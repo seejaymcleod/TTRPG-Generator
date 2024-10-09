@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "TTRPG-Generator", "TTRPG-Generator.njsproj", "{BBECB25A-D5D0-4EBF-873B-FEB69BE9B4F3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBECB25A-D5D0-4EBF-873B-FEB69BE9B4F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBECB25A-D5D0-4EBF-873B-FEB69BE9B4F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBECB25A-D5D0-4EBF-873B-FEB69BE9B4F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBECB25A-D5D0-4EBF-873B-FEB69BE9B4F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F7D201A-3270-41CD-9C30-F0E2DFB2604C}
+	EndGlobalSection
+EndGlobal
