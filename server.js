@@ -77,7 +77,11 @@ function generateFromList(table, number, isTopLevel = true) {
 
         log(`Result before adding index for iteration ${i + 1}: ${result}`);
         if (isTopLevel) {
-            results.push(`(${i + 1}) ${result}`); // Ensure numbering is applied only once at the top level
+            if (table.actiontype === 'DisplayListWithHeaders') {
+                results.push(`(${i + 1})\n${formatWithHeaders(result)}`); // Properly format result as a list with headers
+            } else {
+                results.push(`(${i + 1}) ${result}`); // Ensure numbering is applied only once at the top level
+            }
         } else {
             results.push(result); // No numbering for nested tables
         }
@@ -118,8 +122,7 @@ function extractResultValue(entry) {
     if (typeof entry === 'object') {
         if (entry.type === 'NPC') {
             // Example handling for NPC results with proper formatting
-            const npcDetails = `
-Identifier: ${entry.identifier || 'Unknown'}
+            const npcDetails = `Identifier: ${entry.identifier || 'Unknown'}
 NPC Name: ${entry.name || 'Unknown'}
 Ancestry: ${entry.ancestry || 'Unknown'}
 Alignment: ${entry.alignment || 'Unknown'}
@@ -128,8 +131,7 @@ Wealth: ${entry.wealth || 'Unknown'}
 Appearance: ${entry.appearance || 'Unknown'}
 Does: ${entry.does || 'Unknown'}
 Secrets: ${entry.secrets || 'Unknown'}
-Occupation: ${entry.occupation || 'Unknown'}
-            `.trim();
+Occupation: ${entry.occupation || 'Unknown'}`;
             log(`Extracted NPC details: ${npcDetails}`);
             return npcDetails;
         } else if (entry.value) {
@@ -152,6 +154,14 @@ Occupation: ${entry.occupation || 'Unknown'}
         log(`Default result for unrecognized entry type`);
         return 'Default result';
     }
+}
+
+// Helper function to format result with headers
+function formatWithHeaders(result) {
+    return result
+        .split('\n')
+        .map(line => `    ${line}`) // Indent each line for better readability
+        .join('\n');
 }
 
 // Create server
@@ -188,15 +198,11 @@ const server = http.createServer(async (req, res) => {
                 log(`Error generating data: ${error.message}`);
                 console.error("Error generating data:", error);
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end("Internal Server Error");
+                res.end('Internal Server Error');
             }
         });
-    } else if (req.url === '/api/logs') {
-        // Serve logs
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(logs));
     } else {
-        res.writeHead(404);
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('Not found');
     }
 });
@@ -207,4 +213,8 @@ loadAllTables()
         server.listen(port, () => {
             log(`Server running at http://localhost:${port}/`);
         });
+    })
+    .catch(error => {
+        log(`Error loading tables: ${error.message}`);
+        console.error("Error loading tables:", error);
     });

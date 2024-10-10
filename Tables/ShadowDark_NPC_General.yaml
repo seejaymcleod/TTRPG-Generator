@@ -6,26 +6,7 @@ type: NPC
 subtype: none
 actionType: DisplayListWithHeaders
 tables:
-  - name: Identifier
-    rolltype: d16
-    results:
-      - "The Gray" 
-      - "One-Eye"
-      - "The Lesser"
-      - "The Cunning"
-      - "Silvertongue"
-      - "The Outcast"
-      - "Fasthands"
-      - "The Bold"
-      - "The Elder"
-      - "The Charmer"
-      - "The Exiled"
-      - "The Wise"
-      - "Tree-Speaker"
-      - "The Craven"
-      - "The Red"
-      - "Six-Finger"
-
+  
   - name: NPC Name
     actiontype: SameLineWithNoSpace
     subtables:
@@ -124,6 +105,26 @@ tables:
           - "org"
           - "enne"
           - "ynne"
+          
+  - name: Identifier
+    rolltype: d16
+    results:
+      - "The Gray" 
+      - "One-Eye"
+      - "The Lesser"
+      - "The Cunning"
+      - "Silvertongue"
+      - "The Outcast"
+      - "Fasthands"
+      - "The Bold"
+      - "The Elder"
+      - "The Charmer"
+      - "The Exiled"
+      - "The Wise"
+      - "Tree-Speaker"
+      - "The Craven"
+      - "The Red"
+      - "Six-Finger"
 
   - name: Ancestry
     rolltype: d12

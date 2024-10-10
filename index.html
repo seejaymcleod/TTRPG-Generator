@@ -48,12 +48,18 @@
                     const resultsDiv = document.getElementById('results');
                     resultsDiv.innerHTML = ''; // Clear previous results
                     data.results.forEach(result => {
-                        const p = document.createElement('p');
-                        p.textContent = result;
-                        resultsDiv.appendChild(p);
+                        const pre = document.createElement('pre');
+                        pre.textContent = result;
+                        resultsDiv.appendChild(pre);
+
                     });
                 })
-                .catch(error => console.error('Error generating data:', error));
+                .catch(error => {
+                    console.error('Error generating data:', error);
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = '<p style="color: red;">Error generating data. Please try again.</p>';
+                });
+
         });
     </script>
 </body>
