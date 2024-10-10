@@ -53,23 +53,7 @@ function generateFromList(table, number, isTopLevel = true) {
                 log(`Processing nested table ${index + 1}: ${nestedTable.name || 'Unnamed Nested Table'}`);
                 return generateFromList(nestedTable, 1, false)[0];
             });
-            result = nestedResults.filter(part => part).join(' ');
-        } else if (table.subtables && Array.isArray(table.subtables) && table.subtables.length > 0) {
-            // Handle subtables
-            log(`Processing subtables in: ${tableName}`);
-            const parts = table.subtables.map((subtable, index) => {
-                const subtableResult = generateFromSubtable(subtable);
-                log(`Generated subtable result from subtable ${index + 1}: ${subtableResult}`);
-                return subtableResult;
-            });
-
-            if (table.actiontype === 'SameLineWithSpace') {
-                result = parts.filter(part => part).join(' ');
-            } else if (table.actiontype === 'SameLineWithNoSpace') {
-                result = parts.filter(part => part).join('');
-            } else {
-                result = parts.filter(part => part).join(' ');
-            }
+            result = nestedResults.filter(part => part).join('\n');
         } else {
             log(`Table ${tableName} has no valid results or subtables`);
             result = 'No valid results found';
@@ -77,10 +61,10 @@ function generateFromList(table, number, isTopLevel = true) {
 
         log(`Result before adding index for iteration ${i + 1}: ${result}`);
         if (isTopLevel) {
-            if (table.actiontype === 'DisplayListWithHeaders') {
-                results.push(`(${i + 1})\n${formatWithHeaders(result)}`); // Properly format result as a list with headers
+            if (table.actiontype === 'DisplayListNoHeaders') {
+                results.push(`(${i + 1})\n${result}`); // Display result as a vertical list without headers
             } else {
-                results.push(`(${i + 1}) ${result}`); // Ensure numbering is applied only once at the top level
+                results.push(`(${i + 1}) ${result}`); // Default handling for other cases
             }
         } else {
             results.push(result); // No numbering for nested tables
@@ -90,6 +74,7 @@ function generateFromList(table, number, isTopLevel = true) {
     log(`Final generated results for table ${tableName}: ${results}`); // Debugging final results
     return results; // Keep as an array of strings
 }
+
 
 // Helper function to generate from a subtable
 function generateFromSubtable(subtable) {

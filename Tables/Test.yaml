@@ -1,0 +1,18 @@
+tablename: Test
+filename: Test.yaml
+game: Shadowdark
+genre: Fantasy
+type: Info
+subtype: none
+actionType: DisplayListNoHeaders
+tables:
+  - name: Rumors
+    rolltype: d1
+    results:
+      - range: "01"
+        description: "This is the only Rumor"
+  - name: Place
+    rolltype: d1
+    results:
+      - range: "01"
+        description: "This is the only Place"
