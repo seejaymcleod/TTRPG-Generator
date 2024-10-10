@@ -4,9 +4,10 @@ game: Shadowdark
 genre: Fantasy
 type: Location
 subtype: none
+actionType: DisplayListNoHeaders
 tables:
   - name: Adventuring Site Names
-    actiontype: AddWithSpace
+    actiontype: SameLineWithSpace
     subtables:
       - name: PlaceOf
         rolltype: d20

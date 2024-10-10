@@ -4,6 +4,7 @@ game: Shadowdark
 genre: Fantasy
 type: Info
 subtype: none
+actionType: DisplayListNoHeaders
 tables:
   - name: Rumors
     rolltype: d100

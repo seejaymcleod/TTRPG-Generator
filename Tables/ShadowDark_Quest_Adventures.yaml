@@ -4,9 +4,10 @@ game: Shadowdark
 genre: Fantasy
 type: Quest
 subtype: none
+actionType: DisplayListNoHeaders
 tables:
   - name: Adventures
-    actiontype: AddWithSpace
+    actiontype: SameLineWithSpace
     subtables:
       - name: Action
         rolltype: d20

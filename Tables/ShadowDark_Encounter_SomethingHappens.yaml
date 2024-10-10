@@ -4,6 +4,7 @@ game: ShadowDark
 genre: Fantasy
 type: Encounter
 subtype: none
+actionType: DisplayListNoHeaders
 tables:
   - name: SomethingHappens
     rolltype: d100

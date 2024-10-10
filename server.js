@@ -31,55 +31,60 @@ function log(message) {
 }
 
 // Generate results from the table or subtable
-function generateFromList(table, number) {
+function generateFromList(table, number, isTopLevel = true) {
     const results = [];
+    const tableName = table.name || table.tablename || 'Unnamed Table';
+    log(`Starting generation from table: ${tableName} with number: ${number}`);
 
     for (let i = 0; i < number; i++) {
         let result = "";
-        const tableName = table.name || table.tablename || 'Unnamed Table';
-        log(`Processing table: ${tableName}`);
+        log(`Processing table: ${tableName}, iteration: ${i + 1}`);
 
         if (table.results && Array.isArray(table.results) && table.results.length > 0) {
             // Generate a random result from main table results if available
             const randomIndex = Math.floor(Math.random() * table.results.length);
             const entry = table.results[randomIndex];
-            log(`Selected entry from results: ${extractResultValue(entry)}`);
             result = extractResultValue(entry);
+            log(`Selected entry from results (index: ${randomIndex}): ${result}`);
         } else if (table.tables && Array.isArray(table.tables) && table.tables.length > 0) {
             // Handle multiple tables at the top level
-            const nestedResults = table.tables.map(nestedTable => {
-                log(`Processing nested table: ${nestedTable.name || 'Unnamed Nested Table'}`);
-                return generateFromList(nestedTable, 1)[0];
+            log(`Processing nested tables in: ${tableName}`);
+            const nestedResults = table.tables.map((nestedTable, index) => {
+                log(`Processing nested table ${index + 1}: ${nestedTable.name || 'Unnamed Nested Table'}`);
+                return generateFromList(nestedTable, 1, false)[0];
             });
             result = nestedResults.filter(part => part).join(' ');
         } else if (table.subtables && Array.isArray(table.subtables) && table.subtables.length > 0) {
             // Handle subtables
-            if (table.actiontype && table.actiontype === 'AddWithSpace') {
-                // Concatenate results from subtables with spaces
-                const parts = table.subtables.map(subtable => {
-                    const subtableResult = generateFromSubtable(subtable);
-                    log(`Generated subtable result: ${subtableResult}`);
-                    return subtableResult;
-                });
+            log(`Processing subtables in: ${tableName}`);
+            const parts = table.subtables.map((subtable, index) => {
+                const subtableResult = generateFromSubtable(subtable);
+                log(`Generated subtable result from subtable ${index + 1}: ${subtableResult}`);
+                return subtableResult;
+            });
+
+            if (table.actiontype === 'SameLineWithSpace') {
                 result = parts.filter(part => part).join(' ');
+            } else if (table.actiontype === 'SameLineWithNoSpace') {
+                result = parts.filter(part => part).join('');
             } else {
-                // Handle subtables without specific action type
-                const subtableResults = table.subtables.map(subtable => {
-                    return generateFromSubtable(subtable);
-                });
-                result = subtableResults.filter(part => part).join(' ');
+                result = parts.filter(part => part).join(' ');
             }
         } else {
             log(`Table ${tableName} has no valid results or subtables`);
             result = 'No valid results found';
         }
 
-        log(`Result before adding index: ${result}`);
-        results.push(`(${i + 1}) ${result.replace(/^\(\d+\)\s*/, '')}`); // Ensure no previous index is present
+        log(`Result before adding index for iteration ${i + 1}: ${result}`);
+        if (isTopLevel) {
+            results.push(`(${i + 1}) ${result}`); // Ensure numbering is applied only once at the top level
+        } else {
+            results.push(result); // No numbering for nested tables
+        }
     }
 
-    log(`Final generated results: ${results}`);
-    return results;
+    log(`Final generated results for table ${tableName}: ${results}`); // Debugging final results
+    return results; // Keep as an array of strings
 }
 
 // Helper function to generate from a subtable
@@ -91,11 +96,14 @@ function generateFromSubtable(subtable) {
         // Generate a random result from subtable results if available
         const randomIndex = Math.floor(Math.random() * subtable.results.length);
         const entry = subtable.results[randomIndex];
-        log(`Selected entry from subtable results: ${extractResultValue(entry)}`);
-        return extractResultValue(entry);
+        const result = extractResultValue(entry);
+        log(`Selected entry from subtable results (index: ${randomIndex}): ${result}`);
+        return result;
     } else if (subtable.subtables && Array.isArray(subtable.subtables) && subtable.subtables.length > 0) {
         // Handle nested subtables
-        const nestedResults = subtable.subtables.map(nestedSubtable => {
+        log(`Processing nested subtables in subtable: ${subtableName}`);
+        const nestedResults = subtable.subtables.map((nestedSubtable, index) => {
+            log(`Processing nested subtable ${index + 1}: ${nestedSubtable.name || 'Unnamed Nested Subtable'}`);
             return generateFromSubtable(nestedSubtable);
         });
         return nestedResults.filter(part => part).join(' ');
@@ -108,18 +116,40 @@ function generateFromSubtable(subtable) {
 // Helper function to extract value from result
 function extractResultValue(entry) {
     if (typeof entry === 'object') {
-        if (entry.value) {
+        if (entry.type === 'NPC') {
+            // Example handling for NPC results with proper formatting
+            const npcDetails = `
+Identifier: ${entry.identifier || 'Unknown'}
+NPC Name: ${entry.name || 'Unknown'}
+Ancestry: ${entry.ancestry || 'Unknown'}
+Alignment: ${entry.alignment || 'Unknown'}
+Age: ${entry.age || 'Unknown'}
+Wealth: ${entry.wealth || 'Unknown'}
+Appearance: ${entry.appearance || 'Unknown'}
+Does: ${entry.does || 'Unknown'}
+Secrets: ${entry.secrets || 'Unknown'}
+Occupation: ${entry.occupation || 'Unknown'}
+            `.trim();
+            log(`Extracted NPC details: ${npcDetails}`);
+            return npcDetails;
+        } else if (entry.value) {
+            log(`Extracted value from object: ${entry.value}`);
             return entry.value;
         } else if (entry.description) {
+            log(`Extracted description from object: ${entry.description}`);
             return entry.description;
         } else if (entry.results) {
+            log(`Extracted results from object: ${entry.results}`);
             return entry.results;
         } else {
+            log(`Complex object with no simple value`);
             return 'Complex object with no simple value';
         }
     } else if (typeof entry === 'string' || typeof entry === 'number') {
+        log(`Extracted primitive value: ${entry}`);
         return entry;
     } else {
+        log(`Default result for unrecognized entry type`);
         return 'Default result';
     }
 }
@@ -155,6 +185,7 @@ const server = http.createServer(async (req, res) => {
                 res.end(JSON.stringify({ results }));
                 log(`Response sent with generated values.`); // Debugging after sending response
             } catch (error) {
+                log(`Error generating data: ${error.message}`);
                 console.error("Error generating data:", error);
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 res.end("Internal Server Error");
@@ -176,5 +207,4 @@ loadAllTables()
         server.listen(port, () => {
             log(`Server running at http://localhost:${port}/`);
         });
-    })
-    .catch(err => log(`Error loading tables: ${err}`));
+    });

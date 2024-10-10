@@ -4,6 +4,7 @@ game: Shadowdark
 genre: Fantasy
 type: NPC
 subtype: none
+actionType: DisplayListWithHeaders
 tables:
   - name: Identifier
     rolltype: d16
@@ -25,8 +26,8 @@ tables:
       - "The Red"
       - "Six-Finger"
 
-  - name: Names by Syllable
-    actiontype: AddWithNoSpace
+  - name: NPC Name
+    actiontype: SameLineWithNoSpace
     subtables:
       - name: Prefix Syllable
         rolltype: d20
@@ -178,79 +179,77 @@ tables:
       - range: "6"
         results: Extravagant
 
-  - name: Qualities
-    subtables:
-      - name: Appearance
-        rolltype: d20
-        results:
-          - Balding
-          - Stocky build
-          - Very tall
-          - Beauty mark
-          - One eye
-          - Braided hair
-          - Muscular
-          - White hair
-          - Scar on face
-          - Willowy build
-          - Sweaty
-          - Cleft chin
-          - Frail
-          - Big eyebrows
-          - Tattooed
-          - Floppy hat
-          - Gold tooth
-          - Six fingers
-          - Very short
-          - Large nose
+  - name: Appearance
+    rolltype: d20
+    results:
+      - Balding
+      - Stocky build
+      - Very tall
+      - Beauty mark
+      - One eye
+      - Braided hair
+      - Muscular
+      - White hair
+      - Scar on face
+      - Willowy build
+      - Sweaty
+      - Cleft chin
+      - Frail
+      - Big eyebrows
+      - Tattooed
+      - Floppy hat
+      - Gold tooth
+      - Six fingers
+      - Very short
+      - Large nose
 
-      - name: Does
-        rolltype: d20
-        results:
-          - Spits
-          - Always eating
-          - Moves quickly
-          - Card tricks
-          - Prays aloud
-          - Writes in diary
-          - Apologetic
-          - Slaps backs
-          - Drops things
-          - Swears oaths
-          - Makes puns
-          - Rare accent
-          - Easily spooked
-          - Forgetful
-          - Speaks quietly
-          - Twitches
-          - Moves slowly
-          - Speaks loudly
-          - Swaggers
-          - Smokes pipe
+  - name: Does
+    rolltype: d20
+    results:
+      - Spits
+      - Always eating
+      - Moves quickly
+      - Card tricks
+      - Prays aloud
+      - Writes in diary
+      - Apologetic
+      - Slaps backs
+      - Drops things
+      - Swears oaths
+      - Makes puns
+      - Rare accent
+      - Easily spooked
+      - Forgetful
+      - Speaks quietly
+      - Twitches
+      - Moves slowly
+      - Speaks loudly
+      - Swaggers
+      - Smokes pipe
 
-      - name: Secrets
-        rolltype: d20
-        results:
-          - Hiding a fugitive
-          - Adores baby animals
-          - Obsessed with fire
-          - In a religious cult
-          - Is a half-demon
-          - Was a wizard's apprentice
-          - Needlessly picks pockets
-          - Has a false identity
-          - Afraid of storms
-          - Has functional gills
-          - In deep gambling debt
-          - Works as a smuggler
-          - Is a werewolf
-          - Can actually smell lies
-          - Cast out of wealthy family
-          - In love with a bartender
-          - Left the Thieves' Guild
-          - Best friends with a prince
-          - Retired crawler
-          - Has a pet basilisk
+  - name: Secrets
+    rolltype: d20
+    results:
+      - Hiding a fugitive
+      - Adores baby animals
+      - Obsessed with fire
+      - In a religious cult
+      - Is a half-demon
+      - Was a wizard's apprentice
+      - Needlessly picks pockets
+      - Has a false identity
+      - Afraid of storms
+      - Has functional gills
+      - In deep gambling debt
+      - Works as a smuggler
+      - Is a werewolf
+      - Can actually smell lies
+      - Cast out of wealthy family
+      - In love with a bartender
+      - Left the Thieves' Guild
+      - Best friends with a prince
+      - Retired crawler
+      - Has a pet basilisk
 
   - name: Occupation
     rolltype: d12
