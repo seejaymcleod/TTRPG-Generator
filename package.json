@@ -3,12 +3,18 @@
   "version": "0.0.0",
   "description": "TTRPG-Generator",
   "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "author": {
-    "name": ""
+    "name": "SeeJayMac"
   },
   "devDependencies": {
     "eslint": "^8.21.0"
   },
-  "eslintConfig": {
+  "eslintConfig": {},
+  "dependencies": {
+    "express": "^4.21.1",
+    "js-yaml": "^4.1.0"
   }
 }

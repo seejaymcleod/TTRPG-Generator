@@ -1,0 +1,284 @@
+tablename: NPCs
+filename: ShadowDark_NPC_General.yaml
+game: Shadowdark
+genre: Fantasy
+type: NPC
+subtype: none
+tables:
+  - name: Identifier
+    rolltype: d16
+    results:
+      - "The Gray" 
+      - "One-Eye"
+      - "The Lesser"
+      - "The Cunning"
+      - "Silvertongue"
+      - "The Outcast"
+      - "Fasthands"
+      - "The Bold"
+      - "The Elder"
+      - "The Charmer"
+      - "The Exiled"
+      - "The Wise"
+      - "Tree-Speaker"
+      - "The Craven"
+      - "The Red"
+      - "Six-Finger"
+
+  - name: Names by Syllable
+    actiontype: AddWithSpaceBasedOnParameter
+    subtables:
+      - name: Number of Syllables
+        rolltype: d6
+        actiontype: Parameter
+        results:
+          - range: "1-2"
+            results: 2
+          - range: "3-4"
+            results: 3
+          - range: "5-6"
+            results: 4
+
+      - name: Prefix Syllable
+        rolltype: d20
+        results:
+          - "Ir"
+          - "Van"
+          - "Cyr"
+          - "Den"
+          - "Cor"
+          - "Hil"
+          - "Sal"
+          - "Bri"
+          - "Mar"
+          - "Gar"
+          - "Tin"
+          - "Vor"
+          - "Nel"
+          - "Ri"
+          - "Quor"
+          - "Bal"
+          - "Mur"
+          - "Par"
+          - "Tor"
+          - "Lem"
+
+      - name: Syllable 2
+        rolltype: d20
+        results:
+          - "an"
+          - "ish"
+          - "tos"
+          - "zar"
+          - "ven"
+          - "sen"
+          - "win"
+          - "on"
+          - "en"
+          - "lin"
+          - "sor"
+          - "oc"
+          - "vyn"
+          - "al"
+          - "osh"
+          - "er"
+          - "in"
+          - "el"
+          - "un"
+          - "nar"
+
+      - name: Syllable 3
+        rolltype: d20
+        results:
+          - "l"
+          - "n"
+          - "pil"
+          - "g"
+          - "z"
+          - "bor"
+          - "t"
+          - "c"
+          - "ar"
+          - "q"
+          - "v"
+          - "iv"
+          - "ov"
+          - "b"
+          - "den"
+          - "k"
+          - "s"
+          - "r"
+          - "jen"
+          - "w"
+
+      - name: Suffix
+        rolltype: d20
+        results:
+          - "int"
+          - "us"
+          - "ios"
+          - "el"
+          - "inne"
+          - "os"
+          - "ian"
+          - "ius"
+          - "iol"
+          - "an"
+          - "isk"
+          - "erg"
+          - "ent"
+          - "ial"
+          - "ant"
+          - "iel"
+          - "onne"
+          - "org"
+          - "enne"
+          - "ynne"
+
+  - name: Ancestry
+    rolltype: d12
+    results:
+      - range: "1-4"
+        results: Human
+      - range: "5-6"
+        results: Elf
+      - range: "7-8"
+        results: Dwarf
+      - range: "9-10"
+        results: Halfling
+      - range: "11"
+        results: Half-orc
+      - range: "12"
+        results: Goblin
+
+  - name: Alignment
+    rolltype: d6
+    results:
+      - range: "1-3"
+        results: Lawful
+      - range: "4"
+        results: Neutral
+      - range: "5-6"
+        results: Chaotic
+
+  - name: Age
+    rolltype: d8
+    results:
+      - range: "1"
+        results: Child
+      - range: "2"
+        results: Adolescent
+      - range: "3-4"
+        results: Adult
+      - range: "5-6"
+        results: Middle-Aged
+      - range: "7"
+        results: Elderly
+      - range: "8"
+        results: Ancient
+
+  - name: Wealth
+    rolltype: d6
+    results:
+      - range: "1"
+        results: Poor
+      - range: "2-3"
+        results: Standard
+      - range: "4-5"
+        results: Wealthy
+      - range: "6"
+        results: Extravagant
+
+  - name: Qualities
+    subtables:
+      - name: Appearance
+        rolltype: d20
+        results:
+          - Balding
+          - Stocky build
+          - Very tall
+          - Beauty mark
+          - One eye
+          - Braided hair
+          - Muscular
+          - White hair
+          - Scar on face
+          - Willowy build
+          - Sweaty
+          - Cleft chin
+          - Frail
+          - Big eyebrows
+          - Tattooed
+          - Floppy hat
+          - Gold tooth
+          - Six fingers
+          - Very short
+          - Large nose
+
+      - name: Does
+        rolltype: d20
+        results:
+          - Spits
+          - Always eating
+          - Moves quickly
+          - Card tricks
+          - Prays aloud
+          - Writes in diary
+          - Apologetic
+          - Slaps backs
+          - Drops things
+          - Swears oaths
+          - Makes puns
+          - Rare accent
+          - Easily spooked
+          - Forgetful
+          - Speaks quietly
+          - Twitches
+          - Moves slowly
+          - Speaks loudly
+          - Swaggers
+          - Smokes pipe
+
+      - name: Secrets
+        rolltype: d20
+        results:
+          - Hiding a fugitive
+          - Adores baby animals
+          - Obsessed with fire
+          - In a religious cult
+          - Is a half-demon
+          - Was a wizard's apprentice
+          - Needlessly picks pockets
+          - Has a false identity
+          - Afraid of storms
+          - Has functional gills
+          - In deep gambling debt
+          - Works as a smuggler
+          - Is a werewolf
+          - Can actually smell lies
+          - Cast out of wealthy family
+          - In love with a bartender
+          - Left the Thieves' Guild
+          - Best friends with a prince
+          - Retired crawler
+          - Has a pet basilisk
+
+  - name: Occupation
+    rolltype: d12
+    results:
+      - Gravedigger
+      - Carpenter
+      - Scholar
+      - Blacksmith
+      - Tax collector
+      - Farmer
+      - Bartender
+      - Beggar
+      - Baker
+      - Cook
+      - Sailor
+      - Butcher
+      - Locksmith
+      - Cobbler
+      - Friar/nun
+      - Merchant

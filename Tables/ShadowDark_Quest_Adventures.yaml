@@ -1,0 +1,81 @@
+tablename: Adventures
+filename: ShadowDark_Quest_Adventures.yaml
+game: Shadowdark
+genre: Fantasy
+type: Quest
+subtype: none
+tables:
+  - name: Adventures
+    actiontype: AddWithSpace
+    subtables:
+      - name: Action
+        rolltype: d20
+        results:
+          - "Rescue the"
+          - "Find the"
+          - "Destroy the"
+          - "Infiltrate the"
+          - "Bypass the"
+          - "Return the"
+          - "Defeat the"
+          - "Spy on the"
+          - "Bribe the"
+          - "Deliver the"
+          - "Escape the"
+          - "Imprison the"
+          - "Stop the"
+          - "Befriend the"
+          - "Pacify the"
+          - "Persuade the"
+          - "Steal the"
+          - "Escort the"
+          - "Banish the"
+          - "Free the"
+
+      - name: Target
+        rolltype: d20
+        results:
+          - "Goblet of"
+          - "Prisoner"
+          - "Sword at"
+          - "Vault in"
+          - "Cult under"
+          - "Spirit of"
+          - "Killer in"
+          - "Demon in"
+          - "Noble of"
+          - "Hunter in"
+          - "Hostage in"
+          - "Thief hiding in"
+          - "Spy of"
+          - "Werewolf in"
+          - "Relic of"
+          - "High priest sacrificing"
+          - "Merchant in"
+          - "Witch blackmailing"
+          - "Ritual in"
+          - "Vampire murdering"
+
+      - name: Context
+        rolltype: d20
+        results:
+          - "the evil wizard"
+          - "the wastes"
+          - "the bottom of the river"
+          - "the city sewers"
+          - "the barrow mounds"
+          - "the fallen hero"
+          - "the magical library"
+          - "the king's court"
+          - "the ancient lineage"
+          - "the sorcerer's tower"
+          - "the Murkwood"
+          - "the slums"
+          - "the Dwarven lord"
+          - "the musty tomb"
+          - "the royal knights"
+          - "innocents"
+          - "the catacombs"
+          - "the baron"
+          - "the Thieves' Guild"
+          - "townsfolk"

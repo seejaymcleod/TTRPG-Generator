@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Generator</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+
+        #left-column, #center-column, #right-column {
+            margin: 10px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            flex: 1;
+        }
+    </style>
+    <script>
+        let currentTable = null;
+
+        // Load tables from the server
+        async function loadTables() {
+            const response = await fetch('/api/tables');
+            const tables = await response.json();
+            const tableList = document.getElementById('tableList');
+            tableList.innerHTML = '';
+            tables.forEach(table => {
+                const button = document.createElement('button');
+                button.textContent = table.tablename;
+                button.onclick = () => selectAndLoadTable(table);
+                tableList.appendChild(button);
+            });
+        }
+
+        // Select and load the table from the list
+        function selectAndLoadTable(table) {
+            currentTable = table;
+            const tableDetails = document.getElementById('currentTable');
+            tableDetails.innerHTML = `
+                        <h2>${table.tablename}</h2>
+                        <p>Game: ${table.game}</p>
+                        <p>Genre: ${table.genre}</p>
+                        <p>Type: ${table.type}</p>
+                        <div>
+                            <label for="numberToGenerate">Number to Generate (1-20): </label>
+                            <input type="number" id="numberToGenerate" min="1" max="20" value="1">
+                            <button onclick="generate()">Generate</button>
+                        </div>
+                        <div id="results"></div>
+                    `;
+        }
+
+        // Generate results from the selected table
+        async function generate() {
+            const numberToGenerate = document.getElementById('numberToGenerate').value;
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    table: currentTable,
+                    number: parseInt(numberToGenerate)
+                })
+            });
+            const results = await response.json();
+            displayResults(results);
+        }
+
+        // Display generated results (handling subtables)
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<h3>Generated Results:</h3>`;
+            results.forEach(result => {
+                resultsDiv.innerHTML += formatResult(result);
+            });
+        }
+
+        // Format result to display subtables and tables properly
+        function formatResult(result) {
+            let html = '<div>';
+
+            // Ensure result is not null or undefined
+            if (!result) {
+                console.error('Invalid result object:', result);
+                return '<div><em>Error: No result to display</em></div>';
+            }
+
+            // Loop through result keys
+            for (const [key, value] of Object.entries(result)) {
+                // Check if value is an object (likely a subtable) and recursively call formatResult
+                if (typeof value === 'object' && value !== null) {
+                    html += `<p><strong>${key}:</strong></p>`;
+                    html += formatResult(value);  // Recursively handle subtables
+                } else if (value !== null && value !== undefined) {
+                    html += `<p>${key}: ${value}</p>`;
+                } else {
+                    html += `<p>${key}: <em>No result</em></p>`;  // Handle null or undefined
+                }
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        window.onload = loadTables;
+    </script>
+</head>
+<body>
+    <!-- Left Column: Display list of table names -->
+    <div id="left-column">
+        <h2>Available Tables</h2>
+        <div id="tableList"></div>
+    </div>
+
+    <!-- Center Column: Display selected table details and generate random values -->
+    <div id="center-column">
+        <h2>Selected Table</h2>
+        <div id="currentTable"></div>
+    </div>
+
+    <!-- Right Column: Display saved generated values -->
+    <div id="right-column">
+        <h2>Saved Results</h2>
+        <div id="savedResults"></div>
+    </div>
+</body>
+</html>
