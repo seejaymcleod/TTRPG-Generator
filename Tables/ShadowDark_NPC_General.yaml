@@ -26,19 +26,8 @@ tables:
       - "Six-Finger"
 
   - name: Names by Syllable
-    actiontype: AddWithSpaceBasedOnParameter
+    actiontype: AddWithNoSpace
     subtables:
-      - name: Number of Syllables
-        rolltype: d6
-        actiontype: Parameter
-        results:
-          - range: "1-2"
-            results: 2
-          - range: "3-4"
-            results: 3
-          - range: "5-6"
-            results: 4
-
       - name: Prefix Syllable
         rolltype: d20
         results:

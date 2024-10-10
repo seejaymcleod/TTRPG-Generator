@@ -38,7 +38,6 @@ function generateFromList(table, number) {
         let result = "";
         const tableName = table.name || table.tablename || 'Unnamed Table';
         log(`Processing table: ${tableName}`);
-        log(`Table structure: ${JSON.stringify(table)}`);
 
         if (table.results && Array.isArray(table.results) && table.results.length > 0) {
             // Generate a random result from main table results if available
@@ -50,7 +49,7 @@ function generateFromList(table, number) {
             // Handle multiple tables at the top level
             const nestedResults = table.tables.map(nestedTable => {
                 log(`Processing nested table: ${nestedTable.name || 'Unnamed Nested Table'}`);
-                return generateFromList(nestedTable, 1)[0][nestedTable.name || 'Unnamed Nested Table'];
+                return generateFromList(nestedTable, 1)[0];
             });
             result = nestedResults.filter(part => part).join(' ');
         } else if (table.subtables && Array.isArray(table.subtables) && table.subtables.length > 0) {
@@ -75,9 +74,11 @@ function generateFromList(table, number) {
             result = 'No valid results found';
         }
 
-        results.push({ [tableName]: result });
+        log(`Result before adding index: ${result}`);
+        results.push(`(${i + 1}) ${result.replace(/^\(\d+\)\s*/, '')}`); // Ensure no previous index is present
     }
 
+    log(`Final generated results: ${results}`);
     return results;
 }
 
@@ -85,7 +86,6 @@ function generateFromList(table, number) {
 function generateFromSubtable(subtable) {
     const subtableName = subtable.name || subtable.tablename || 'Unnamed Subtable';
     log(`Processing subtable: ${subtableName}`);
-    log(`Subtable structure: ${JSON.stringify(subtable)}`);
 
     if (subtable.results && Array.isArray(subtable.results) && subtable.results.length > 0) {
         // Generate a random result from subtable results if available
@@ -150,9 +150,10 @@ const server = http.createServer(async (req, res) => {
                 const { table, number } = JSON.parse(body);
                 log(`Received request to generate ${number} values from table: ${table.tablename || 'Unnamed Table'}`);
                 const results = generateFromList(table, number);
+                log(`Generated results (final): ${results}`); // Debugging the generated results
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify(results));
-                log(`Generated ${number} values from table: ${table.tablename || 'Unnamed Table'}`);
+                res.end(JSON.stringify({ results }));
+                log(`Response sent with generated values.`); // Debugging after sending response
             } catch (error) {
                 console.error("Error generating data:", error);
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
