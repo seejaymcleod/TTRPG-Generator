@@ -107,7 +107,6 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
     switch (actionType) {
         case 'ListWithHeaders':
             return results.map(result => result.header === 'Party' ? `${result.header}:\n${result.result}` : `${result.header}: ${result.result}`).join('\n');
-
         case 'SameLineWithSpaces':
             return results.map(result => (typeof result === 'object' ? result.result : result)).join(' ');
         case 'SameLineNoSpaces':

@@ -7,8 +7,9 @@ subtype: none
 actionType: ListWithHeaders
 tables:  
   - name: NPC Name
-    actiontype: SameLineNoSpaces
-      - subname: Prefix Syllable
+    actionType: SameLineNoSpaces
+    subTables:
+      - name: Prefix Syllable
         results:
           - "Ir"
           - "Van"
@@ -31,7 +32,7 @@ tables:
           - "Tor"
           - "Lem"
 
-      - subname: Syllable 2
+      - name: Syllable 2
         results:
           - "an"
           - "ish"
@@ -54,7 +55,7 @@ tables:
           - "un"
           - "nar"
 
-      - subname: Syllable 3
+      - name: Syllable 3
         results:
           - "l"
           - "n"
@@ -77,7 +78,7 @@ tables:
           - "jen"
           - "w"
 
-      - subname: Suffix
+      - name: Suffix
         results:
           - "int"
           - "us"

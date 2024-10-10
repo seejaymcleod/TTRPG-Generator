@@ -1,0 +1,74 @@
+tablename: Adventures
+filename: ShadowDark_Quest_Adventures.yaml
+game: Shadowdark
+genre: Fantasy
+type: Quest
+subtype: none
+actionType: SameLineWithSpaces
+tables:
+  - name: Action
+    results:
+      - "Rescue the"
+      - "Find the"
+      - "Destroy the"
+      - "Infiltrate the"
+      - "Bypass the"
+      - "Return the"
+      - "Defeat the"
+      - "Spy on the"
+      - "Bribe the"
+      - "Deliver the"
+      - "Escape the"
+      - "Imprison the"
+      - "Stop the"
+      - "Befriend the"
+      - "Pacify the"
+      - "Persuade the"
+      - "Steal the"
+      - "Escort the"
+      - "Banish the"
+      - "Free the"
+  - name: Target
+    results:
+      - "Goblet"
+      - "Prisoner"
+      - "Sword"
+      - "Vault"
+      - "Cult"
+      - "Spirit"
+      - "Killer"
+      - "Demon"
+      - "Noble"
+      - "Hunter"
+      - "Hostage"
+      - "Thief"
+      - "Spy"
+      - "Werewolf"
+      - "Relic"
+      - "High priest"
+      - "Merchant"
+      - "Witch"
+      - "Ritual"
+      - "Vampire"
+  - name: Context
+    results:
+      - "of the evil wizard"
+      - "stalking the wastes"
+      - "at the bottom of the river"
+      - "in the city sewers"
+      - "under the barrow mounds"
+      - "of the fallen hero"
+      - "in the magical library"
+      - "in the king's court"
+      - "of the ancient lineage"
+      - "in the sorcerer's tower"
+      - "in the Murkwood"
+      - "hiding in the slums"
+      - "of the Dwarven lord"
+      - "in the musty tomb"
+      - "of the royal knights"
+      - "sacrificing innocents"
+      - "in the catacombs"
+      - "blackmailing the baron"
+      - "in the Thieves' Guild"
+      - "murdering townsfolk"
