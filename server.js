@@ -1,205 +1,145 @@
-'use strict';
-const http = require('http');
+const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
 
-const port = process.env.PORT || 1337;
+const app = express();
+const PORT = process.env.PORT || 1337;
+const TABLES_DIR = path.join(__dirname, 'tables');
+
+// Toggleable debugging flag
+const DEBUG = true;
+
+// Load tables into memory on startup
 let tables = [];
-let logs = [];
+loadAllTables();
 
-// Load all tables into memory
-async function loadAllTables() {
-    const tablesDir = path.join(__dirname, 'tables');
-    const files = fs.readdirSync(tablesDir);
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-    for (const file of files) {
-        if (file.endsWith('.yaml')) {
-            const filePath = path.join(tablesDir, file);
-            const fileContents = fs.readFileSync(filePath, 'utf8');
-            const data = yaml.load(fileContents);
-            tables.push(data);
-            log(`Loaded table: ${data.tablename || 'Unnamed Table'}`);
-        }
-    }
-}
+// Endpoint to fetch table names
+app.get('/api/tables', (req, res) => {
+    if (DEBUG) console.log('Fetching table names from loaded tables:', tables);
+    res.json(tables.map(table => ({ filename: table.filename, tablename: table.tablename })));
+});
 
-// Log messages
-function log(message) {
-    logs.push(message);
-    console.log(message);
-}
+// Endpoint to generate results
+app.post('/api/generate', (req, res) => {
+    if (DEBUG) console.log('Received request body:', req.body);
+    const { table, number } = req.body;
+    if (DEBUG) console.log('Received request to generate results:', table, 'Number of generations:', number);
 
-// Generate results from the table or subtable
-function generateFromList(table, number, isTopLevel = true) {
-    const results = [];
-    const tableName = table.name || table.tablename || 'Unnamed Table';
-    log(`Starting generation from table: ${tableName} with number: ${number}`);
-
-    for (let i = 0; i < number; i++) {
-        let result = "";
-        log(`Processing table: ${tableName}, iteration: ${i + 1}`);
-
-        if (table.results && Array.isArray(table.results) && table.results.length > 0) {
-            // Generate a random result from main table results if available
-            const randomIndex = Math.floor(Math.random() * table.results.length);
-            const entry = table.results[randomIndex];
-            result = extractResultValue(entry);
-            log(`Selected entry from results (index: ${randomIndex}): ${result}`);
-        } else if (table.tables && Array.isArray(table.tables) && table.tables.length > 0) {
-            // Handle multiple tables at the top level
-            log(`Processing nested tables in: ${tableName}`);
-            const nestedResults = table.tables.map((nestedTable, index) => {
-                log(`Processing nested table ${index + 1}: ${nestedTable.name || 'Unnamed Nested Table'}`);
-                return generateFromList(nestedTable, 1, false)[0];
-            });
-            result = nestedResults.filter(part => part).join('\n');
-        } else {
-            log(`Table ${tableName} has no valid results or subtables`);
-            result = 'No valid results found';
-        }
-
-        log(`Result before adding index for iteration ${i + 1}: ${result}`);
-        if (isTopLevel) {
-            if (table.actiontype === 'DisplayListNoHeaders') {
-                results.push(`(${i + 1})\n${result}`); // Display result as a vertical list without headers
-            } else {
-                results.push(`(${i + 1}) ${result}`); // Default handling for other cases
-            }
-        } else {
-            results.push(result); // No numbering for nested tables
-        }
+    const selectedTable = tables.find(t => t.filename === table.filename);
+    if (!selectedTable) {
+        console.error('Table not found:', table.filename);
+        return res.status(404).json({ error: 'Table not found.' });
     }
 
-    log(`Final generated results for table ${tableName}: ${results}`); // Debugging final results
-    return results; // Keep as an array of strings
-}
-
-
-// Helper function to generate from a subtable
-function generateFromSubtable(subtable) {
-    const subtableName = subtable.name || subtable.tablename || 'Unnamed Subtable';
-    log(`Processing subtable: ${subtableName}`);
-
-    if (subtable.results && Array.isArray(subtable.results) && subtable.results.length > 0) {
-        // Generate a random result from subtable results if available
-        const randomIndex = Math.floor(Math.random() * subtable.results.length);
-        const entry = subtable.results[randomIndex];
-        const result = extractResultValue(entry);
-        log(`Selected entry from subtable results (index: ${randomIndex}): ${result}`);
-        return result;
-    } else if (subtable.subtables && Array.isArray(subtable.subtables) && subtable.subtables.length > 0) {
-        // Handle nested subtables
-        log(`Processing nested subtables in subtable: ${subtableName}`);
-        const nestedResults = subtable.subtables.map((nestedSubtable, index) => {
-            log(`Processing nested subtable ${index + 1}: ${nestedSubtable.name || 'Unnamed Nested Subtable'}`);
-            return generateFromSubtable(nestedSubtable);
-        });
-        return nestedResults.filter(part => part).join(' ');
-    } else {
-        log(`Subtable ${subtableName} has no valid results`);
-        return 'No valid results found';
-    }
-}
-
-// Helper function to extract value from result
-function extractResultValue(entry) {
-    if (typeof entry === 'object') {
-        if (entry.type === 'NPC') {
-            // Example handling for NPC results with proper formatting
-            const npcDetails = `Identifier: ${entry.identifier || 'Unknown'}
-NPC Name: ${entry.name || 'Unknown'}
-Ancestry: ${entry.ancestry || 'Unknown'}
-Alignment: ${entry.alignment || 'Unknown'}
-Age: ${entry.age || 'Unknown'}
-Wealth: ${entry.wealth || 'Unknown'}
-Appearance: ${entry.appearance || 'Unknown'}
-Does: ${entry.does || 'Unknown'}
-Secrets: ${entry.secrets || 'Unknown'}
-Occupation: ${entry.occupation || 'Unknown'}`;
-            log(`Extracted NPC details: ${npcDetails}`);
-            return npcDetails;
-        } else if (entry.value) {
-            log(`Extracted value from object: ${entry.value}`);
-            return entry.value;
-        } else if (entry.description) {
-            log(`Extracted description from object: ${entry.description}`);
-            return entry.description;
-        } else if (entry.results) {
-            log(`Extracted results from object: ${entry.results}`);
-            return entry.results;
-        } else {
-            log(`Complex object with no simple value`);
-            return 'Complex object with no simple value';
+    try {
+        const results = [];
+        for (let i = 0; i < number; i++) {
+            if (DEBUG) console.log(`Generating result ${i + 1} for table:`, selectedTable);
+            const result = generateResultsFromTables(selectedTable.tables, selectedTable.actionType);
+            if (DEBUG) console.log(`Generated result ${i + 1}:`, result);
+            results.push(result);
         }
-    } else if (typeof entry === 'string' || typeof entry === 'number') {
-        log(`Extracted primitive value: ${entry}`);
-        return entry;
-    } else {
-        log(`Default result for unrecognized entry type`);
-        return 'Default result';
-    }
-}
 
-// Helper function to format result with headers
-function formatWithHeaders(result) {
-    return result
-        .split('\n')
-        .map(line => `    ${line}`) // Indent each line for better readability
-        .join('\n');
-}
-
-// Create server
-const server = http.createServer(async (req, res) => {
-    if (req.url === '/') {
-        // Serve index.html
-        fs.readFile('index.html', 'utf8', (err, html) => {
-            if (err) {
-                res.writeHead(500);
-                return res.end('Error loading index.html');
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(html);
-        });
-    } else if (req.url === '/api/tables') {
-        // Serve the list of loaded tables
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(tables));
-    } else if (req.url === '/api/generate' && req.method === 'POST') {
-        let body = '';
-        req.on('data', chunk => {
-            body += chunk.toString(); // Convert Buffer to string
-        });
-        req.on('end', () => {
-            try {
-                const { table, number } = JSON.parse(body);
-                log(`Received request to generate ${number} values from table: ${table.tablename || 'Unnamed Table'}`);
-                const results = generateFromList(table, number);
-                log(`Generated results (final): ${results}`); // Debugging the generated results
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ results }));
-                log(`Response sent with generated values.`); // Debugging after sending response
-            } catch (error) {
-                log(`Error generating data: ${error.message}`);
-                console.error("Error generating data:", error);
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                res.end('Internal Server Error');
-            }
-        });
-    } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Not found');
+        res.json({ results });
+    } catch (error) {
+        console.error('Error generating data:', error);
+        res.status(500).json({ error: 'Failed to generate results.' });
     }
 });
 
-// Load tables at server start
-loadAllTables()
-    .then(() => {
-        server.listen(port, () => {
-            log(`Server running at http://localhost:${port}/`);
-        });
-    })
-    .catch(error => {
-        log(`Error loading tables: ${error.message}`);
-        console.error("Error loading tables:", error);
+// Load all tables into memory
+function loadAllTables() {
+    if (DEBUG) console.log('Loading all tables from directory:', TABLES_DIR);
+
+    try {
+        const files = fs.readdirSync(TABLES_DIR);
+        tables = files.filter(file => file.endsWith('.yaml')).map(filename => {
+            try {
+                const table = yaml.load(fs.readFileSync(path.join(TABLES_DIR, filename), 'utf8'));
+                if (DEBUG) console.log('Loaded raw table data:', table);
+                table.filename = filename;
+                if (DEBUG) console.log('Final loaded table:', table);
+                return table;
+            } catch (err) {
+                console.error('Error loading YAML file:', filename, err);
+                return null;
+            }
+        }).filter(Boolean);
+    } catch (err) {
+        console.error('Error reading tables directory:', err);
+    }
+}
+
+// Function to generate results from nested tables
+function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentHeader = '') {
+    if (DEBUG) console.log('Generating results from nested tables:', tables, 'with action type:', actionType);
+    if (!tables || tables.length === 0) {
+        if (DEBUG) console.warn('No tables found to generate results from.');
+        return 'No valid results found';
+    }
+
+    let results = [];
+
+    tables.forEach(table => {
+        if (DEBUG) console.log('Processing table:', table);
+        const header = table.name || parentHeader;
+        if (table.results && Array.isArray(table.results) && table.results.length > 0) {
+            if (DEBUG) console.log('Table has results:', table.results);
+            const randomResult = getRandomResult(table);
+            results.push({ header, result: randomResult });
+        } else if (table.subTables) {
+            if (DEBUG) console.log('Table has subtables:', table.subTables);
+            const subResults = generateResultsFromTables(table.subTables, table.actionType, header);
+            if (Array.isArray(subResults)) {
+                subResults.forEach(subResult => {
+                    results.push(subResult);
+                });
+            } else {
+                results.push({ header, result: subResults });
+            }
+        }
     });
+
+    switch (actionType) {
+        case 'ListWithHeaders':
+            return results.map(result => result.header === 'Party' ? `${result.header}:\n${result.result}` : `${result.header}: ${result.result}`).join('\n');
+
+        case 'SameLineWithSpaces':
+            return results.map(result => (typeof result === 'object' ? result.result : result)).join(' ');
+        case 'SameLineNoSpaces':
+            return results.map(result => (typeof result === 'object' ? result.result : result)).join('');
+        default:
+            return results.map(result => (typeof result === 'object' ? result.result : result)).join('\n');
+    }
+}
+
+// Function to get a random result from a table
+function getRandomResult(table) {
+    if (DEBUG) console.log('Getting random result for table:', table.name || table.tablename);
+    if (!table.results) {
+        if (DEBUG) console.warn('No results found for table:', table.name || table.tablename);
+        return 'No valid entries available';
+    }
+
+    const randomIndex = Math.floor(Math.random() * table.results.length);
+    if (DEBUG) console.log('Random index chosen:', randomIndex, 'Random result:', table.results[randomIndex]);
+
+    const result = table.results[randomIndex];
+    return (typeof result === 'object' && result.value) ? result.value : result;
+}
+
+// Serve HTML file
+app.get('/', (req, res) => {
+    if (DEBUG) console.log('Serving index.html');
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    if (DEBUG) console.log('Debugging is enabled.');
+});

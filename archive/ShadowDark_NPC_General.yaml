@@ -4,14 +4,12 @@ game: Shadowdark
 genre: Fantasy
 type: NPC
 subtype: none
-actionType: DisplayListWithHeaders
+actionType: ListWithHeaders
 tables:
   
   - name: NPC Name
-    actiontype: SameLineWithNoSpace
-    subtables:
-      - name: Prefix Syllable
-        rolltype: d20
+    actiontype: SameLineNoSpaces
+      - subname: Prefix Syllable
         results:
           - "Ir"
           - "Van"
@@ -34,8 +32,7 @@ tables:
           - "Tor"
           - "Lem"
 
-      - name: Syllable 2
-        rolltype: d20
+      - subname: Syllable 2
         results:
           - "an"
           - "ish"
@@ -58,8 +55,7 @@ tables:
           - "un"
           - "nar"
 
-      - name: Syllable 3
-        rolltype: d20
+      - subname: Syllable 3
         results:
           - "l"
           - "n"
@@ -82,8 +78,7 @@ tables:
           - "jen"
           - "w"
 
-      - name: Suffix
-        rolltype: d20
+      - subname: Suffix
         results:
           - "int"
           - "us"
@@ -107,7 +102,6 @@ tables:
           - "ynne"
           
   - name: Identifier
-    rolltype: d16
     results:
       - "The Gray" 
       - "One-Eye"
@@ -127,61 +121,56 @@ tables:
       - "Six-Finger"
 
   - name: Ancestry
-    rolltype: d12
     results:
       - range: "1-4"
-        results: Human
+        value: Human
       - range: "5-6"
-        results: Elf
+        value: Elf
       - range: "7-8"
-        results: Dwarf
+        value: Dwarf
       - range: "9-10"
-        results: Halfling
+        value: Halfling
       - range: "11"
-        results: Half-orc
+        value: Half-orc
       - range: "12"
-        results: Goblin
+        value: Goblin
 
   - name: Alignment
-    rolltype: d6
     results:
       - range: "1-3"
-        results: Lawful
+        value: Lawful
       - range: "4"
-        results: Neutral
+        value: Neutral
       - range: "5-6"
-        results: Chaotic
+        value: Chaotic
 
   - name: Age
-    rolltype: d8
     results:
       - range: "1"
-        results: Child
+        value: Child
       - range: "2"
-        results: Adolescent
+        value: Adolescent
       - range: "3-4"
-        results: Adult
+        value: Adult
       - range: "5-6"
-        results: Middle-Aged
+        value: Middle-Aged
       - range: "7"
-        results: Elderly
+        value: Elderly
       - range: "8"
-        results: Ancient
+        value: Ancient
 
   - name: Wealth
-    rolltype: d6
     results:
       - range: "1"
-        results: Poor
+        value: Poor
       - range: "2-3"
-        results: Standard
+        value: Standard
       - range: "4-5"
-        results: Wealthy
+        value: Wealthy
       - range: "6"
-        results: Extravagant
+        value: Extravagant
 
   - name: Appearance
-    rolltype: d20
     results:
       - Balding
       - Stocky build
@@ -205,7 +194,6 @@ tables:
       - Large nose
 
   - name: Does
-    rolltype: d20
     results:
       - Spits
       - Always eating
@@ -229,7 +217,6 @@ tables:
       - Smokes pipe
 
   - name: Secrets
-    rolltype: d20
     results:
       - Hiding a fugitive
       - Adores baby animals
@@ -253,7 +240,6 @@ tables:
       - Has a pet basilisk
 
   - name: Occupation
-    rolltype: d12
     results:
       - Gravedigger
       - Carpenter

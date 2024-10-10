@@ -4,13 +4,11 @@ game: Shadowdark
 genre: Fantasy
 type: Location
 subtype: none
-actionType: DisplayListNoHeaders
+actionType: ListNoHeaders
 tables:
   - name: Adventuring Site Names
-    actiontype: SameLineWithSpace
-    subtables:
+    actiontype: SameLineWithSpaces
       - name: PlaceOf
-        rolltype: d20
         results:
           - "Mines of the"
           - "Abbey of the"
@@ -34,7 +32,6 @@ tables:
           - "Shrine of the"
 
       - name: Adjective
-        rolltype: d20
         results:
           - "Cursed"
           - "Whispering"
@@ -58,7 +55,6 @@ tables:
           - "Immortal"
 
       - name: Noun
-        rolltype: d20
         results:
           - "Flame"
           - "Ghost"

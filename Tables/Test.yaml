@@ -4,15 +4,37 @@ game: Shadowdark
 genre: Fantasy
 type: Info
 subtype: none
-actionType: DisplayListNoHeaders
+actionType: ListWithHeaders
 tables:
   - name: Rumors
-    rolltype: d1
     results:
       - range: "01"
-        description: "This is the only Rumor"
+        value: "This is the only Rumor"
   - name: Place
-    rolltype: d1
     results:
       - range: "01"
-        description: "This is the only Place"
+        value: "Garden"
+      - range: "02-10"
+        value: "House"
+  - name: Party
+    actionType: ListWithHeaders
+    subTables:
+      - name: Party Place
+        results:
+          - "Hell"
+          - "Palace"
+      - name: Party Guest of Honor
+        results:
+          - King
+          - Queen
+  - name: DrinkName
+    actionType: SameLineNoSpaces
+    subTables:
+      - name: FirstPart
+        results:
+          - "Good"
+          - "Bad"
+      - name: SecondPart
+        results:
+          - Yellow
+          - Black
