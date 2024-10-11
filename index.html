@@ -115,7 +115,7 @@
 
         .top-level-button {
             width: 100%;
-            padding: 3px;
+            padding: 6px;
             margin-bottom: 5px;
             text-align: center;
             cursor: pointer;
@@ -131,13 +131,13 @@
                 transform: scale(1.05);
             }
 
-            .top-level-button.active {
-                background-color: #d0d0d0;
+            .top-level-button.active, .top-level-button.selected {
+                background-color: #b0b0b0;
             }
 
         .matching-table-button, .category-button {
             width: 100%;
-            padding: 3px;
+            padding: 6px;
             margin: 0;
             font-size: 0.9em;
             background-color: #f0f0f0;
@@ -152,8 +152,8 @@
                 transform: scale(1.05);
             }
 
-            .matching-table-button.active, .category-button.active {
-                background-color: #d0d0d0;
+            .matching-table-button.active, .category-button.active, .matching-table-button.selected, .category-button.selected {
+                background-color: #b0b0b0;
             }
 
         #toggleDarkMode {
@@ -246,10 +246,8 @@
             categoryButtonsContainer.classList.remove('active');
             matchingTablesContainer.classList.remove('active');
 
-            document.querySelectorAll('.top-level-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            buttonElement.classList.add('active');
+            resetButtonHighlights();
+            buttonElement.classList.add('selected');
 
             if (filterType === 'all') {
                 tablesData.forEach(table => {
@@ -275,8 +273,8 @@
                     button.onclick = () => {
                         console.log('Category button clicked:', value); // Debugging
                         displayFilteredTables(filterType, value);
-                        resetButtonHighlights();
-                        button.classList.add('active');
+                        resetButtonHighlights(false, true, true);
+                        button.classList.add('selected');
                     };
                     categoryButtonsContainer.appendChild(button);
                 });
@@ -292,9 +290,8 @@
             button.className = 'matching-table-button';
             button.textContent = table.tablename;
             button.onclick = () => {
-                resetButtonHighlights();
-                document.querySelectorAll('.matching-table-button').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
+                resetButtonHighlights(false, false, true);
+                button.classList.add('selected');
                 displayTableHeaders(table);
                 document.getElementById('generationControls').style.display = 'block';
                 document.getElementById('generationSlider').value = 1;
@@ -360,10 +357,22 @@
             }, 500);
         }
 
-        function resetButtonHighlights() {
-            document.querySelectorAll('.top-level-button, .category-button, .matching-table-button').forEach(button => {
-                button.classList.remove('active');
-            });
+        function resetButtonHighlights(resetTopLevel = true, resetTags = true, resetTables = true) {
+            if (resetTopLevel) {
+                document.querySelectorAll('.top-level-button').forEach(button => {
+                    button.classList.remove('selected');
+                });
+            }
+            if (resetTags) {
+                document.querySelectorAll('.category-button').forEach(button => {
+                    button.classList.remove('selected');
+                });
+            }
+            if (resetTables) {
+                document.querySelectorAll('.matching-table-button').forEach(button => {
+                    button.classList.remove('selected');
+                });
+            }
         }
 
         // Update the label when the slider changes
@@ -373,7 +382,7 @@
         });
 
         document.getElementById('generateBtn').addEventListener('click', async () => {
-            const selectedTableButton = document.querySelector('.matching-table-button.active');
+            const selectedTableButton = document.querySelector('.matching-table-button.selected');
             if (!selectedTableButton) {
                 alert("Please select a table first.");
                 return;
