@@ -17,10 +17,17 @@ loadAllTables();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint to fetch table names
+// Endpoint to fetch table names and details
 app.get('/api/tables', (req, res) => {
     if (DEBUG) console.log('Fetching table names from loaded tables:', tables);
-    res.json(tables.map(table => ({ filename: table.filename, tablename: table.tablename })));
+    res.json(tables.map(table => ({
+        filename: table.filename,
+        tablename: table.tablename,
+        game: table.game || 'Not Available',
+        genre: table.genre || 'Not Available',
+        type: table.type || 'Not Available',
+        subtype: table.subtype || 'Not Available'
+    })));
 });
 
 // Endpoint to generate results

@@ -7,21 +7,35 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #leftColumn {
+            width: 25%;
+            border-right: 2px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #mainContent {
+            width: 75%;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
         }
 
         #results {
-            margin: 20px;
+            margin-top: 20px;
             white-space: pre-wrap; /* Preserve spacing and newlines */
         }
 
         .header {
             font-weight: bold;
             margin-top: 10px;
-            text-align: left;
-        }
-
-        .result {
-            margin-left: 20px;
             text-align: left;
         }
 
@@ -33,22 +47,45 @@
             font-weight: bold;
             margin-top: 20px;
         }
+
+        .slider-container {
+            margin-top: 20px;
+        }
+
+        #tableHeaders {
+            margin-bottom: 20px;
+        }
+
+        .dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+            .dark-mode #leftColumn {
+                border-right: 2px solid #444;
+            }
     </style>
 </head>
 <body>
-    <h1>Adventure Generator</h1>
-    <div>
+    <div id="leftColumn">
+        <h1>TTRPG Generator</h1>
         <label for="tableSelect">Choose a Table:</label>
-        <select id="tableSelect">
+        <select id="tableSelect" style="width: 100%;">
             <!-- Options will be dynamically populated here -->
         </select>
+        <button id="toggleDarkMode" style="margin-top: 20px;">Toggle Dark Mode</button>
     </div>
-    <div class="slider-container">
-        <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
-        <input type="range" id="generationSlider" min="1" max="20" value="1">
+    <div id="mainContent">
+        <div id="tableHeaders">
+            <!-- Table name and details will be displayed here -->
+        </div>
+        <div id="generationControls" class="slider-container" style="display: none;">
+            <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
+            <input type="range" id="generationSlider" min="1" max="20" value="1">
+            <button id="generateBtn" style="margin-top: 10px;">Generate</button>
+        </div>
+        <div id="results"></div>
     </div>
-    <button id="generateBtn">Generate</button>
-    <div id="results"></div>
 
     <script>
         async function fetchTables() {
@@ -56,6 +93,9 @@
                 const response = await fetch('/api/tables');
                 const data = await response.json();
                 const tableSelect = document.getElementById('tableSelect');
+
+                // Clear previous options and add a default one
+                tableSelect.innerHTML = '<option value="" disabled selected>Select a table...</option>';
 
                 data.forEach(table => {
                     const option = document.createElement('option');
@@ -66,6 +106,42 @@
             } catch (error) {
                 console.error('Error fetching tables:', error);
             }
+        }
+
+        document.getElementById('tableSelect').addEventListener('change', (event) => {
+            const selectedTable = JSON.parse(event.target.value);
+            displayTableHeaders(selectedTable);
+            document.getElementById('generationControls').style.display = 'block';
+            document.getElementById('generationSlider').value = 1;
+            document.getElementById('generationValue').textContent = 1;
+        });
+
+        function displayTableHeaders(table) {
+            const tableHeadersContainer = document.getElementById('tableHeaders');
+            tableHeadersContainer.innerHTML = ''; // Clear previous headers
+
+            // Set the table name as the section title
+            const tableNameTitle = document.createElement('h2');
+            tableNameTitle.textContent = table.tablename;
+            tableHeadersContainer.appendChild(tableNameTitle);
+
+            // Display relevant table details
+            const details = [
+                { key: 'filename', label: 'File Name' },
+                { key: 'game', label: 'Game' },
+                { key: 'genre', label: 'Genre' },
+                { key: 'type', label: 'Type' },
+                { key: 'subtype', label: 'Subtype' }
+            ];
+
+            details.forEach(detail => {
+                if (table[detail.key]) {
+                    const detailDiv = document.createElement('div');
+                    detailDiv.className = 'header';
+                    detailDiv.textContent = `${detail.label}: ${table[detail.key]}`;
+                    tableHeadersContainer.appendChild(detailDiv);
+                }
+            });
         }
 
         // Update the label when the slider changes
@@ -125,6 +201,11 @@
                 resultsContainer.appendChild(generationContainer);
             });
         }
+
+        // Toggle dark mode
+        document.getElementById('toggleDarkMode').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
 
         // Fetch tables on page load
         fetchTables();
