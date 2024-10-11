@@ -115,8 +115,8 @@
 
         .top-level-button {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 8px;
+            padding: 3px;
+            margin-bottom: 5px;
             text-align: center;
             cursor: pointer;
             background-color: #f0f0f0;
@@ -137,7 +137,7 @@
 
         .matching-table-button, .category-button {
             width: 100%;
-            padding: 12px;
+            padding: 3px;
             margin: 0;
             font-size: 0.9em;
             background-color: #f0f0f0;
@@ -150,6 +150,10 @@
             .matching-table-button:hover, .category-button:hover {
                 background-color: #e0e0e0;
                 transform: scale(1.05);
+            }
+
+            .matching-table-button.active, .category-button.active {
+                background-color: #d0d0d0;
             }
 
         #toggleDarkMode {
@@ -271,6 +275,8 @@
                     button.onclick = () => {
                         console.log('Category button clicked:', value); // Debugging
                         displayFilteredTables(filterType, value);
+                        resetButtonHighlights();
+                        button.classList.add('active');
                     };
                     categoryButtonsContainer.appendChild(button);
                 });
@@ -286,6 +292,7 @@
             button.className = 'matching-table-button';
             button.textContent = table.tablename;
             button.onclick = () => {
+                resetButtonHighlights();
                 document.querySelectorAll('.matching-table-button').forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 displayTableHeaders(table);
@@ -351,6 +358,12 @@
             setTimeout(() => {
                 categoryButtonsContainer.style.display = 'none';
             }, 500);
+        }
+
+        function resetButtonHighlights() {
+            document.querySelectorAll('.top-level-button, .category-button, .matching-table-button').forEach(button => {
+                button.classList.remove('active');
+            });
         }
 
         // Update the label when the slider changes
