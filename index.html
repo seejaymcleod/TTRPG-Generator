@@ -275,11 +275,12 @@
             button.className = 'matching-table-button';
             button.textContent = table.tablename;
             button.onclick = () => {
+                document.querySelectorAll('.matching-table-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
                 displayTableHeaders(table);
                 document.getElementById('generationControls').style.display = 'block';
-                document.getElementById('generationSlider').value = 1;
-                document.getElementById('generationValue').textContent = 1;
             };
+
             container.appendChild(button);
         }
 
@@ -347,7 +348,7 @@
         });
 
         document.getElementById('generateBtn').addEventListener('click', async () => {
-            const selectedTableButton = document.querySelector('.matching-table-button');
+            const selectedTableButton = document.querySelector('.matching-table-button.active');
             if (!selectedTableButton) {
                 alert("Please select a table first.");
                 return;
