@@ -3,64 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Table Generator</title>
+    <title>TTRPG Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #results {
+            margin: 20px;
+            white-space: pre-wrap; /* Preserve spacing and newlines */
+        }
+
+        .header {
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .result {
+            margin-left: 20px;
+            text-align: left;
+        }
+
+        .generation-container {
+            margin-bottom: 20px; /* Space between each generation */
+        }
+
+        .generation-title {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>RPG Table Generator</h1>
+    <h1>Adventure Generator</h1>
     <div>
-        <label for="tableSelect">Choose a table:</label>
-        <select id="tableSelect"></select>
-        <input type="number" id="numberToGenerate" placeholder="Number to generate" min="1" value="1">
-        <button id="generateButton">Generate</button>
+        <label for="tableSelect">Choose a Table:</label>
+        <select id="tableSelect">
+            <!-- Options will be dynamically populated here -->
+        </select>
     </div>
+    <div class="slider-container">
+        <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
+        <input type="range" id="generationSlider" min="1" max="20" value="1">
+    </div>
+    <button id="generateBtn">Generate</button>
     <div id="results"></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/api/tables')
-                .then(response => response.json())
-                .then(tables => {
-                    const tableSelect = document.getElementById('tableSelect');
-                    tables.forEach(table => {
-                        const option = document.createElement('option');
-                        option.value = JSON.stringify(table);
-                        option.textContent = table.tablename;
-                        tableSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching tables:', error));
-        });
+        async function fetchTables() {
+            try {
+                const response = await fetch('/api/tables');
+                const data = await response.json();
+                const tableSelect = document.getElementById('tableSelect');
 
-        document.getElementById('generateButton').addEventListener('click', function () {
-            const tableSelect = document.getElementById('tableSelect');
-            const selectedTable = JSON.parse(tableSelect.value);
-            const numberToGenerate = parseInt(document.getElementById('numberToGenerate').value);
-
-            fetch('/api/generate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ table: selectedTable, number: numberToGenerate })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = ''; // Clear previous results
-                    data.results.forEach(result => {
-                        const pre = document.createElement('pre');
-                        pre.textContent = result;
-                        resultsDiv.appendChild(pre);
-
-                    });
-                })
-                .catch(error => {
-                    console.error('Error generating data:', error);
-                    const resultsDiv = document.getElementById('results');
-                    resultsDiv.innerHTML = '<p style="color: red;">Error generating data. Please try again.</p>';
+                data.forEach(table => {
+                    const option = document.createElement('option');
+                    option.value = JSON.stringify(table);
+                    option.text = table.tablename;
+                    tableSelect.appendChild(option);
                 });
+            } catch (error) {
+                console.error('Error fetching tables:', error);
+            }
+        }
 
+        // Update the label when the slider changes
+        document.getElementById('generationSlider').addEventListener('input', (event) => {
+            const generationValue = event.target.value;
+            document.getElementById('generationValue').textContent = generationValue;
         });
+
+        document.getElementById('generateBtn').addEventListener('click', async () => {
+            const tableSelect = document.getElementById('tableSelect');
+            const selectedTable = tableSelect.value;
+            if (!selectedTable) {
+                alert("Please select a table first.");
+                return;
+            }
+
+            const tableData = JSON.parse(selectedTable);
+            const numberOfGenerations = parseInt(document.getElementById('generationSlider').value, 10);
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ table: tableData, number: numberOfGenerations })
+                });
+                const data = await response.json();
+                displayResults(data.results);
+            } catch (error) {
+                console.error('Error generating adventure:', error);
+            }
+        });
+
+        function displayResults(results) {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = ''; // Clear previous results
+
+            results.forEach((result, index) => {
+                // Create a container for each generation
+                const generationContainer = document.createElement('div');
+                generationContainer.className = 'generation-container';
+
+                // Add the generation number and result on the same line
+                const generationTitle = document.createElement('div');
+                generationTitle.className = 'generation-title';
+                generationTitle.textContent = `(${index + 1}) `;
+
+                if (typeof result === 'string') {
+                    generationTitle.textContent += result;
+                } else if (typeof result === 'object') {
+                    // If there are nested headers, format them properly
+                    generationTitle.textContent += `${result.header}: ${result.result}`;
+                }
+
+                generationContainer.appendChild(generationTitle);
+
+                // Append the generation container to the results container
+                resultsContainer.appendChild(generationContainer);
+            });
+        }
+
+        // Fetch tables on page load
+        fetchTables();
     </script>
 </body>
 </html>
