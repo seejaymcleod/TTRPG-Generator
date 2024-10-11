@@ -20,7 +20,7 @@
         }
 
         #leftColumn {
-            width: 33%;
+            width: 20%;
             border-right: 2px solid #ccc;
             padding: 10px;
             box-sizing: border-box;
@@ -33,20 +33,30 @@
             display: flex;
             flex-direction: row;
             gap: 10px;
+            height: auto;
         }
 
         #topLevelButtons {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            flex: 1;
+            width: 20%;
         }
 
         #categoryButtons {
-            display: flex;
-            flex: 2;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px;
+            align-content: start;
+            width: 70%;
+            overflow-y: auto;
+        }
+
+        #horizontalDivider {
+            width: 100%;
+            height: 2px;
+            background-color: #ccc;
+            margin: 20px 0;
         }
 
         #matchingTables {
@@ -104,8 +114,8 @@
             }
 
         .top-level-button {
-            width: 20%;
-            padding: 2px;
+            width: 100%;
+            padding: 12px;
             margin-bottom: 8px;
             text-align: center;
             cursor: pointer;
@@ -118,7 +128,6 @@
 
             .top-level-button:hover {
                 background-color: #e0e0e0;
-                width: 20%;
                 transform: scale(1.05);
             }
 
@@ -127,8 +136,8 @@
             }
 
         .matching-table-button, .category-button {
-            width: 90%;
-            padding: 2px;
+            width: 100%;
+            padding: 12px;
             margin: 0;
             font-size: 0.9em;
             background-color: #f0f0f0;
@@ -136,7 +145,6 @@
             border-radius: 5px;
             text-align: center;
             transition: background-color 0.3s, transform 0.2s;
-            $1
         }
 
             .matching-table-button:hover, .category-button:hover {
@@ -190,7 +198,9 @@
                 </div>
             </div>
 
-            <h3>Matching Tables</h3>
+            <div id="horizontalDivider"></div>
+
+            <h2>Matching Tables</h2>
             <div id="matchingTables" class="matching-tables">
                 <!-- Matching table buttons will be dynamically populated here -->
             </div>
@@ -280,13 +290,14 @@
                 button.classList.add('active');
                 displayTableHeaders(table);
                 document.getElementById('generationControls').style.display = 'block';
+                document.getElementById('generationSlider').value = 1;
+                document.getElementById('generationValue').textContent = 1;
             };
 
             container.appendChild(button);
         }
 
         function displayFilteredTables(filterType, value) {
-
             const matchingTablesContainer = document.getElementById('matchingTables');
             // Clear previous buttons
             matchingTablesContainer.innerHTML = ''; // Clear previous buttons
@@ -330,7 +341,7 @@
 
         function showCategoryButtons() {
             const categoryButtonsContainer = document.getElementById('categoryButtons');
-            categoryButtonsContainer.style.display = 'flex';
+            categoryButtonsContainer.style.display = 'grid';
             categoryButtonsContainer.style.animation = 'slideIn 0.5s forwards';
         }
 
