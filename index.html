@@ -11,17 +11,55 @@
             height: 100vh;
             margin: 0;
             transition: background-color 0.3s, color 0.3s;
+            flex-direction: column;
+        }
+
+        #contentWrapper {
+            display: flex;
+            flex: 1;
         }
 
         #leftColumn {
-            width: 25%;
+            width: 33%;
             border-right: 2px solid #ccc;
             padding: 10px;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #topAndCategoryButtons {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+
+        #topLevelButtons {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        #categoryButtons {
+            display: flex;
+            flex: 2;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #matchingTables {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+            overflow-y: auto;
+            max-height: calc(100% - 120px);
         }
 
         #mainContent {
-            width: 75%;
+            width: 70%;
             padding: 20px;
             box-sizing: border-box;
             display: flex;
@@ -64,57 +102,201 @@
             .dark-mode #leftColumn {
                 border-right: 2px solid #444;
             }
+
+        .top-level-button {
+            width: auto;
+            padding: 2px;
+            margin-bottom: 8px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9em;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+            .top-level-button:hover {
+                background-color: #e0e0e0;
+                transform: scale(1.05);
+            }
+
+            .top-level-button.active {
+                background-color: #d0d0d0;
+            }
+
+        .matching-table-button, .category-button {
+            width: 100%;
+            padding: 12px;
+            margin: 0;
+            font-size: 0.9em;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.2s;
+            $1
+        }
+
+            .matching-table-button:hover, .category-button:hover {
+                background-color: #e0e0e0;
+                transform: scale(1.05);
+            }
+
+        #toggleDarkMode {
+            margin: 20px;
+            align-self: center;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(-20%);
+            }
+        }
     </style>
 </head>
-<body>
-    <div id="leftColumn">
-        <h1>TTRPG Generator</h1>
-        <label for="tableSelect">Choose a Table:</label>
-        <select id="tableSelect" style="width: 100%;">
-            <!-- Options will be dynamically populated here -->
-        </select>
-        <button id="toggleDarkMode" style="margin-top: 20px;">Toggle Dark Mode</button>
-    </div>
-    <div id="mainContent">
-        <div id="tableHeaders">
-            <!-- Table name and details will be displayed here -->
+<body class="dark-mode">
+    <div id="contentWrapper">
+        <div id="leftColumn">
+            <h1>TTRPG Generator</h1>
+            <div id="topAndCategoryButtons">
+                <div id="topLevelButtons">
+                    <button class="top-level-button" onclick="filterTables('all', this)">All</button>
+                    <button class="top-level-button" onclick="filterTables('game', this)">Game</button>
+                    <button class="top-level-button" onclick="filterTables('genre', this)">Setting</button>
+                    <button class="top-level-button" onclick="filterTables('type', this)">Type</button>
+                </div>
+                <div id="categoryButtons" class="category-buttons">
+                    <!-- Filtered tag buttons will be dynamically populated here -->
+                </div>
+            </div>
+
+            <h3>Matching Tables</h3>
+            <div id="matchingTables" class="matching-tables">
+                <!-- Matching table buttons will be dynamically populated here -->
+            </div>
         </div>
-        <div id="generationControls" class="slider-container" style="display: none;">
-            <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
-            <input type="range" id="generationSlider" min="1" max="20" value="1">
-            <button id="generateBtn" style="margin-top: 10px;">Generate</button>
+        <div id="mainContent">
+            <div id="tableHeaders">
+                <!-- Table name and details will be displayed here -->
+            </div>
+            <div id="generationControls" class="slider-container" style="display: none;">
+                <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
+                <input type="range" id="generationSlider" min="1" max="20" value="1">
+                <button id="generateBtn" style="margin-top: 10px;">Generate</button>
+            </div>
+            <div id="results"></div>
         </div>
-        <div id="results"></div>
     </div>
+    <button id="toggleDarkMode">Toggle Dark Mode</button>
 
     <script>
+        let tablesData = [];
+
         async function fetchTables() {
             try {
                 const response = await fetch('/api/tables');
-                const data = await response.json();
-                const tableSelect = document.getElementById('tableSelect');
-
-                // Clear previous options and add a default one
-                tableSelect.innerHTML = '<option value="" disabled selected>Select a table...</option>';
-
-                data.forEach(table => {
-                    const option = document.createElement('option');
-                    option.value = JSON.stringify(table);
-                    option.text = table.tablename;
-                    tableSelect.appendChild(option);
-                });
+                tablesData = await response.json();
+                console.log('Tables data fetched:', tablesData); // Debugging to ensure tables are fetched correctly
+                filterTables('all', document.querySelector('.top-level-button')); // Automatically select 'All' on load
             } catch (error) {
                 console.error('Error fetching tables:', error);
             }
         }
 
-        document.getElementById('tableSelect').addEventListener('change', (event) => {
-            const selectedTable = JSON.parse(event.target.value);
-            displayTableHeaders(selectedTable);
-            document.getElementById('generationControls').style.display = 'block';
-            document.getElementById('generationSlider').value = 1;
-            document.getElementById('generationValue').textContent = 1;
-        });
+        function filterTables(filterType, buttonElement) {
+            console.log('Filtering tables by:', filterType); // Debugging
+            const categoryButtonsContainer = document.getElementById('categoryButtons');
+            const matchingTablesContainer = document.getElementById('matchingTables');
+            categoryButtonsContainer.innerHTML = ''; // Clear previous buttons
+            matchingTablesContainer.innerHTML = ''; // Clear previous buttons
+            categoryButtonsContainer.classList.remove('active');
+            matchingTablesContainer.classList.remove('active');
+
+            document.querySelectorAll('.top-level-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            buttonElement.classList.add('active');
+
+            if (filterType === 'all') {
+                tablesData.forEach(table => {
+                    createTableButton(table, matchingTablesContainer);
+                });
+                if (matchingTablesContainer.children.length > 1) { // More than just the title
+                    matchingTablesContainer.classList.add('active');
+                }
+                hideCategoryButtons();
+            } else {
+                let filteredValues = new Set();
+                tablesData.forEach(table => {
+                    if (table[filterType]) {
+                        console.log('Found value for filter:', table[filterType]); // Debugging
+                        filteredValues.add(table[filterType]);
+                    }
+                });
+
+                Array.from(filteredValues).forEach(value => {
+                    const button = document.createElement('button');
+                    button.className = 'category-button';
+                    button.textContent = value;
+                    button.onclick = () => {
+                        console.log('Category button clicked:', value); // Debugging
+                        displayFilteredTables(filterType, value);
+                    };
+                    categoryButtonsContainer.appendChild(button);
+                });
+
+                if (filteredValues.size > 0) {
+                    showCategoryButtons();
+                }
+            }
+        }
+
+        function createTableButton(table, container) {
+            const button = document.createElement('button');
+            button.className = 'matching-table-button';
+            button.textContent = table.tablename;
+            button.onclick = () => {
+                displayTableHeaders(table);
+                document.getElementById('generationControls').style.display = 'block';
+                document.getElementById('generationSlider').value = 1;
+                document.getElementById('generationValue').textContent = 1;
+            };
+            container.appendChild(button);
+        }
+
+        function displayFilteredTables(filterType, value) {
+
+            const matchingTablesContainer = document.getElementById('matchingTables');
+            // Clear previous buttons
+            matchingTablesContainer.innerHTML = ''; // Clear previous buttons
+
+            tablesData.filter(table => table[filterType] === value).forEach(table => {
+                createTableButton(table, matchingTablesContainer);
+            });
+
+            if (matchingTablesContainer.children.length > 1) { // More than just the title
+                matchingTablesContainer.classList.add('active');
+            }
+        }
 
         function displayTableHeaders(table) {
             const tableHeadersContainer = document.getElementById('tableHeaders');
@@ -144,6 +326,20 @@
             });
         }
 
+        function showCategoryButtons() {
+            const categoryButtonsContainer = document.getElementById('categoryButtons');
+            categoryButtonsContainer.style.display = 'flex';
+            categoryButtonsContainer.style.animation = 'slideIn 0.5s forwards';
+        }
+
+        function hideCategoryButtons() {
+            const categoryButtonsContainer = document.getElementById('categoryButtons');
+            categoryButtonsContainer.style.animation = 'slideOut 0.5s forwards';
+            setTimeout(() => {
+                categoryButtonsContainer.style.display = 'none';
+            }, 500);
+        }
+
         // Update the label when the slider changes
         document.getElementById('generationSlider').addEventListener('input', (event) => {
             const generationValue = event.target.value;
@@ -151,14 +347,14 @@
         });
 
         document.getElementById('generateBtn').addEventListener('click', async () => {
-            const tableSelect = document.getElementById('tableSelect');
-            const selectedTable = tableSelect.value;
-            if (!selectedTable) {
+            const selectedTableButton = document.querySelector('.matching-table-button');
+            if (!selectedTableButton) {
                 alert("Please select a table first.");
                 return;
             }
 
-            const tableData = JSON.parse(selectedTable);
+            const tableName = selectedTableButton.textContent;
+            const tableData = tablesData.find(table => table.tablename === tableName);
             const numberOfGenerations = parseInt(document.getElementById('generationSlider').value, 10);
 
             try {

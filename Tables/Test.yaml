@@ -1,7 +1,7 @@
 tablename: Test
 filename: Test.yaml
-game: Shadowdark
-genre: Fantasy
+game: MadeUp
+genre: SciFi
 type: Info
 subtype: none
 actionType: ListWithHeaders
