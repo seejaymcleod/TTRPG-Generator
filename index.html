@@ -131,8 +131,10 @@
                 transform: scale(1.05);
             }
 
-            .top-level-button.active, .top-level-button.selected {
-                background-color: #b0b0b0;
+            .top-level-button.selected {
+                background-color: #006666;
+                transform: scale(1.1);
+                color: #ffffff;
             }
 
         .matching-table-button, .category-button {
@@ -152,13 +154,17 @@
                 transform: scale(1.05);
             }
 
-            .matching-table-button.active, .category-button.active, .matching-table-button.selected, .category-button.selected {
-                background-color: #b0b0b0;
+            .matching-table-button.selected, .category-button.selected {
+                background-color: #006666;
+                transform: scale(1.1);
+                color: #ffffff;
             }
 
         #toggleDarkMode {
             margin: 20px;
             align-self: center;
+            position: absolute;
+            bottom: 10px;
         }
 
         @keyframes slideIn {
@@ -208,6 +214,7 @@
             <div id="matchingTables" class="matching-tables">
                 <!-- Matching table buttons will be dynamically populated here -->
             </div>
+            <button id="toggleDarkMode">Toggle Dark Mode</button>
         </div>
         <div id="mainContent">
             <div id="tableHeaders">
@@ -221,7 +228,6 @@
             <div id="results"></div>
         </div>
     </div>
-    <button id="toggleDarkMode">Toggle Dark Mode</button>
 
     <script>
         let tablesData = [];
@@ -246,8 +252,10 @@
             categoryButtonsContainer.classList.remove('active');
             matchingTablesContainer.classList.remove('active');
 
-            resetButtonHighlights();
-            buttonElement.classList.add('selected');
+            if (buttonElement) {
+                document.querySelectorAll('.top-level-button').forEach(button => button.classList.remove('selected'));
+                buttonElement.classList.add('selected');
+            }
 
             if (filterType === 'all') {
                 tablesData.forEach(table => {
@@ -273,7 +281,7 @@
                     button.onclick = () => {
                         console.log('Category button clicked:', value); // Debugging
                         displayFilteredTables(filterType, value);
-                        resetButtonHighlights(false, true, true);
+                        document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
                         button.classList.add('selected');
                     };
                     categoryButtonsContainer.appendChild(button);
@@ -290,7 +298,7 @@
             button.className = 'matching-table-button';
             button.textContent = table.tablename;
             button.onclick = () => {
-                resetButtonHighlights(false, false, true);
+                document.querySelectorAll('.matching-table-button').forEach(btn => btn.classList.remove('selected'));
                 button.classList.add('selected');
                 displayTableHeaders(table);
                 document.getElementById('generationControls').style.display = 'block';
@@ -355,24 +363,6 @@
             setTimeout(() => {
                 categoryButtonsContainer.style.display = 'none';
             }, 500);
-        }
-
-        function resetButtonHighlights(resetTopLevel = true, resetTags = true, resetTables = true) {
-            if (resetTopLevel) {
-                document.querySelectorAll('.top-level-button').forEach(button => {
-                    button.classList.remove('selected');
-                });
-            }
-            if (resetTags) {
-                document.querySelectorAll('.category-button').forEach(button => {
-                    button.classList.remove('selected');
-                });
-            }
-            if (resetTables) {
-                document.querySelectorAll('.matching-table-button').forEach(button => {
-                    button.classList.remove('selected');
-                });
-            }
         }
 
         // Update the label when the slider changes

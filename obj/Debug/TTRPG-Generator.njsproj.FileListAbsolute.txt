@@ -1,0 +1,3 @@
+C:\Users\Seejay\source\repos\TTRPG-Generator\obj\Debug\TTRPG-Generator.njsproj.AssemblyReference.cache
+C:\Users\Seejay\source\repos\TTRPG-Generator\obj\Debug\TTRPG-Generator.njsproj.CoreCompileInputs.cache
+C:\Users\Seejay\source\repos\TTRPG-Generator\bin\Microsoft.NodejsTools.WebRole.dll
