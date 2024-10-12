@@ -3,82 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTRPG Generator</title>
+    <title>TTRPG Generator - Version 113</title>
+    <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
             transition: background-color 0.3s, color 0.3s;
+        }
+
+        #titleContainer {
+            text-align: center;
+            padding: 15px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        #searchContainer {
+            display: flex;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-bottom: 2px solid #ccc;
+        }
+
+        #searchInput {
+            flex: 1;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #filtersContainer {
+            display: flex;
+            padding: 15px;
+            background-color: #e0e0e0;
+            border-bottom: 2px solid #ccc;
+            gap: 15px;
+        }
+
+        .filter-container {
+            display: flex;
             flex-direction: column;
+            position: relative;
+            width: 300px;
+        }
+
+        .filter-dropdown {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .clear-button {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #007bff;
+            display: block;
         }
 
         #contentWrapper {
             display: flex;
             flex: 1;
+            overflow: hidden;
         }
 
         #leftColumn {
-            width: 20%;
-            border-right: 2px solid #ccc;
+            width: 25%;
             padding: 10px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            position: relative;
-        }
-
-        #topAndCategoryButtons {
-            display: flex;
-            flex-direction: row;
-            gap: 10px;
-            height: auto;
-        }
-
-        #topLevelButtons {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            width: 20%;
-        }
-
-        #categoryButtons {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            align-content: start;
-            width: 70%;
+            border-right: 2px solid #ccc;
             overflow-y: auto;
         }
 
-        #horizontalDivider {
+        .matching-table-button {
             width: 100%;
-            height: 2px;
-            background-color: #ccc;
-            margin: 20px 0;
+            padding: 15px;
+            margin-bottom: 10px;
+            font-size: 1em;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        #matchingTables {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-            overflow-y: auto;
-            max-height: calc(100% - 120px);
+        .matching-table-button:hover {
+            background-color: #e0e0e0;
         }
 
         #mainContent {
-            width: 70%;
+            flex: 1;
             padding: 20px;
             box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #results {
-            margin-top: 20px;
-            white-space: pre-wrap; /* Preserve spacing and newlines */
+            overflow-y: auto;
         }
 
         .header {
@@ -86,138 +115,56 @@
             margin-top: 10px;
             text-align: left;
         }
-
-        .generation-container {
-            margin-bottom: 20px; /* Space between each generation */
-        }
-
-        .generation-title {
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .slider-container {
-            margin-top: 20px;
-        }
-
-        #tableHeaders {
-            margin-bottom: 20px;
-        }
-
-        .dark-mode {
-            background-color: #121212;
-            color: #ffffff;
-        }
-
-            .dark-mode #leftColumn {
-                border-right: 2px solid #444;
-            }
-
-        .top-level-button {
-            width: 100%;
-            padding: 6px;
-            margin-bottom: 5px;
-            text-align: center;
-            cursor: pointer;
-            background-color: #f0f0f0;
-            border: none;
-            border-radius: 5px;
-            font-size: 0.9em;
-            transition: background-color 0.3s, transform 0.2s;
-            box-sizing: border-box;
-        }
-
-            .top-level-button:hover {
-                background-color: #e0e0e0;
-                transform: scale(1.05);
-            }
-
-            .top-level-button.selected {
-                background-color: #008080;
-                transform: scale(1.1);
-                color: #ffffff;
-            }
-
-        .matching-table-button, .category-button {
-            width: 100%;
-            padding: 6px;
-            margin: 0;
-            font-size: 0.9em;
-            background-color: #f0f0f0;
-            border: none;
-            border-radius: 5px;
-            text-align: center;
-            transition: background-color 0.3s, transform 0.2s;
-            box-sizing: border-box;
-        }
-
-            .matching-table-button:hover, .category-button:hover {
-                background-color: #e0e0e0;
-                transform: scale(1.05);
-            }
-
-            .matching-table-button.selected, .category-button.selected {
-                background-color: #008080;
-                transform: scale(1.1);
-                color: #ffffff;
-            }
-
-        #toggleDarkMode {
-            margin: 20px;
-            align-self: center;
-            position: absolute;
-            bottom: 10px;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-20%);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-
-            to {
-                opacity: 0;
-                transform: translateX(-20%);
-            }
-        }
     </style>
 </head>
-<body class="dark-mode">
+<body>
+    <div id="titleContainer">
+        <h1>TTRPG Generator - Version 113</h1>
+    </div>
+
+    <div id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Search for tables..." oninput="performSearch()">
+    </div>
+
+    <div id="filtersContainer">
+        <div class="filter-container">
+            <label for="gameFilter">Game</label>
+            <select id="gameFilter" class="filter-dropdown" multiple="multiple">
+                <option value="ShadowDark">ShadowDark</option>
+                <option value="D&D">D&D</option>
+                <option value="Pathfinder">Pathfinder</option>
+            </select>
+            <button class="clear-button" onclick="clearFilter('gameFilter')">&times;</button>
+        </div>
+
+        <div class="filter-container">
+            <label for="typeFilter">Type</label>
+            <select id="typeFilter" class="filter-dropdown" multiple="multiple">
+                <option value="Encounter">Encounter</option>
+                <option value="Adventure">Adventure</option>
+                <option value="NPC">NPC</option>
+            </select>
+            <button class="clear-button" onclick="clearFilter('typeFilter')">&times;</button>
+        </div>
+
+        <div class="filter-container">
+            <label for="settingFilter">Setting</label>
+            <select id="settingFilter" class="filter-dropdown" multiple="multiple">
+                <option value="Fantasy">Fantasy</option>
+                <option value="Horror">Horror</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+            </select>
+            <button class="clear-button" onclick="clearFilter('settingFilter')">&times;</button>
+        </div>
+    </div>
+
     <div id="contentWrapper">
         <div id="leftColumn">
-            <h1>TTRPG Generator</h1>
-            <div id="topAndCategoryButtons">
-                <div id="topLevelButtons">
-                    <button class="top-level-button" onclick="filterTables('all', this)">All</button>
-                    <button class="top-level-button" onclick="filterTables('game', this)">Game</button>
-                    <button class="top-level-button" onclick="filterTables('genre', this)">Setting</button>
-                    <button class="top-level-button" onclick="filterTables('type', this)">Type</button>
-                </div>
-                <div id="categoryButtons" class="category-buttons">
-                    <!-- Filtered tag buttons will be dynamically populated here -->
-                </div>
-            </div>
-
-            <div id="horizontalDivider"></div>
-
-            <h2>Matching Tables</h2>
-            <div id="matchingTables" class="matching-tables">
+            <div id="matchingTablesContainer">
                 <!-- Matching table buttons will be dynamically populated here -->
             </div>
-            <button id="toggleDarkMode">Toggle Dark Mode</button>
         </div>
+
         <div id="mainContent">
             <div id="tableHeaders">
                 <!-- Table name and details will be displayed here -->
@@ -225,107 +172,83 @@
             <div id="generationControls" class="slider-container" style="display: none;">
                 <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
                 <input type="range" id="generationSlider" min="1" max="20" value="1">
-                <button id="generateBtn" style="margin-top: 10px;">Generate</button>
+                <button id="generateBtn" style="margin-top: 10px;" onclick="generateContent()">Generate</button>
             </div>
             <div id="results"></div>
         </div>
     </div>
 
     <script>
-        let tablesData = [];
-
-        async function fetchTables() {
-            try {
-                const response = await fetch('/api/tables');
-                tablesData = await response.json();
-                console.log('Tables data fetched:', tablesData); // Debugging to ensure tables are fetched correctly
-                filterTables('all', document.querySelector('.top-level-button')); // Automatically select 'All' on load
-            } catch (error) {
-                console.error('Error fetching tables:', error);
-            }
-        }
-
-        function filterTables(filterType, buttonElement) {
-            console.log('Filtering tables by:', filterType); // Debugging
-            const categoryButtonsContainer = document.getElementById('categoryButtons');
-            const matchingTablesContainer = document.getElementById('matchingTables');
-            categoryButtonsContainer.innerHTML = ''; // Clear previous buttons
-            matchingTablesContainer.innerHTML = ''; // Clear previous buttons
-            categoryButtonsContainer.classList.remove('active');
-            matchingTablesContainer.classList.remove('active');
-
-            if (buttonElement) {
-                document.querySelectorAll('.top-level-button').forEach(button => button.classList.remove('selected'));
-                buttonElement.classList.add('selected');
-            }
-
-            if (filterType === 'all') {
-                tablesData.forEach(table => {
-                    createTableButton(table, matchingTablesContainer);
-                });
-                if (matchingTablesContainer.children.length > 1) { // More than just the title
-                    matchingTablesContainer.classList.add('active');
-                }
-                hideCategoryButtons();
-            } else {
-                let filteredValues = new Set();
-                tablesData.forEach(table => {
-                    if (table[filterType]) {
-                        console.log('Found value for filter:', table[filterType]); // Debugging
-                        filteredValues.add(table[filterType]);
-                    }
-                });
-
-                Array.from(filteredValues).forEach(value => {
-                    const button = document.createElement('button');
-                    button.className = 'category-button';
-                    button.textContent = value;
-                    button.onclick = () => {
-                        console.log('Category button clicked:', value); // Debugging
-                        displayFilteredTables(filterType, value);
-                        document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
-                        button.classList.add('selected');
-                    };
-                    categoryButtonsContainer.appendChild(button);
-                });
-
-                if (filteredValues.size > 0) {
-                    showCategoryButtons();
-                }
-            }
-        }
-
-        function createTableButton(table, container) {
-            const button = document.createElement('button');
-            button.className = 'matching-table-button';
-            button.textContent = table.tablename;
-            button.onclick = () => {
-                document.querySelectorAll('.matching-table-button').forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-                displayTableHeaders(table);
-                document.getElementById('generationControls').style.display = 'block';
-                document.getElementById('generationSlider').value = 1;
-                document.getElementById('generationValue').textContent = 1;
-            };
-
-            container.appendChild(button);
-        }
-
-        function displayFilteredTables(filterType, value) {
-            const matchingTablesContainer = document.getElementById('matchingTables');
-            // Clear previous buttons
-            matchingTablesContainer.innerHTML = ''; // Clear previous buttons
-
-            tablesData.filter(table => table[filterType] === value).forEach(table => {
-                createTableButton(table, matchingTablesContainer);
+        document.addEventListener('DOMContentLoaded', function() {
+            window.gameChoices = new Choices('#gameFilter', {
+                removeItemButton: true,
+                placeholder: true,
+                searchPlaceholderValue: 'Select games...',
+                allowHTML: true,
+                noResultsText: '',
+                noChoicesText: ''
             });
+            document.getElementById('gameFilter').addEventListener('change', applyFilters);
 
-            if (matchingTablesContainer.children.length > 1) { // More than just the title
-                matchingTablesContainer.classList.add('active');
-            }
+            window.typeChoices = new Choices('#typeFilter', {
+                removeItemButton: true,
+                placeholder: true,
+                searchPlaceholderValue: 'Select types...',
+                allowHTML: true,
+                noResultsText: '',
+                noChoicesText: ''
+            });
+            document.getElementById('typeFilter').addEventListener('change', applyFilters);
+
+            window.settingChoices = new Choices('#settingFilter', {
+                removeItemButton: true,
+                placeholder: true,
+                searchPlaceholderValue: 'Select settings...',
+                allowHTML: true,
+                noResultsText: '',
+                noChoicesText: ''
+            });
+            document.getElementById('settingFilter').addEventListener('change', applyFilters);
+        });
+
+        const tablesData = [
+            { tablename: 'Forest Encounters', game: 'ShadowDark', type: 'Encounter', setting: 'Fantasy' },
+            { tablename: 'Grassland Encounters', game: 'ShadowDark', type: 'Encounter', setting: 'Fantasy' },
+            { tablename: 'Mountain Adventures', game: 'D&D', type: 'Adventure', setting: 'Fantasy' },
+            { tablename: 'Urban Mysteries', game: 'Pathfinder', type: 'Encounter', setting: 'Horror' },
+            { tablename: 'Forest NPCs', game: 'ShadowDark', type: 'NPC', setting: 'Fantasy' }
+        ];
+
+        function performSearch() {
+            applyFilters();
         }
 
-        function displayTableHeaders(table) {
+        function applyFilters() {
+            const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            const gameFilter = Array.from(document.getElementById('gameFilter').selectedOptions).map(option => option.value);
+            const typeFilter = Array.from(document.getElementById('typeFilter').selectedOptions).map(option => option.value);
+            const settingFilter = Array.from(document.getElementById('settingFilter').selectedOptions).map(option => option.value);
+
+            const matchingTablesContainer = document.getElementById('matchingTablesContainer');
+            matchingTablesContainer.innerHTML = '';
+
+            tablesData.forEach(table => {
+                if (
+                    (searchQuery === '' || table.tablename.toLowerCase().includes(searchQuery)) &&
+                    (gameFilter.length === 0 || gameFilter.includes(table.game)) &&
+                    (typeFilter.length === 0 || typeFilter.includes(table.type)) &&
+                    (settingFilter.length === 0 || settingFilter.includes(table.setting))
+                ) {
+                    const button = document.createElement('button');
+                    button.className = 'matching-table-button';
+                    button.textContent = `${table.game} : ${table.tablename}`;
+                    button.onclick = () => displayTableDetails(table);
+                    matchingTablesContainer.appendChild(button);
+                }
+            });
+        }
+
+        function displayTableDetails(table) {
             const tableHeadersContainer = document.getElementById('tableHeaders');
             tableHeadersContainer.innerHTML = ''; // Clear previous headers
 
@@ -336,11 +259,9 @@
 
             // Display relevant table details
             const details = [
-                { key: 'filename', label: 'File Name' },
                 { key: 'game', label: 'Game' },
-                { key: 'genre', label: 'Genre' },
                 { key: 'type', label: 'Type' },
-                { key: 'subtype', label: 'Subtype' }
+                { key: 'setting', label: 'Setting' }
             ];
 
             details.forEach(detail => {
@@ -351,87 +272,46 @@
                     tableHeadersContainer.appendChild(detailDiv);
                 }
             });
+
+            document.getElementById('generationControls').style.display = 'block';
+            document.getElementById('generationSlider').value = 1;
+            document.getElementById('generationValue').textContent = 1;
         }
 
-        function showCategoryButtons() {
-            const categoryButtonsContainer = document.getElementById('categoryButtons');
-            categoryButtonsContainer.style.display = 'grid';
-            categoryButtonsContainer.style.animation = 'slideIn 0.5s forwards';
-        }
-
-        function hideCategoryButtons() {
-            const categoryButtonsContainer = document.getElementById('categoryButtons');
-            categoryButtonsContainer.style.animation = 'slideOut 0.5s forwards';
-            setTimeout(() => {
-                categoryButtonsContainer.style.display = 'none';
-            }, 500);
-        }
-
-        // Update the label when the slider changes
-        document.getElementById('generationSlider').addEventListener('input', (event) => {
-            const generationValue = event.target.value;
-            document.getElementById('generationValue').textContent = generationValue;
-        });
-
-        document.getElementById('generateBtn').addEventListener('click', async () => {
-            const selectedTableButton = document.querySelector('.matching-table-button.selected');
-            if (!selectedTableButton) {
-                alert("Please select a table first.");
-                return;
+        function clearFilter(filterId) {
+            console.log('Attempting to clear filter:', filterId);
+            switch (filterId) {
+                case 'gameFilter':
+                    if (window.gameChoices) {
+                        window.gameChoices.removeActiveItems();
+                        console.log('Active items removed for: gameFilter');
+                    } else {
+                        console.warn('Choices instance not found for: gameFilter');
+                    }
+                    break;
+                case 'typeFilter':
+                    if (window.typeChoices) {
+                        window.typeChoices.removeActiveItems();
+                        console.log('Active items removed for: typeFilter');
+                    } else {
+                        console.warn('Choices instance not found for: typeFilter');
+                    }
+                    break;
+                case 'settingFilter':
+                    if (window.settingChoices) {
+                        window.settingChoices.removeActiveItems();
+                        console.log('Active items removed for: settingFilter');
+                    } else {
+                        console.warn('Choices instance not found for: settingFilter');
+                    }
+                    break;
+                default:
+                    console.warn('Unknown filter ID:', filterId);
             }
-
-            const tableName = selectedTableButton.textContent;
-            const tableData = tablesData.find(table => table.tablename === tableName);
-            const numberOfGenerations = parseInt(document.getElementById('generationSlider').value, 10);
-
-            try {
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ table: tableData, number: numberOfGenerations })
-                });
-                const data = await response.json();
-                displayResults(data.results);
-            } catch (error) {
-                console.error('Error generating adventure:', error);
-            }
-        });
-
-        function displayResults(results) {
-            const resultsContainer = document.getElementById('results');
-            resultsContainer.innerHTML = ''; // Clear previous results
-
-            results.forEach((result, index) => {
-                // Create a container for each generation
-                const generationContainer = document.createElement('div');
-                generationContainer.className = 'generation-container';
-
-                // Add the generation number and result on the same line
-                const generationTitle = document.createElement('div');
-                generationTitle.className = 'generation-title';
-                generationTitle.textContent = `(${index + 1}) `;
-
-                if (typeof result === 'string') {
-                    generationTitle.textContent += result;
-                } else if (typeof result === 'object') {
-                    // If there are nested headers, format them properly
-                    generationTitle.textContent += `${result.header}: ${result.result}`;
-                }
-
-                generationContainer.appendChild(generationTitle);
-
-                // Append the generation container to the results container
-                resultsContainer.appendChild(generationContainer);
-            });
+            applyFilters();
         }
 
-        // Toggle dark mode
-        document.getElementById('toggleDarkMode').addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-        });
-
-        // Fetch tables on page load
-        fetchTables();
+        applyFilters();
     </script>
 </body>
 </html>
