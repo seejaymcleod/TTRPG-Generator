@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTRPG Generator - Version 113</title>
+    <title>TTRPG Generator - Version 115</title>
     <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <style>
@@ -70,6 +70,16 @@
             display: block;
         }
 
+        #resetButton {
+            margin-left: 20px;
+            padding: 10px;
+            font-size: 1em;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
         #contentWrapper {
             display: flex;
             flex: 1;
@@ -115,11 +125,15 @@
             margin-top: 10px;
             text-align: left;
         }
+
+        .disabled-option {
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
     <div id="titleContainer">
-        <h1>TTRPG Generator - Version 113</h1>
+        <h1>TTRPG Generator - Version 115</h1>
     </div>
 
     <div id="searchContainer">
@@ -156,6 +170,8 @@
             </select>
             <button class="clear-button" onclick="clearFilter('settingFilter')">&times;</button>
         </div>
+
+        <button id="resetButton" onclick="resetFilters()">Reset</button>
     </div>
 
     <div id="contentWrapper">
@@ -232,19 +248,19 @@
             const matchingTablesContainer = document.getElementById('matchingTablesContainer');
             matchingTablesContainer.innerHTML = '';
 
-            tablesData.forEach(table => {
-                if (
-                    (searchQuery === '' || table.tablename.toLowerCase().includes(searchQuery)) &&
-                    (gameFilter.length === 0 || gameFilter.includes(table.game)) &&
-                    (typeFilter.length === 0 || typeFilter.includes(table.type)) &&
-                    (settingFilter.length === 0 || settingFilter.includes(table.setting))
-                ) {
-                    const button = document.createElement('button');
-                    button.className = 'matching-table-button';
-                    button.textContent = `${table.game} : ${table.tablename}`;
-                    button.onclick = () => displayTableDetails(table);
-                    matchingTablesContainer.appendChild(button);
-                }
+            const filteredTables = tablesData.filter(table =>
+                (searchQuery === '' || table.tablename.toLowerCase().includes(searchQuery)) &&
+                (gameFilter.length === 0 || gameFilter.includes(table.game)) &&
+                (typeFilter.length === 0 || typeFilter.includes(table.type)) &&
+                (settingFilter.length === 0 || settingFilter.includes(table.setting))
+            );
+
+            filteredTables.forEach(table => {
+                const button = document.createElement('button');
+                button.className = 'matching-table-button';
+                button.textContent = `${table.game} : ${table.tablename}`;
+                button.onclick = () => displayTableDetails(table);
+                matchingTablesContainer.appendChild(button);
             });
         }
 
@@ -279,35 +295,20 @@
         }
 
         function clearFilter(filterId) {
-            console.log('Attempting to clear filter:', filterId);
-            switch (filterId) {
-                case 'gameFilter':
-                    if (window.gameChoices) {
-                        window.gameChoices.removeActiveItems();
-                        console.log('Active items removed for: gameFilter');
-                    } else {
-                        console.warn('Choices instance not found for: gameFilter');
-                    }
-                    break;
-                case 'typeFilter':
-                    if (window.typeChoices) {
-                        window.typeChoices.removeActiveItems();
-                        console.log('Active items removed for: typeFilter');
-                    } else {
-                        console.warn('Choices instance not found for: typeFilter');
-                    }
-                    break;
-                case 'settingFilter':
-                    if (window.settingChoices) {
-                        window.settingChoices.removeActiveItems();
-                        console.log('Active items removed for: settingFilter');
-                    } else {
-                        console.warn('Choices instance not found for: settingFilter');
-                    }
-                    break;
-                default:
-                    console.warn('Unknown filter ID:', filterId);
+            const choicesInstance = window[`${filterId.replace('Filter', 'Choices')}`];
+            if (choicesInstance) {
+                choicesInstance.removeActiveItems();
+                console.log('Active items cleared for:', filterId);
+            } else {
+                console.warn('Choices instance not found for:', filterId);
             }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            window.gameChoices.removeActiveItems();
+            window.typeChoices.removeActiveItems();
+            window.settingChoices.removeActiveItems();
             applyFilters();
         }
 
