@@ -1,7 +1,7 @@
 tablename: Test2
 filename: Test2 - Copy.yaml
 game: Yet Another Game
-genre: Cthulhu
+setting: Cthulhu
 type: Encounters
 subtype: none
 actionType: ListWithHeaders

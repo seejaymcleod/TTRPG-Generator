@@ -109,9 +109,9 @@
             transition: background-color 0.3s;
         }
 
-        .matching-table-button:hover {
-            background-color: #e0e0e0;
-        }
+            .matching-table-button:hover {
+                background-color: #e0e0e0;
+            }
 
         #mainContent {
             flex: 1;
@@ -185,10 +185,11 @@
     <script>
         let tablesData = [];
 
-        document.addEventListener('DOMContentLoaded', async function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             try {
                 const response = await fetch('/api/tables');
                 tablesData = await response.json();
+                console.log('Tables Data:', tablesData); // Debugging output
                 populateDropdowns(tablesData);
                 applyFilters();
             } catch (error) {
@@ -218,7 +219,7 @@
             window.settingChoices = new Choices('#settingFilter', {
                 removeItemButton: true,
                 placeholder: true,
-                searchPlaceholderValue: 'Select settings...',
+                searchPlaceholderValue: 'Select setting...',
                 allowHTML: true,
                 noResultsText: '',
                 noChoicesText: ''
@@ -231,11 +232,13 @@
             const typeSet = new Set();
             const settingSet = new Set();
 
+
             tables.forEach(table => {
                 if (table.game) gameSet.add(table.game);
                 if (table.type) typeSet.add(table.type);
-                if (table.setting) settingSet.add(table.setting);
+                if (table.setting) settingSet.add(table.setting);  
             });
+
 
             populateOptions('#gameFilter', Array.from(gameSet));
             populateOptions('#typeFilter', Array.from(typeSet));
@@ -263,11 +266,12 @@
             const typeFilter = Array.from(document.getElementById('typeFilter').selectedOptions).map(option => option.value);
             const settingFilter = Array.from(document.getElementById('settingFilter').selectedOptions).map(option => option.value);
 
+
             const matchingTablesContainer = document.getElementById('matchingTablesContainer');
             matchingTablesContainer.innerHTML = '';
 
             const filteredTables = tablesData.filter(table =>
-                (searchQuery === '' || table.tablename.toLowerCase().includes(searchQuery)) &&
+                (searchQuery === '' || (table.tablename && table.tablename.toLowerCase().includes(searchQuery))) &&
                 (gameFilter.length === 0 || gameFilter.includes(table.game)) &&
                 (typeFilter.length === 0 || typeFilter.includes(table.type)) &&
                 (settingFilter.length === 0 || settingFilter.includes(table.setting))
@@ -277,6 +281,7 @@
                 const button = document.createElement('button');
                 button.className = 'matching-table-button';
                 button.textContent = `${table.game ?? 'Unknown'} : ${table.tablename ?? 'Undefined'}`;
+                console.log('Button Text:', button.textContent); // Debugging output
                 button.onclick = () => displayTableDetails(table);
                 matchingTablesContainer.appendChild(button);
             });
@@ -293,7 +298,7 @@
             const details = [
                 { key: 'game', label: 'Game' },
                 { key: 'type', label: 'Type' },
-                { key: 'setting', label: 'Setting' }
+                { key: 'setting', label: 'Setting' } 
             ];
 
             details.forEach(detail => {
@@ -342,17 +347,18 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ table: selectedTable, number: numberOfGenerations })
             })
-            .then(response => response.json())
-            .then(data => {
-                const resultsContainer = document.getElementById('results');
-                resultsContainer.innerHTML = data.results.map(result => `<div>${result}</div>`).join('');
-            })
-            .catch(error => {
-                console.error('Error generating content:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    const resultsContainer = document.getElementById('results');
+                    resultsContainer.innerHTML = data.results.map(result => `<div>${result}</div>`).join('');
+                })
+                .catch(error => {
+                    console.error('Error generating content:', error);
+                });
         }
 
         applyFilters();
     </script>
+
 </body>
 </html>

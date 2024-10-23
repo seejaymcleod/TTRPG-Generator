@@ -1,7 +1,7 @@
 tablename: Test
 filename: Test.yaml
 game: MadeUp
-genre: SciFi
+setting: SciFi
 type: Info
 subtype: none
 actionType: ListWithHeaders

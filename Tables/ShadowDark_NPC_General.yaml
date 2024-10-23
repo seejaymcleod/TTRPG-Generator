@@ -1,7 +1,7 @@
 tablename: NPCs
 filename: ShadowDark_NPC_General.yaml
 game: ShadowDark
-genre: Fantasy
+setting: Fantasy
 type: NPC
 subtype: none
 actionType: ListWithHeaders

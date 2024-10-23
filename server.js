@@ -19,14 +19,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to fetch table names and details
 app.get('/api/tables', (req, res) => {
+    if (DEBUG) console.log('Sending tables data:', tables);
     res.json(tables.map(table => ({
         filename: table.filename,
-        name: table.name || table.tablename || 'Unknown',
+        tablename: table.tablename || 'Unknown',
         game: table.game || 'Unknown',
         type: table.type || 'Unknown',
-        genre: table.genre || 'Unknown'
+        setting: table.setting || 'Unknown'
     })));
 });
+
+
 
 app.post('/api/generate', (req, res) => {
     const { table, number } = req.body;
@@ -58,7 +61,7 @@ function loadAllTables() {
                 table.filename = filename;  // Ensure name is set for each file
                 table.game = table.game || 'Unknown';
                 table.type = table.type || 'Unknown';
-                table.genre = table.genre || 'Unknown';
+                table.setting = table.setting || 'Unknown';
                 return table;
             } catch (err) {
                 console.error('Error loading YAML file:', filename, err);
