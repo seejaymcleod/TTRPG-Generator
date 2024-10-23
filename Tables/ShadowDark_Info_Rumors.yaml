@@ -2,7 +2,7 @@ tablename: Rumors
 filename: ShadowDark_Info_Rumors.yaml
 game: ShadowDark
 setting: Fantasy
-type: Info
+type: Rumor
 subtype: none
 actionType: ListNoHeaders
 tables:

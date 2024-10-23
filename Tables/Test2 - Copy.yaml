@@ -2,7 +2,7 @@ tablename: Test2
 filename: Test2 - Copy.yaml
 game: Yet Another Game
 setting: Cthulhu
-type: Encounters
+type: Encounter
 subtype: none
 actionType: ListWithHeaders
 tables:

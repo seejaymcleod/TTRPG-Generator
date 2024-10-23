@@ -150,6 +150,42 @@
         .dragging {
             opacity: 0.5;
         }
+
+        /* NPC specific styling */
+        .npc-object {
+            border: 2px solid #007bff;
+            background-color: #e6f0ff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .npc-header {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .npc-notes {
+            margin-top: 10px;
+        }
+
+            .npc-notes textarea {
+                width: 100%;
+                height: 50px;
+                padding: 5px;
+                font-size: 1em;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+            }
+
+        .npc-details {
+            margin-top: 10px;
+        }
+
+            .npc-details div {
+                margin-bottom: 5px;
+            }
     </style>
 </head>
 <body>
@@ -378,14 +414,61 @@
             })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Received generation data:', data); // Debugging output
                     const resultsContainer = document.getElementById('results');
+
                     data.results.forEach((result, index) => {
                         const objDiv = document.createElement('div');
-                        objDiv.className = 'generation-object';
                         objDiv.setAttribute('draggable', 'true');
                         objDiv.dataset.type = selectedTable.type;
                         objDiv.dataset.id = `${selectedTable.filename}-${Date.now()}-${index}`;
-                        objDiv.innerHTML = `<strong>Generated ${selectedTable.type}:</strong><br>${result}`;
+
+                        if (selectedTable.type.toLowerCase() === 'npc') {
+                            // NPC-specific structure
+                            objDiv.className = 'generation-object npc';
+
+                            const npcDetails = document.createElement('div');
+                            npcDetails.className = 'npc-details';
+
+                            // Extracting name from result
+                            const nameDetail = result.find(detail => detail.key === 'NPC Name');
+                            if (nameDetail) {
+                                const nameDiv = document.createElement('div');
+                                nameDiv.innerHTML = `<strong>Name:</strong> ${nameDetail.value}`;
+                                npcDetails.appendChild(nameDiv);
+                            }
+
+                            // Loop through and add remaining details, skipping the name since it’s already handled
+                            result.forEach(detail => {
+                                if (detail.key !== 'NPC Name') {
+                                    const detailDiv = document.createElement('div');
+                                    detailDiv.innerHTML = `<strong>${detail.key}:</strong> ${detail.value}`;
+                                    npcDetails.appendChild(detailDiv);
+                                }
+                            });
+
+                            objDiv.appendChild(npcDetails);
+
+                            // Add Notes section
+                            const notesDiv = document.createElement('div');
+                            notesDiv.className = 'notes';
+                            notesDiv.innerHTML = `<label>Notes:</label><textarea></textarea>`;
+                            objDiv.appendChild(notesDiv);
+
+                        } else {
+                            // Handle non-NPC content (ListNoHeaders or similar)
+                            objDiv.className = 'generation-object';
+
+                            // If result is an array of key-value pairs, extract the value for `ListNoHeaders` style
+                            if (Array.isArray(result)) {
+                                const simpleContent = result.map(item => item.value).join(', ');
+                                objDiv.innerHTML = `<strong>${selectedTable.type}:</strong> ${simpleContent}`;
+                            } else {
+                                // Fallback for when result is a single object
+                                const simpleContent = result.value || JSON.stringify(result);
+                                objDiv.innerHTML = `<strong>${selectedTable.type}:</strong> ${simpleContent}`;
+                            }
+                        }
 
                         // Add drag event handlers
                         objDiv.addEventListener('dragstart', handleDragStart);
@@ -398,6 +481,7 @@
                     console.error('Error generating content:', error);
                 });
         }
+
 
         function updateGenerationValue() {
             const generationSlider = document.getElementById('generationSlider');

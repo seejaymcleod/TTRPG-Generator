@@ -105,13 +105,13 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
 
     switch (actionType) {
         case 'ListWithHeaders':
-            return results.map(result => `${result.header}: ${result.result}`).join('\n');
+            return results.map(result => ({ key: result.header, value: result.result }));
         case 'SameLineWithSpaces':
-            return results.map(result => (typeof result === 'object' ? result.result : result)).join(' ');
+            return results.map(result => ({ key: 'text', value: result.result })).join(' ');
         case 'SameLineNoSpaces':
-            return results.map(result => (typeof result === 'object' ? result.result : result)).join('');
+            return results.map(result => ({ key: 'text', value: result.result })).join('');
         default:
-            return results.map(result => (typeof result === 'object' ? result.result : result)).join('\n');
+            return results.map(result => ({ key: result.header, value: result.result }));
     }
 }
 
