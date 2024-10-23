@@ -107,13 +107,14 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
         case 'ListWithHeaders':
             return results.map(result => ({ key: result.header, value: result.result }));
         case 'SameLineWithSpaces':
-            return results.map(result => ({ key: 'text', value: result.result })).join(' ');
+            return results.map(result => result.result).join(' ');
         case 'SameLineNoSpaces':
-            return results.map(result => ({ key: 'text', value: result.result })).join('');
+            return results.map(result => result.result).join('');
         default:
             return results.map(result => ({ key: result.header, value: result.result }));
     }
 }
+
 
 // Function to get a random result from a table
 function getRandomResult(table) {

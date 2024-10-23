@@ -4,7 +4,7 @@ game: ShadowDark
 setting: Fantasy
 type: Encounter
 subtype: none
-actionType: ListNoHeaders
+actionType: SameLineWithSpaces
 tables:
   - name: Forest_Encounters
     results:

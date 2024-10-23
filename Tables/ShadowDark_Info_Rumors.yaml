@@ -4,7 +4,7 @@ game: ShadowDark
 setting: Fantasy
 type: Rumor
 subtype: none
-actionType: ListNoHeaders
+actionType: SameLineWithSpaces
 tables:
   - name: Rumors
     results:

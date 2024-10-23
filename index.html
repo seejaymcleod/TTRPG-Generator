@@ -414,9 +414,9 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Received generation data:', data); // Debugging output
-                    const resultsContainer = document.getElementById('results');
+                    console.log("Received generation data:", data.results); // Debugging output
 
+                    const resultsContainer = document.getElementById('results');
                     data.results.forEach((result, index) => {
                         const objDiv = document.createElement('div');
                         objDiv.setAttribute('draggable', 'true');
@@ -427,26 +427,22 @@
                             // NPC-specific structure
                             objDiv.className = 'generation-object npc';
 
+                            const title = `${result.name || ''}${result.title ? ' - ' + result.title : ''}${result.ancestry ? ' - ' + result.ancestry : ''}`;
+                            const header = `<strong>${title}</strong>`;
+
+                            // Create NPC details in a vertical list
                             const npcDetails = document.createElement('div');
                             npcDetails.className = 'npc-details';
 
-                            // Extracting name from result
-                            const nameDetail = result.find(detail => detail.key === 'NPC Name');
-                            if (nameDetail) {
-                                const nameDiv = document.createElement('div');
-                                nameDiv.innerHTML = `<strong>Name:</strong> ${nameDetail.value}`;
-                                npcDetails.appendChild(nameDiv);
-                            }
-
-                            // Loop through and add remaining details, skipping the name since it’s already handled
-                            result.forEach(detail => {
-                                if (detail.key !== 'NPC Name') {
+                            result.forEach(item => {
+                                if (item.key !== 'name' && item.key !== 'title' && item.key !== 'ancestry') {
                                     const detailDiv = document.createElement('div');
-                                    detailDiv.innerHTML = `<strong>${detail.key}:</strong> ${detail.value}`;
+                                    detailDiv.textContent = `${item.key}: ${item.value}`;
                                     npcDetails.appendChild(detailDiv);
                                 }
                             });
 
+                            objDiv.innerHTML = `${header}`;
                             objDiv.appendChild(npcDetails);
 
                             // Add Notes section
@@ -455,19 +451,31 @@
                             notesDiv.innerHTML = `<label>Notes:</label><textarea></textarea>`;
                             objDiv.appendChild(notesDiv);
 
-                        } else {
-                            // Handle non-NPC content (ListNoHeaders or similar)
+                        } else if (selectedTable.actionType === 'SameLineWithSpaces' || selectedTable.actionType === 'SameLineWithoutSpaces') {
+                            // Handle non-NPC content with SameLine
                             objDiv.className = 'generation-object';
 
-                            // If result is an array of key-value pairs, extract the value for `ListNoHeaders` style
+                            let resultText = '';
                             if (Array.isArray(result)) {
-                                const simpleContent = result.map(item => item.value).join(', ');
-                                objDiv.innerHTML = `<strong>${selectedTable.type}:</strong> ${simpleContent}`;
+                                // If result is an array of objects, concatenate the values
+                                resultText = result.map(item => item.value).join(
+                                    selectedTable.actionType === 'SameLineWithSpaces' ? ' ' : ''
+                                );
+                            } else if (typeof result === 'object') {
+                                resultText = Object.values(result).join(
+                                    selectedTable.actionType === 'SameLineWithSpaces' ? ' ' : ''
+                                );
                             } else {
-                                // Fallback for when result is a single object
-                                const simpleContent = result.value || JSON.stringify(result);
-                                objDiv.innerHTML = `<strong>${selectedTable.type}:</strong> ${simpleContent}`;
+                                resultText = result;
                             }
+
+                            const defaultContent = `<strong>Generated ${selectedTable.type}:</strong><br>${resultText}`;
+                            objDiv.innerHTML = defaultContent;
+                        } else {
+                            // Default generation for other content types
+                            objDiv.className = 'generation-object';
+                            const defaultContent = `<strong>Generated ${selectedTable.type}:</strong><br>${result}`;
+                            objDiv.innerHTML = defaultContent;
                         }
 
                         // Add drag event handlers
@@ -481,6 +489,7 @@
                     console.error('Error generating content:', error);
                 });
         }
+
 
 
         function updateGenerationValue() {
