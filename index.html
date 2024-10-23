@@ -183,6 +183,10 @@
             margin-top: 10px;
         }
 
+        .detail-key {
+            font-weight: bold;
+        }
+
             .npc-details div {
                 margin-bottom: 5px;
             }
@@ -437,7 +441,9 @@
                             result.forEach(item => {
                                 if (item.key !== 'name' && item.key !== 'title' && item.key !== 'ancestry') {
                                     const detailDiv = document.createElement('div');
-                                    detailDiv.textContent = `${item.key}: ${item.value}`;
+                                    //  detailDiv.textContent = `${item.key}: ${item.value}`;
+                                    detailDiv.innerHTML = `<span class="detail-key">${item.key}:</span> ${item.value}`;
+
                                     npcDetails.appendChild(detailDiv);
                                 }
                             });
@@ -469,12 +475,12 @@
                                 resultText = result;
                             }
 
-                            const defaultContent = `<strong>Generated ${selectedTable.type}:</strong><br>${resultText}`;
+                            const defaultContent = `<strong>${selectedTable.type}:</strong><br>${resultText}`;
                             objDiv.innerHTML = defaultContent;
                         } else {
                             // Default generation for other content types
                             objDiv.className = 'generation-object';
-                            const defaultContent = `<strong>Generated ${selectedTable.type}:</strong><br>${result}`;
+                            const defaultContent = `<strong>${selectedTable.type}:</strong><br>${result}`;
                             objDiv.innerHTML = defaultContent;
                         }
 

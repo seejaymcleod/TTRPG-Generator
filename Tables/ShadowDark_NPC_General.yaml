@@ -6,7 +6,7 @@ type: NPC
 subtype: none
 actionType: ListWithHeaders
 tables:  
-  - name: NPC Name
+  - name: Name
     actionType: SameLineNoSpaces
     subTables:
       - name: Prefix Syllable
@@ -101,7 +101,7 @@ tables:
           - "enne"
           - "ynne"
           
-  - name: Identifier
+  - name: Title
     results:
       - "The Gray" 
       - "One-Eye"
