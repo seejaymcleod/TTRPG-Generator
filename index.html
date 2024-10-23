@@ -129,6 +129,27 @@
         .disabled-option {
             color: #aaa;
         }
+
+        .generation-object {
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            cursor: grab;
+        }
+
+        .saved-generations {
+            width: 25%;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-left: 2px solid #ccc;
+            overflow-y: auto;
+        }
+
+        .dragging {
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
@@ -178,7 +199,13 @@
                 <input type="range" id="generationSlider" min="1" max="20" value="1">
                 <button id="generateBtn" style="margin-top: 10px;" onclick="generateContent()">Generate</button>
             </div>
-            <div id="results"></div>
+            <div id="results" class="generation-list">
+                <!-- Generation List goes here, each generation being its own object in the list. -->
+            </div>
+        </div>
+
+        <div id="savedGenerations" class="saved-generations">
+            <h2>Saved Generations</h2>
         </div>
     </div>
 
@@ -219,7 +246,7 @@
             window.settingChoices = new Choices('#settingFilter', {
                 removeItemButton: true,
                 placeholder: true,
-                searchPlaceholderValue: 'Select setting...',
+                searchPlaceholderValue: 'Select settings...',
                 allowHTML: true,
                 noResultsText: '',
                 noChoicesText: ''
@@ -232,13 +259,11 @@
             const typeSet = new Set();
             const settingSet = new Set();
 
-
             tables.forEach(table => {
                 if (table.game) gameSet.add(table.game);
                 if (table.type) typeSet.add(table.type);
-                if (table.setting) settingSet.add(table.setting);  
+                if (table.setting) settingSet.add(table.setting);
             });
-
 
             populateOptions('#gameFilter', Array.from(gameSet));
             populateOptions('#typeFilter', Array.from(typeSet));
@@ -266,7 +291,6 @@
             const typeFilter = Array.from(document.getElementById('typeFilter').selectedOptions).map(option => option.value);
             const settingFilter = Array.from(document.getElementById('settingFilter').selectedOptions).map(option => option.value);
 
-
             const matchingTablesContainer = document.getElementById('matchingTablesContainer');
             matchingTablesContainer.innerHTML = '';
 
@@ -282,7 +306,10 @@
                 button.className = 'matching-table-button';
                 button.textContent = `${table.game ?? 'Unknown'} : ${table.tablename ?? 'Undefined'}`;
                 console.log('Button Text:', button.textContent); // Debugging output
-                button.onclick = () => displayTableDetails(table);
+                button.onclick = () => {
+                    displayTableDetails(table);
+                    clearGeneratedList();
+                };
                 matchingTablesContainer.appendChild(button);
             });
         }
@@ -298,7 +325,7 @@
             const details = [
                 { key: 'game', label: 'Game' },
                 { key: 'type', label: 'Type' },
-                { key: 'setting', label: 'Setting' } 
+                { key: 'setting', label: 'Setting' }
             ];
 
             details.forEach(detail => {
@@ -334,6 +361,8 @@
         }
 
         function generateContent() {
+            clearGeneratedList();
+
             const numberOfGenerations = document.getElementById('generationSlider').value;
             const selectedTable = tablesData.find(t => t.tablename === document.querySelector('#tableHeaders h2')?.textContent);
 
@@ -350,15 +379,53 @@
                 .then(response => response.json())
                 .then(data => {
                     const resultsContainer = document.getElementById('results');
-                    resultsContainer.innerHTML = data.results.map(result => `<div>${result}</div>`).join('');
+                    data.results.forEach((result, index) => {
+                        const objDiv = document.createElement('div');
+                        objDiv.className = 'generation-object';
+                        objDiv.setAttribute('draggable', 'true');
+                        objDiv.dataset.type = selectedTable.type;
+                        objDiv.dataset.id = `${selectedTable.filename}-${Date.now()}-${index}`;
+                        objDiv.innerHTML = `<strong>Generated ${selectedTable.type}:</strong><br>${result}`;
+
+                        // Add drag event handlers
+                        objDiv.addEventListener('dragstart', handleDragStart);
+                        objDiv.addEventListener('dragend', handleDragEnd);
+
+                        resultsContainer.appendChild(objDiv);
+                    });
                 })
                 .catch(error => {
                     console.error('Error generating content:', error);
                 });
         }
 
+        function clearGeneratedList() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.dataset.id);
+        }
+
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+        }
+
+        document.getElementById('savedGenerations').addEventListener('dragover', function (e) {
+            e.preventDefault();
+        });
+
+        document.getElementById('savedGenerations').addEventListener('drop', function (e) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text/plain');
+            const draggedElement = document.querySelector(`[data-id="${id}"]`);
+            if (draggedElement) {
+                this.appendChild(draggedElement);
+            }
+        });
+
         applyFilters();
     </script>
-
 </body>
 </html>
