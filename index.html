@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTRPG Generator - Version 119</title>
+    <title>TTRPG Generator - Version 120</title>
     <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <style>
@@ -196,7 +196,7 @@
             </div>
             <div id="generationControls" class="slider-container" style="display: none;">
                 <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
-                <input type="range" id="generationSlider" min="1" max="20" value="1">
+                <input type="range" id="generationSlider" min="1" max="20" value="1" oninput="updateGenerationValue()">
                 <button id="generateBtn" style="margin-top: 10px;" onclick="generateContent()">Generate</button>
             </div>
             <div id="results" class="generation-list">
@@ -397,6 +397,11 @@
                 .catch(error => {
                     console.error('Error generating content:', error);
                 });
+        }
+
+        function updateGenerationValue() {
+            const generationSlider = document.getElementById('generationSlider');
+            document.getElementById('generationValue').textContent = generationSlider.value;
         }
 
         function clearGeneratedList() {
