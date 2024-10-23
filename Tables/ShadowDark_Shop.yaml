@@ -1,0 +1,56 @@
+tablename: Shop
+filename: ShadowDark_Shop.yaml
+game: ShadowDark
+setting: Fantasy
+type: Location
+subtype: none
+actionType: ListWithHeaders
+tables:  
+  - name: Name
+    actionType: SameLineWithSpaces
+    subTables:
+      - name: Name1
+        results:
+          - "Fink &"
+          - "Imperial"
+          - "The Stout"
+          - "Rose's"
+          - "The King's"
+          - "Fox &"
+          - "Noble"
+          - "Sylvia's"
+          - "Sunrise"
+          - "The Corner"
+          - "Grigor's"
+          - "Royal"
+          - "Crown &"
+          - "Ralina's"
+          - "The Village"
+          - "Golden"
+          - "Boot &"
+          - "Marvolo's"
+          - "The Merry"
+          - "The Jade"
+
+      - name: Name2
+        results:
+          - "Sons"
+          - "Toad"
+          - "Hammer"
+          - "Commodities"
+          - "Daughters"
+          - "Sundries"
+          - "Castle"
+          - "Finery"
+          - "Oddments"
+          - "Beetle"
+          - "Storehouse"
+          - "Keep"
+          - "Coins"
+          - "Hearth"
+          - "Wheel"
+          - "Wares"
+          - "Market"
+          - "Lantern"
+          - "Vendibles"
+          - "Stocks"
