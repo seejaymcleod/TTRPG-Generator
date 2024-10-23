@@ -2,7 +2,7 @@ tablename: SOMETHING HAPPENS
 filename: ShadowDark_Encounter_SomethingHappens.yaml.yaml
 game: ShadowDark
 genre: Fantasy
-type: Encounter
+type: Encounters
 subtype: none
 actionType: ListNoHeaders
 tables:

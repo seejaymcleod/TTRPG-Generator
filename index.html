@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TTRPG Generator - Version 115</title>
+    <title>TTRPG Generator - Version 119</title>
     <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <style>
@@ -133,7 +133,7 @@
 </head>
 <body>
     <div id="titleContainer">
-        <h1>TTRPG Generator - Version 115</h1>
+        <h1>TTRPG Generator - Version 119</h1>
     </div>
 
     <div id="searchContainer">
@@ -143,31 +143,19 @@
     <div id="filtersContainer">
         <div class="filter-container">
             <label for="gameFilter">Game</label>
-            <select id="gameFilter" class="filter-dropdown" multiple="multiple">
-                <option value="ShadowDark">ShadowDark</option>
-                <option value="D&D">D&D</option>
-                <option value="Pathfinder">Pathfinder</option>
-            </select>
+            <select id="gameFilter" class="filter-dropdown" multiple="multiple"></select>
             <button class="clear-button" onclick="clearFilter('gameFilter')">&times;</button>
         </div>
 
         <div class="filter-container">
             <label for="typeFilter">Type</label>
-            <select id="typeFilter" class="filter-dropdown" multiple="multiple">
-                <option value="Encounter">Encounter</option>
-                <option value="Adventure">Adventure</option>
-                <option value="NPC">NPC</option>
-            </select>
+            <select id="typeFilter" class="filter-dropdown" multiple="multiple"></select>
             <button class="clear-button" onclick="clearFilter('typeFilter')">&times;</button>
         </div>
 
         <div class="filter-container">
             <label for="settingFilter">Setting</label>
-            <select id="settingFilter" class="filter-dropdown" multiple="multiple">
-                <option value="Fantasy">Fantasy</option>
-                <option value="Horror">Horror</option>
-                <option value="Sci-Fi">Sci-Fi</option>
-            </select>
+            <select id="settingFilter" class="filter-dropdown" multiple="multiple"></select>
             <button class="clear-button" onclick="clearFilter('settingFilter')">&times;</button>
         </div>
 
@@ -195,7 +183,18 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        let tablesData = [];
+
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const response = await fetch('/api/tables');
+                tablesData = await response.json();
+                populateDropdowns(tablesData);
+                applyFilters();
+            } catch (error) {
+                console.error('Error fetching tables:', error);
+            }
+
             window.gameChoices = new Choices('#gameFilter', {
                 removeItemButton: true,
                 placeholder: true,
@@ -227,13 +226,32 @@
             document.getElementById('settingFilter').addEventListener('change', applyFilters);
         });
 
-        const tablesData = [
-            { tablename: 'Forest Encounters', game: 'ShadowDark', type: 'Encounter', setting: 'Fantasy' },
-            { tablename: 'Grassland Encounters', game: 'ShadowDark', type: 'Encounter', setting: 'Fantasy' },
-            { tablename: 'Mountain Adventures', game: 'D&D', type: 'Adventure', setting: 'Fantasy' },
-            { tablename: 'Urban Mysteries', game: 'Pathfinder', type: 'Encounter', setting: 'Horror' },
-            { tablename: 'Forest NPCs', game: 'ShadowDark', type: 'NPC', setting: 'Fantasy' }
-        ];
+        function populateDropdowns(tables) {
+            const gameSet = new Set();
+            const typeSet = new Set();
+            const settingSet = new Set();
+
+            tables.forEach(table => {
+                if (table.game) gameSet.add(table.game);
+                if (table.type) typeSet.add(table.type);
+                if (table.setting) settingSet.add(table.setting);
+            });
+
+            populateOptions('#gameFilter', Array.from(gameSet));
+            populateOptions('#typeFilter', Array.from(typeSet));
+            populateOptions('#settingFilter', Array.from(settingSet));
+        }
+
+        function populateOptions(selectId, options) {
+            const select = document.querySelector(selectId);
+            select.innerHTML = '';
+            options.forEach(option => {
+                const opt = document.createElement('option');
+                opt.value = option;
+                opt.textContent = option;
+                select.appendChild(opt);
+            });
+        }
 
         function performSearch() {
             applyFilters();
@@ -258,7 +276,7 @@
             filteredTables.forEach(table => {
                 const button = document.createElement('button');
                 button.className = 'matching-table-button';
-                button.textContent = `${table.game} : ${table.tablename}`;
+                button.textContent = `${table.game ?? 'Unknown'} : ${table.tablename ?? 'Undefined'}`;
                 button.onclick = () => displayTableDetails(table);
                 matchingTablesContainer.appendChild(button);
             });
@@ -266,14 +284,12 @@
 
         function displayTableDetails(table) {
             const tableHeadersContainer = document.getElementById('tableHeaders');
-            tableHeadersContainer.innerHTML = ''; // Clear previous headers
+            tableHeadersContainer.innerHTML = '';
 
-            // Set the table name as the section title
             const tableNameTitle = document.createElement('h2');
-            tableNameTitle.textContent = table.tablename;
+            tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
             tableHeadersContainer.appendChild(tableNameTitle);
 
-            // Display relevant table details
             const details = [
                 { key: 'game', label: 'Game' },
                 { key: 'type', label: 'Type' },
@@ -310,6 +326,30 @@
             window.typeChoices.removeActiveItems();
             window.settingChoices.removeActiveItems();
             applyFilters();
+        }
+
+        function generateContent() {
+            const numberOfGenerations = document.getElementById('generationSlider').value;
+            const selectedTable = tablesData.find(t => t.tablename === document.querySelector('#tableHeaders h2')?.textContent);
+
+            if (!selectedTable) {
+                console.error('No table selected for generation.');
+                return;
+            }
+
+            fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ table: selectedTable, number: numberOfGenerations })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsContainer = document.getElementById('results');
+                resultsContainer.innerHTML = data.results.map(result => `<div>${result}</div>`).join('');
+            })
+            .catch(error => {
+                console.error('Error generating content:', error);
+            });
         }
 
         applyFilters();

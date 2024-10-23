@@ -2,7 +2,7 @@ tablename: Adventuring Site Names
 filename: ShadowDark_Location_AdventuringSiteNames.yaml
 game: ShadowDark
 genre: Fantasy
-type: Location
+type: Locations
 subtype: none
 actionType: SameLineWithSpaces
 tables:

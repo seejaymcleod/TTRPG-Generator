@@ -19,57 +19,46 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint to fetch table names and details
 app.get('/api/tables', (req, res) => {
-    if (DEBUG) console.log('Fetching table names from loaded tables:', tables);
     res.json(tables.map(table => ({
         filename: table.filename,
-        tablename: table.tablename,
-        game: table.game || 'Not Available',
-        genre: table.genre || 'Not Available',
-        type: table.type || 'Not Available',
-        subtype: table.subtype || 'Not Available'
+        name: table.name || table.tablename || 'Unknown',
+        game: table.game || 'Unknown',
+        type: table.type || 'Unknown',
+        genre: table.genre || 'Unknown'
     })));
 });
 
-// Endpoint to generate results
 app.post('/api/generate', (req, res) => {
-    if (DEBUG) console.log('Received request body:', req.body);
     const { table, number } = req.body;
-    if (DEBUG) console.log('Received request to generate results:', table, 'Number of generations:', number);
-
     const selectedTable = tables.find(t => t.filename === table.filename);
     if (!selectedTable) {
-        console.error('Table not found:', table.filename);
         return res.status(404).json({ error: 'Table not found.' });
     }
 
     try {
         const results = [];
         for (let i = 0; i < number; i++) {
-            if (DEBUG) console.log(`Generating result ${i + 1} for table:`, selectedTable);
-            const result = generateResultsFromTables(selectedTable.tables, selectedTable.actionType);
-            if (DEBUG) console.log(`Generated result ${i + 1}:`, result);
+            const result = generateResultsFromTables(selectedTable.tables || selectedTable.subTables, selectedTable.actionType);
             results.push(result);
         }
 
         res.json({ results });
     } catch (error) {
-        console.error('Error generating data:', error);
         res.status(500).json({ error: 'Failed to generate results.' });
     }
 });
 
-// Load all tables into memory
+// Function to load all YAML files
 function loadAllTables() {
-    if (DEBUG) console.log('Loading all tables from directory:', TABLES_DIR);
-
     try {
         const files = fs.readdirSync(TABLES_DIR);
         tables = files.filter(file => file.endsWith('.yaml')).map(filename => {
             try {
                 const table = yaml.load(fs.readFileSync(path.join(TABLES_DIR, filename), 'utf8'));
-                if (DEBUG) console.log('Loaded raw table data:', table);
-                table.filename = filename;
-                if (DEBUG) console.log('Final loaded table:', table);
+                table.filename = filename;  // Ensure name is set for each file
+                table.game = table.game || 'Unknown';
+                table.type = table.type || 'Unknown';
+                table.genre = table.genre || 'Unknown';
                 return table;
             } catch (err) {
                 console.error('Error loading YAML file:', filename, err);
@@ -113,7 +102,7 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
 
     switch (actionType) {
         case 'ListWithHeaders':
-            return results.map(result => result.header === 'Party' ? `${result.header}:\n${result.result}` : `${result.header}: ${result.result}`).join('\n');
+            return results.map(result => `${result.header}: ${result.result}`).join('\n');
         case 'SameLineWithSpaces':
             return results.map(result => (typeof result === 'object' ? result.result : result)).join(' ');
         case 'SameLineNoSpaces':

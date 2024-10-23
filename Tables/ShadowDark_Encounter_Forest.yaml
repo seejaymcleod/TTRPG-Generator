@@ -2,7 +2,7 @@ tablename: FOREST ENCOUNTERS
 filename: ShadowDark_Encounter_Forest.yaml
 game: ShadowDark
 genre: Fantasy
-type: Encounter
+type: Encounters
 subtype: none
 actionType: ListNoHeaders
 tables:

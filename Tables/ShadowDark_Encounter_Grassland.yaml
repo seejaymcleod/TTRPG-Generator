@@ -2,7 +2,7 @@ tablename: GRASSLAND ENCOUNTERS
 filename: ShadowDark_Encounter_Grassland.yaml
 game: ShadowDark
 genre: Fantasy
-type: Encounter
+type: Encounters
 subtype: none
 actionType: ListNoHeaders
 tables:
