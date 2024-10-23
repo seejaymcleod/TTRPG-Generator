@@ -187,9 +187,9 @@
             font-weight: bold;
         }
 
-            .npc-details div {
-                margin-bottom: 5px;
-            }
+        .npc-details div {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -431,8 +431,8 @@
                             // NPC-specific structure
                             objDiv.className = 'generation-object npc';
 
-                            const title = `${result.name || ''}${result.title ? ' - ' + result.title : ''}${result.ancestry ? ' - ' + result.ancestry : ''}`;
-                            const header = `<strong>${title}</strong>`;
+                       
+                            const header = `<strong>NPC</strong>`;
 
                             // Create NPC details in a vertical list
                             const npcDetails = document.createElement('div');
