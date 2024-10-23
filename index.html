@@ -422,8 +422,15 @@
                 .then(data => {
                     console.log("Received generation data:", data.results); // Debugging output
 
+                    if (!data.results || !Array.isArray(data.results)) {
+                        console.error('Invalid data format received from server:', data);
+                        return;
+                    }
+
                     const resultsContainer = document.getElementById('results');
                     data.results.forEach((result, index) => {
+                        console.log(`Processing result ${index}:`, result); // Additional debug
+
                         const objDiv = document.createElement('div');
                         objDiv.setAttribute('draggable', 'true');
                         objDiv.dataset.type = selectedTable.type;
@@ -433,22 +440,25 @@
                             // NPC-specific structure
                             objDiv.className = 'generation-object npc';
 
-                       
                             const header = `<strong>NPC</strong>`;
 
                             // Create NPC details in a vertical list
                             const npcDetails = document.createElement('div');
                             npcDetails.className = 'npc-details';
 
-                            result.forEach(item => {
-                                if (item.key !== 'name' && item.key !== 'title' && item.key !== 'ancestry') {
-                                    const detailDiv = document.createElement('div');
-                                    //  detailDiv.textContent = `${item.key}: ${item.value}`;
-                                    detailDiv.innerHTML = `<span class="detail-key">${item.key}:</span> ${item.value}`;
-
-                                    npcDetails.appendChild(detailDiv);
-                                }
-                            });
+                            if (Array.isArray(result)) {
+                                result.forEach(item => {
+                                    if (item.key && item.value && item.key !== 'name' && item.key !== 'title' && item.key !== 'ancestry') {
+                                        const detailDiv = document.createElement('div');
+                                        detailDiv.innerHTML = `<span class="detail-key">${item.key}:</span> ${item.value}`;
+                                        npcDetails.appendChild(detailDiv);
+                                    } else {
+                                        console.error(`Invalid item in result at index ${index}:`, item);
+                                    }
+                                });
+                            } else {
+                                console.error(`Unexpected result format for NPC at index ${index}:`, result);
+                            }
 
                             objDiv.innerHTML = `${header}`;
                             objDiv.appendChild(npcDetails);
@@ -459,26 +469,6 @@
                             notesDiv.innerHTML = `<label>Notes:</label><textarea></textarea>`;
                             objDiv.appendChild(notesDiv);
 
-                        } else if (selectedTable.actionType === 'SameLineWithSpaces' || selectedTable.actionType === 'SameLineWithoutSpaces') {
-                            // Handle non-NPC content with SameLine
-                            objDiv.className = 'generation-object';
-
-                            let resultText = '';
-                            if (Array.isArray(result)) {
-                                // If result is an array of objects, concatenate the values
-                                resultText = result.map(item => item.value).join(
-                                    selectedTable.actionType === 'SameLineWithSpaces' ? ' ' : ''
-                                );
-                            } else if (typeof result === 'object') {
-                                resultText = Object.values(result).join(
-                                    selectedTable.actionType === 'SameLineWithSpaces' ? ' ' : ''
-                                );
-                            } else {
-                                resultText = result;
-                            }
-
-                            const defaultContent = `<strong>${selectedTable.type}</strong><br>${resultText}`;
-                            objDiv.innerHTML = defaultContent;
                         } else {
                             // Default generation for other content types
                             objDiv.className = 'generation-object';
@@ -497,6 +487,7 @@
                     console.error('Error generating content:', error);
                 });
         }
+
 
 
 

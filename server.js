@@ -74,6 +74,7 @@ function loadAllTables() {
 }
 
 // Function to generate results from nested tables
+// Updated function to dynamically determine the range based on the minimum and maximum of all defined ranges
 function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentHeader = '') {
     if (DEBUG) console.log('Generating results from nested tables:', tables, 'with action type:', actionType);
     if (!tables || tables.length === 0) {
@@ -83,13 +84,25 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
 
     let results = [];
 
-    tables.forEach(table => {
+    tables.forEach((table, tableIndex) => {
         if (DEBUG) console.log('Processing table:', table);
         const header = table.name || parentHeader;
+
         if (table.results && Array.isArray(table.results) && table.results.length > 0) {
             if (DEBUG) console.log('Table has results:', table.results);
-            const randomResult = getRandomResult(table);
-            results.push({ header, result: randomResult });
+
+            // Check if the table has ranges
+            const hasRanges = table.results.some(entry => entry.range);
+
+            if (hasRanges) {
+                const weightedResult = getWeightedRandomResult(table, tableIndex);
+                if (DEBUG) console.log(`Selected weighted result: "${weightedResult}"`);
+                results.push({ header, result: weightedResult });
+            } else {
+                const randomResult = getRandomResult(table);
+                if (DEBUG) console.log(`Selected result: "${randomResult}" from non-ranged list of ${table.results.length} total items.`);
+                results.push({ header, result: randomResult });
+            }
         } else if (table.subTables) {
             if (DEBUG) console.log('Table has subtables:', table.subTables);
             const subResults = generateResultsFromTables(table.subTables, table.actionType, header);
@@ -100,6 +113,8 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
             } else {
                 results.push({ header, result: subResults });
             }
+        } else {
+            console.error(`Invalid table detected at index ${tableIndex}. Table:`, table);
         }
     });
 
@@ -115,21 +130,81 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
     }
 }
 
+// New function for selecting a weighted random result from tables with ranges
+function getWeightedRandomResult(table, tableIndex) {
+    let ranges = [];
+    let minRange = Infinity;
+    let maxRange = -Infinity;
 
-// Function to get a random result from a table
-function getRandomResult(table) {
-    if (DEBUG) console.log('Getting random result for table:', table.name || table.tablename);
-    if (!table.results) {
-        if (DEBUG) console.warn('No results found for table:', table.name || table.tablename);
-        return 'No valid entries available';
+    table.results.forEach((entry, entryIndex) => {
+        if (!entry.value) {
+            console.error(`Invalid entry detected at index ${entryIndex} in table at index ${tableIndex}. Entry:`, entry);
+            return;
+        }
+
+        let range = entry.range;
+        if (range) {
+            if (range.includes('-')) {
+                const [start, end] = range.split('-').map(Number);
+                for (let i = start; i <= end; i++) {
+                    ranges.push({ value: entry.value, index: i });
+                }
+                minRange = Math.min(minRange, start);
+                maxRange = Math.max(maxRange, end);
+            } else {
+                const value = parseInt(range, 10);
+                ranges.push({ value: entry.value, index: value });
+                minRange = Math.min(minRange, value);
+                maxRange = Math.max(maxRange, value);
+            }
+        } else {
+            console.error(`Invalid range detected at index ${entryIndex} in table at index ${tableIndex}. Entry:`, entry);
+        }
+    });
+
+    // Check for overlapping ranges
+    let rangeSet = new Set();
+    for (let rangeEntry of ranges) {
+        if (rangeSet.has(rangeEntry.index)) {
+            console.error('Overlapping ranges detected for index:', rangeEntry.index);
+            return 'Error: Overlapping ranges detected';
+        }
+        rangeSet.add(rangeEntry.index);
     }
 
-    const randomIndex = Math.floor(Math.random() * table.results.length);
-    if (DEBUG) console.log('Random index chosen:', randomIndex, 'Random result:', table.results[randomIndex]);
+    // Ensure ranges are not empty before proceeding
+    if (ranges.length === 0) {
+        console.error('Error: No valid ranges found in table at index', tableIndex);
+        return 'Error: No valid ranges found';
+    }
 
-    const result = table.results[randomIndex];
-    return (typeof result === 'object' && result.value) ? result.value : result;
+    // Generate a random value within the full range
+    const randomValue = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
+    let selectedResult = ranges.find(entry => entry.index === randomValue)?.value;
+
+    if (selectedResult === null || selectedResult === undefined) {
+        // If no match found in ranges, pick a random result
+        const fallbackIndex = Math.floor(Math.random() * table.results.length);
+        selectedResult = table.results[fallbackIndex].value;
+        if (DEBUG) console.warn(`No matching range found for random value ${randomValue}. Falling back to random result at index ${fallbackIndex}`);
+    }
+
+    console.log(`Selected: "${selectedResult}" from weighted list based on range ${minRange}-${maxRange}. Random value: ${randomValue}`);
+    return selectedResult;
 }
+
+// Modified function for selecting a random result from tables without ranges
+function getRandomResult(table) {
+    const randomIndex = Math.floor(Math.random() * table.results.length);
+    if (DEBUG) console.log(`Selecting random result at index ${randomIndex} from table with ${table.results.length} results.`);
+    const result = table.results[randomIndex];
+    if (!result || result.value === undefined || result.value === null) {
+       // console.error(`Error: Invalid result at index ${randomIndex}. Result:`, result);
+        return result;
+    }
+    return result.value;
+}
+
 
 // Serve HTML file
 app.get('/', (req, res) => {

@@ -1,0 +1,14 @@
+tablename: TEST ENCOUNTERS
+filename: ShadowDark_Encounter_Forest - Copy.yaml
+game: ShadowDark
+setting: Fantasy
+type: Encounter
+subtype: none
+actionType: SameLineWithSpaces
+tables:
+  - name: Test_Encounters
+    results:
+      - range: "01"
+        value: "3d6 giant spiders fill this part of the forest with thick webs"
+      - range: "02-10"
+        value: "A scavenging owlbear snorts around in the overgrowth"
