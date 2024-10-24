@@ -54,3 +54,87 @@ tables:
           - "Lantern"
           - "Vendibles"
           - "Stocks"
+          
+  - name: Poor Shop
+    results:
+      - "Filthy bakery"
+      - "Used adventuring gear"
+      - "Dead body collector"
+      - "Pawn shop/fence"
+      - "Moneylender"
+      - "Manure collector"
+      - "Tannery"
+      - "Back-alley chirurgeon"
+      - "Ratcatcher"
+      - "Fishmonger"
+      - "Gambling house"
+      - "Drug den"
+
+  - name: Standard Shop
+    results:
+      - "Brewer"
+      - "Butcher"
+      - "Tailor"
+      - "Common blacksmith"
+      - "Adventuring gear"
+      - "Leatherworker"
+      - "Shipwright/carpenter"
+      - "Stonemason"
+      - "Herald/town crier"
+      - "Livestock"
+
+  - name: Wealthy Shop
+    results:
+      - "Fine tailor"
+      - "Glassblower"
+      - "Jeweler"
+      - "Apothecary"
+      - "Artist"
+      - "Scribe"
+      - "Guildhall"
+      - "Goldsmith"
+      - "Master blacksmith"
+      - "Antiques and curios"
+
+  - name: Known For
+    results:
+      - "Ancient, beloved owner"
+      - "Buying anything of value"
+      - "Charging non-regulars extra"
+      - "Being a Thieves' Guild front"
+      - "Resident cat, Crumpet"
+      - "Password required to enter"
+      - "Free ale with a purchase"
+      - "Heavily armed bodyguards"
+      - "Paying top coin for curios"
+      - "Secret room behind shelf"
+      - "Fencing illicit goods"
+      - "Ringing a gong at every sale"
+      - "Goods from distant lands"
+      - "Shoddy and cheap items"
+      - "Accusing customers of theft"
+      - "All goods are dyed blue"
+      - "Owner's talking parrot"
+      - "Famous bronze imp statue"
+      - "Being haunted"
+      - "Aggressive rodent problem"
+
+  - name: Interesting Customer
+    results:
+      - "Odd wizard"
+      - "1d10 children"
+      - "Cackling crone"
+      - "Loud dwarf"
+      - "Nervous elf"
+      - "Shifty thug"
+      - "Town guard"
+      - "1d4 priests"
+      - "Goblin pirate"
+      - "Cowled mage"
+      - "Half-orc knight"
+      - "Drunk man"
+      - "Staring child"
+      - "Rival crawlers"
+      - "Glum halfling"
+      - "Pickpocket"
+      
