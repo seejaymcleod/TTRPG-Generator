@@ -6,7 +6,7 @@ type: Location
 subtype: none
 tables:
   - name: Name
-    customDisplay: "{Name1} {Name2} {Name3}"
+    customDisplay: "{Name1] {Name2] {Name3]"
     subTables:
       - name: Name1
         results:

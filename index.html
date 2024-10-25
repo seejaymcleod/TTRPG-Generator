@@ -321,17 +321,30 @@
                 return;
             }
 
+            console.log('Generating content with the following data:', {
+                table: selectedTable,
+                number: numberOfGenerations
+            });
+
             fetch('/api/generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ table: selectedTable, number: numberOfGenerations })
+                body: JSON.stringify({ table: selectedTable, number: parseInt(numberOfGenerations) })
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(`Server responded with an error: ${err.error}`);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log("Received generation data:", data.results); // Debugging output
 
-                    if (!data.results || !Array.isArray(data.results)) {
-                        console.error('Invalid data format received from server:', data);
+                    if (!data.results || !Array.isArray(data.results) || data.results.length === 0) {
+                        console.error('Invalid or empty data format received from server:', data);
+                        displayErrorMessage('Error: No valid entries found');
                         return;
                     }
 
@@ -348,16 +361,10 @@
 
                         // Create the content to be displayed
                         let content = `<strong>${selectedTable.type}</strong><br>`;
-                        if (Array.isArray(result)) {
-                            result.forEach(item => {
-                                if (item.key && item.value) {
-                                    content += `<span class="detail-key">${item.key}:</span> ${item.value}<br>`;
-                                } else {
-                                    content += `${item}<br>`;
-                                }
-                            });
-                        } else {
+                        if (result.result) {
                             content += `${result.result}`;
+                        } else {
+                            content += 'Error: No valid entries found';
                         }
 
                         objDiv.innerHTML = content;
@@ -371,6 +378,7 @@
                 })
                 .catch(error => {
                     console.error('Error generating content:', error);
+                    displayErrorMessage('Error: Unable to generate content. Please try again later.');
                 });
         }
 
@@ -379,8 +387,13 @@
             document.getElementById('generationValue').textContent = generationSlider.value;
         }
 
-        function clearGeneratedList() {
-            document.getElementById('results').innerHTML = '';
+        function displayErrorMessage(message) {
+            const resultsContainer = document.getElementById('results');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'generation-object';
+            errorDiv.style.color = 'red';
+            errorDiv.textContent = message;
+            resultsContainer.appendChild(errorDiv);
         }
 
         function handleDragStart(e) {
@@ -449,6 +462,11 @@
             document.getElementById('generationControls').style.display = 'block';
             document.getElementById('generationSlider').value = 1;
             document.getElementById('generationValue').textContent = 1;
+        }
+
+        function clearGeneratedList() {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = ''; // Clear the previous generation results
         }
     </script>
 </body>

@@ -42,20 +42,8 @@ app.post('/api/generate', (req, res) => {
     }
 
     try {
-        const results = [];
-        for (let i = 0; i < number; i++) {
-            const result = generateResultsFromTables(selectedTable.tables || selectedTable.subTables);
-            if (Array.isArray(result)) {
-                result.forEach(item => {
-                    item.address = `${selectedTable.filename}/${selectedTable.tablename || 'Unnamed table'}${item.header ? '/' + item.header : ''}`;
-                });
-                results.push(...result);
-            } else {
-                result.address = `${selectedTable.filename}/${selectedTable.tablename || 'Unnamed table'}`;
-                results.push(result);
-            }
-        }
-
+        const results = generateResultsFromTables(selectedTable, number);
+        if (DEBUG) console.log('Generated results:', JSON.stringify(results, null, 2));
         res.json({ results });
     } catch (error) {
         console.error('Error generating results:', error);
@@ -70,10 +58,12 @@ function loadAllTables() {
         tables = files.filter(file => file.endsWith('.yaml')).map(filename => {
             try {
                 const table = yaml.load(fs.readFileSync(path.join(TABLES_DIR, filename), 'utf8'));
-                table.filename = filename;  // Ensure name is set for each file
+                table.filename = filename;
                 table.game = table.game || 'Unknown';
                 table.type = table.type || 'Unknown';
                 table.setting = table.setting || 'Unknown';
+
+                if (DEBUG) console.log('Loaded table:', JSON.stringify(table, null, 2));
                 return table;
             } catch (err) {
                 console.error('Error loading YAML file:', filename, err);
@@ -86,65 +76,61 @@ function loadAllTables() {
 }
 
 // Function to generate results from nested tables
-function generateResultsFromTables(tables, parentHeader = '') {
-    if (DEBUG) console.log('Generating results from nested tables:', tables);
-    if (!tables || tables.length === 0) {
-        if (DEBUG) console.warn('No tables found to generate results from.');
-        return 'No valid results found';
+function generateResultsFromTables(table, numberOfGenerations) {
+    if (DEBUG) console.log('Generating results from table:', JSON.stringify(table, null, 2));
+    if (!table.results && !table.tables) {
+        console.warn('No results or subTables found for generation.');
+        return [{ header: 'Error', result: 'No valid entries found' }];
     }
 
     let results = [];
-
-    tables.forEach((table, tableIndex) => {
-        if (DEBUG) console.log('Processing table:', table);
-        const header = table.name || parentHeader;
-
-        if (table.results && Array.isArray(table.results) && table.results.length > 0) {
-            if (DEBUG) console.log('Table has results:', table.results);
-
-            const weightedResult = getWeightedRandomResult(table);
-            if (DEBUG) console.log(`Selected weighted result: "${weightedResult}"`);
-            results.push({ header, result: weightedResult });
-        } else if (table.subTables) {
-            if (DEBUG) console.log('Table has subtables:', table.subTables);
-            const subResults = generateResultsFromTables(table.subTables, header);
-            if (Array.isArray(subResults)) {
-                subResults.forEach(subResult => {
-                    results.push(subResult);
-                });
-            } else {
-                results.push({ header, result: subResults });
-            }
-        } else {
-            console.error(`Invalid table detected at index ${tableIndex}. Table:`, table);
+    for (let i = 0; i < numberOfGenerations; i++) {
+        const result = processTable(table);
+        if (result) {
+            results.push(result);
         }
-
-        // Handle customDisplay if present
-        if (table.customDisplay) {
-            const customDisplayText = table.customDisplay.replace(/\{(.*?)\}/g, (match, subTableName) => {
-                const subTable = tables.find(t => t.name === subTableName.trim());
-                if (subTable) {
-                    const subResult = getWeightedRandomResult(subTable);
-                    return subResult;
-                }
-                return match; // If subtable not found, return the original placeholder
-            });
-            results.push({ header: 'Custom Display', result: customDisplayText });
-        }
-    });
-
+    }
     return results;
+}
+
+// Function to process an individual table or sub-table
+function processTable(table, parentHeader = '') {
+    if (DEBUG) console.log('Processing table:', JSON.stringify(table, null, 2));
+
+    const header = table.name || table.tablename || parentHeader;
+    let results = [];
+
+    if (table.results && Array.isArray(table.results) && table.results.length > 0) {
+        if (DEBUG) console.log('Table has results. Proceeding to get a weighted result.');
+        const weightedResult = getWeightedRandomResult(table);
+        if (DEBUG) console.log('Selected weighted result:', weightedResult);
+        return { header, result: weightedResult };
+    } else if (table.tables && Array.isArray(table.tables)) {
+        if (DEBUG) console.log('Table has subTables. Processing each subTable:', header);
+        table.tables.forEach((subTable, index) => {
+            if (DEBUG) console.log(`Processing subTable ${index + 1} of ${table.tables.length}:`, JSON.stringify(subTable, null, 2));
+            const subResult = processTable(subTable, header);
+            if (subResult) {
+                results.push(subResult);
+            }
+        });
+    } else {
+        console.warn('Table does not have results or tables:', JSON.stringify(table, null, 2));
+    }
+
+    return results.length > 0 ? results[0] : null;
 }
 
 // New function for selecting a weighted random result
 function getWeightedRandomResult(table) {
+    if (DEBUG) console.log('Getting weighted random result from table:', JSON.stringify(table, null, 2));
     let weightedEntries = [];
-    table.results.forEach(entry => {
-        if (!entry.value) {
-            console.error('Invalid entry:', entry);
+    table.results.forEach((entry, index) => {
+        if (typeof entry !== 'string') {
+            console.error(`Invalid entry at index ${index}: Expected a string but got`, JSON.stringify(entry, null, 2));
             return;
         }
-        const [text, weightIndicator] = entry.value.split('^');
+        const [text, weightIndicator] = entry.split('^');
         const weight = weightIndicator ? parseInt(weightIndicator.trim(), 10) : 1;
         for (let i = 0; i < weight; i++) {
             weightedEntries.push(text.trim());

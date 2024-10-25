@@ -4,7 +4,7 @@ game: ShadowDark
 setting: Fantasy
 type: Quest
 subtype: none
-customDisplay: "{Action} {Targer} {Context}"
+customDisplay: "{Action] {Targer] {Context]"
 tables:
   - name: Action
     results:

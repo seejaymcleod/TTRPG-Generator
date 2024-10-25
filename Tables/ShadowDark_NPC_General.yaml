@@ -6,7 +6,7 @@ type: NPC
 subtype: none
 tables:  
   - name: Name
-    customDisplay: "{Syllable1}{Syllable2}{Syllable3}{Syllable4}"
+    customDisplay: "{Syllable1]{Syllable2]{Syllable3]{Syllable4]"
     subTables:
       - name: Syllable1
         results:
