@@ -4,26 +4,25 @@ game: Cairn
 setting: Fantasy
 type: Character
 subtype: none
-actionType: SameLineNoSpaces
 tables:  
   - name: Character Bonds
     results:
-      - "You inherited a single <b>Gem (500gp)</b>, cold and brittle, from a long-dead relative. It arrived with a warning: squander your newfound riches, and a debt long thought forgotten would be called in."
-      - "A distant cousin left you a small inheritance. Take <b>20gp</b> and a <b>Strange Compass</b> (pretty) that always points towards something deep in the Wood."
-      - "You carry a hand-drawn <b>Portrait</b> (pretty) of a past love who disappeared into the Wood long ago. Somehow you know that they are still alive."
-      - "You found a <b>Tiny Crystal Prism</b> (pretty) buried in the dirt. When held up to the light, it shows visions of an unknown location deep within the Wood. Sometimes you feel a presence looking back at you."
-      - "You once freed a Nixie from a choked stream. In return, it gave you some <b>Silver Moss</b> (pretty). Swallow it near water, and the creature will come, once, to repay its debt."
-      - "You inherited an <b>old Journal</b>, bound in bark. Each evening, its pages are filled with the events of the day, crassly written from the journal's perspective. The writing is crude but accurate."
-      - "You protect a long-dormant family secret. Take a <b>Locket</b> (pretty) and an <b>Ancient Key</b> (pretty). They say that if joined with its twin, it opens a Gate through the Wood."
-      - "You received a <b>Letter</b> (pretty) detailing incontrovertible proof that your true parentage is that of the nobility. The note also indicates a date and location where you are to meet the letter's author, deep in the Wood."
-      - "You owe a great debt to a member of the nobility and carry their <b>Signet (pretty)</b>, which serves as proof of their protection as well as your obligation."
-      - "You consumed a <b>Mischievous Spirit</b> that wreaths havoc on your insides, demanding to be taken home, deep in the Wood. It occupies one slot but absorbs one fatigue each day. It wants you alive (for now)."
-      - "A roaming storyteller once spun you tales of great treasure hidden deep in the Wood. You thought it naught but fancy, till they gave you a <b>Rolled-up Map</b> (pretty) marked with an X."
-      - "During your travels, you met a dying hunter who asked you to deliver a message to their loved ones. Take a <b>Letter</b> (pretty), sealed with tree sap. It is addressed only to the Lord of Winter."
-      - "You found a wounded beast in the forest but chose to ignore it. You see it everywhere now, but only when you're alone. It looks sad but not angry. You cannot become panicked when alone."
-      - "You promised a childhood friend that you'd bring them back a rare gift, something unique in all of the world. Take a <b>Bracelet</b> (pretty) woven from twine and wildflowers."
-      - "You crossed a creature of the Wood, and it cursed you with a <b>Stone Heart</b>. With each passing month, the stone grows heavier by one slot. Until your debt is lifted, you cannot truly die."
-      - "You carved a <b>Whistle</b> (pretty) from an <b>Oak Lord's branch</b>. Your act did not go unnoticed. You cannot seem to rid yourself of the whistle either."
-      - "The <b>Dawn Brigade</b> did your family a service, giving you a dried <b>Blood-Red Flower</b> (pretty) as proof. When the flower turns white, it means the favor is owed."
-      - "An entertainer once visited your home, filling it with story and song. He left the next morning with the <b>Twig</b> (pretty) in your hand. You believe it brings you luck. It smells faintly of sulfur."
-      - "One of your ancestors wronged a <b>Moss Witch</b>, who cursed their bloodline. Your visage causes mirrors to shatter. You've noticed that the shards can sometimes reveal illusions."
+      - You inherited a single <b>Gem (500gp)</b>, cold and brittle, from a long-dead relative. It arrived with a warning: squander your newfound riches, and a debt long thought forgotten would be called in.
+      - A distant cousin left you a small inheritance. Take <b>20gp</b> and a <b>Strange Compass</b> (pretty) that always points towards something deep in the Wood.
+      - You carry a hand-drawn <b>Portrait</b> (pretty) of a past love who disappeared into the Wood long ago. Somehow you know that they are still alive.
+      - You found a <b>Tiny Crystal Prism</b> (pretty) buried in the dirt. When held up to the light, it shows visions of an unknown location deep within the Wood. Sometimes you feel a presence looking back at you.
+      - You once freed a Nixie from a choked stream. In return, it gave you some <b>Silver Moss</b> (pretty). Swallow it near water, and the creature will come, once, to repay its debt.
+      - You inherited an <b>old Journal</b>, bound in bark. Each evening, its pages are filled with the events of the day, crassly written from the journal's perspective. The writing is crude but accurate.
+      - You protect a long-dormant family secret. Take a <b>Locket</b> (pretty) and an <b>Ancient Key</b> (pretty). They say that if joined with its twin, it opens a Gate through the Wood.
+      - You received a <b>Letter</b> (pretty) detailing incontrovertible proof that your true parentage is that of the nobility. The note also indicates a date and location where you are to meet the letter's author, deep in the Wood.
+      - You owe a great debt to a member of the nobility and carry their <b>Signet (pretty)</b>, which serves as proof of their protection as well as your obligation.
+      - You consumed a <b>Mischievous Spirit</b> that wreaths havoc on your insides, demanding to be taken home, deep in the Wood. It occupies one slot but absorbs one fatigue each day. It wants you alive (for now).
+      - A roaming storyteller once spun you tales of great treasure hidden deep in the Wood. You thought it naught but fancy, till they gave you a <b>Rolled-up Map</b> (pretty) marked with an X.
+      - During your travels, you met a dying hunter who asked you to deliver a message to their loved ones. Take a <b>Letter</b> (pretty), sealed with tree sap. It is addressed only to the Lord of Winter.
+      - You found a wounded beast in the forest but chose to ignore it. You see it everywhere now, but only when you're alone. It looks sad but not angry. You cannot become panicked when alone.
+      - You promised a childhood friend that you'd bring them back a rare gift, something unique in all of the world. Take a <b>Bracelet</b> (pretty) woven from twine and wildflowers.
+      - You crossed a creature of the Wood, and it cursed you with a <b>Stone Heart</b>. With each passing month, the stone grows heavier by one slot. Until your debt is lifted, you cannot truly die.
+      - You carved a <b>Whistle</b> (pretty) from an <b>Oak Lord's branch</b>. Your act did not go unnoticed. You cannot seem to rid yourself of the whistle either.
+      - The <b>Dawn Brigade</b> did your family a service, giving you a dried <b>Blood-Red Flower</b> (pretty) as proof. When the flower turns white, it means the favor is owed.
+      - An entertainer once visited your home, filling it with story and song. He left the next morning with the <b>Twig</b> (pretty) in your hand. You believe it brings you luck. It smells faintly of sulfur.
+      - One of your ancestors wronged a <b>Moss Witch</b>, who cursed their bloodline. Your visage causes mirrors to shatter. You've noticed that the shards can sometimes reveal illusions.

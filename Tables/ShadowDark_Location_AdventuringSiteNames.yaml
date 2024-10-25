@@ -4,73 +4,73 @@ game: ShadowDark
 setting: Fantasy
 type: Location
 subtype: none
-actionType: SameLineWithSpaces
+customDisplay: "{PlaceOf} {Adjective} {Noun}"
 tables:
   - name: PlaceOf
     results:
-      - "Mines of the"
-      - "Abbey of the"
-      - "Tower of the"
-      - "Caves of the"
-      - "Barrow of the"
-      - "Warrens of the"
-      - "Crypt of the"
-      - "Monastery of the"
-      - "Ruin of the"
-      - "Tunnels of the"
-      - "Citadel of the"
-      - "Tomb of the"
-      - "Castle of the"
-      - "Temple of the"
-      - "Fortress of the"
-      - "Isle of the"
-      - "Keep of the"
-      - "Dungeon of the"
-      - "Necropolis of the"
-      - "Shrine of the"
+      - Mines of the
+      - Abbey of the
+      - Tower of the
+      - Caves of the
+      - Barrow of the
+      - Warrens of the
+      - Crypt of the
+      - Monastery of the
+      - Ruin of the
+      - Tunnels of the
+      - Citadel of the
+      - Tomb of the
+      - Castle of the
+      - Temple of the
+      - Fortress of the
+      - Isle of the
+      - Keep of the
+      - Dungeon of the
+      - Necropolis of the
+      - Shrine of the
 
   - name: Adjective
     results:
-      - "Cursed"
-      - "Whispering"
-      - "Bleeding"
-      - "Shrouded"
-      - "Lost"
-      - "Dead"
-      - "Deepwood"
-      - "Fallen"
-      - "Revenant"
-      - "Frozen"
-      - "Shimmering"
-      - "Chaos"
-      - "Abandoned"
-      - "Blighted"
-      - "Forgotten"
-      - "Slumbering"
-      - "Savage"
-      - "Unholy"
-      - "Enchanted"
-      - "Immortal"
+      - Cursed
+      - Whispering
+      - Bleeding
+      - Shrouded
+      - Lost
+      - Dead
+      - Deepwood
+      - Fallen
+      - Revenant
+      - Frozen
+      - Shimmering
+      - Chaos
+      - Abandoned
+      - Blighted
+      - Forgotten
+      - Slumbering
+      - Savage
+      - Unholy
+      - Enchanted
+      - Immortal
 
   - name: Noun
     results:
-      - "Flame"
-      - "Ghost"
-      - "Darkness"
-      - "Peak"
-      - "Borderlands"
-      - "King"
-      - "Twilight"
-      - "Depths"
-      - "Jewel"
-      - "God"
-      - "Lands"
-      - "Storm"
-      - "Swamp"
-      - "Ravine"
-      - "Valley"
-      - "Horde"
-      - "Skull"
-      - "Queen"
-      - "Wastes"
-      - "Hero"
+      - Flame
+      - Ghost
+      - Darkness
+      - Peak
+      - Borderlands
+      - King
+      - Twilight
+      - Depths
+      - Jewel
+      - God
+      - Lands
+      - Storm
+      - Swamp
+      - Ravine
+      - Valley
+      - Horde
+      - Skull
+      - Queen
+      - Wastes
+      - Hero

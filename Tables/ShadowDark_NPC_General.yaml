@@ -4,171 +4,151 @@ game: ShadowDark
 setting: Fantasy
 type: NPC
 subtype: none
-actionType: ListWithHeaders
 tables:  
   - name: Name
-    actionType: SameLineNoSpaces
+    customDisplay: "{Syllable1}{Syllable2}{Syllable3}{Syllable4}"
     subTables:
-      - name: Prefix Syllable
+      - name: Syllable1
         results:
-          - "Ir"
-          - "Van"
-          - "Cyr"
-          - "Den"
-          - "Cor"
-          - "Hil"
-          - "Sal"
-          - "Bri"
-          - "Mar"
-          - "Gar"
-          - "Tin"
-          - "Vor"
-          - "Nel"
-          - "Ri"
-          - "Quor"
-          - "Bal"
-          - "Mur"
-          - "Par"
-          - "Tor"
-          - "Lem"
+          - Ir
+          - Van
+          - Cyr
+          - Den
+          - Cor
+          - Hil
+          - Sal
+          - Bri
+          - Mar
+          - Gar
+          - Tin
+          - Vor
+          - Nel
+          - Ri
+          - Quor
+          - Bal
+          - Mur
+          - Par
+          - Tor
+          - Lem
 
-      - name: Syllable 2
+      - name: Syllable2
         results:
-          - "an"
-          - "ish"
-          - "tos"
-          - "zar"
-          - "ven"
-          - "sen"
-          - "win"
-          - "on"
-          - "en"
-          - "lin"
-          - "sor"
-          - "oc"
-          - "vyn"
-          - "al"
-          - "osh"
-          - "er"
-          - "in"
-          - "el"
-          - "un"
-          - "nar"
+          - an
+          - ish
+          - tos
+          - zar
+          - ven
+          - sen
+          - win
+          - on
+          - en
+          - lin
+          - sor
+          - oc
+          - vyn
+          - al
+          - osh
+          - er
+          - in
+          - el
+          - un
+          - nar
 
-      - name: Syllable 3
+      - name: Syllable3
         results:
-          - "l"
-          - "n"
-          - "pil"
-          - "g"
-          - "z"
-          - "bor"
-          - "t"
-          - "c"
-          - "ar"
-          - "q"
-          - "v"
-          - "iv"
-          - "ov"
-          - "b"
-          - "den"
-          - "k"
-          - "s"
-          - "r"
-          - "jen"
-          - "w"
+          - l
+          - n
+          - pil
+          - g
+          - z
+          - bor
+          - t
+          - c
+          - ar
+          - q
+          - v
+          - iv
+          - ov
+          - b
+          - den
+          - k
+          - s
+          - r
+          - jen
+          - w
 
-      - name: Suffix
+      - name: Syllable4
         results:
-          - "int"
-          - "us"
-          - "ios"
-          - "el"
-          - "inne"
-          - "os"
-          - "ian"
-          - "ius"
-          - "iol"
-          - "an"
-          - "isk"
-          - "erg"
-          - "ent"
-          - "ial"
-          - "ant"
-          - "iel"
-          - "onne"
-          - "org"
-          - "enne"
-          - "ynne"
+          - int
+          - us
+          - ios
+          - el
+          - inne
+          - os
+          - ian
+          - ius
+          - iol
+          - an
+          - isk
+          - erg
+          - ent
+          - ial
+          - ant
+          - iel
+          - onne
+          - org
+          - enne
+          - ynne
           
   - name: Title
     results:
-      - "The Gray" 
-      - "One-Eye"
-      - "The Lesser"
-      - "The Cunning"
-      - "Silvertongue"
-      - "The Outcast"
-      - "Fasthands"
-      - "The Bold"
-      - "The Elder"
-      - "The Charmer"
-      - "The Exiled"
-      - "The Wise"
-      - "Tree-Speaker"
-      - "The Craven"
-      - "The Red"
-      - "Six-Finger"
+      - The Gray 
+      - One-Eye
+      - The Lesser
+      - The Cunning
+      - Silvertongue
+      - The Outcast
+      - Fasthands
+      - The Bold
+      - The Elder
+      - The Charmer
+      - The Exiled
+      - The Wise
+      - Tree-Speaker
+      - The Craven
+      - The Red
+      - Six-Finger
 
   - name: Ancestry
     results:
-      - range: "1-4"
-        value: Human
-      - range: "5-6"
-        value: Elf
-      - range: "7-8"
-        value: Dwarf
-      - range: "9-10"
-        value: Halfling
-      - range: "11"
-        value: Half-orc
-      - range: "12"
-        value: Goblin
+      - Human^4
+      - Elf^2
+      - Dwarf^2
+      - Halfling^2
+      - Half-orc
+      - Goblin
 
   - name: Alignment
     results:
-      - range: "1-3"
-        value: Lawful
-      - range: "4"
-        value: Neutral
-      - range: "5-6"
-        value: Chaotic
+      - Lawful^3
+      - Neutral
+      - Chaotic^2
 
   - name: Age
     results:
-      - range: "1"
-        value: Child
-      - range: "2"
-        value: Adolescent
-      - range: "3-4"
-        value: Adult
-      - range: "5-6"
-        value: Middle-Aged
-      - range: "7"
-        value: Elderly
-      - range: "8"
-        value: Ancient
+      - Child
+      - Adolescent
+      - Adult^2
+      - Middle-Aged^2
+      - Elderly
+      - Ancient
 
   - name: Wealth
     results:
-      - range: "1"
-        value: Poor
-      - range: "2-3"
-        value: Standard
-      - range: "4-5"
-        value: Wealthy
-      - range: "6"
-        value: Extravagant
+      - Poor
+      - Standard^2
+      - Wealthy^2
+      - Extravagant
 
   - name: Appearance
     results:

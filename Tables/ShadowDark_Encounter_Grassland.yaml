@@ -1,110 +1,59 @@
-tablename: GRASSLAND ENCOUNTERS
+tablename: Grassland Encounters
 filename: ShadowDark_Encounter_Grassland.yaml
 game: ShadowDark
 setting: Fantasy
 type: Encounter
 subtype: none
-actionType: SameLineWithSpaces
 tables:
   - name: Grassland_Encounters
     results:
-      - range: "01"
-        value: "A roc passes overhead and then divebombs the PCs"
-      - range: "02-03"
-        value: "A hunting smilodon prowls through the tall grass"
-      - range: "04-05"
-        value: "A baby mammoth flees a pack of 2d6 wolves"
-      - range: "06-07"
-        value: "A pale wizard in black robes stands silently on a tall rock"
-      - range: "08-09"
-        value: "1d4 giant dung beetles roll manure toward a towering pile"
-      - range: "10-11"
-        value: "A whirling dust devil is actually an angry air elemental"
-      - range: "12-13"
-        value: "Dark, tall clouds roll in; a violent thunderstorm is imminent"
-      - range: "14-15"
-        value: "1d4 fierce griffons savagely tear apart a horse carcass"
-      - range: "16-17"
-        value: "3d6 kobolds pop out of prairie dog holes and fling rocks"
-      - range: "18-19"
-        value: "Smoke drifts on the wind; a growing wildfire rages nearby"
-      - range: "20-21"
-        value: "An earth elemental slurps around in a muddy geyser field"
-      - range: "22-23"
-        value: "1d4 wyverns sun themselves atop striated badlands hills"
-      - range: "24-25"
-        value: "2d6 rust-red velociraptors prowl the plains for slow prey"
-      - range: "26-27"
-        value: "Two hill giants trudge along with a horse under each arm"
-      - range: "28-29"
-        value: "A pack of 3d6 gnolls trails a rhino peppered with arrows"
-      - range: "30-31"
-        value: "An empty tower shell is covered in finger-painted runes"
-      - range: "32-33"
-        value: "The grass bends in an S shape; it's a roving giant snake"
-      - range: "34-35"
-        value: "A stampede of 2d6 mammoths thunders toward the PCs"
-      - range: "36-37"
-        value: "A lone orc sits inside a weathered henge of stones"
-      - range: "38-39"
-        value: "Rune-etched boulders seal off ancient burial cairns"
-      - range: "40-41"
-        value: "3d6 horse-riding berserkers crest over the horizon"
-      - range: "42-43"
-        value: "A wyvern swoops at a human backed up to a cliff edge"
-      - range: "44-45"
-        value: "Wedges on strings hold precarious boulders in place"
-      - range: "46-47"
-        value: "Two gnolls fight inside a ring of 2d4 chanting gnolls"
-      - range: "48-49"
-        value: "1d4 wild boars drink at a thin, winding stream"
-      - range: "50-53"
-        value: "2d6 bandits on horses drive a herd of bison toward a cliff"
-      - range: "54-55"
-        value: "Cursed wind flutes on poles hypnotize with their sound"
-      - range: "56-57"
-        value: "A bandit chieftain (x2 LV and damage) demands a duel"
-      - range: "58-59"
-        value: "2d4 lions watch intently from the banks of a river"
-      - range: "60-61"
-        value: "2d20 nervous peasants stare from their circle of yurts"
-      - range: "62-63"
-        value: "A druid in a wolf cloak paints red symbols on dead bison"
-      - range: "64-65"
-        value: "2d4 pegasi wheel overhead, teaching 2 clumsy foals to fly"
-      - range: "66-67"
-        value: "A grass-woven effigy of a horse stands in an empty field"
-      - range: "68-69"
-        value: "An ochre basilisk basks on a rock and puffs its neck pouch"
-      - range: "70-71"
-        value: "An albino chimera sails out of a white, fluffy cloud"
-      - range: "72-73"
-        value: "1d4 ankhegs hiss and spit at a rampaging bulette"
-      - range: "74-75"
-        value: "A rival crawling party rides in a howdah on an elephant"
-      - range: "76-77"
-        value: "A fossilized tree teeters on top of an eroding mud pillar"
-      - range: "78-79"
-        value: "A T-Rex gallops along after a herd of panicked antelope"
-      - range: "80-81"
-        value: "2d6 gnolls creep below the tall grass line, spears ready"
-      - range: "82-83"
-        value: "A mammoth gently pats heads with its trunk: +1 luck token"
-      - range: "84-85"
-        value: "A mated pair of smilodons leaps down from grassy ridges"
-      - range: "86-87"
-        value: "A stone golem made of glittering gypsum guards a field"
-      - range: "88-89"
-        value: "A shadow ripples over the grass like a dark stain"
-      - range: "90-91"
-        value: "2d12 berserker hunters welcome guests to their camp"
-      - range: "92-93"
-        value: "A bull-headed shrine to a lost god repels roving beasts"
-      - range: "94-95"
-        value: "A sun-blind cave brute wildly lurches toward sounds"
-      - range: "96-97"
-        value: "The Wandering Merchant flees from a furious rhino"
-      - range: "98-99"
-        value: "Roll two encounters and combine the results (reroll 98-99)"
-      - range: "00"
-        value: "A principled angel strides from a storm cloud to gift a boon"
+      - A roc passes overhead and then divebombs the PCs^0.5
+      - A hunting smilodon prowls through the tall grass
+      - A baby mammoth flees a pack of 2d6 wolves
+      - A pale wizard in black robes stands silently on a tall rock
+      - 1d4 giant dung beetles roll manure toward a towering pile
+      - A whirling dust devil is actually an angry air elemental
+      - Dark, tall clouds roll in; a violent thunderstorm is imminent
+      - 1d4 fierce griffons savagely tear apart a horse carcass
+      - 3d6 kobolds pop out of prairie dog holes and fling rocks
+      - Smoke drifts on the wind; a growing wildfire rages nearby
+      - An earth elemental slurps around in a muddy geyser field
+      - 1d4 wyverns sun themselves atop striated badlands hills
+      - 2d6 rust-red velociraptors prowl the plains for slow prey
+      - Two hill giants trudge along with a horse under each arm
+      - A pack of 3d6 gnolls trails a rhino peppered with arrows
+      - An empty tower shell is covered in finger-painted runes
+      - The grass bends in an S shape; it's a roving giant snake
+      - A stampede of 2d6 mammoths thunders toward the PCs
+      - A lone orc sits inside a weathered henge of stones
+      - Rune-etched boulders seal off ancient burial cairns
+      - 3d6 horse-riding berserkers crest over the horizon
+      - A wyvern swoops at a human backed up to a cliff edge
+      - Wedges on strings hold precarious boulders in place
+      - Two gnolls fight inside a ring of 2d4 chanting gnolls
+      - 1d4 wild boars drink at a thin, winding stream
+      - 2d6 bandits on horses drive a herd of bison toward a cliff
+      - Cursed wind flutes on poles hypnotize with their sound
+      - A bandit chieftain (x2 LV and damage) demands a duel
+      - 2d4 lions watch intently from the banks of a river
+      - 2d20 nervous peasants stare from their circle of yurts
+      - A druid in a wolf cloak paints red symbols on dead bison
+      - 2d4 pegasi wheel overhead, teaching 2 clumsy foals to fly
+      - A grass-woven effigy of a horse stands in an empty field
+      - An ochre basilisk basks on a rock and puffs its neck pouch
+      - An albino chimera sails out of a white, fluffy cloud
+      - 1d4 ankhegs hiss and spit at a rampaging bulette
+      - A rival crawling party rides in a howdah on an elephant
+      - A fossilized tree teeters on top of an eroding mud pillar
+      - A T-Rex gallops along after a herd of panicked antelope
+      - 2d6 gnolls creep below the tall grass line, spears ready
+      - A mammoth gently pats heads with its trunk: +1 luck token
+      - A mated pair of smilodons leaps down from grassy ridges
+      - A stone golem made of glittering gypsum guards a field
+      - A shadow ripples over the grass like a dark stain
+      - 2d12 berserker hunters welcome guests to their camp
+      - A bull-headed shrine to a lost god repels roving beasts
+      - A sun-blind cave brute wildly lurches toward sounds
+      - The Wandering Merchant flees from a furious rhino
+      - Roll two encounters and combine the results (reroll 98-99)
+      - A principled angel strides from a storm cloud to gift a boon^0.5

@@ -1,3 +1,4 @@
+// server.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -29,10 +30,12 @@ app.get('/api/tables', (req, res) => {
     })));
 });
 
-
-
 app.post('/api/generate', (req, res) => {
     const { table, number } = req.body;
+    if (!table || typeof number !== 'number') {
+        return res.status(400).json({ error: 'Invalid request data.' });
+    }
+
     const selectedTable = tables.find(t => t.filename === table.filename);
     if (!selectedTable) {
         return res.status(404).json({ error: 'Table not found.' });
@@ -41,12 +44,21 @@ app.post('/api/generate', (req, res) => {
     try {
         const results = [];
         for (let i = 0; i < number; i++) {
-            const result = generateResultsFromTables(selectedTable.tables || selectedTable.subTables, selectedTable.actionType);
-            results.push(result);
+            const result = generateResultsFromTables(selectedTable.tables || selectedTable.subTables);
+            if (Array.isArray(result)) {
+                result.forEach(item => {
+                    item.address = `${selectedTable.filename}/${selectedTable.tablename || 'Unnamed table'}${item.header ? '/' + item.header : ''}`;
+                });
+                results.push(...result);
+            } else {
+                result.address = `${selectedTable.filename}/${selectedTable.tablename || 'Unnamed table'}`;
+                results.push(result);
+            }
         }
 
         res.json({ results });
     } catch (error) {
+        console.error('Error generating results:', error);
         res.status(500).json({ error: 'Failed to generate results.' });
     }
 });
@@ -74,9 +86,8 @@ function loadAllTables() {
 }
 
 // Function to generate results from nested tables
-// Updated function to dynamically determine the range based on the minimum and maximum of all defined ranges
-function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentHeader = '') {
-    if (DEBUG) console.log('Generating results from nested tables:', tables, 'with action type:', actionType);
+function generateResultsFromTables(tables, parentHeader = '') {
+    if (DEBUG) console.log('Generating results from nested tables:', tables);
     if (!tables || tables.length === 0) {
         if (DEBUG) console.warn('No tables found to generate results from.');
         return 'No valid results found';
@@ -91,21 +102,12 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
         if (table.results && Array.isArray(table.results) && table.results.length > 0) {
             if (DEBUG) console.log('Table has results:', table.results);
 
-            // Check if the table has ranges
-            const hasRanges = table.results.some(entry => entry.range);
-
-            if (hasRanges) {
-                const weightedResult = getWeightedRandomResult(table, tableIndex);
-                if (DEBUG) console.log(`Selected weighted result: "${weightedResult}"`);
-                results.push({ header, result: weightedResult });
-            } else {
-                const randomResult = getRandomResult(table);
-                if (DEBUG) console.log(`Selected result: "${randomResult}" from non-ranged list of ${table.results.length} total items.`);
-                results.push({ header, result: randomResult });
-            }
+            const weightedResult = getWeightedRandomResult(table);
+            if (DEBUG) console.log(`Selected weighted result: "${weightedResult}"`);
+            results.push({ header, result: weightedResult });
         } else if (table.subTables) {
             if (DEBUG) console.log('Table has subtables:', table.subTables);
-            const subResults = generateResultsFromTables(table.subTables, table.actionType, header);
+            const subResults = generateResultsFromTables(table.subTables, header);
             if (Array.isArray(subResults)) {
                 subResults.forEach(subResult => {
                     results.push(subResult);
@@ -116,95 +118,47 @@ function generateResultsFromTables(tables, actionType = 'ListNoHeaders', parentH
         } else {
             console.error(`Invalid table detected at index ${tableIndex}. Table:`, table);
         }
+
+        // Handle customDisplay if present
+        if (table.customDisplay) {
+            const customDisplayText = table.customDisplay.replace(/\{(.*?)\}/g, (match, subTableName) => {
+                const subTable = tables.find(t => t.name === subTableName.trim());
+                if (subTable) {
+                    const subResult = getWeightedRandomResult(subTable);
+                    return subResult;
+                }
+                return match; // If subtable not found, return the original placeholder
+            });
+            results.push({ header: 'Custom Display', result: customDisplayText });
+        }
     });
 
-    switch (actionType) {
-        case 'ListWithHeaders':
-            return results.map(result => ({ key: result.header, value: result.result }));
-        case 'SameLineWithSpaces':
-            return results.map(result => result.result).join(' ');
-        case 'SameLineNoSpaces':
-            return results.map(result => result.result).join('');
-        default:
-            return results.map(result => ({ key: result.header, value: result.result }));
-    }
+    return results;
 }
 
-// New function for selecting a weighted random result from tables with ranges
-function getWeightedRandomResult(table, tableIndex) {
-    let ranges = [];
-    let minRange = Infinity;
-    let maxRange = -Infinity;
-
-    table.results.forEach((entry, entryIndex) => {
+// New function for selecting a weighted random result
+function getWeightedRandomResult(table) {
+    let weightedEntries = [];
+    table.results.forEach(entry => {
         if (!entry.value) {
-            console.error(`Invalid entry detected at index ${entryIndex} in table at index ${tableIndex}. Entry:`, entry);
+            console.error('Invalid entry:', entry);
             return;
         }
-
-        let range = entry.range;
-        if (range) {
-            if (range.includes('-')) {
-                const [start, end] = range.split('-').map(Number);
-                for (let i = start; i <= end; i++) {
-                    ranges.push({ value: entry.value, index: i });
-                }
-                minRange = Math.min(minRange, start);
-                maxRange = Math.max(maxRange, end);
-            } else {
-                const value = parseInt(range, 10);
-                ranges.push({ value: entry.value, index: value });
-                minRange = Math.min(minRange, value);
-                maxRange = Math.max(maxRange, value);
-            }
-        } else {
-            console.error(`Invalid range detected at index ${entryIndex} in table at index ${tableIndex}. Entry:`, entry);
+        const [text, weightIndicator] = entry.value.split('^');
+        const weight = weightIndicator ? parseInt(weightIndicator.trim(), 10) : 1;
+        for (let i = 0; i < weight; i++) {
+            weightedEntries.push(text.trim());
         }
     });
 
-    // Check for overlapping ranges
-    let rangeSet = new Set();
-    for (let rangeEntry of ranges) {
-        if (rangeSet.has(rangeEntry.index)) {
-            console.error('Overlapping ranges detected for index:', rangeEntry.index);
-            return 'Error: Overlapping ranges detected';
-        }
-        rangeSet.add(rangeEntry.index);
+    if (weightedEntries.length === 0) {
+        console.error('Error: No valid entries found for weighting.');
+        return 'Error: No valid entries found';
     }
 
-    // Ensure ranges are not empty before proceeding
-    if (ranges.length === 0) {
-        console.error('Error: No valid ranges found in table at index', tableIndex);
-        return 'Error: No valid ranges found';
-    }
-
-    // Generate a random value within the full range
-    const randomValue = Math.floor(Math.random() * (maxRange - minRange + 1)) + minRange;
-    let selectedResult = ranges.find(entry => entry.index === randomValue)?.value;
-
-    if (selectedResult === null || selectedResult === undefined) {
-        // If no match found in ranges, pick a random result
-        const fallbackIndex = Math.floor(Math.random() * table.results.length);
-        selectedResult = table.results[fallbackIndex].value;
-        if (DEBUG) console.warn(`No matching range found for random value ${randomValue}. Falling back to random result at index ${fallbackIndex}`);
-    }
-
-    console.log(`Selected: "${selectedResult}" from weighted list based on range ${minRange}-${maxRange}. Random value: ${randomValue}`);
-    return selectedResult;
+    const randomIndex = Math.floor(Math.random() * weightedEntries.length);
+    return weightedEntries[randomIndex];
 }
-
-// Modified function for selecting a random result from tables without ranges
-function getRandomResult(table) {
-    const randomIndex = Math.floor(Math.random() * table.results.length);
-    if (DEBUG) console.log(`Selecting random result at index ${randomIndex} from table with ${table.results.length} results.`);
-    const result = table.results[randomIndex];
-    if (!result || result.value === undefined || result.value === null) {
-       // console.error(`Error: Invalid result at index ${randomIndex}. Result:`, result);
-        return result;
-    }
-    return result.value;
-}
-
 
 // Serve HTML file
 app.get('/', (req, res) => {

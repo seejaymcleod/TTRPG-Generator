@@ -4,108 +4,107 @@ game: Cairn
 setting: Fantasy
 type: Character
 subtype: none
-actionType: ListWithHeaders
 tables:  
   - name: Physique
     results:
-      - "Athletic"
-      - "Brawny"
-      - "Flabby"
-      - "Lanky"
-      - "Rugged"
-      - "Scrawny"
-      - "Short"
-      - "Statuesque"
-      - "Stout"
-      - "Towering"
+      - Athletic
+      - Brawny
+      - Flabby
+      - Lanky
+      - Rugged
+      - Scrawny
+      - Short
+      - Statuesque
+      - Stout
+      - Towering
 
   - name: Skin
     results:
-      - "Birthmarked"
-      - "Marked"
-      - "Oily"
-      - "Rosy"
-      - "Scarred"
-      - "Soft"
-      - "Tanned"
-      - "Tattooed"
-      - "Weathered"
-      - "Webbed"
+      - Birthmarked
+      - Marked
+      - Oily
+      - Rosy
+      - Scarred
+      - Soft
+      - Tanned
+      - Tattooed
+      - Weathered
+      - Webbed
 
   - name: Hair
     results:
-      - "Bald"
-      - "Braided"
-      - "Curly"
-      - "Filthy"
-      - "Frizzy"
-      - "Long"
-      - "Luxurious"
-      - "Oily"
-      - "Wavy"
-      - "Wispy"
+      - Bald
+      - Braided
+      - Curly
+      - Filthy
+      - Frizzy
+      - Long
+      - Luxurious
+      - Oily
+      - Wavy
+      - Wispy
 
   - name: Face
     results:
-      - "Bony"
-      - "Broken"
-      - "Chiseled"
-      - "Elongated"
-      - "Pale"
-      - "Perfect"
-      - "Rakish"
-      - "Sharp"
-      - "Square"
-      - "Sunken"
+      - Bony
+      - Broken
+      - Chiseled
+      - Elongated
+      - Pale
+      - Perfect
+      - Rakish
+      - Sharp
+      - Square
+      - Sunken
 
   - name: Speech
     results:
-      - "Blunt"
-      - "Booming"
-      - "Cryptic"
-      - "Droning"
-      - "Formal"
-      - "Gravelly"
-      - "Precise"
-      - "Squeaky"
-      - "Stuttering"
-      - "Whispery"
+      - Blunt
+      - Booming
+      - Cryptic
+      - Droning
+      - Formal
+      - Gravelly
+      - Precise
+      - Squeaky
+      - Stuttering
+      - Whispery
 
   - name: Clothing
     results:
-      - "Antique"
-      - "Bloody"
-      - "Elegant"
-      - "Filthy"
-      - "Foreign"
-      - "Frayed"
-      - "Frumpy"
-      - "Livery"
-      - "Rancid"
-      - "Soiled"
+      - Antique
+      - Bloody
+      - Elegant
+      - Filthy
+      - Foreign
+      - Frayed
+      - Frumpy
+      - Livery
+      - Rancid
+      - Soiled
 
   - name: Virtue
     results:
-      - "Ambitious"
-      - "Cautious"
-      - "Courageous"
-      - "Disciplined"
-      - "Gregarious"
-      - "Honorable"
-      - "Humble"
-      - "Merciful"
-      - "Serene"
-      - "Tolerant"
+      - Ambitious
+      - Cautious
+      - Courageous
+      - Disciplined
+      - Gregarious
+      - Honorable
+      - Humble
+      - Merciful
+      - Serene
+      - Tolerant
 
   - name: Vice
     results:
-      - "Aggressive"
-      - "Bitter"
-      - "Craven"
-      - "Deceitful"
-      - "Greedy"
-      - "Lazy"
-      - "Nervous"
-      - "Rude"
-      - "Vain"
-      - "Vengeful"
+      - Aggressive
+      - Bitter
+      - Craven
+      - Deceitful
+      - Greedy
+      - Lazy
+      - Nervous
+      - Rude
+      - Vain
+      - Vengeful

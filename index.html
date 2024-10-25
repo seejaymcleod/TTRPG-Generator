@@ -50,7 +50,6 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            /*width: 300px;*/
             flex: 1;
         }
 
@@ -82,9 +81,10 @@
             border: 1px solid #ccc;
             background-color: #fff;
             border-radius: 5px;
-            height: 30px; /* Keep consistent height with textboxes */
-            align-self: center; /* Aligns the button with other elements vertically */
+            height: 30px;
+            align-self: center;
         }
+
         #contentWrapper {
             display: flex;
             flex: 1;
@@ -125,16 +125,6 @@
             overflow-y: auto;
         }
 
-        .header {
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: left;
-        }
-
-        .disabled-option {
-            color: #aaa;
-        }
-
         .generation-object {
             margin: 10px;
             padding: 10px;
@@ -155,51 +145,11 @@
         .dragging {
             opacity: 0.5;
         }
-
-        /* NPC specific styling */
-        .npc-object {
-            border: 2px solid #007bff;
-            background-color: #e6f0ff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-        }
-
-        .npc-header {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #333;
-        }
-
-        .npc-notes {
-            margin-top: 10px;
-        }
-
-            .npc-notes textarea {
-                width: 100%;
-                height: 50px;
-                padding: 5px;
-                font-size: 1em;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-            }
-
-        .npc-details {
-            margin-top: 10px;
-        }
-
-        .detail-key {
-            font-weight: bold;
-        }
-
-        .npc-details div {
-            margin-bottom: 5px;
-        }
     </style>
 </head>
 <body>
     <div id="titleContainer">
-        <h1>TTRPG Generator - Version 119</h1>
+        <h1>TTRPG Generator - Version 120</h1>
     </div>
 
     <div id="searchContainer">
@@ -350,7 +300,6 @@
                 const button = document.createElement('button');
                 button.className = 'matching-table-button';
                 button.textContent = `${table.game ?? 'Unknown'} : ${table.tablename ?? 'Undefined'}`;
-                console.log('Button Text:', button.textContent); // Debugging output
                 button.onclick = () => {
                     displayTableDetails(table);
                     clearGeneratedList();
@@ -359,52 +308,6 @@
 
                 matchingTablesContainer.appendChild(button);
             });
-        }
-
-        function displayTableDetails(table) {
-            const tableHeadersContainer = document.getElementById('tableHeaders');
-            tableHeadersContainer.innerHTML = '';
-
-            const tableNameTitle = document.createElement('h2');
-            tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
-            tableHeadersContainer.appendChild(tableNameTitle);
-
-            const details = [
-                { key: 'game', label: 'Game' },
-                { key: 'type', label: 'Type' },
-                { key: 'setting', label: 'Setting' }
-            ];
-
-            details.forEach(detail => {
-                if (table[detail.key]) {
-                    const detailDiv = document.createElement('div');
-                    detailDiv.className = 'header';
-                    detailDiv.textContent = `${detail.label}: ${table[detail.key]}`;
-                    tableHeadersContainer.appendChild(detailDiv);
-                }
-            });
-
-            document.getElementById('generationControls').style.display = 'block';
-            document.getElementById('generationSlider').value = 1;
-            document.getElementById('generationValue').textContent = 1;
-        }
-
-        function clearFilter(filterId) {
-            const choicesInstance = window[`${filterId.replace('Filter', 'Choices')}`];
-            if (choicesInstance) {
-                choicesInstance.removeActiveItems();
-                console.log('Active items cleared for:', filterId);
-            } else {
-                console.warn('Choices instance not found for:', filterId);
-            }
-            applyFilters();
-        }
-
-        function resetFilters() {
-            window.gameChoices.removeActiveItems();
-            window.typeChoices.removeActiveItems();
-            window.settingChoices.removeActiveItems();
-            applyFilters();
         }
 
         function generateContent() {
@@ -437,66 +340,27 @@
                         console.log(`Processing result ${index}:`, result); // Additional debug
 
                         const objDiv = document.createElement('div');
+                        objDiv.className = 'generation-object';
                         objDiv.setAttribute('draggable', 'true');
                         objDiv.dataset.type = selectedTable.type;
                         objDiv.dataset.id = `${selectedTable.filename}-${Date.now()}-${index}`;
+                        objDiv.dataset.address = result.address; // Store the address invisibly in a data attribute
 
-                        if (selectedTable.type.toLowerCase() === 'npc') {
-                            // NPC-specific structure
-                            objDiv.className = 'generation-object npc';
-
-                            const header = `<strong>NPC</strong>`;
-
-                            // Create NPC details in a vertical list
-                            const npcDetails = document.createElement('div');
-                            npcDetails.className = 'npc-details';
-
-                            if (Array.isArray(result)) {
-                                result.forEach(item => {
-                                    if (item.key && item.value && item.key !== 'name' && item.key !== 'title' && item.key !== 'ancestry') {
-                                        const detailDiv = document.createElement('div');
-                                        detailDiv.innerHTML = `<span class="detail-key">${item.key}:</span> ${item.value}`;
-                                        npcDetails.appendChild(detailDiv);
-                                    } else {
-                                        console.error(`Invalid item in result at index ${index}:`, item);
-                                    }
-                                });
-                            } else {
-                                console.error(`Unexpected result format for NPC at index ${index}:`, result);
-                            }
-
-                            objDiv.innerHTML = `${header}`;
-                            objDiv.appendChild(npcDetails);
-
-                            // Add Notes section
-                            const notesDiv = document.createElement('div');
-                            notesDiv.className = 'notes';
-                            notesDiv.innerHTML = `<label>Notes:</label><textarea></textarea>`;
-                            objDiv.appendChild(notesDiv);
-
+                        // Create the content to be displayed
+                        let content = `<strong>${selectedTable.type}</strong><br>`;
+                        if (Array.isArray(result)) {
+                            result.forEach(item => {
+                                if (item.key && item.value) {
+                                    content += `<span class="detail-key">${item.key}:</span> ${item.value}<br>`;
+                                } else {
+                                    content += `${item}<br>`;
+                                }
+                            });
                         } else {
-                            // Handling for other content types (e.g., Shops)
-                            objDiv.className = 'generation-object';
-
-                            // Determine how to handle result based on actionType
-                            let defaultContent = `<strong>${selectedTable.type}</strong><br>`;
-
-                            if (Array.isArray(result)) {
-                                // If result is an array, handle accordingly (e.g., ListWithHeaders)
-                                result.forEach(item => {
-                                    if (item.key && item.value) {
-                                        defaultContent += `<span class="detail-key">${item.key}:</span> ${item.value}<br>`;
-                                    } else {
-                                        defaultContent += `${item}<br>`;
-                                    }
-                                });
-                            } else {
-                                // Otherwise, just add the result
-                                defaultContent += `${result}`;
-                            }
-
-                            objDiv.innerHTML = defaultContent;
+                            content += `${result.result}`;
                         }
+
+                        objDiv.innerHTML = content;
 
                         // Add drag event handlers
                         objDiv.addEventListener('dragstart', handleDragStart);
@@ -509,8 +373,6 @@
                     console.error('Error generating content:', error);
                 });
         }
-
-
 
         function updateGenerationValue() {
             const generationSlider = document.getElementById('generationSlider');
@@ -543,7 +405,51 @@
             }
         });
 
-        applyFilters();
+        function clearFilter(filterId) {
+            const choicesInstance = window[`${filterId.replace('Filter', 'Choices')}`];
+            if (choicesInstance) {
+                choicesInstance.removeActiveItems();
+                console.log('Active items cleared for:', filterId);
+            } else {
+                console.warn('Choices instance not found for:', filterId);
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            window.gameChoices.removeActiveItems();
+            window.typeChoices.removeActiveItems();
+            window.settingChoices.removeActiveItems();
+            applyFilters();
+        }
+
+        function displayTableDetails(table) {
+            const tableHeadersContainer = document.getElementById('tableHeaders');
+            tableHeadersContainer.innerHTML = '';
+
+            const tableNameTitle = document.createElement('h2');
+            tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
+            tableHeadersContainer.appendChild(tableNameTitle);
+
+            const details = [
+                { key: 'game', label: 'Game' },
+                { key: 'type', label: 'Type' },
+                { key: 'setting', label: 'Setting' }
+            ];
+
+            details.forEach(detail => {
+                if (table[detail.key]) {
+                    const detailDiv = document.createElement('div');
+                    detailDiv.className = 'header';
+                    detailDiv.textContent = `${detail.label}: ${table[detail.key]}`;
+                    tableHeadersContainer.appendChild(detailDiv);
+                }
+            });
+
+            document.getElementById('generationControls').style.display = 'block';
+            document.getElementById('generationSlider').value = 1;
+            document.getElementById('generationValue').textContent = 1;
+        }
     </script>
 </body>
 </html>
