@@ -40,7 +40,7 @@
 
         #filtersContainer {
             display: flex;
-            padding: 15px;
+            padding: 6px;
             background-color: #e0e0e0;
             border-bottom: 2px solid #ccc;
             gap: 15px;
@@ -50,7 +50,12 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            width: 300px;
+            /*width: 300px;*/
+            flex: 1;
+        }
+
+        .choices {
+            margin-bottom: 0 !important;
         }
 
         .filter-dropdown {
@@ -72,14 +77,14 @@
 
         #resetButton {
             margin-left: 20px;
-            padding: 10px;
             font-size: 1em;
             cursor: pointer;
             border: 1px solid #ccc;
             background-color: #fff;
             border-radius: 5px;
+            height: 30px; /* Keep consistent height with textboxes */
+            align-self: center; /* Aligns the button with other elements vertically */
         }
-
         #contentWrapper {
             display: flex;
             flex: 1;
