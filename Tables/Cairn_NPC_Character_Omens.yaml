@@ -1,0 +1,28 @@
+tablename: Character Omens
+filename: Cairn_NPC_Character_Omens.yaml
+game: Cairn
+setting: Fantasy
+type: Character
+subtype: none
+actionType: SameLineNoSpaces
+tables:  
+  - name: Character Omens
+    results:
+      - "The once rich waters of a life-giving river have turned black and putrid, rotting the land and sickening those who drink from it. A village elder points to some recent desecration as the cause, but most do not heed their words."
+      - "It feels like winter has arrived too quickly this year. Frost and snows paint their appearance much earlier than expected. There is a smell of iron to the frost found in windows, ponds, and cracks in the ground. It almost looks like a map."
+      - "A thick, unnatural fog has begun encroaching upon an ancient and holy tree. It is said to be the work of a great forest spirit, angered by nearby deforestation."
+      - "The night sky glows dimmer each evening, as if stars are disappearing one by one. Rumors of hellish creatures capturing farmers and pulling them into the Roots are spreading like wildfire. Village elders believe the two are connected."
+      - "The songbirds of the Wood have fallen eerily silent as of late. Hunters claim that a spectral figure has been spotted wandering the forest, igniting only an avenging encounter."
+      - "Strange, tear-shaped stones have been found throughout the region, sparking a 'gold rush' of sorts for jewelers and thieves alike. The locals believe they are the tears of the earth itself, weeping for a great tragedy yet to come."
+      - "Swarming pests gnaw away at the edges of doors, and farmers speak of a loud buzzing sound emanating from deep within the Wood. They say that the sound is getting closer."
+      - "The moon turns a deep crimson, bathing the night in an eerie, blood-red glow. Stray whispers of a divide between realms as at its weakest in centuries and fear what may emerge from the other side."
+      - "A right-blooming flower once thought extinct is sprouting up throughout the Wood. Its scent is intoxicating but also causes vivid nightmares."
+      - "Local livestock have grown increasingly agitated and unmanageable as of late. An old shepherd says it is due to an unsettling howl that emanates from the Wood each full moon."
+      - "Swarm of insects are fleeing from the Wood in droves, destroying any flowers and structures they come across. The sound of their wings has a familiar tune as they pass overhead, like a forgotten nursery rhyme."
+      - "Hunters talk of a curse that befalls any who kill any beast with a streak of white fur. Soon after, they are found dead in their homes. Each day, there are fewer and fewer creatures to hunt."
+      - "Folks say that a faint laughter can be heard echoing out of wells all over the city, and that the echoes change to sobs at night."
+      - "The constellations have slowly started shifting in the night sky, forming unfamiliar patterns that have strangers and sages perplexed. Even the ambient seems disturbed."
+      - "An ancient tree at the heart of a sleepy village has suddenly withered and died, despite showing no signs of disease. After its trunk was cut, a shadowy hand was found at its core."
+      - "Statues have been weeping blood for months on end, and the wombs of every maiden have lain barren since. A single child has been the only exception, hidden away by elders overcome with fear and dread."
+      - "A foul tide is behaving oddly, displaying heightened aggression or fleeing from the entirety. Hunters talk of a shadowy figure that roams the Wood, calling to the animals."
+      - "Local streams have become riotous in recent weeks after multiple claims of a red-robed figure appearing in their children's dreams, uttering the same warning: A fire is coming and it will consume everything."
