@@ -50,6 +50,70 @@ app.post('/api/generate', (req, res) => {
   }
 });
 
+// New endpoint for rerolling specific items with context preservation
+app.post('/api/reroll', (req, res) => {
+  const { table, header, context: clientContext } = req.body;
+  if (!table) {
+    return res.status(400).json({ error: 'Invalid request data: table is required' });
+  }
+
+  const selectedTable = tables.find(t => t.filename === table.filename);
+  if (!selectedTable) {
+    return res.status(404).json({ error: 'Table not found.' });
+  }
+
+  try {
+    // Find the specific subtable matching the header
+    let targetTable = findSpecificTable(selectedTable, header);
+    
+    if (!targetTable) {
+      return res.status(404).json({ error: `Could not find subtable matching header: ${header}` });
+    }
+
+    // Create a context object from client-provided context (if any)
+    const context = clientContext || {};
+    
+    // Process just this table with the preserved context
+    const result = processTable(targetTable, header, tables, context);
+    
+    if (DEBUG) {
+      console.log(`Rerolled "${header}" with result:`, JSON.stringify(result, null, 2));
+      console.log(`Context after reroll:`, context);
+    }
+    
+    res.json({ result, context });
+  } catch (error) {
+    console.error('Error rerolling result:', error);
+    res.status(500).json({ error: 'Failed to reroll result' });
+  }
+});
+
+// Helper function to find a specific table by its header/name
+function findSpecificTable(rootTable, targetName) {
+  // Check if this is the table we're looking for
+  if ((rootTable.name === targetName) || (rootTable.tablename === targetName)) {
+    return rootTable;
+  }
+  
+  // Check tables array
+  if (rootTable.tables && Array.isArray(rootTable.tables)) {
+    for (const subTable of rootTable.tables) {
+      const found = findSpecificTable(subTable, targetName);
+      if (found) return found;
+    }
+  }
+  
+  // Check subTables array
+  if (rootTable.subTables && Array.isArray(rootTable.subTables)) {
+    for (const subTable of rootTable.subTables) {
+      const found = findSpecificTable(subTable, targetName);
+      if (found) return found;
+    }
+  }
+  
+  return null;
+}
+
 // Function to load all YAML files
 function loadAllTables() {
   try {
@@ -127,8 +191,6 @@ function getWeightedRandomResult(table) {
 }
 
 // Process a customDisplay string.
-// - For normal tokens like "{Syllable2, 0.5}", parse an optional weight & skip/keep based on a random roll.
-// - For tokens starting with "selectedResult", do a top-level table lookup, then subtable lookup in the current table.
 function processCustomDisplay(table, allTables, context) {
   if (DEBUG) console.log('Processing customDisplay for table:', table);
 
@@ -214,53 +276,66 @@ function processCustomDisplay(table, allTables, context) {
     let parts = tokenContent.split(',');
     let tableToLookup = parts[1] ? parts[1].trim() : "Ancestry";
 
-    // Find the root table object
-    const rootTable = findRootTable(table, allTables);
-    
-    // First try to find the table within the current hierarchy
-    let refTable = findTableInHierarchy(rootTable, tableToLookup);
-    
-    if (DEBUG) {
-      console.log(`Looking for table "${tableToLookup}" within current hierarchy: ${refTable ? "Found" : "Not found"}`);
-    }
+    // Check if we already have a cached result for this dependency
+    let pickedResult = null;
+    if (context && context[tableToLookup]) {
+      pickedResult = context[tableToLookup];
+      if (DEBUG) {
+        console.log(`Using cached result "${pickedResult}" for table "${tableToLookup}" from context`);
+      }
+    } else {
+      // Find the root table object
+      const rootTable = findRootTable(table, allTables);
+      
+      // First try to find the table within the current hierarchy
+      let refTable = findTableInHierarchy(rootTable, tableToLookup);
+      
+      if (DEBUG) {
+        console.log(`Looking for table "${tableToLookup}" within current hierarchy: ${refTable ? "Found" : "Not found"}`);
+      }
 
-    // If not found in hierarchy, fallback to global search
-    if (!refTable) {
-      for (let i = 0; i < allTables.length; i++) {
-        const t = allTables[i];
-        const tableName = t.name || t.tablename;
-        if (tableName && tableName.toLowerCase() === tableToLookup.toLowerCase()) {
-          refTable = t;
-          break;
+      // If not found in hierarchy, fallback to global search
+      if (!refTable) {
+        for (let i = 0; i < allTables.length; i++) {
+          const t = allTables[i];
+          const tableName = t.name || t.tablename;
+          if (tableName && tableName.toLowerCase() === tableToLookup.toLowerCase()) {
+            refTable = t;
+            break;
+          }
+        }
+        
+        if (DEBUG && !refTable) {
+          console.log(`Deferred token: Could not find a table named "${tableToLookup}" anywhere.`);
+          console.log(`Available top-level table names:`, allTables.map(t => t.name || t.tablename));
         }
       }
+
+      if (!refTable) {
+        return; // Skip further processing for this token
+      }
+
+      if (!refTable.results || !Array.isArray(refTable.results) || refTable.results.length === 0) {
+        if (DEBUG) {
+          console.log(`Deferred token: Found table "${tableToLookup}" but it has no valid results.`);
+        }
+        return; // Skip further processing for this token
+      }
+
+      // Pick from that table and cache the result in context
+      pickedResult = getWeightedRandomResult(refTable);
+      if (context) {
+        context[tableToLookup] = pickedResult;
+      }
       
-      if (DEBUG && !refTable) {
-        console.log(`Deferred token: Could not find a table named "${tableToLookup}" anywhere.`);
-        console.log(`Available top-level table names:`, allTables.map(t => t.name || t.tablename));
-      }
-    }
-
-    if (!refTable) {
-      return; // Skip further processing for this token
-    }
-
-    if (!refTable.results || !Array.isArray(refTable.results) || refTable.results.length === 0) {
       if (DEBUG) {
-        console.log(`Deferred token: Found table "${tableToLookup}" but it has no valid results.`);
+        console.log(
+          `Deferred token: Picked "${pickedResult}" from table "${tableToLookup}" and stored in context.`
+        );
       }
-      return; // Skip further processing for this token
     }
 
-    // 2) Pick from that table
-    let pickedResult = getWeightedRandomResult(refTable);
-    if (DEBUG) {
-      console.log(
-        `Deferred token: Picked "${pickedResult}" from table "${tableToLookup}".`
-      );
-    }
-
-    // 3) Now use that pick as the subtable name in the *current* table
+    // Now use that pick as the subtable name in the *current* table
     if (table.subTables) {
       let subTable = null;
       for (let i = 0; i < table.subTables.length; i++) {
@@ -361,11 +436,18 @@ function processTable(table, parentHeader, allTables, context) {
 
   // 1) If the table has customDisplay => parse it
   if (table.customDisplay) {
-    return { header, result: processCustomDisplay(table, allTables, context) };
+    const result = processCustomDisplay(table, allTables, context);
+    return { header, result, _tableName: table.name }; // Store table name for reference
   }
   // 2) If the table has results => do a weighted pick
   else if (table.results && Array.isArray(table.results) && table.results.length > 0) {
-    return { header, result: getWeightedRandomResult(table) };
+    const result = getWeightedRandomResult(table);
+    // Store result in context if this is a dependency table
+    if (context && header) {
+      context[header] = result;
+      if (DEBUG) console.log(`Stored result "${result}" for table "${header}" in context`);
+    }
+    return { header, result, _tableName: table.name };
   }
   // 3) If the table has subTables => gather from each subTable
   else if (table.tables && Array.isArray(table.tables)) {
@@ -376,7 +458,7 @@ function processTable(table, parentHeader, allTables, context) {
         subResults.push(subResult);
       }
     });
-    return { header, result: subResults };
+    return { header, result: subResults, _tableName: table.name };
   }
   // 4) Fallback
   else {
