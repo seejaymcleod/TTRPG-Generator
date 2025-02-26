@@ -159,20 +159,18 @@
       background-color: white;
     }
     .reroll-btn {
-      margin-left: 8px; /* Reduced from 10px to 8px */
-      padding: 3px 8px; /* Reduced from 5px 10px */
-      font-size: 0.8em;
+      margin-left: 8px;
+      padding: 0; /* Remove padding */
+      background: none; /* Remove background */
+      border: none; /* Remove border */
       cursor: pointer;
-      background-color: #e7e7e7;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      transition: background-color 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.2s; /* Add transition for hover effect */
     }
     .reroll-btn:hover {
-      background-color: #d7d7d7;
+      transform: scale(1.2); /* Scale up on hover instead of changing background */
     }
     .card-title {
       margin-top: 0;
@@ -181,11 +179,37 @@
       color: #444;
       border-bottom: 1px solid #ddd;
       padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .reroll-all-btn {
+      display: flex;
+      align-items: center;
+      font-size: 0.7em;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      padding: 0;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .reroll-all-btn:hover {
+      transform: scale(1.05);
+      color: #333;
+    }
+    .reroll-all-btn img {
+      width: 18px;
+      height: 18px;
+      margin-left: 6px;
+      border-radius: 3px;
+      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
     }
     .reroll-btn img {
-      width: 16px;
-      height: 16px;
-      vertical-align: middle;
+      width: 24px; /* Slightly larger icon */
+      height: 24px;
+      border-radius: 4px; /* Add rounded corners to the image */
+      filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3)); /* Add subtle shadow */
     }
   </style>
 </head>
@@ -397,10 +421,25 @@
           generationContainer.className = 'generation-container';
           generationContainer.dataset.index = index;
           
-          // Create a title using the table name instead of "Generation X"
-          const cardTitle = document.createElement('h3');
+          // Create a title container with Reroll All button
+          const cardTitle = document.createElement('div');
           cardTitle.className = 'card-title';
-          cardTitle.textContent = selectedTable.tablename || 'Result';
+          
+          // Add the title text
+          const titleText = document.createElement('span');
+          titleText.textContent = selectedTable.tablename || 'Result';
+          cardTitle.appendChild(titleText);
+          
+          // Add the Reroll All button
+          const rerollAllBtn = document.createElement('button');
+          rerollAllBtn.className = 'reroll-all-btn';
+          rerollAllBtn.onclick = () => rerollAllContent(generationContainer);
+          rerollAllBtn.innerHTML = `
+            Reroll All
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All" title="Reroll All">
+          `;
+          cardTitle.appendChild(rerollAllBtn);
+          
           generationContainer.appendChild(cardTitle);
           
           // Extract initial context from result
@@ -665,6 +704,67 @@
       else if (Array.isArray(item)) {
         item.forEach(subItem => extractContext(subItem, context));
       }
+    }
+
+    // New function to reroll an entire generation/card
+    function rerollAllContent(generationContainer) {
+      if (!currentSelectedTable) {
+        console.error('No table currently selected');
+        return;
+      }
+
+      const generationIndex = generationContainer.dataset.index;
+      const context = {}; // Create a fresh context for full rerolls
+      
+      console.log(`Rerolling entire card ${generationIndex}`);
+      
+      // Show loading indicator
+      generationContainer.style.opacity = '0.6';
+      
+      // Call the API to generate a single new result
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          table: currentSelectedTable, 
+          number: 1 
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(`Server responded with an error: ${err.error}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.results && data.results.length > 0) {
+          // Store the new result's context
+          generationContexts[generationIndex] = {};
+          extractContext(data.results[0], generationContexts[generationIndex]);
+          
+          // Clear and rebuild the card content (keeping the header)
+          const cardHeader = generationContainer.querySelector('.card-title');
+          generationContainer.innerHTML = '';
+          generationContainer.appendChild(cardHeader);
+          
+          // Add the new content
+          const contentWrapper = document.createElement('div');
+          contentWrapper.innerHTML = renderResultItem(data.results[0], true, generationIndex);
+          generationContainer.appendChild(contentWrapper);
+          
+          // Reset opacity
+          generationContainer.style.opacity = '1';
+        } else {
+          throw new Error('No results returned');
+        }
+      })
+      .catch(error => {
+        console.error('Error rerolling all content:', error);
+        generationContainer.style.opacity = '1';
+        alert('Failed to reroll content. Please try again.');
+      });
     }
   </script>
 </body>
