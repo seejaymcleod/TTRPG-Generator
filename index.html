@@ -117,6 +117,7 @@
       background-color: #f0f0f0;
       border: 1px solid #ddd;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
     }
     .generation-object {
       margin: 10px;
@@ -182,6 +183,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      cursor: grab;
+    }
+    .card-title:active {
+      cursor: grabbing;
     }
     .reroll-all-btn {
       display: flex;
@@ -210,6 +215,75 @@
       height: 24px;
       border-radius: 4px; /* Add rounded corners to the image */
       filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3)); /* Add subtle shadow */
+    }
+    .card-title-text {
+      flex-grow: 1;
+    }
+    .card-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .reroll-all-btn, .copy-btn, .delete-card-btn {
+      display: flex;
+      align-items: center;
+      font-size: 0.7em;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      padding: 0;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .reroll-all-btn:hover, .copy-btn:hover {
+      transform: scale(1.05);
+      color: #333;
+    }
+    .delete-card-btn:hover {
+      transform: scale(1.05);
+      color: #ff3333;
+    }
+    .reroll-all-btn img, .copy-btn img, .delete-card-btn img {
+      width: 18px;
+      height: 18px;
+      margin-left: 6px;
+      border-radius: 3px;
+      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
+    }
+    .toast-message {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .toast-visible {
+      opacity: 1;
+    }
+    .delete-btn {
+      display: none;
+    }
+    .saved-cards {
+      width: 25%;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-left: 2px solid #ccc;
+      overflow-y: auto;
+    }
+    .card-being-dragged {
+      opacity: 0.6;
+      transform: scale(0.98);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+    .drop-target-highlight {
+      background-color: #e6f7ff;
+      border: 2px dashed #66b3ff;
     }
   </style>
 </head>
@@ -262,8 +336,8 @@
       </div>
     </div>
 
-    <div id="savedGenerations" class="saved-generations">
-      <h2>Saved Generations</h2>
+    <div id="savedGenerations" class="saved-cards">
+      <h2>Saved Cards</h2>
     </div>
   </div>
 
@@ -421,14 +495,54 @@
           generationContainer.className = 'generation-container';
           generationContainer.dataset.index = index;
           
-          // Create a title container with Reroll All button
+          // Make it draggable
+          generationContainer.draggable = true;
+          generationContainer.addEventListener('dragstart', handleCardDragStart);
+          generationContainer.addEventListener('dragend', handleCardDragEnd);
+          
+          // Create a title container with buttons
+          const cardTitle = document.createElement('div');
+          
+          const generationContainer = document.createElement('div');
+          generationContainer.className = 'generation-container';
+          generationContainer.dataset.index = index;
+          
+          // Make it draggable
+          generationContainer.draggable = true;
+          generationContainer.addEventListener('dragstart', handleCardDragStart);
+          generationContainer.addEventListener('dragend', handleCardDragEnd);
+          
+          // Add delete button
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.innerHTML = '&times;';
+          deleteBtn.title = 'Delete card';
+          deleteBtn.addEventListener('click', () => deleteCard(generationContainer));
+          generationContainer.appendChild(deleteBtn);
+          
+          // Create a title container with buttons
           const cardTitle = document.createElement('div');
           cardTitle.className = 'card-title';
           
           // Add the title text
           const titleText = document.createElement('span');
+          titleText.className = 'card-title-text';
           titleText.textContent = selectedTable.tablename || 'Result';
           cardTitle.appendChild(titleText);
+          
+          // Create buttons container
+          const cardActions = document.createElement('div');
+          cardActions.className = 'card-actions';
+          
+          // Add the Copy button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.onclick = () => copyToMarkdown(generationContainer);
+          copyBtn.innerHTML = `
+            Copy
+            <img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">
+          `;
+          cardActions.appendChild(copyBtn);
           
           // Add the Reroll All button
           const rerollAllBtn = document.createElement('button');
@@ -438,7 +552,10 @@
             Reroll All
             <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All" title="Reroll All">
           `;
-          cardTitle.appendChild(rerollAllBtn);
+          cardActions.appendChild(rerollAllBtn);
+          
+          // Add the actions to the card title
+          cardTitle.appendChild(cardActions);
           
           generationContainer.appendChild(cardTitle);
           
@@ -765,6 +882,136 @@
         generationContainer.style.opacity = '1';
         alert('Failed to reroll content. Please try again.');
       });
+    }
+
+    // Function to convert card content to markdown and copy to clipboard
+    function copyToMarkdown(generationContainer) {
+      // Get the card title
+      const cardTitle = generationContainer.querySelector('.card-title-text').textContent;
+      
+      // Extract all the rows
+      const rows = generationContainer.querySelectorAll('.result-row');
+      let markdown = `# ${cardTitle}\n\n`;
+      
+      // Process each row
+      rows.forEach(row => {
+        const header = row.querySelector('.result-header').textContent;
+        const content = row.querySelector('.result-content').textContent.trim();
+        markdown += `**${header}**: ${content}\n`;
+      });
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(markdown)
+        .then(() => {
+          // Show success toast
+          showToast('Copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+          showToast('Failed to copy to clipboard');
+        });
+    }
+    
+    // Function to show a toast notification
+    function showToast(message, duration = 2000) {
+      // Check if a toast already exists
+      let toast = document.querySelector('.toast-message');
+      
+      // If not, create one
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast-message';
+        document.body.appendChild(toast);
+      }
+      
+      // Update the toast message
+      toast.textContent = message;
+      toast.classList.add('toast-visible');
+      
+      // Hide the toast after duration
+      setTimeout(() => {
+        toast.classList.remove('toast-visible');
+      }, duration);
+    }
+
+    // Drag and drop handlers for cards
+    function handleCardDragStart(e) {
+      e.dataTransfer.setData('text/plain', this.dataset.index);
+      this.classList.add('card-being-dragged');
+      
+      // Allow the card to be copied to the saved area
+      e.dataTransfer.effectAllowed = 'copy';
+    }
+
+    function handleCardDragEnd(e) {
+      this.classList.remove('card-being-dragged');
+      
+      // Remove highlight from drop targets
+      document.querySelectorAll('.drop-target-highlight').forEach(el => {
+        el.classList.remove('drop-target-highlight');
+      });
+    }
+
+    // Add event listeners to the saved cards area
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedArea = document.getElementById('savedGenerations');
+      
+      // Update handlers
+      savedArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('drop-target-highlight');
+        e.dataTransfer.dropEffect = 'copy';
+      });
+      
+      savedArea.addEventListener('dragleave', function(e) {
+        this.classList.remove('drop-target-highlight');
+      });
+      
+      savedArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('drop-target-highlight');
+        
+        const cardIndex = e.dataTransfer.getData('text/plain');
+        const originalCard = document.querySelector(`.generation-container[data-index="${cardIndex}"]`);
+        
+        if (!originalCard) return;
+        
+        // Clone the card
+        const cardClone = originalCard.cloneNode(true);
+        const newIndex = `saved-${Date.now()}`;
+        cardClone.dataset.index = newIndex;
+        
+        // Add delete button functionality to the cloned card
+        const deleteBtn = cardClone.querySelector('.delete-btn');
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', () => deleteCard(cardClone));
+        }
+        
+        // Add the card to the saved area
+        this.appendChild(cardClone);
+        
+        // Show confirmation
+        showToast('Card saved!');
+      });
+    });
+
+    // Function to delete a card
+    function deleteCard(card) {
+      if (confirm('Are you sure you want to delete this card?')) {
+        card.remove();
+        showToast('Card deleted');
+      }
+    }
+
+    // Remove the old drag handlers that we're not using anymore
+    function handleDragStart(e) {
+      // This function is deprecated - only kept for reference
+      console.warn('handleDragStart is deprecated');
+    }
+
+    function handleDragEnd() {
+      // This function is deprecated - only kept for reference
+      console.warn('handleDragEnd is deprecated');
     }
   </script>
 </body>
