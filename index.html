@@ -502,26 +502,6 @@
           
           // Create a title container with buttons
           const cardTitle = document.createElement('div');
-          
-          const generationContainer = document.createElement('div');
-          generationContainer.className = 'generation-container';
-          generationContainer.dataset.index = index;
-          
-          // Make it draggable
-          generationContainer.draggable = true;
-          generationContainer.addEventListener('dragstart', handleCardDragStart);
-          generationContainer.addEventListener('dragend', handleCardDragEnd);
-          
-          // Add delete button
-          const deleteBtn = document.createElement('button');
-          deleteBtn.className = 'delete-btn';
-          deleteBtn.innerHTML = '&times;';
-          deleteBtn.title = 'Delete card';
-          deleteBtn.addEventListener('click', () => deleteCard(generationContainer));
-          generationContainer.appendChild(deleteBtn);
-          
-          // Create a title container with buttons
-          const cardTitle = document.createElement('div');
           cardTitle.className = 'card-title';
           
           // Add the title text
@@ -537,7 +517,10 @@
           // Add the Copy button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
-          copyBtn.onclick = () => copyToMarkdown(generationContainer);
+          copyBtn.onclick = (e) => {
+            e.stopPropagation(); // Prevent drag when clicking buttons
+            copyToMarkdown(generationContainer);
+          };
           copyBtn.innerHTML = `
             Copy
             <img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">
@@ -547,12 +530,28 @@
           // Add the Reroll All button
           const rerollAllBtn = document.createElement('button');
           rerollAllBtn.className = 'reroll-all-btn';
-          rerollAllBtn.onclick = () => rerollAllContent(generationContainer);
+          rerollAllBtn.onclick = (e) => {
+            e.stopPropagation(); // Prevent drag when clicking buttons
+            rerollAllContent(generationContainer);
+          };
           rerollAllBtn.innerHTML = `
-            Reroll All
+            Reroll
             <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All" title="Reroll All">
           `;
           cardActions.appendChild(rerollAllBtn);
+          
+          // Add the Delete button (in the action bar instead of corner)
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-card-btn';
+          deleteBtn.onclick = (e) => {
+            e.stopPropagation(); // Prevent drag when clicking buttons
+            deleteCard(generationContainer);
+          };
+          deleteBtn.innerHTML = `
+            Delete
+            <img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">
+          `;
+          cardActions.appendChild(deleteBtn);
           
           // Add the actions to the card title
           cardTitle.appendChild(cardActions);
@@ -934,8 +933,21 @@
       }, duration);
     }
 
-    // Drag and drop handlers for cards
+    // Improved drag and drop handlers for cards
     function handleCardDragStart(e) {
+      // Only allow dragging from the title area, not the buttons
+      if (e.target.closest('.reroll-all-btn, .copy-btn, .delete-card-btn')) {
+        e.preventDefault();
+        return;
+      }
+      
+      // Check if the card is in the saved area and prevent dragging within saved area
+      const inSavedArea = this.closest('#savedGenerations');
+      if (inSavedArea) {
+        e.preventDefault();
+        return;
+      }
+      
       e.dataTransfer.setData('text/plain', this.dataset.index);
       this.classList.add('card-being-dragged');
       
@@ -976,16 +988,61 @@
         
         if (!originalCard) return;
         
-        // Clone the card
+        // Check if this card already exists in the saved area by comparing content
+        const cardTitle = originalCard.querySelector('.card-title-text').textContent;
+        
+        // Get all headers and contents from the original card to create a unique signature
+        const originalHeaders = Array.from(originalCard.querySelectorAll('.result-header')).map(h => h.textContent);
+        const originalContents = Array.from(originalCard.querySelectorAll('.result-content')).map(c => c.textContent);
+        const cardSignature = JSON.stringify({ title: cardTitle, headers: originalHeaders, contents: originalContents });
+        
+        // Check if a card with the same signature already exists
+        let isDuplicate = false;
+        const savedCards = savedArea.querySelectorAll('.generation-container');
+        
+        savedCards.forEach(savedCard => {
+          const savedHeaders = Array.from(savedCard.querySelectorAll('.result-header')).map(h => h.textContent);
+          const savedContents = Array.from(savedCard.querySelectorAll('.result-content')).map(c => c.textContent);
+          const savedSignature = JSON.stringify({ 
+            title: savedCard.querySelector('.card-title-text').textContent, 
+            headers: savedHeaders, 
+            contents: savedContents
+          });
+          
+          if (savedSignature === cardSignature) {
+            isDuplicate = true;
+          }
+        });
+        
+        if (isDuplicate) {
+          showToast('Card already exists in Saved Cards');
+          return;
+        }
+        
+        // Clone the card and add to saved area
         const cardClone = originalCard.cloneNode(true);
         const newIndex = `saved-${Date.now()}`;
         cardClone.dataset.index = newIndex;
         
-        // Add delete button functionality to the cloned card
-        const deleteBtn = cardClone.querySelector('.delete-btn');
-        if (deleteBtn) {
-          deleteBtn.addEventListener('click', () => deleteCard(cardClone));
-        }
+        // Reattach event handlers for all buttons in the cloned card
+        cardClone.querySelector('.copy-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          copyToMarkdown(cardClone);
+        });
+        
+        cardClone.querySelector('.reroll-all-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          rerollAllContent(cardClone);
+        });
+        
+        cardClone.querySelector('.delete-card-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteCard(cardClone);
+        });
+        
+        // Make the clone draggable too, but it won't actually be draggable due to our check in handleCardDragStart
+        cardClone.addEventListener('dragstart', handleCardDragStart);
+        cardClone.addEventListener('dragend', handleCardDragEnd);
         
         // Add the card to the saved area
         this.appendChild(cardClone);
