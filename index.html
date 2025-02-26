@@ -139,37 +139,53 @@
     .result-row {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 3px; /* Further reduced from 5px to 3px */
       background-color: white;
-      padding: 5px;
+      padding: 3px; /* Reduced from 5px to 3px */
       border-radius: 4px;
     }
     .result-header {
-      padding: 10px;
+      padding: 5px; /* Reduced from 8px to 5px */
       border: 1px solid #ccc;
-      margin-right: 10px;
+      margin-right: 8px; /* Reduced from 10px to 8px */
       width: 200px;
       font-weight: bold;
       background-color: white;
     }
     .result-content {
-      padding: 10px;
+      padding: 5px; /* Reduced from 8px to 5px */
       border: 1px solid #ccc;
       flex-grow: 1;
       background-color: white;
     }
     .reroll-btn {
-      margin-left: 10px;
-      padding: 5px 10px;
+      margin-left: 8px; /* Reduced from 10px to 8px */
+      padding: 3px 8px; /* Reduced from 5px 10px */
       font-size: 0.8em;
       cursor: pointer;
       background-color: #e7e7e7;
       border: 1px solid #ccc;
       border-radius: 4px;
       transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .reroll-btn:hover {
       background-color: #d7d7d7;
+    }
+    .card-title {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.4em;
+      color: #444;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 8px;
+    }
+    .reroll-btn img {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
     }
   </style>
 </head>
@@ -381,12 +397,13 @@
           generationContainer.className = 'generation-container';
           generationContainer.dataset.index = index;
           
-          // Create a label for the generation
-          const generationLabel = document.createElement('h3');
-          generationLabel.textContent = `Generation ${index + 1}`;
-          generationContainer.appendChild(generationLabel);
+          // Create a title using the table name instead of "Generation X"
+          const cardTitle = document.createElement('h3');
+          cardTitle.className = 'card-title';
+          cardTitle.textContent = selectedTable.tablename || 'Result';
+          generationContainer.appendChild(cardTitle);
           
-          // Extract initial context from result (recursive)
+          // Extract initial context from result
           extractContext(result, generationContexts[index]);
           
           // Render the result content
@@ -553,12 +570,14 @@
           // Create a new temporary div to hold our HTML
           const tempDiv = document.createElement('div');
           
-          // Generate the HTML for the new result
+          // Generate the HTML for the new result with dice icon
           tempDiv.innerHTML = `
             <div class="result-row" data-header="${header}">
               <div class="result-header">${header}</div>
               <div class="result-content">${renderResultItem(data.result.result, false, generationIndex)}</div>
-              <button class="reroll-btn" onclick="rerollContent(this)">Reroll</button>
+              <button class="reroll-btn" onclick="rerollContent(this)">
+                <img src="Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+              </button>
             </div>
           `;
           
@@ -584,7 +603,7 @@
       });
     }
 
-    // Updated renderResultItem function to pass generation index
+    // Updated renderResultItem function with even tighter spacing
     function renderResultItem(item, isTopLevel = true, generationIndex = 0) {
       // If the item is an array...
       if (Array.isArray(item)) {
@@ -596,22 +615,22 @@
         const renderedSub = renderResultItem(item.result, false);
         
         if (isTopLevel) {
-          // Top-level: No Reroll button, white background
+          // Top level: Don't display the header (which would be the table name like "NPC")
+          // Just return the rendered subresults directly with minimal padding
           return `
-            <div style="margin-bottom: 15px; background-color: white; padding: 10px; border-radius: 4px;">
-              <strong>${item.header}</strong>
-              <div style="margin-left: 20px;">
-                ${renderedSub}
-              </div>
+            <div style="background-color: white; padding: 6px; border-radius: 4px;">
+              ${renderedSub}
             </div>
           `;
         } else {
-          // Nested: Show Reroll button with proper styling
+          // Nested: Show Reroll button with dice icon
           return `
             <div class="result-row">
               <div class="result-header">${item.header}</div>
               <div class="result-content">${renderedSub}</div>
-              <button class="reroll-btn" onclick="rerollContent(this)">Reroll</button>
+              <button class="reroll-btn" onclick="rerollContent(this)">
+                <img src="Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+              </button>
             </div>
           `;
         }

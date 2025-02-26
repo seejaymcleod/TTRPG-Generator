@@ -2,7 +2,7 @@ filename: ShadowDark_NPC_General_test.yaml
 game: ShadowDark
 setting: Fantasy
 subtype: none
-tablename: NPCs
+tablename: NPC
 tables:
   - name: NameBySyllable
     customDisplay: "[{Syllable1}{Syllable2, 0.5}{Syllable3, 0.5}{Syllable4}]"
@@ -275,6 +275,23 @@ tables:
       - [Standard, 2]
       - [Wealthy, 2]
       - Extravagant
+  - name: Occupation
+    results:
+      - Gravedigger
+      - Tax collector
+      - Baker
+      - Locksmith
+      - Carpenter
+      - Farmer
+      - Cook
+      - Cobbler
+      - Scholar
+      - Bartender
+      - Friar
+      - Blacksmith
+      - Sailor
+      - Butcher
+      - Merchant
   - name: Appearance
     results:
       - Balding
@@ -286,4 +303,58 @@ tables:
       - Muscular
       - White hair
       - Scar on face
-      - Will
+      - Willowy build
+      - Sweaty
+      - Cleft chin
+      - Frail
+      - Big eyebrows
+      - Tattooed
+      - Floppy hat
+      - Gold tooth
+      - Six fingers
+      - Very short
+      - Large nose
+  - name: Does
+    results:
+      - Spits
+      - Always eating
+      - Moves quickly
+      - Card tricks
+      - Prays aloud
+      - Writes in diary
+      - Apologetic
+      - Slaps backs
+      - Drops things
+      - Swears oaths
+      - Makes puns
+      - Rare accent
+      - Easily spooked
+      - Forgetful
+      - Speaks quietly
+      - Twitches
+      - Moves slowly
+      - Speaks loudly
+      - Swaggers
+      - Smokes pipe 
+  - name: Secret
+    results:
+      - Hiding a fugitive
+      - Adores baby animals
+      - Obsessed with fire
+      - In a religious cult
+      - Is a half-demon
+      - Was a wizard's apprentice
+      - Needlessly picks pockets
+      - Has a false identity
+      - Afraid of storms
+      - Has functional gills
+      - In deep gambling debt
+      - Works as a smuggler
+      - Is a werewolf
+      - Can actually smell lies
+      - Cast out of wealthy family
+      - In love with a bartender
+      - Left the Thieves' Guild
+      - Best friends with a prince
+      - Retired crawler
+      - Has a pet basilisk
