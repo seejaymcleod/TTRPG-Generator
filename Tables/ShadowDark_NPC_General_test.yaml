@@ -96,7 +96,7 @@ tables:
           - enne
           - ynne
   - name: NPC Names by Ancestry
-    customDisplay: "[selectedResult{Ancestry}]"
+    customDisplay: "[{selectedResult, Ancestry}]"
     subTables:
       - name: Dwarf
         results:
@@ -186,7 +186,7 @@ tables:
           - Sage
           - Reenie
           - Wendry
-      - name: Half-Orc
+      - name: Half-orc
         results:
           - Troga
           - Boraal

@@ -322,8 +322,8 @@
       .then(data => {
         console.log("Received generation data:", data.results); // Debugging output
         const resultsContainer = document.getElementById('results');
-        // Use our recursive render function to display the nested results
-        resultsContainer.innerHTML = renderResultItem(data.results);
+        // Use our updated recursive function with isTopLevel = true
+        resultsContainer.innerHTML = renderResultItem(data.results, true);
       })
       .catch(error => {
         console.error('Error generating content:', error);
@@ -417,21 +417,58 @@
       const resultsContainer = document.getElementById('results');
       resultsContainer.innerHTML = '';
     }
-    
-    // RECURSIVE RENDER FUNCTION
-    function renderResultItem(item) {
-      if (Array.isArray(item)) {
-        return item.map(i => renderResultItem(i)).join("<br>");
-      } else if (item && typeof item === "object" && "header" in item && "result" in item) {
-        const renderedSub = renderResultItem(item.result);
-        return `<div style="margin-bottom:1em;">
-                  <strong>${item.header}:</strong>
-                  <div style="margin-left:1em;">${renderedSub}</div>
-                </div>`;
-      } else {
-        return String(item);
-      }
+
+    // =========================================================
+    // RECURSIVE RENDER FUNCTION (with top-level parameter)
+    // =========================================================
+    function renderResultItem(item, isTopLevel = true) {
+  // If the item is an array...
+  if (Array.isArray(item)) {
+    // Instead of always forcing isTopLevel = false,
+    // we keep the same isTopLevel value for each element.
+    return item.map(i => renderResultItem(i, isTopLevel)).join("");
+  }
+
+  // If the item is an object with "header" and "result"
+  else if (item && typeof item === "object" && "header" in item && "result" in item) {
+    const renderedSub = renderResultItem(item.result, false);
+    if (isTopLevel) {
+      // Top-level: No Reroll button
+      return `
+        <div style="margin-bottom: 10px;">
+          <strong>${item.header}</strong>
+          <div style="margin-left: 20px;">
+            ${renderedSub}
+          </div>
+        </div>
+      `;
+    } else {
+      // Nested: Show Reroll button
+      return `
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+          <div style="padding: 10px; border: 1px solid #ccc; margin-right: 10px; width: 200px;">
+            <strong>${item.header}</strong>
+          </div>
+          <div style="padding: 10px; border: 1px solid #ccc; flex-grow: 1;">
+            ${renderedSub}
+          </div>
+          <button 
+            style="margin-left: auto; padding: 5px 10px; font-size: 0.8em; cursor: pointer;"
+            onclick="rerollContent(this)"
+          >
+            Reroll
+          </button>
+        </div>
+      `;
     }
+  }
+
+  // Otherwise (primitive value), just return it as a string
+  else {
+    return String(item);
+  }
+}
+
   </script>
 </body>
 </html>
