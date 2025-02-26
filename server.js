@@ -130,23 +130,30 @@ function getWeightedRandomResult(table) {
 // - For normal tokens like "{Syllable2, 0.5}", parse an optional weight & skip/keep based on a random roll.
 // - For tokens starting with "selectedResult", do a top-level table lookup, then subtable lookup in the current table.
 function processCustomDisplay(table, allTables, context) {
+  if (DEBUG) console.log('Processing customDisplay for table:', table);
+
+  if (!table.customDisplay) {
+    console.error('Error: customDisplay is missing in the table:', table);
+    return 'Error: customDisplay is missing';
+  }
+
   // Remove outer brackets.
   let displayStr = table.customDisplay.replace(/^\[|\]$/g, '');
-  
+
   // Prepare variables:
   let normalResult = "";
   let deferredTokens = [];
-  
+
   // Regex to capture tokens in the form {tokenContent}
   const tokenRegex = /\{([^}]+)\}/g;
   let lastIndex = 0;
   let match;
-  
+
   while ((match = tokenRegex.exec(displayStr)) !== null) {
     // Append any text between tokens.
     normalResult += displayStr.slice(lastIndex, match.index);
     let tokenContent = match[1].trim();
-    
+
     // Check for deferred tokens:
     if (tokenContent.startsWith("selectedResult")) {
       deferredTokens.push(tokenContent);
@@ -194,7 +201,7 @@ function processCustomDisplay(table, allTables, context) {
   }
   // Append any trailing text.
   normalResult += displayStr.slice(lastIndex);
-  
+
   // Now handle deferred tokens (e.g. "selectedResult, Ancestry")
   let finalResult = normalResult;
   deferredTokens.forEach(tokenContent => {
@@ -206,55 +213,146 @@ function processCustomDisplay(table, allTables, context) {
     // Example tokenContent: "selectedResult, Ancestry"
     let parts = tokenContent.split(',');
     let tableToLookup = parts[1] ? parts[1].trim() : "Ancestry";
+
+    // Find the root table object
+    const rootTable = findRootTable(table, allTables);
     
-    // 1) Find the top-level table by name
-    let refTable = allTables.find(t =>
-      (t.name || t.tablename)?.toLowerCase() === tableToLookup.toLowerCase()
-    );
-    if (!refTable || !refTable.results) {
+    // First try to find the table within the current hierarchy
+    let refTable = findTableInHierarchy(rootTable, tableToLookup);
+    
+    if (DEBUG) {
+      console.log(`Looking for table "${tableToLookup}" within current hierarchy: ${refTable ? "Found" : "Not found"}`);
+    }
+
+    // If not found in hierarchy, fallback to global search
+    if (!refTable) {
+      for (let i = 0; i < allTables.length; i++) {
+        const t = allTables[i];
+        const tableName = t.name || t.tablename;
+        if (tableName && tableName.toLowerCase() === tableToLookup.toLowerCase()) {
+          refTable = t;
+          break;
+        }
+      }
+      
+      if (DEBUG && !refTable) {
+        console.log(`Deferred token: Could not find a table named "${tableToLookup}" anywhere.`);
+        console.log(`Available top-level table names:`, allTables.map(t => t.name || t.tablename));
+      }
+    }
+
+    if (!refTable) {
+      return; // Skip further processing for this token
+    }
+
+    if (!refTable.results || !Array.isArray(refTable.results) || refTable.results.length === 0) {
       if (DEBUG) {
-        console.log(
-          `Deferred token: Could not find a top-level table named "${tableToLookup}" or it has no results.`
-        );
+        console.log(`Deferred token: Found table "${tableToLookup}" but it has no valid results.`);
       }
       return; // Skip further processing for this token
     }
-    
+
     // 2) Pick from that table
     let pickedResult = getWeightedRandomResult(refTable);
     if (DEBUG) {
       console.log(
-        `Deferred token: Picked "${pickedResult}" from top-level table "${tableToLookup}".`
+        `Deferred token: Picked "${pickedResult}" from table "${tableToLookup}".`
       );
     }
-    
+
     // 3) Now use that pick as the subtable name in the *current* table
     if (table.subTables) {
-      let subTable = table.subTables.find(
-        st => st.name.toLowerCase() === pickedResult.toLowerCase()
-      );
+      let subTable = null;
+      for (let i = 0; i < table.subTables.length; i++) {
+        const st = table.subTables[i];
+        if (st.name.toLowerCase() === pickedResult.toLowerCase()) {
+          subTable = st;
+          break;
+        }
+      }
+
       if (subTable && subTable.results?.length > 0) {
         let finalPick = randomChoice(subTable.results);
         finalResult = finalPick;
         if (DEBUG) {
           console.log(
-            `Deferred token: Found subtable "${pickedResult}" in current table "${table.name}". Picked "${finalPick}".`
+            `Deferred token: Found subtable "${pickedResult}" in current table. Picked "${finalPick}".`
           );
         }
       } else {
         if (DEBUG) {
           console.log(
-            `Deferred token: No subtable named "${pickedResult}" in current table "${table.name}".`
+            `Deferred token: No subtable named "${pickedResult}" in current table or it has no results.`
           );
+          if (table.subTables && table.subTables.length > 0) {
+            console.log(`Available subtable names:`, table.subTables.map(st => st.name));
+          }
         }
+      }
+    } else {
+      if (DEBUG) {
+        console.log(`Current table has no subTables property.`);
       }
     }
   });
-  
+
   if (DEBUG) {
     console.log(`Final customDisplay result: "${finalResult}"`);
   }
   return finalResult;
+}
+
+// Find a table by name in the hierarchy of a given table
+function findTableInHierarchy(rootTable, tableName) {
+  if (!rootTable) return null;
+  
+  // Check if the current table matches
+  if ((rootTable.name || rootTable.tablename) && 
+      (rootTable.name || rootTable.tablename).toLowerCase() === tableName.toLowerCase()) {
+    return rootTable;
+  }
+  
+  // Check in tables array
+  if (rootTable.tables && Array.isArray(rootTable.tables)) {
+    for (const subTable of rootTable.tables) {
+      const found = findTableInHierarchy(subTable, tableName);
+      if (found) return found;
+    }
+  }
+  
+  return null;
+}
+
+// Find the root table that contains the current table
+function findRootTable(currentTable, allTables) {
+  // If currentTable is already a top-level table, return it
+  if (allTables.includes(currentTable)) {
+    return currentTable;
+  }
+  
+  // Otherwise, find the top-level table that contains the current table
+  for (const topTable of allTables) {
+    if (isTableContained(topTable, currentTable)) {
+      return topTable;
+    }
+  }
+  
+  return null;
+}
+
+// Check if childTable is contained somewhere in parentTable
+function isTableContained(parentTable, childTable) {
+  if (parentTable === childTable) return true;
+  
+  if (parentTable.tables && Array.isArray(parentTable.tables)) {
+    for (const subTable of parentTable.tables) {
+      if (isTableContained(subTable, childTable)) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
 }
 
 // Process a table, returning { header, result }
