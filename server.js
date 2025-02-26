@@ -17,6 +17,8 @@ loadAllTables();
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+// Add a route to serve images from the Images directory
+app.use('/Images', express.static(path.join(__dirname, 'Images')));
 
 // Endpoint to fetch table names and details
 app.get('/api/tables', (req, res) => {
