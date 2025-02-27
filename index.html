@@ -1128,6 +1128,9 @@
         return;
       }
 
+      // Store the collapsed state - THIS WAS MISSING
+      const wasCollapsed = generationContainer.classList.contains('collapsed');
+      
       const generationIndex = generationContainer.dataset.index;
       const context = {}; // Create a fresh context for full rerolls
       
