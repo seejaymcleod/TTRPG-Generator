@@ -4,97 +4,6 @@ setting: Fantasy
 subtype: none
 tablename: NPC
 tables:
-  - name: NameBySyllable
-    customDisplay: "[{Syllable1}{Syllable2, 0.5}{Syllable3, 0.5}{Syllable4}]"
-    subTables:
-      - name: Syllable1
-        results:
-          - Ir
-          - Van
-          - Cyr
-          - Den
-          - Cor
-          - Hil
-          - Sal
-          - Bri
-          - Mar
-          - Gar
-          - Tin
-          - Vor
-          - Nel
-          - Ri
-          - Quor
-          - Bal
-          - Mur
-          - Par
-          - Tor
-          - Lem
-      - name: Syllable2
-        results:
-          - an
-          - ish
-          - tos
-          - zar
-          - ven
-          - sen
-          - win
-          - true
-          - en
-          - lin
-          - sor
-          - oc
-          - vyn
-          - al
-          - osh
-          - er
-          - in
-          - el
-          - un
-          - nar
-      - name: Syllable3
-        results:
-          - l
-          - n
-          - pil
-          - g
-          - z
-          - bor
-          - t
-          - c
-          - ar
-          - q
-          - v
-          - iv
-          - ov
-          - b
-          - den
-          - k
-          - s
-          - r
-          - jen
-          - w
-      - name: Syllable4
-        results:
-          - int
-          - us
-          - ios
-          - el
-          - inne
-          - os
-          - ian
-          - ius
-          - iol
-          - an
-          - isk
-          - erg
-          - ent
-          - ial
-          - ant
-          - iel
-          - onne
-          - org
-          - enne
-          - ynne
   - name: NPC Names by Ancestry
     customDisplay: "[{selectedResult, Ancestry}]"
     subTables:
@@ -230,6 +139,98 @@ tables:
           - Vakesh
           - Una
           - Nabilo
+  - name: NameBySyllable
+    customDisplay: "[{Syllable1}{Syllable2, 0.5}{Syllable3, 0.5}{Syllable4}]"
+    subTables:
+      - name: Syllable1
+        results:
+          - Ir
+          - Van
+          - Cyr
+          - Den
+          - Cor
+          - Hil
+          - Sal
+          - Bri
+          - Mar
+          - Gar
+          - Tin
+          - Vor
+          - Nel
+          - Ri
+          - Quor
+          - Bal
+          - Mur
+          - Par
+          - Tor
+          - Lem
+      - name: Syllable2
+        results:
+          - an
+          - ish
+          - tos
+          - zar
+          - ven
+          - sen
+          - win
+          - true
+          - en
+          - lin
+          - sor
+          - oc
+          - vyn
+          - al
+          - osh
+          - er
+          - in
+          - el
+          - un
+          - nar
+      - name: Syllable3
+        results:
+          - l
+          - n
+          - pil
+          - g
+          - z
+          - bor
+          - t
+          - c
+          - ar
+          - q
+          - v
+          - iv
+          - ov
+          - b
+          - den
+          - k
+          - s
+          - r
+          - jen
+          - w
+      - name: Syllable4
+        results:
+          - int
+          - us
+          - ios
+          - el
+          - inne
+          - os
+          - ian
+          - ius
+          - iol
+          - an
+          - isk
+          - erg
+          - ent
+          - ial
+          - ant
+          - iel
+          - onne
+          - org
+          - enne
+          - ynne
+  
   - name: Ancestry
     results:
       - [Human, 4]

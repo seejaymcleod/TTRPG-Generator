@@ -432,14 +432,20 @@ function isTableContained(parentTable, childTable) {
   return false;
 }
 
-// Process a table, returning { header, result }
+// Process a table, returning { header, result } with source info
 function processTable(table, parentHeader, allTables, context) {
   const header = table.name || table.tablename || parentHeader;
+
+  // Store the source table name for reference (will be hidden in UI)
+  const sourceInfo = {
+    _tableName: table.name || table.tablename,
+    _fileName: table.filename
+  };
 
   // 1) If the table has customDisplay => parse it
   if (table.customDisplay) {
     const result = processCustomDisplay(table, allTables, context);
-    return { header, result, _tableName: table.name }; // Store table name for reference
+    return { header, result, ...sourceInfo };
   }
   // 2) If the table has results => do a weighted pick
   else if (table.results && Array.isArray(table.results) && table.results.length > 0) {
@@ -449,18 +455,22 @@ function processTable(table, parentHeader, allTables, context) {
       context[header] = result;
       if (DEBUG) console.log(`Stored result "${result}" for table "${header}" in context`);
     }
-    return { header, result, _tableName: table.name };
+    return { header, result, ...sourceInfo };
   }
   // 3) If the table has subTables => gather from each subTable
   else if (table.tables && Array.isArray(table.tables)) {
     let subResults = [];
     table.tables.forEach(subTable => {
+      // Pass down the filename as well
+      if (!subTable.filename && table.filename) {
+        subTable.filename = table.filename;
+      }
       const subResult = processTable(subTable, header, allTables, context);
       if (subResult) {
         subResults.push(subResult);
       }
     });
-    return { header, result: subResults, _tableName: table.name };
+    return { header, result: subResults, ...sourceInfo };
   }
   // 4) Fallback
   else {
@@ -468,7 +478,7 @@ function processTable(table, parentHeader, allTables, context) {
       'Table does not have results or subTables:',
       JSON.stringify(table, null, 2)
     );
-    return { header, result: "No valid entries" };
+    return { header, result: "No valid entries", ...sourceInfo };
   }
 }
 

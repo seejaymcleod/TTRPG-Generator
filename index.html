@@ -140,10 +140,9 @@
     .result-row {
       display: flex;
       align-items: center;
-      margin-bottom: 3px; /* Further reduced from 5px to 3px */
       background-color: transparent !important; /* Make container transparent */
-      padding: 3px; /* Reduced from 5px to 3px */
-      border-radius: 4px;
+      padding: 1px; /* Reduced from 5px to 3px */
+      border-radius: 2px;
       border: none !important; /* Remove border from row container */
     }
     .result-header {
@@ -159,6 +158,27 @@
       border: 1px solid #ccc;
       flex-grow: 1;
       background-color: white;
+      white-space: nowrap; /* Prevent text from wrapping */
+      overflow: hidden; /* Hide overflow content */
+      text-overflow: ellipsis; /* Show ellipsis for truncated text */
+    }
+    .result-content:hover {
+      position: relative;
+    }
+    .result-content:hover::after {
+      content: attr(title);
+      position: absolute;
+      left: 0;
+      top: -30px;
+      background: #333;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 0.9em;
+      white-space: normal;
+      max-width: 300px;
+      z-index: 100;
+      pointer-events: none;
     }
     .reroll-btn {
       margin-left: 8px;
@@ -443,6 +463,95 @@
       3. Set it to sRGB
       4. Restart the browser
     */
+
+    /* Force fix for result row borders - override all other styles */
+    .result-row,
+    #savedGenerations .result-row,
+    .saved-cards .result-row,
+    div.result-row {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+    
+    /* Ensure only the header and content have borders */
+    .result-header, .result-content {
+      border: 1px solid #ccc !important;
+      background-color: white !important;
+      color: #333 !important;
+    }
+    
+    /* Fix for any inherited properties that might cause borders */
+    .saved-cards .result-row::before,
+    .saved-cards .result-row::after,
+    #savedGenerations .result-row::before,
+    #savedGenerations .result-row::after,
+    .result-row::before,
+    .result-row::after {
+      display: none !important;
+      border: none !important;
+      background: none !important;
+      content: none !important;
+    }
+
+    /* Styles for collapse/expand functionality */
+    .collapse-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-size: 16px;
+      color: #777;
+      transition: transform 0.2s, color 0.2s;
+      position: absolute;
+      top: 15px; /* Position at top of card */
+      left: 50%; /* Center horizontally */
+      transform: translateX(-50%);
+      z-index: 2;
+      border-radius: 50%;
+      background-color: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .collapse-btn:hover {
+      color: #333;
+      background-color: #f5f5f5;
+    }
+
+    /* Position adjustment for card title to accommodate the button */
+    .card-title {
+      padding-top: 5px; /* Extra space at top for button */
+      position: relative;
+    }
+
+    /* Collapsed card state */
+    .generation-container.collapsed .card-content {
+      display: none;
+    }
+
+    .generation-container.collapsed {
+      padding-bottom: 5px;
+    }
+
+    /* Card content wrapper */
+    .card-content {
+      transition: max-height 0.3s ease-out;
+      overflow: hidden;
+    }
+
+    /* Rotate arrow when collapsed */
+    .generation-container.collapsed .collapse-btn .down-arrow {
+      display: none;
+    }
+    .generation-container:not(.collapsed) .collapse-btn .up-arrow {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -662,10 +771,35 @@
           const cardTitle = document.createElement('div');
           cardTitle.className = 'card-title';
           
+          // Add the collapse button
+          const collapseBtn = document.createElement('button');
+          collapseBtn.className = 'collapse-btn';
+          collapseBtn.onclick = (e) => {
+            e.stopPropagation(); // Prevent card drag
+            toggleCardCollapse(collapseBtn);
+          };
+          collapseBtn.innerHTML = `
+            <span class="down-arrow">▼</span>
+            <span class="up-arrow">▲</span>
+          `;
+          generationContainer.appendChild(collapseBtn);
+          
           // Add the title text
           const titleText = document.createElement('span');
           titleText.className = 'card-title-text';
-          titleText.textContent = selectedTable.tablename || 'Result';
+          // Extract first meaningful value for the title
+          let firstValue = extractDisplayValueForTitle(result);
+          firstValue = firstValue.trim();
+          
+          // Limit the length if it's too long
+          if (firstValue.length > 30) {
+            firstValue = firstValue.substring(0, 27) + '...';
+          }
+          
+          // Add the title text with both table name and first value
+          titleText.textContent = firstValue ? 
+            `${selectedTable.tablename || 'Result'} - ${firstValue}` :
+            selectedTable.tablename || 'Result';
           cardTitle.appendChild(titleText);
           
           // Create buttons container
@@ -721,6 +855,7 @@
           
           // Render the result content
           const contentWrapper = document.createElement('div');
+          contentWrapper.className = 'card-content';
           contentWrapper.innerHTML = renderResultItem(result, true, index);
           generationContainer.appendChild(contentWrapper);
           
@@ -916,7 +1051,7 @@
       });
     }
 
-    // Updated renderResultItem function with even tighter spacing
+    // Updated renderResultItem function to add title attribute for tooltip
     function renderResultItem(item, isTopLevel = true, generationIndex = 0) {
       // If the item is an array...
       if (Array.isArray(item)) {
@@ -927,6 +1062,9 @@
       else if (item && typeof item === "object" && "header" in item && "result" in item) {
         const renderedSub = renderResultItem(item.result, false);
         
+        // Get source table information if available
+        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        
         if (isTopLevel) {
           // Top level: Don't display the header (which would be the table name like "NPC")
           // Just return the rendered subresults directly with minimal padding
@@ -936,11 +1074,14 @@
             </div>
           `;
         } else {
-          // Nested: Show Reroll button with dice icon
+          // Nested: Show Reroll button with dice icon, include source table info as data attribute
+          // Add title attribute with full content for tooltip
+          const contentForTooltip = renderedSub.replace(/"/g, '&quot;');
+          
           return `
-            <div class="result-row">
+            <div class="result-row"${sourceTable}>
               <div class="result-header">${item.header}</div>
-              <div class="result-content">${renderedSub}</div>
+              <div class="result-content" title="${contentForTooltip}">${renderedSub}</div>
               <button class="reroll-btn" onclick="rerollContent(this)">
                 <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
               </button>
@@ -1020,13 +1161,38 @@
           
           // Clear and rebuild the card content (keeping the header)
           const cardHeader = generationContainer.querySelector('.card-title');
+          const collapseButton = generationContainer.querySelector('.collapse-btn');
           generationContainer.innerHTML = '';
+          generationContainer.appendChild(collapseButton);
           generationContainer.appendChild(cardHeader);
           
           // Add the new content
           const contentWrapper = document.createElement('div');
+          contentWrapper.className = 'card-content';
           contentWrapper.innerHTML = renderResultItem(data.results[0], true, generationIndex);
           generationContainer.appendChild(contentWrapper);
+          
+          // Extract first meaningful value for the title
+          let firstValue = extractDisplayValueForTitle(data.results[0]);
+          firstValue = firstValue.trim();
+          
+          // Limit the length if it's too long
+          if (firstValue.length > 30) {
+            firstValue = firstValue.substring(0, 27) + '...';
+          }
+          
+          // Update the title text
+          const titleText = cardHeader.querySelector('.card-title-text');
+          if (titleText) {
+            titleText.textContent = firstValue ? 
+              `${currentSelectedTable.tablename || 'Result'} - ${firstValue}` :
+              currentSelectedTable.tablename || 'Result';
+          }
+          
+          // Restore the collapsed state if it was collapsed
+          if (wasCollapsed) {
+            generationContainer.classList.add('collapsed');
+          }
           
           // Reset opacity
           generationContainer.style.opacity = '1';
@@ -1043,24 +1209,37 @@
 
     // Function to convert card content to markdown and copy to clipboard
     function copyToMarkdown(generationContainer) {
-      // Get the card title
+      // Get the card title and add source information
       const cardTitle = generationContainer.querySelector('.card-title-text').textContent;
+      const sourceInfo = currentSelectedTable ? `${currentSelectedTable.filename}: ${currentSelectedTable.tablename}` : '';
+      
+      let markdown = `# ${cardTitle}\n`;
+      if (sourceInfo) {
+        markdown += `*Source: ${sourceInfo}*\n`;
+      }
+      markdown += '\n';
       
       // Extract all the rows
       const rows = generationContainer.querySelectorAll('.result-row');
-      let markdown = `# ${cardTitle}\n\n`;
       
       // Process each row
       rows.forEach(row => {
         const header = row.querySelector('.result-header').textContent;
         const content = row.querySelector('.result-content').textContent.trim();
-        markdown += `**${header}**: ${content}\n`;
+        let rowMd = `**${header}**: ${content}`;
+        
+        // Add source table if available
+        const sourceTable = row.getAttribute('data-source-table');
+        if (sourceTable) {
+          rowMd += ` *(from ${sourceTable})*`;
+        }
+        
+        markdown += rowMd + '\n';
       });
       
       // Copy to clipboard
       navigator.clipboard.writeText(markdown)
         .then(() => {
-          // Show success toast
           showToast('Copied to clipboard!');
         })
         .catch(err => {
@@ -1202,6 +1381,12 @@
         cardClone.addEventListener('dragstart', handleCardDragStart);
         cardClone.addEventListener('dragend', handleCardDragEnd);
         
+        // Update collapse button handlers
+        cardClone.querySelector('.collapse-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleCardCollapse(e.currentTarget);
+        });
+        
         // Add the card to the saved area
         this.appendChild(cardClone);
         
@@ -1227,6 +1412,41 @@
     function handleDragEnd() {
       // This function is deprecated - only kept for reference
       console.warn('handleDragEnd is deprecated');
+    }
+
+    // Function to toggle card collapse state
+    function toggleCardCollapse(button) {
+      const card = button.closest('.generation-container');
+      card.classList.toggle('collapsed');
+      
+      // Update the button icon (though CSS will hide/show the appropriate one)
+      const isCollapsed = card.classList.contains('collapsed');
+      
+      // Optional: Scroll to the card if expanding
+      if (!isCollapsed) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Add this new helper function to extract a displayable value from a result object
+    function extractDisplayValueForTitle(resultObj) {
+      // Handle arrays by looking at first item
+      if (Array.isArray(resultObj)) {
+        return resultObj.length > 0 ? extractDisplayValueForTitle(resultObj[0]) : '';
+      }
+      
+      // If it's an object with header and result properties
+      if (resultObj && typeof resultObj === 'object' && resultObj.result !== undefined) {
+        // Check for simple string result
+        if (typeof resultObj.result === 'string') {
+          return resultObj.result;
+        }
+        // Recurse into nested result structure
+        return extractDisplayValueForTitle(resultObj.result);
+      }
+      
+      // If it's a simple value, return it as string
+      return resultObj ? String(resultObj) : '';
     }
   </script>
 </body>
