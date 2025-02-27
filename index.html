@@ -110,11 +110,12 @@
       box-sizing: border-box;
       overflow-y: auto;
     }
-    .generation-container {
+    .generation-container,
+    #savedGenerations .generation-container {
       margin: 15px 0;
       padding: 15px;
       border-radius: 8px;
-      background-color: white !important; /* Change to white for better contrast */
+      background-color: #e8e8e8 !important; /* Medium gray background */
       border: 1px solid #ddd;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       position: relative;
@@ -551,6 +552,34 @@
     }
     .generation-container:not(.collapsed) .collapse-btn .up-arrow {
       display: none;
+    }
+    .generation-container,
+    #savedGenerations .generation-container {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 8px;
+      background-color: #e8e8e8 !important; /* Medium gray background */
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .generation-container .result-header,
+    .generation-container .result-content,
+    #savedGenerations .generation-container .result-header,
+    #savedGenerations .generation-container .result-content {
+      background-color: white !important;
+      border: 1px solid #ccc !important;
+      color: #333 !important;
+    }
+    .collapse-btn {
+      background-color: white !important;
+    }
+    .card-content > div {
+      background-color: #e8e8e8 !important;
+    }
+    .saved-cards .generation-container {
+      background-color: #e8e8e8 !important;
+      border: 1px solid #bbb !important;
     }
   </style>
 </head>
