@@ -1,0 +1,29 @@
+tablename: Dungeon Locations
+filename: ViridianDice_Locations.yaml
+game: ViridianDice
+setting: Fantasy
+type: Locations
+subtype: none
+tables:
+  - name: Dungeon Locations
+    results:
+      - Armory
+      - Common Room
+      - Crypt
+      - Dining Room
+      - Forge
+      - Great Hall
+      - Lab
+      - Library
+      - Menagerie
+      - Natural Feature
+      - Prison
+      - Quarters
+      - Ritual Chamber
+      - Ruins
+      - Storage
+      - Temple
+      - Throne Room
+      - Treasury
+      - Wonder
+      - Workshop

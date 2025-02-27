@@ -32,23 +32,45 @@ app.get('/api/tables', (req, res) => {
   })));
 });
 
-// Generation endpoint
+// Add enhanced error handling to the generate endpoint
 app.post('/api/generate', (req, res) => {
   const { table, number } = req.body;
   if (!table || typeof number !== 'number') {
+    console.error('Invalid request data:', req.body);
     return res.status(400).json({ error: 'Invalid request data.' });
   }
-  const selectedTable = tables.find(t => t.filename === table.filename);
+
+  // Find the table by both filename and tablename to be more flexible
+  const selectedTable = tables.find(t => 
+    (t.filename === table.filename) || 
+    (t.tablename === table.tablename));
+  
   if (!selectedTable) {
+    console.error('Table not found:', table);
     return res.status(404).json({ error: 'Table not found.' });
   }
+
   try {
+    console.log('Generating from table:', selectedTable.tablename || selectedTable.filename);
+    
+    // Check that the table structure is valid
+    if (!selectedTable.tables || !Array.isArray(selectedTable.tables)) {
+      console.error('Invalid table structure - missing tables array:', selectedTable);
+      return res.status(500).json({ error: 'Invalid table structure - missing tables array.' });
+    }
+    
     const results = generateResultsFromTables(selectedTable, number, tables);
-    if (DEBUG) console.log('Generated results:', JSON.stringify(results, null, 2));
+    
+    if (!results || results.length === 0) {
+      console.error('Generated empty results');
+      return res.status(500).json({ error: 'Generated empty results.' });
+    }
+    
+    console.log('Successfully generated results');
     res.json({ results });
   } catch (error) {
     console.error('Error generating results:', error);
-    res.status(500).json({ error: 'Failed to generate results.' });
+    res.status(500).json({ error: 'Failed to generate results: ' + error.message });
   }
 });
 
@@ -172,23 +194,40 @@ function weightedRandom(results) {
   return randomChoice(weightedEntries);
 }
 
-// Weighted random from table.results
+// Modify the getWeightedRandomResult function to handle multi-value arrays
 function getWeightedRandomResult(table) {
   let weightedEntries = [];
   table.results.forEach(entry => {
     if (Array.isArray(entry)) {
-      let [value, weight] = entry;
-      for (let i = 0; i < weight; i++) {
-        weightedEntries.push(value);
+      // New type check: If array has 2 elements and both are strings,
+      // it's a multi-field entry (not a weighted entry)
+      if (entry.length === 2 && typeof entry[0] === 'string' && typeof entry[1] === 'string') {
+        // For career-style entries with [career, items] format
+        weightedEntries.push({
+          career: entry[0],
+          items: entry[1]
+        });
+      } else {
+        // Standard weighted entry [value, weight]
+        let [value, weight] = entry;
+        for (let i = 0; i < (weight || 1); i++) {
+          weightedEntries.push(value);
+        }
       }
+    } else if (typeof entry === 'object' && entry !== null) {
+      // Support for object entries (like {career: "X", items: "Y"})
+      weightedEntries.push(entry);
     } else if (typeof entry === 'string') {
+      // Plain string entries
       weightedEntries.push(entry);
     }
   });
+  
   if (weightedEntries.length === 0) {
-    console.error('Error: No valid entries found for weighting.');
+    console.error('Error: No valid entries found for weighting in table:', table.name);
     return 'Error: No valid entries found';
   }
+  
   return randomChoice(weightedEntries);
 }
 
@@ -432,7 +471,7 @@ function isTableContained(parentTable, childTable) {
   return false;
 }
 
-// Process a table, returning { header, result } with source info
+// Update processTable to handle special multi-field results
 function processTable(table, parentHeader, allTables, context) {
   const header = table.name || table.tablename || parentHeader;
 
@@ -450,11 +489,27 @@ function processTable(table, parentHeader, allTables, context) {
   // 2) If the table has results => do a weighted pick
   else if (table.results && Array.isArray(table.results) && table.results.length > 0) {
     const result = getWeightedRandomResult(table);
-    // Store result in context if this is a dependency table
+    
+    // Store result in context
     if (context && header) {
       context[header] = result;
       if (DEBUG) console.log(`Stored result "${result}" for table "${header}" in context`);
     }
+    
+    // Handle special case for object results with career/items
+    if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
+      if (result.career && result.items) {
+        return { 
+          header, 
+          result: [
+            { header: "Career", result: result.career },
+            { header: "Items", result: result.items }
+          ],
+          ...sourceInfo 
+        };
+      }
+    }
+    
     return { header, result, ...sourceInfo };
   }
   // 3) If the table has subTables => gather from each subTable
