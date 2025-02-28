@@ -74,41 +74,104 @@ app.post('/api/generate', (req, res) => {
   }
 });
 
-// New endpoint for rerolling specific items with context preservation
+// Enhanced debugging version of the reroll endpoint with much more logging
 app.post('/api/reroll', (req, res) => {
   const { table, header, context: clientContext } = req.body;
   if (!table) {
     return res.status(400).json({ error: 'Invalid request data: table is required' });
   }
 
+  console.log(`Reroll request for ${table.filename}, header: ${header}`);
+
   const selectedTable = tables.find(t => t.filename === table.filename);
   if (!selectedTable) {
+    console.error(`Table not found: ${table.filename}`);
     return res.status(404).json({ error: 'Table not found.' });
   }
 
   try {
-    // Find the specific subtable matching the header
+    const context = clientContext || {};
+    const isKnaveCareer = table.filename && table.filename.includes('Knave_Careers');
+    const isViridianLocation = table.filename && table.filename.includes('ViridianDice_Locations') || 
+                              header === 'Dungeon Locations';
+    
+    // Special handling for Knave careers
+    if (isKnaveCareer) {
+      console.log('Processing Knave career reroll');
+      
+      // Find the Careers table directly from the loaded table structure
+      const careersTable = selectedTable.tables && 
+                          selectedTable.tables.find(t => t.name === 'Careers');
+      
+      if (!careersTable || !careersTable.results || !careersTable.results.length) {
+        console.error('Invalid Knave careers structure:', selectedTable);
+        return res.status(500).json({ error: 'Could not find careers data' });
+      }
+      
+      // Get random career directly from the results
+      const careerEntry = careersTable.results[Math.floor(Math.random() * careersTable.results.length)];
+      console.log('Selected career:', careerEntry);
+      
+      // Validate the career entry format
+      if (!Array.isArray(careerEntry) || careerEntry.length < 2) {
+        console.error('Invalid career format:', careerEntry);
+        return res.status(500).json({ error: 'Invalid career data format' });
+      }
+      
+      // Return the career in proper format
+      return res.json({
+        result: {
+          header: header || 'Careers',
+          result: [careerEntry[0], careerEntry[1]],
+          _isCareer: true,
+          _tableName: 'Knave Careers'
+        },
+        context
+      });
+    }
+    
+    // Special handling for Viridian locations
+    if (isViridianLocation) {
+      console.log('Processing Viridian location reroll');
+      
+      // Find the Dungeon Locations table directly
+      const locationsTable = selectedTable.tables &&
+                            selectedTable.tables.find(t => t.name === 'Dungeon Locations');
+      
+      if (!locationsTable || !locationsTable.results || !locationsTable.results.length) {
+        console.error('Invalid Viridian locations structure:', selectedTable);
+        return res.status(500).json({ error: 'Could not find locations data' });
+      }
+      
+      // Get random location
+      const location = locationsTable.results[Math.floor(Math.random() * locationsTable.results.length)];
+      console.log('Selected location:', location);
+      
+      // Return the location in proper format
+      return res.json({
+        result: {
+          header: header || 'Dungeon Locations',
+          result: location,
+          _tableName: 'Viridian Locations'
+        },
+        context
+      });
+    }
+    
+    // For other tables, use the existing find and process approach
     let targetTable = findSpecificTable(selectedTable, header);
     
     if (!targetTable) {
+      console.error(`Could not find subtable matching header: ${header}`);
       return res.status(404).json({ error: `Could not find subtable matching header: ${header}` });
     }
-
-    // Create a context object from client-provided context (if any)
-    const context = clientContext || {};
     
-    // Process just this table with the preserved context
     const result = processTable(targetTable, header, tables, context);
-    
-    if (DEBUG) {
-      console.log(`Rerolled "${header}" with result:`, JSON.stringify(result, null, 2));
-      console.log(`Context after reroll:`, context);
-    }
-    
+    console.log('Final result:', result);
     res.json({ result, context });
   } catch (error) {
     console.error('Error rerolling result:', error);
-    res.status(500).json({ error: 'Failed to reroll result' });
+    res.status(500).json({ error: 'Failed to reroll result: ' + error.message });
   }
 });
 
@@ -456,22 +519,20 @@ function findRootTable(currentTable, allTables) {
   return null;
 }
 
-// Check if childTable is contained somewhere in parentTable
+// Check if a table is contained within another table
 function isTableContained(parentTable, childTable) {
   if (parentTable === childTable) return true;
   
   if (parentTable.tables && Array.isArray(parentTable.tables)) {
     for (const subTable of parentTable.tables) {
-      if (isTableContained(subTable, childTable)) {
-        return true;
-      }
+      if (isTableContained(subTable, childTable)) return true;
     }
   }
   
   return false;
 }
 
-// Update processTable to handle special multi-field results
+// Process a table and generate results
 function processTable(table, parentHeader, allTables, context) {
   const header = table.name || table.tablename || parentHeader;
 
@@ -481,6 +542,59 @@ function processTable(table, parentHeader, allTables, context) {
     _fileName: table.filename
   };
 
+  // Special case for Viridian Locations
+  if ((table.filename && table.filename.includes('ViridianDice_Locations')) ||
+      (header === 'Dungeon Locations')) {
+    console.log(`Processing Viridian Location table: ${header}`);
+    
+    if (table.results && Array.isArray(table.results) && table.results.length > 0) {
+      const result = randomChoice(table.results);
+      console.log(`Selected Viridian Location: ${result}`);
+      
+      // Store result in context
+      if (context && header) {
+        context[header] = result;
+      }
+      
+      return { header, result, ...sourceInfo };
+    }
+  }
+
+  // Special case for Knave Careers - explicitly detect by filename
+  if (table.filename && table.filename.includes('Knave_Careers')) {
+    console.log(`Processing Knave Career table: ${header}`);
+    
+    if (table.results && Array.isArray(table.results) && table.results.length > 0) {
+      const career = randomChoice(table.results);
+      console.log(`Selected Knave Career:`, career);
+      
+      // Force careers into standard [career, items] format
+      let result;
+      if (Array.isArray(career) && career.length >= 2) {
+        result = career;
+      } else if (typeof career === 'object' && career.career && career.items) {
+        result = [career.career, career.items];
+      } else {
+        console.error('Unexpected career format:', career);
+        result = ["Unknown Career", "Unknown Items"];
+      }
+      
+      // Store result in context
+      if (context && header) {
+        context[header] = result;
+      }
+      
+      // Always include the _isCareer flag
+      return { 
+        header, 
+        result,
+        _isCareer: true,
+        ...sourceInfo 
+      };
+    }
+  }
+
+  // Original processTable logic for other tables
   // 1) If the table has customDisplay => parse it
   if (table.customDisplay) {
     const result = processCustomDisplay(table, allTables, context);
@@ -511,12 +625,11 @@ function processTable(table, parentHeader, allTables, context) {
     // Handle special case for object results with career/items
     if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
       if (result.career && result.items) {
-        // This was incorrectly transforming into separate objects
-        // Instead, preserve as a two-element array
+        // Preserve as a two-element array
         return { 
           header, 
           result: [result.career, result.items],
-          _isCareer: true,  // Add this marker
+          _isCareer: true,
           ...sourceInfo 
         };
       }
@@ -574,3 +687,170 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   if (DEBUG) console.log('Debugging is enabled.');
 });
+
+// Add this new helper function to debug table data
+function debugTableStructure(table) {
+  if (!DEBUG) return;
+  
+  console.log(`Table debug for: ${table.name || table.tablename || 'unnamed table'}`);
+  console.log(`Filename: ${table.filename || 'N/A'}`);
+  console.log(`Has customDisplay: ${table.customDisplay ? 'YES' : 'NO'}`);
+  console.log(`Has results: ${table.results ? `YES (${table.results.length} entries)` : 'NO'}`);
+  
+  if (table.results && table.results.length > 0) {
+    const sampleEntry = table.results[0];
+    console.log(`Sample result entry: ${typeof sampleEntry === 'object' ? JSON.stringify(sampleEntry) : sampleEntry}`);
+    
+    // Check for career format
+    if (Array.isArray(sampleEntry) && sampleEntry.length === 2 && 
+        typeof sampleEntry[0] === 'string' && typeof sampleEntry[1] === 'string') {
+      console.log(`Table appears to use career format [career, items]`);
+    }
+  }
+  
+  console.log(`Has tables: ${table.tables ? `YES (${table.tables.length} tables)` : 'NO'}`);
+  console.log(`Has subTables: ${table.subTables ? `YES (${table.subTables.length} subtables)` : 'NO'}`);
+}
+
+// Add this debug helper function at the top of the file with other utility functions
+function printObject(obj, label = 'Object') {
+  console.log(`=== ${label} ===`);
+  if (typeof obj !== 'object' || obj === null) {
+    console.log(`Not an object: ${obj}`);
+    return;
+  }
+  
+  try {
+    const cleaned = JSON.parse(JSON.stringify(obj, (key, value) => {
+      if (typeof value === 'function') return '[Function]';
+      if (key.startsWith('_') && key !== '_isCareer' && key !== '_fileName' && key !== '_tableName') return undefined;
+      return value;
+    }));
+    console.log(cleaned);
+  } catch (e) {
+    console.log('Error stringifying object:', e);
+    console.log(obj);
+  }
+}
+
+// Update this part of the reroll endpoint handling for Knave careers
+app.post('/api/reroll', (req, res) => {
+  // ...existing code...
+  
+  try {
+    // ...existing code...
+    
+    // Enhanced Knave career handling - ensure it always returns the proper format
+    if (selectedTable.filename && selectedTable.filename.includes('Knave_Careers')) {
+      console.log(`=== KNAVE CAREER SPECIAL HANDLING ===`);
+      
+      // Always force the career array format regardless of what came back from processTable
+      if (typeof result === 'object' && result !== null) {
+        result._isCareer = true;
+        
+        // Force into array format [career, items]
+        let careerValue = 'Unknown Career';
+        let itemsValue = 'Unknown Items';
+        
+        // Check for array format first
+        if (Array.isArray(result.result) && result.result.length >= 2) {
+          careerValue = result.result[0] || careerValue;
+          itemsValue = result.result[1] || itemsValue;
+          console.log(`Found Knave career in array format: [${careerValue}, ${itemsValue}]`);
+        }
+        // Check for object format with career/items properties
+        else if (typeof result.result === 'object' && result.result !== null &&
+                result.result.career && result.result.items) {
+          careerValue = result.result.career;
+          itemsValue = result.result.items;
+          console.log(`Found Knave career in object format, converting to array: [${careerValue}, ${itemsValue}]`);
+        }
+        // If we get a string, try to split it
+        else if (typeof result.result === 'string') {
+          const matches = result.result.match(/^([^,]+),\s*(.+)$/);
+          if (matches && matches.length >= 3) {
+            careerValue = matches[1].trim();
+            itemsValue = matches[2].trim();
+            console.log(`Split Knave career string into array: [${careerValue}, ${itemsValue}]`);
+          } else {
+            careerValue = result.result;
+            console.log(`Using string value as career only: [${careerValue}, ${itemsValue}]`);
+          }
+        }
+        
+        // Override the result with our properly formatted array
+        result.result = [careerValue, itemsValue];
+        
+        // Direct access to the table to fetch a real career if needed
+        if (careerValue === 'Unknown Career' && targetTable && 
+            targetTable.results && targetTable.results.length > 0) {
+          // Try to get a valid career from the table
+          const freshResult = getWeightedRandomResult(targetTable);
+          if (Array.isArray(freshResult) && freshResult.length >= 2) {
+            result.result = [freshResult[0], freshResult[1]];
+            console.log(`Generated fresh Knave career: [${result.result[0]}, ${result.result[1]}]`);
+          }
+        }
+        
+        // Final check for malformed career
+        if (!Array.isArray(result.result) || result.result.length < 2) {
+          console.error('Career format is still incorrect, forcing array structure:', result);
+          result.result = [careerValue, itemsValue];
+        }
+        
+        printObject(result, 'Final Knave career result');
+      }
+    }
+    
+    // Enhanced Viridian Locations handling
+    if (targetTable.name === 'Dungeon Locations' || 
+        (selectedTable.filename && selectedTable.filename.includes('ViridianDice_Locations'))) {
+      console.log(`=== VIRIDIAN LOCATION SPECIAL HANDLING ===`);
+      
+      // If result is an object, ensure it has a result property that is a string
+      if (typeof result === 'object' && result !== null) {
+        // Direct string case
+        if (typeof result.result === 'string') {
+          console.log(`Viridian location already in correct format: "${result.result}"`);
+        }
+        // Need to extract from object
+        else if (result.result && typeof result.result === 'object') {
+          // If the nested result has a string result property, use that
+          if (typeof result.result.result === 'string') {
+            const locationName = result.result.result;
+            result.result = locationName;
+            console.log(`Extracted location name from nested object: "${locationName}"`);
+          }
+          // Otherwise try to find any string property
+          else {
+            let found = false;
+            for (const key in result.result) {
+              if (typeof result.result[key] === 'string' && !key.startsWith('_')) {
+                const locationName = result.result[key];
+                result.result = locationName;
+                console.log(`Found string property "${key}" with value: "${locationName}"`);
+                found = true;
+                break;
+              }
+            }
+            
+            // If no string property found, try to generate a new one
+            if (!found && targetTable && targetTable.results && targetTable.results.length > 0) {
+              const locationName = randomChoice(targetTable.results);
+              result.result = locationName;
+              console.log(`Generated new location: "${locationName}"`);
+            }
+          }
+        }
+      }
+      
+      printObject(result, 'Final Viridian location result');
+    }
+    
+    // ...existing code...
+  } catch (error) {
+    // ...existing error handling...
+  }
+});
+
+// ...existing code...

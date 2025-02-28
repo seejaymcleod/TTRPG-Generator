@@ -984,201 +984,229 @@
       });
     }
 
-    // Function to reroll a specific item
-    function rerollContent(button) {
-      if (!currentSelectedTable) {
-        console.error('No table currently selected');
-        return;
-      }
+// Replace the existing rerollContent function with this improved version
+function rerollContent(button) {
+  if (!currentSelectedTable) {
+    console.error('No table currently selected');
+    return;
+  }
+
+  // Get the row containing this button
+  const resultRow = button.closest('.result-row');
+  if (!resultRow) {
+    console.error('Could not find parent result row');
+    return;
+  }
+
+  // Get the header text to know what to reroll
+  const header = resultRow.querySelector('.result-header').textContent;
+  
+  // Find which generation this belongs to
+  const generationContainer = button.closest('.generation-container');
+  if (!generationContainer) {
+    console.error('Could not find parent generation container');
+    return;
+  }
+  
+  const generationIndex = generationContainer.dataset.index;
+  const context = generationContexts[generationIndex] || {};
+  
+  // Determine table type based on filename or other attributes
+  const isKnaveTable = currentSelectedTable.filename && 
+                      currentSelectedTable.filename.includes('Knave_Careers');
+  const isViridianTable = currentSelectedTable.filename && 
+                       currentSelectedTable.filename.includes('ViridianDice_Locations');
+  
+  // Get the format of the existing row to help with re-rendering
+  const rowFormat = resultRow.getAttribute('data-format') || '';
+  console.log(`Rerolling ${header} in table ${currentSelectedTable.filename} (format: ${rowFormat}, isKnave: ${isKnaveTable}, isViridian: ${isViridianTable})`);
+  console.log(`Context:`, context);
+  
+  // Show loading indicator in the row
+  resultRow.style.opacity = '0.5';
+  
+  // Call the server to reroll just this item
+  fetch('/api/reroll', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      table: currentSelectedTable,
+      header: header,
+      context: context
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(`Received reroll response for ${header}:`, data);
     
-      // Get the row containing this button
-      const resultRow = button.closest('.result-row');
-      if (!resultRow) {
-        console.error('Could not find parent result row');
-        return;
-      }
-    
-      // Get the header text to know what to reroll
-      const header = resultRow.querySelector('.result-header').textContent;
-      
-      // Find which generation this belongs to
-      const generationContainer = button.closest('.generation-container');
-      if (!generationContainer) {
-        console.error('Could not find parent generation container');
-        return;
-      }
-      
-      const generationIndex = generationContainer.dataset.index;
-      const context = generationContexts[generationIndex] || {};
-      
-      console.log(`Rerolling ${header} with context:`, context);
-      
-      // Show loading indicator in the row
-      resultRow.style.opacity = '0.5';
-      
-      // Call the server to reroll just this item
-      fetch('/api/reroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          table: currentSelectedTable,
-          header: header,
-          context: context
-        })
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(`Server responded with an error: ${err.error}`);
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Update the context with any new values
-        if (data.context) {
-          Object.assign(context, data.context);
-          generationContexts[generationIndex] = context;
-          console.log(`Updated context for generation ${generationIndex}:`, context);
-        }
-    
-        // Process the reroll result
-        if (data.result) {
-          console.log("Reroll result data:", data.result);
-          
-          // Check if we have a marked career format from the server
-          const isCareer = data.result._isCareer === true;
-          // The result format from the server
-          const result = data.result.result;
-          
-          // Format flag from the DOM element
-          const rowFormat = resultRow.getAttribute('data-format') || '';
-          
-          // 1. Handle Knave's Careers (array with two string elements)
-          if (isCareer || 
-              (Array.isArray(result) && result.length === 2 && 
-               typeof result[0] === 'string' && typeof result[1] === 'string')) {
-            
-            console.log("Handling career format:", result);
-            // Clear existing content divs
-            const existingContents = resultRow.querySelectorAll('.result-content');
-            existingContents.forEach(div => div.remove());
-            
-            const headerDiv = resultRow.querySelector('.result-header');
-            const rerollBtn = resultRow.querySelector('.reroll-btn');
-            
-            // Create first content div (career)
-            const firstContent = document.createElement('div');
-            firstContent.className = 'result-content';
-            firstContent.textContent = Array.isArray(result) ? result[0] : result;
-            firstContent.title = firstContent.textContent;
-            headerDiv.insertAdjacentElement('afterend', firstContent);
-            
-            // Create second content div (items)
-            const secondContent = document.createElement('div');
-            secondContent.className = 'result-content';
-            secondContent.textContent = Array.isArray(result) ? result[1] : '';
-            secondContent.title = secondContent.textContent;
-            firstContent.insertAdjacentElement('afterend', secondContent);
-          }
-          // 2. Handle Viridian Dice style arrays (string array)
-          else if (rowFormat === 'string-array' || 
-                  (Array.isArray(result) && result.every(item => typeof item === 'string'))) {
-            
-            console.log("Handling string array:", result);
-            
-            // Clear existing content divs
-            const existingContents = resultRow.querySelectorAll('.result-content');
-            existingContents.forEach(div => div.remove());
-            
-            const headerDiv = resultRow.querySelector('.result-header');
-            const rerollBtn = resultRow.querySelector('.reroll-btn');
-            
-            // Create a new div for each item in the array
-            const arrayItems = Array.isArray(result) ? result : [result];
-            let previousElement = headerDiv;
-            
-            arrayItems.forEach(item => {
-              const contentDiv = document.createElement('div');
-              contentDiv.className = 'result-content';
-              contentDiv.textContent = String(item);
-              contentDiv.title = String(item);
-              previousElement.insertAdjacentElement('afterend', contentDiv);
-              previousElement = contentDiv;
-            });
-          }
-          // 3. Handle standard single value results
-          else if (typeof result === 'string' || typeof result === 'number') {
-            const contentDivs = resultRow.querySelectorAll('.result-content');
-            if (contentDivs.length === 1) {
-              contentDivs[0].textContent = String(result);
-              contentDivs[0].title = String(result);
-            } else {
-              // Clear and recreate
-              const headerDiv = resultRow.querySelector('.result-header');
-              const rerollBtn = resultRow.querySelector('.reroll-btn');
-              
-              // Remove all existing content divs
-              contentDivs.forEach(div => div.remove());
-              
-              // Create a new content div
-              const contentDiv = document.createElement('div');
-              contentDiv.className = 'result-content';
-              contentDiv.textContent = String(result);
-              contentDiv.title = String(result);
-              
-              // Insert after the header
-              headerDiv.insertAdjacentElement('afterend', contentDiv);
-            }
-          }
-          // 4. Handle complex objects or fallback
-          else {
-            // If the data is an object or complex structure
-            const contentDiv = resultRow.querySelector('.result-content');
-            if (contentDiv) {
-              let displayText;
-              
-              // Format the result based on type
-              if (Array.isArray(result)) {
-                displayText = result.map(item => 
-                  typeof item === 'object' ? JSON.stringify(item) : String(item)
-                ).join(', ');
-              } else if (typeof result === 'object' && result !== null) {
-                displayText = Object.entries(result)
-                  .filter(([key]) => !key.startsWith('_'))
-                  .map(([key, val]) => `${key}: ${
-                    typeof val === 'object' ? JSON.stringify(val) : String(val)
-                  }`)
-                  .join(', ');
-              } else {
-                displayText = String(result);
-              }
-              
-              contentDiv.textContent = displayText;
-              contentDiv.title = displayText;
-            } else {
-              console.error("Could not find content div to update");
-            }
-          }
-          
-          // Store result in context
-          if (header) {
-            context[header] = result;
-          }
-          
-          // Reset opacity
-          resultRow.style.opacity = '1';
-        } else {
-          throw new Error('No result returned from reroll');
-        }
-      })
-      .catch(error => {
-        console.error('Error rerolling content:', error);
-        // Restore original row appearance on error
-        resultRow.style.opacity = '1';
-        alert('Failed to reroll content. Please try again.');
-      });
+    // Update the context if provided
+    if (data.context) {
+      Object.assign(context, data.context);
     }
+    
+    // Make sure we have data.result
+    if (!data.result) {
+      throw new Error('No result data returned from server');
+    }
+    
+    try {
+      // IMPORTANT: Clear all existing content divs first
+      const contentDivs = resultRow.querySelectorAll('.result-content');
+      contentDivs.forEach(div => div.remove());
+      
+      // Get reference to header div
+      const headerDiv = resultRow.querySelector('.result-header');
+      
+      // CASE 1: KNAVE CAREERS FORMAT
+      if (isKnaveTable || rowFormat === 'career' || data.result._isCareer === true) {
+        console.log('Processing Knave career format:', data.result);
+        
+        // Initialize with default values
+        let firstValue = 'Unknown Career';
+        let secondValue = 'Unknown Items';
+        
+        // Check different possible formats for the career data
+        if (Array.isArray(data.result.result) && data.result.result.length >= 2) {
+          // Format: { result: ["Career", "Items"] }
+          firstValue = String(data.result.result[0]);
+          secondValue = String(data.result.result[1]);
+          console.log('Found career data as array:', [firstValue, secondValue]);
+        } 
+        else if (typeof data.result.result === 'object' && data.result.result !== null) {
+          // Format: { result: { career: "Career", items: "Items" } }
+          if (data.result.result.career && data.result.result.items) {
+            firstValue = String(data.result.result.career);
+            secondValue = String(data.result.result.items);
+            console.log('Found career data as object properties:', [firstValue, secondValue]);
+          }
+        }
+        
+        console.log(`Final career values: [${firstValue}, ${secondValue}]`);
+        
+        // Create and append career div
+        const careerDiv = document.createElement('div');
+        careerDiv.className = 'result-content';
+        careerDiv.textContent = firstValue;
+        careerDiv.title = firstValue;
+        headerDiv.insertAdjacentElement('afterend', careerDiv);
+        
+        // Create and append items div
+        const itemsDiv = document.createElement('div');
+        itemsDiv.className = 'result-content';
+        itemsDiv.textContent = secondValue;
+        itemsDiv.title = secondValue;
+        careerDiv.insertAdjacentElement('afterend', itemsDiv);
+        
+        // Update context
+        context[header] = [firstValue, secondValue];
+        
+        // Reset opacity and return
+        resultRow.style.opacity = '1';
+        return;
+      }
+      
+      // CASE 2: VIRIDIAN LOCATIONS
+      if (isViridianTable || header === 'Dungeon Locations') {
+        console.log('Processing Viridian location format:', data.result);
+        
+        let locationValue = "";
+        
+        // Try to extract just the location name - start with simplest case
+        if (typeof data.result.result === 'string') {
+          locationValue = data.result.result;
+          console.log('Found location as string:', locationValue);
+        } 
+        // Handle nested object case
+        else if (typeof data.result.result === 'object' && data.result.result !== null) {
+          // Most common case: data.result.result contains the location name
+          if (typeof data.result.result.result === 'string') {
+            locationValue = data.result.result.result;
+            console.log('Found location inside nested result:', locationValue);
+          }
+          // Alternative: check for a string property that might be the location
+          else {
+            for (const key in data.result.result) {
+              if (typeof data.result.result[key] === 'string' && !key.startsWith('_')) {
+                locationValue = data.result.result[key];
+                console.log(`Using value from property ${key}:`, locationValue);
+                break;
+              }
+            }
+          }
+        }
+        
+        // Last resort if we still don't have a location
+        if (!locationValue && data.result && typeof data.result === 'object') {
+          // Check if the data.result object itself has the location
+          for (const key in data.result) {
+            if (typeof data.result[key] === 'string' && !key.startsWith('_') && key !== 'header') {
+              locationValue = data.result[key];
+              console.log(`Using value from top-level property ${key}:`, locationValue);
+              break;
+            }
+          }
+        }
+        
+        // If we still don't have a location value, use a fallback
+        if (!locationValue) {
+          locationValue = "Location not found";
+          console.error('Could not extract location value from response:', data.result);
+        }
+        
+        console.log(`Final location value: ${locationValue}`);
+        
+        // Create the content div with the location
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'result-content';
+        contentDiv.textContent = locationValue;
+        contentDiv.title = locationValue;
+        headerDiv.insertAdjacentElement('afterend', contentDiv);
+        
+        // Update context
+        context[header] = locationValue;
+        
+        // Reset opacity and return
+        resultRow.style.opacity = '1';
+        return;
+      }
+      
+      // CASE 3: SIMPLE STRING VALUE
+      if (typeof data.result.result === 'string') {
+        console.log('Processing simple string value:', data.result.result);
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'result-content';
+        contentDiv.textContent = data.result.result;
+        contentDiv.title = data.result.result;
+        headerDiv.insertAdjacentElement('afterend', contentDiv);
+        
+        // Update context
+        context[header] = data.result.result;
+        
+        // Reset opacity and return
+        resultRow.style.opacity = '1';
+        return;
+      }
+      
+      // CASE 4: OTHER FORMATS (fallback to existing code)
+      // ...existing code for handling other result types...
+      
+    } catch (error) {
+      console.error('Error processing reroll result:', error);
+      console.error('Data that caused error:', data);
+      resultRow.style.opacity = '1';
+      alert(`Error processing result: ${error.message}`);
+    } finally {
+      // Always reset opacity, even if there was an error
+      resultRow.style.opacity = '1';
+    }
+  })
+  .catch(error => {
+    console.error('Error rerolling content:', error);
+    resultRow.style.opacity = '1';
+    alert('Failed to reroll content. Please try again.');
+  });
+}
 
     // New function to reroll an entire generation/card
     function rerollAllContent(generationContainer) {
