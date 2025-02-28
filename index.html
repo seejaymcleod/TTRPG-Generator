@@ -1661,6 +1661,99 @@
         `;
       }
       
+      // New case: Handle multi-element array format flagged by the server
+      if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        
+        // Create content cells for each element in the array (max 4 elements)
+        const contentCells = item.result.map(element => {
+          const valueStr = String(element || '');
+          const escapedValue = valueStr.replace(/"/g, '&quot;');
+          return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+        }).join('');
+        
+        const rerollButton = !isNestedContent ? `
+          <button class="reroll-btn" onclick="rerollContent(this)">
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+          </button>` : '';
+        
+        return `
+          <div class="result-row"${sourceTable} data-format="multi-array">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            ${contentCells}
+            ${rerollButton}
+          </div>
+        `;
+      }
+      
+      // Handle arrays with better weight detection
+      if (Array.isArray(item.result)) {
+        // Check if the last element is numeric (a weight)
+        const lastIndex = item.result.length - 1;
+        const lastElement = item.result[lastIndex];
+        const isLastElementNumeric = 
+          typeof lastElement === 'number' || 
+          (typeof lastElement === 'string' && !isNaN(parseFloat(lastElement)) && 
+           lastElement.trim() !== '' && !isNaN(lastElement));
+        
+        // If this is a weighted array, show only the value elements (exclude weight)
+        if (isLastElementNumeric && item.result.length >= 2) {
+          const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+          const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+          
+          // Display each value element (excluding the weight)
+          const contentCells = item.result.slice(0, lastIndex).map(element => {
+            const valueStr = String(element || '');
+            const escapedValue = valueStr.replace(/"/g, '&quot;');
+            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+          }).join('');
+          
+          const rerollButton = !isNestedContent ? `
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>` : '';
+          
+          return `
+            <div class="result-row"${sourceTable} data-format="weighted">
+              <div class="result-header" title="${headerTitle}">${item.header}</div>
+              ${contentCells}
+              ${rerollButton}
+            </div>
+          `;
+        }
+      }
+
+      // Continue with existing logic for other cases
+      // Special handling for career format flagged by the server
+      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        
+        // Get the career and items values
+        const career = item.result[0] || '';
+        const items = item.result[1] || '';
+        
+        // Escape values for HTML attributes
+        const careerEscaped = career.replace(/"/g, '&quot;');
+        const itemsEscaped = items.replace(/"/g, '&quot;');
+        
+        // Create a single row with both elements
+        const rerollButton = !isNestedContent ? `
+          <button class="reroll-btn" onclick="rerollContent(this)">
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+          </button>` : '';
+        
+        return `
+          <div class="result-row"${sourceTable} data-format="career">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            <div class="result-content" title="${careerEscaped}">${career}</div>
+            <div class="result-content" title="${itemsEscaped}">${items}</div>
+            ${rerollButton}
+          </div>
+        `;
+      }
+      
       // Handle arrays with proper detection
       if (Array.isArray(item)) {
         // Case for arrays of simple values where each element is not an object

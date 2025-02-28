@@ -237,31 +237,80 @@ function weightedRandom(results) {
   return randomChoice(weightedEntries);
 }
 
-// Modify the getWeightedRandomResult function to handle multi-value arrays
+// Updated getWeightedRandomResult function to handle arrays with up to 4 elements
 function getWeightedRandomResult(table) {
   let weightedEntries = [];
   table.results.forEach(entry => {
+    // Handle arrays (could be weighted entries or career-style entries)
     if (Array.isArray(entry)) {
-      // New type check: If array has 2 elements and both are strings,
-      // it's a multi-field entry (not a weighted entry)
-      if (entry.length === 2 && typeof entry[0] === 'string' && typeof entry[1] === 'string') {
-        // For career-style entries with [career, items] format
-        weightedEntries.push({
-          career: entry[0],
-          items: entry[1]
-        });
-      } else {
-        // Standard weighted entry [value, weight]
-        let [value, weight] = entry;
-        for (let i = 0; i < (weight || 1); i++) {
-          weightedEntries.push(value);
+      // Get the length of the array
+      const arrayLength = entry.length;
+      
+      // If the array has at least 2 elements
+      if (arrayLength >= 2) {
+        // Check if the last element is numeric (a weight)
+        const lastElement = entry[arrayLength - 1];
+        const isLastElementNumeric = 
+          typeof lastElement === 'number' || 
+          (typeof lastElement === 'string' && !isNaN(parseFloat(lastElement)) && 
+           lastElement.trim() !== '' && !isNaN(lastElement));
+        
+        if (isLastElementNumeric) {
+          // Get the weight as a number
+          const weight = typeof lastElement === 'number' ? 
+                        lastElement : parseInt(lastElement, 10);
+          
+          // Create value array without the weight
+          const value = entry.slice(0, arrayLength - 1);
+          
+          // If it's a single-value array, extract just the string
+          const finalValue = value.length === 1 ? value[0] : value;
+          
+          // Add weighted entries to the list
+          for (let i = 0; i < (weight || 1); i++) {
+            weightedEntries.push(finalValue);
+          }
+          
+          if (DEBUG) {
+            console.log(`Detected weighted entry with weight ${weight}:`, finalValue);
+          }
+          return; // Skip the rest of this iteration
+        }
+        
+        // Check for career-style entries (two strings - special case)
+        if (arrayLength === 2 && 
+            typeof entry[0] === 'string' && 
+            typeof entry[1] === 'string') {
+            
+          // Check if the second string resembles items rather than a numeric string
+          const secondElement = entry[1];
+          const resemblesItems = secondElement.includes(',') || 
+                              secondElement.includes(' ') || 
+                              secondElement.length > 5;
+          
+          if (resemblesItems) {
+            // For career-style entries with [career, items] format
+            weightedEntries.push({
+              career: entry[0],
+              items: entry[1]
+            });
+            
+            if (DEBUG) {
+              console.log(`Detected career-style entry: ${entry[0]}, ${entry[1]}`);
+            }
+            return; // Skip the rest of this iteration
+          }
         }
       }
+      
+      // If we got here, it's a regular array without special handling
+      weightedEntries.push(entry);
+      
     } else if (typeof entry === 'object' && entry !== null) {
       // Support for object entries (like {career: "X", items: "Y"})
       weightedEntries.push(entry);
-    } else if (typeof entry === 'string') {
-      // Plain string entries
+    } else if (typeof entry === 'string' || typeof entry === 'number') {
+      // Plain string/number entries
       weightedEntries.push(entry);
     }
   });
@@ -605,6 +654,30 @@ function processTable(table, parentHeader, allTables, context) {
           header, 
           result: [result.career, result.items],
           _isCareer: true,
+          ...sourceInfo 
+        };
+      }
+    }
+    
+    // Additional handling for results with potential multi-element arrays
+    if (Array.isArray(result)) {
+      // Mark multi-element arrays (3+ elements) with a special flag
+      if (result.length >= 3) {
+        return { 
+          header,
+          result,
+          _isMultiElementArray: true,  // Add flag for multi-element arrays
+          ...sourceInfo 
+        };
+      }
+      // Handle career-style entries (2 elements)
+      else if (result.length === 2 && 
+               typeof result[0] === 'string' && 
+               typeof result[1] === 'string') {
+        return { 
+          header, 
+          result,
+          _isCareer: true,  // Add career marker
           ...sourceInfo 
         };
       }
