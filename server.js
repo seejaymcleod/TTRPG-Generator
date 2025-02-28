@@ -496,15 +496,27 @@ function processTable(table, parentHeader, allTables, context) {
       if (DEBUG) console.log(`Stored result "${result}" for table "${header}" in context`);
     }
     
+    // Special detection for Knave Careers format - preserve the original array structure
+    if (Array.isArray(result) && result.length === 2 && 
+        typeof result[0] === 'string' && typeof result[1] === 'string') {
+      // Mark this as a Knave careers result with a special type marker
+      return { 
+        header, 
+        result,
+        _isCareer: true,  // Add this marker to identify it as a career format
+        ...sourceInfo 
+      };
+    }
+    
     // Handle special case for object results with career/items
     if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
       if (result.career && result.items) {
+        // This was incorrectly transforming into separate objects
+        // Instead, preserve as a two-element array
         return { 
           header, 
-          result: [
-            { header: "Career", result: result.career },
-            { header: "Items", result: result.items }
-          ],
+          result: [result.career, result.items],
+          _isCareer: true,  // Add this marker
           ...sourceInfo 
         };
       }

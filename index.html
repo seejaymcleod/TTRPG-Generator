@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <style>
+    /* Base styles */
     body {
       font-family: Arial, sans-serif;
       display: flex;
@@ -15,6 +16,8 @@
       margin: 0;
       transition: background-color 0.3s, color 0.3s;
     }
+    
+    /* Header containers */
     #titleContainer {
       text-align: center;
       padding: 15px;
@@ -34,6 +37,8 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+    
+    /* Filter styles */
     #filtersContainer {
       display: flex;
       padding: 6px;
@@ -75,6 +80,8 @@
       height: 30px;
       align-self: center;
     }
+    
+    /* Content layout */
     #contentWrapper {
       display: flex;
       flex: 1;
@@ -110,12 +117,14 @@
       box-sizing: border-box;
       overflow-y: auto;
     }
+    
+    /* Card styles */
     .generation-container,
     #savedGenerations .generation-container {
       margin: 15px 0;
       padding: 15px;
       border-radius: 8px;
-      background-color: #e8e8e8 !important; /* Medium gray background */
+      background-color: #e8e8e8 !important;
       border: 1px solid #ddd;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       position: relative;
@@ -128,30 +137,23 @@
       background-color: #f9f9f9;
       cursor: grab;
     }
-    .saved-generations {
-      width: 25%;
-      padding: 15px;
-      background-color: #f0f0f0;
-      border-left: 2px solid #ccc;
-      overflow-y: auto;
-    }
-    .dragging {
-      opacity: 0.5;
-    }
-
-    /* Fixed style for result rows with multiple content cells */
+    
+    /* Fixed style for result rows to prevent stacking */
     .result-row {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: center;
-      overflow-x: hidden; /* Hide scrollbar but keep functionality */
-      background-color: transparent !important; 
-      padding: 1px; 
-      border-radius: 2px;
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      position: relative !important;
+      width: 100% !important;
+      overflow-x: auto !important;
+      background-color: transparent !important;
+      padding: 5px 0 !important;
+      margin-bottom: 8px !important;
+      min-height: 30px !important;
+      max-height: 40px !important; 
       border: none !important;
-      margin-bottom: 5px;
-      scrollbar-width: none; /* Firefox */
-      -ms-overflow-style: none; /* IE and Edge */
+      box-sizing: border-box !important;
     }
     
     /* Hide WebKit scrollbars */
@@ -159,66 +161,85 @@
       display: none;
     }
     
-    /* Make content cells compact but readable */
+    /* Make content cells wider and more readable */
     .result-row .result-content {
-      flex: 0 0 auto;
-      min-width: 80px;
-      max-width: 180px;
-      margin-right: 8px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 5px;
-      border: 1px solid #ccc;
-      background-color: white;
+      flex: 0 0 auto !important;
+      min-width: 200px !important;
+      max-width: 300px !important;
+      height: 28px !important;
+      line-height: 28px !important;
+      margin-right: 8px !important;
+      padding: 0 8px !important;
+      border: 1px solid #ccc !important;
+      background-color: white !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      border-radius: 3px !important;
+      position: relative !important;
+      z-index: 1 !important;
     }
     
-    /* Make header more compact */
+    /* Keep header at single line height */
     .result-row .result-header {
-      flex: 0 0 120px; 
-      min-width: 120px;
-      margin-right: 8px;
-      padding: 5px;
-      border: 1px solid #ccc;
-      font-weight: bold;
-      background-color: white;
+      flex: 0 0 120px !important;
+      min-width: 120px !important;
+      max-width: 120px !important;
+      height: 28px !important;
+      line-height: 28px !important;
+      margin-right: 8px !important;
+      padding: 0 5px !important;
+      border: 1px solid #ccc !important;
+      font-weight: bold !important;
+      background-color: white !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      border-radius: 3px !important;
+      position: relative !important;
+      z-index: 1 !important;
     }
     
-    /* Ensure reroll button stays at end without wrapping */
+    /* Ensure reroll button stays at end */
     .result-row .reroll-btn {
-      margin-left: auto;
-      flex-shrink: 0;
-      padding: 0;
-      background: none;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.2s;
+      margin-left: auto !important;
+      flex-shrink: 0 !important;
+      position: sticky !important;
+      right: 0 !important;
+      background-color: white !important;
+      border-radius: 50% !important;
+      z-index: 2 !important;
+      width: 30px !important;
+      height: 30px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
     }
-
-    .result-content:hover {
-      position: relative;
-    }
-    .result-content:hover::after {
-      content: attr(title);
+    
+    /* Make sure the reroll button has a white background when content scrolls under it */
+    .result-row .reroll-btn::before {
+      content: '';
       position: absolute;
-      left: 0;
-      top: -30px;
-      background: #333;
-      color: white;
-      padding: 3px 8px;
-      border-radius: 3px;
-      font-size: 0.9em;
-      white-space: normal;
-      max-width: 300px;
-      z-index: 100;
-      pointer-events: none;
+      top: -5px;
+      right: -5px;
+      bottom: -5px;
+      left: -5px;
+      background-color: rgba(255,255,255,0.7);
+      z-index: -1;
+      border-radius: 50%;
     }
+    
+    /* Remove tooltip hover effect */
+    .result-content:hover::after {
+      display: none !important;
+    }
+    
+    /* Button hover effect */
     .reroll-btn:hover {
-      transform: scale(1.2); /* Scale up on hover instead of changing background */
+      transform: scale(1.2);
     }
+    
+    /* Card title and button styles */
     .card-title {
       margin-top: 0;
       margin-bottom: 10px;
@@ -234,42 +255,18 @@
     .card-title:active {
       cursor: grabbing;
     }
-    .reroll-all-btn {
-      display: flex;
-      align-items: center;
-      font-size: 0.7em;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #666;
-      padding: 0;
-      transition: transform 0.2s, color 0.2s;
-    }
-    .reroll-all-btn:hover {
-      transform: scale(1.05);
-      color: #333;
-    }
-    .reroll-all-btn img {
-      width: 18px;
-      height: 18px;
-      margin-left: 6px;
-      border-radius: 3px;
-      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
-    }
-    .reroll-btn img {
-      width: 24px; /* Slightly larger icon */
-      height: 24px;
-      border-radius: 4px; /* Add rounded corners to the image */
-      filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3)); /* Add subtle shadow */
-    }
     .card-title-text {
       flex-grow: 1;
+      color: #333 !important;
+      font-weight: bold;
     }
     .card-actions {
       display: flex;
       gap: 12px;
       align-items: center;
     }
+    
+    /* Button styles */
     .reroll-all-btn, .copy-btn, .delete-card-btn {
       display: flex;
       align-items: center;
@@ -296,6 +293,14 @@
       border-radius: 3px;
       filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
     }
+    .reroll-btn img {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3));
+    }
+    
+    /* Toast notification */
     .toast-message {
       position: fixed;
       bottom: 20px;
@@ -312,9 +317,8 @@
     .toast-visible {
       opacity: 1;
     }
-    .delete-btn {
-      display: none;
-    }
+    
+    /* Saved cards section */
     .saved-cards {
       width: 25%;
       padding: 15px;
@@ -322,6 +326,19 @@
       border-left: 2px solid #ccc;
       overflow-y: auto;
     }
+    #savedGenerations h2 {
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      color: #333 !important;
+      font-weight: bold;
+    }
+    #savedGenerations .generation-container {
+      margin-bottom: 20px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+    }
+    
+    /* Drag and drop styles */
     .card-being-dragged {
       opacity: 0.6;
       transform: scale(0.98);
@@ -331,100 +348,35 @@
       background-color: #e6f7ff;
       border: 2px dashed #66b3ff;
     }
-    /* Add styles specifically for cards in the saved section */
-    #savedGenerations .generation-container {
-      /* Same as regular cards but with slightly increased shadow for better depth */
-      box-shadow: 0 3px 5px rgba(0,0,0,0.15);
-      margin-bottom: 20px; /* Add more space between cards */
+    .dragging {
+      opacity: 0.5;
     }
-    /* To ensure text is always visible */
-    .result-header, .result-content {
-      background-color: white;
-      color: #333; /* Ensure text color is dark */
-    }
-    /* Add a nice title for the saved cards section with better contrast */
-    #savedGenerations h2 {
-      margin-top: 0;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ccc;
-      color: #333;
-      font-weight: bold;
-    }
-    /* Override styles for the saved cards section to ensure consistency */
-    .saved-cards {
-      width: 25%;
-      padding: 15px;
-      background-color: #f0f0f0;
-      border-left: 2px solid #ccc;
-      overflow-y: auto;
+    .delete-btn {
+      display: none;
     }
     
-    /* Force consistent styling for all cards, especially in saved section */
+    /* Force consistent styling for all cards */
     .generation-container {
       margin: 15px 0;
       padding: 15px;
       border-radius: 8px;
-      background-color: white !important; /* Force white background */
+      background-color: #e8e8e8 !important;
       border: 1px solid #ddd;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       position: relative;
     }
-    
-    /* Force consistent text colors */
-    .card-title-text {
-      color: #333 !important;
-      flex-grow: 1;
-      font-weight: bold;
-    }
-    
-    /* Force white background and black text for content */
     .result-header, .result-content {
       background-color: white !important;
-      color: #333 !important; /* Force dark text */
+      color: #333 !important;
       border: 1px solid #ccc !important;
     }
     
-    /* Make sure buttons are visible */
-    .saved-cards .reroll-all-btn,
-    .saved-cards .copy-btn, 
-    .saved-cards .delete-card-btn {
-      color: #666 !important;
+    /* Saved cards special styling */
+    .saved-cards .generation-container {
+      background-color: #e8e8e8 !important;
+      border: 1px solid #bbb !important;
     }
     
-    /* Ensure icons appear correctly */
-    .reroll-all-btn img, .copy-btn img, .delete-card-btn img,
-    .saved-cards .reroll-all-btn img, 
-    .saved-cards .copy-btn img, 
-    .saved-cards .delete-card-btn img,
-    .reroll-btn img {
-      opacity: 1 !important;
-      filter: none !important; /* Remove any filters that might affect appearance */
-      background: transparent !important; /* Ensure transparent background */
-    }
-    
-    /* Ensure reroll buttons in saved section look the same */
-    .saved-cards .reroll-btn {
-      margin-left: 8px;
-      padding: 0;
-      background: none !important;
-      border: none !important;
-    }
-    
-    /* Add clear section header */
-    #savedGenerations h2 {
-      margin-top: 0;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ccc;
-      color: #333 !important;
-      font-weight: bold;
-    }
-    
-    /* Ensure card spacing */
-    #savedGenerations .generation-container {
-      margin-bottom: 20px;
-      box-shadow: 0 3px 5px rgba(0,0,0,0.15);
-    }
-
     /* IMPORTANT: Reset any potential filters that could cause graying out */
     .saved-cards,
     .saved-cards *,
@@ -440,14 +392,7 @@
       color-adjust: exact !important;
     }
     
-    /* Ensure buttons and text are properly colored */
-    .saved-cards .reroll-all-btn,
-    .saved-cards .copy-btn, 
-    .saved-cards .delete-card-btn {
-      color: #333 !important;
-    }
-    
-    /* Force all text to be black for maximum contrast */
+    /* Force all text to be black for maximum contrast in saved cards */
     .saved-cards .result-header, 
     .saved-cards .result-content,
     .saved-cards .card-title-text {
@@ -473,13 +418,13 @@
       border: 1px solid #aaa !important;
       background-color: #ffffff !important;
     }
-
+    
     /* Additional fix for card container background */
     .saved-cards .generation-container {
       background-color: #ffffff !important;
       border: 1px solid #333 !important;
     }
-
+    
     /* Force fix for result row borders - override all other styles */
     .result-row,
     #savedGenerations .result-row,
@@ -491,20 +436,7 @@
       outline: none !important;
     }
     
-    /* Fix for any inherited properties that might cause borders */
-    .saved-cards .result-row::before,
-    .saved-cards .result-row::after,
-    #savedGenerations .result-row::before,
-    #savedGenerations .result-row::after,
-    .result-row::before,
-    .result-row::after {
-      display: none !important;
-      border: none !important;
-      background: none !important;
-      content: none !important;
-    }
-
-    /* Styles for collapse/expand functionality */
+    /* Collapse/expand functionality */
     .collapse-btn {
       display: flex;
       align-items: center;
@@ -519,75 +451,40 @@
       color: #777;
       transition: transform 0.2s, color 0.2s;
       position: absolute;
-      top: 15px; /* Position at top of card */
-      left: 50%; /* Center horizontally */
+      top: 15px;
+      left: 50%;
       transform: translateX(-50%);
       z-index: 2;
       border-radius: 50%;
-      background-color: white;
+      background-color: white !important;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-
     .collapse-btn:hover {
       color: #333;
       background-color: #f5f5f5;
     }
-
-    /* Position adjustment for card title to accommodate the button */
     .card-title {
-      padding-top: 5px; /* Extra space at top for button */
+      padding-top: 5px;
       position: relative;
     }
-
-    /* Collapsed card state */
     .generation-container.collapsed .card-content {
       display: none;
     }
-
     .generation-container.collapsed {
       padding-bottom: 5px;
     }
-
-    /* Card content wrapper */
     .card-content {
       transition: max-height 0.3s ease-out;
       overflow: hidden;
     }
-
-    /* Rotate arrow when collapsed */
     .generation-container.collapsed .collapse-btn .down-arrow {
       display: none;
     }
     .generation-container:not(.collapsed) .collapse-btn .up-arrow {
       display: none;
     }
-    .generation-container,
-    #savedGenerations .generation-container {
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 8px;
-      background-color: #e8e8e8 !important; /* Medium gray background */
-      border: 1px solid #ddd;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      position: relative;
-    }
-    .generation-container .result-header,
-    .generation-container .result-content,
-    #savedGenerations .generation-container .result-header,
-    #savedGenerations .generation-container .result-content {
-      background-color: white !important;
-      border: 1px solid #ccc !important;
-      color: #333 !important;
-    }
-    .collapse-btn {
-      background-color: white !important;
-    }
     .card-content > div {
       background-color: #e8e8e8 !important;
-    }
-    .saved-cards .generation-container {
-      background-color: #e8e8e8 !important;
-      border: 1px solid #bbb !important;
     }
   </style>
 </head>
@@ -654,13 +551,14 @@
       try {
         const response = await fetch('/api/tables');
         tablesData = await response.json();
-        console.log('Tables Data:', tablesData); // Debugging output
+        console.log('Tables Data:', tablesData);
         populateDropdowns(tablesData);
         applyFilters();
       } catch (error) {
         console.error('Error fetching tables:', error);
       }
 
+      // Initialize filter dropdowns with Choices.js
       window.gameChoices = new Choices('#gameFilter', {
         removeItemButton: true,
         placeholder: true,
@@ -690,6 +588,94 @@
         noChoicesText: ''
       });
       document.getElementById('settingFilter').addEventListener('change', applyFilters);
+
+      // Set up drag and drop for saved cards
+      const savedArea = document.getElementById('savedGenerations');
+      
+      savedArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('drop-target-highlight');
+        e.dataTransfer.dropEffect = 'copy';
+      });
+      
+      savedArea.addEventListener('dragleave', function(e) {
+        this.classList.remove('drop-target-highlight');
+      });
+      
+      savedArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('drop-target-highlight');
+        const cardIndex = e.dataTransfer.getData('text/plain');
+        const originalCard = document.querySelector(`.generation-container[data-index="${cardIndex}"]`);
+        
+        if (!originalCard) return;
+        
+        // Check if this card already exists in the saved area by comparing content
+        const cardTitle = originalCard.querySelector('.card-title-text').textContent;
+        
+        // Get all headers and contents from the original card to create a unique signature
+        const originalHeaders = Array.from(originalCard.querySelectorAll('.result-header')).map(h => h.textContent);
+        const originalContents = Array.from(originalCard.querySelectorAll('.result-content')).map(c => c.textContent);
+        const cardSignature = JSON.stringify({ title: cardTitle, headers: originalHeaders, contents: originalContents });
+        
+        // Check if a card with the same signature already exists
+        let isDuplicate = false;
+        const savedCards = savedArea.querySelectorAll('.generation-container');
+        savedCards.forEach(savedCard => {
+          const savedHeaders = Array.from(savedCard.querySelectorAll('.result-header')).map(h => h.textContent);
+          const savedContents = Array.from(savedCard.querySelectorAll('.result-content')).map(c => c.textContent);
+          const savedSignature = JSON.stringify({ 
+            title: savedCard.querySelector('.card-title-text').textContent, 
+            headers: savedHeaders, 
+            contents: savedContents });
+          
+          if (savedSignature === cardSignature) {
+            isDuplicate = true;
+          }
+        });
+        
+        if (isDuplicate) {
+          showToast('Card already exists in Saved Cards');
+          return;
+        }
+        
+        // Clone the card and add to saved area
+        const cardClone = originalCard.cloneNode(true);
+        const newIndex = `saved-${Date.now()}`;
+        cardClone.dataset.index = newIndex;
+        
+        // Reattach event handlers for all buttons in the cloned card
+        cardClone.querySelector('.copy-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          copyToMarkdown(cardClone);
+        });
+        
+        cardClone.querySelector('.reroll-all-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          rerollAllContent(cardClone);
+        });
+        
+        cardClone.querySelector('.delete-card-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteCard(cardClone);
+        });
+        
+        // Make the clone draggable too, but it won't actually be draggable due to our check in handleCardDragStart
+        cardClone.addEventListener('dragstart', handleCardDragStart);
+        cardClone.addEventListener('dragend', handleCardDragEnd);
+        
+        // Update collapse button handlers
+        cardClone.querySelector('.collapse-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleCardCollapse(e.currentTarget);
+        });
+        
+        // Add the card to the saved area
+        this.appendChild(cardClone);
+        
+        // Show confirmation
+        showToast('Card saved!');
+      });
     });
 
     function populateDropdowns(tables) {
@@ -725,19 +711,30 @@
 
     function applyFilters() {
       const searchQuery = document.getElementById('searchInput').value.toLowerCase();
-      const gameFilter = Array.from(document.getElementById('gameFilter').selectedOptions).map(option => option.value);
-      const typeFilter = Array.from(document.getElementById('typeFilter').selectedOptions).map(option => option.value);
-      const settingFilter = Array.from(document.getElementById('settingFilter').selectedOptions).map(option => option.value);
+      
+      // Get selected filter values safely
+      const gameFilter = Array.from(document.querySelectorAll('#gameFilter option:checked')).map(option => option.value);
+      const typeFilter = Array.from(document.querySelectorAll('#typeFilter option:checked')).map(option => option.value);
+      const settingFilter = Array.from(document.querySelectorAll('#settingFilter option:checked')).map(option => option.value);
+      
+      console.log('Applying filters:', { 
+        search: searchQuery,
+        game: gameFilter,
+        type: typeFilter,
+        setting: settingFilter
+      });
 
       const matchingTablesContainer = document.getElementById('matchingTablesContainer');
       matchingTablesContainer.innerHTML = '';
 
       const filteredTables = tablesData.filter(table =>
         (searchQuery === '' || (table.tablename && table.tablename.toLowerCase().includes(searchQuery))) &&
-        (gameFilter.length === 0 || gameFilter.includes(table.game)) &&
-        (typeFilter.length === 0 || typeFilter.includes(table.type)) &&
-        (settingFilter.length === 0 || settingFilter.includes(table.setting))
+        (gameFilter.length === 0 || (table.game && gameFilter.includes(table.game))) &&
+        (typeFilter.length === 0 || (table.type && typeFilter.includes(table.type))) &&
+        (settingFilter.length === 0 || (table.setting && settingFilter.includes(table.setting)))
       );
+      
+      console.log(`Found ${filteredTables.length} matching tables`);
 
       filteredTables.forEach(table => {
         const button = document.createElement('button');
@@ -751,6 +748,71 @@
 
         matchingTablesContainer.appendChild(button);
       });
+    }
+
+    function clearFilter(filterId) {
+      const choicesInstance = window[`${filterId.replace('Filter', 'Choices')}`];
+      if (choicesInstance) {
+        choicesInstance.removeActiveItems();
+        console.log('Active items cleared for:', filterId);
+      } else {
+        console.warn('Choices instance not found for:', filterId);
+      }
+      applyFilters();
+    }
+
+    function resetFilters() {
+      window.gameChoices.removeActiveItems();
+      window.typeChoices.removeActiveItems();
+      window.settingChoices.removeActiveItems();
+      applyFilters();
+    }
+
+    function displayTableDetails(table) {
+      const tableHeadersContainer = document.getElementById('tableHeaders');
+      tableHeadersContainer.innerHTML = '';
+
+      const tableNameTitle = document.createElement('h2');
+      tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
+      tableHeadersContainer.appendChild(tableNameTitle);
+
+      const details = [
+        { key: 'game', label: 'Game' },
+        { key: 'type', label: 'Type' },
+        { key: 'setting', label: 'Setting' }
+      ];
+
+      details.forEach(detail => {
+        if (table[detail.key]) {
+          const detailDiv = document.createElement('div');
+          detailDiv.className = 'header';
+          detailDiv.textContent = `${detail.label}: ${table[detail.key]}`;
+          tableHeadersContainer.appendChild(detailDiv);
+        }
+      });
+
+      document.getElementById('generationControls').style.display = 'block';
+      document.getElementById('generationSlider').value = 1;
+      document.getElementById('generationValue').textContent = 1;
+    }
+
+    function updateGenerationValue() {
+      const generationSlider = document.getElementById('generationSlider');
+      document.getElementById('generationValue').textContent = generationSlider.value;
+    }
+
+    function clearGeneratedList() {
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+    }
+    
+    function displayErrorMessage(message) {
+      const resultsContainer = document.getElementById('results');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'generation-object';
+      errorDiv.style.color = 'red';
+      errorDiv.textContent = message;
+      resultsContainer.appendChild(errorDiv);
     }
 
     function generateContent() {
@@ -922,93 +984,6 @@
       });
     }
 
-    function updateGenerationValue() {
-      const generationSlider = document.getElementById('generationSlider');
-      document.getElementById('generationValue').textContent = generationSlider.value;
-    }
-
-    function displayErrorMessage(message) {
-      const resultsContainer = document.getElementById('results');
-      const errorDiv = document.createElement('div');
-      errorDiv.className = 'generation-object';
-      errorDiv.style.color = 'red';
-      errorDiv.textContent = message;
-      resultsContainer.appendChild(errorDiv);
-    }
-
-    function handleDragStart(e) {
-      this.classList.add('dragging');
-      e.dataTransfer.setData('text/plain', this.dataset.id);
-    }
-
-    function handleDragEnd() {
-      this.classList.remove('dragging');
-    }
-
-    document.getElementById('savedGenerations').addEventListener('dragover', function (e) {
-      e.preventDefault();
-    });
-
-    document.getElementById('savedGenerations').addEventListener('drop', function (e) {
-      e.preventDefault();
-      const id = e.dataTransfer.getData('text/plain');
-      const draggedElement = document.querySelector(`[data-id="${id}"]`);
-      if (draggedElement) {
-        this.appendChild(draggedElement);
-      }
-    });
-
-    function clearFilter(filterId) {
-      const choicesInstance = window[`${filterId.replace('Filter', 'Choices')}`];
-      if (choicesInstance) {
-        choicesInstance.removeActiveItems();
-        console.log('Active items cleared for:', filterId);
-      } else {
-        console.warn('Choices instance not found for:', filterId);
-      }
-      applyFilters();
-    }
-
-    function resetFilters() {
-      window.gameChoices.removeActiveItems();
-      window.typeChoices.removeActiveItems();
-      window.settingChoices.removeActiveItems();
-      applyFilters();
-    }
-
-    function displayTableDetails(table) {
-      const tableHeadersContainer = document.getElementById('tableHeaders');
-      tableHeadersContainer.innerHTML = '';
-
-      const tableNameTitle = document.createElement('h2');
-      tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
-      tableHeadersContainer.appendChild(tableNameTitle);
-
-      const details = [
-        { key: 'game', label: 'Game' },
-        { key: 'type', label: 'Type' },
-        { key: 'setting', label: 'Setting' }
-      ];
-
-      details.forEach(detail => {
-        if (table[detail.key]) {
-          const detailDiv = document.createElement('div');
-          detailDiv.className = 'header';
-          detailDiv.textContent = `${detail.label}: ${table[detail.key]}`;
-          tableHeadersContainer.appendChild(detailDiv);
-        }
-      });
-
-      document.getElementById('generationControls').style.display = 'block';
-      document.getElementById('generationSlider').value = 1;
-      document.getElementById('generationValue').textContent = 1;
-    }
-
-    function clearGeneratedList() {
-      const resultsContainer = document.getElementById('results');
-      resultsContainer.innerHTML = '';
-    }
-
     // Function to reroll a specific item
     function rerollContent(button) {
       if (!currentSelectedTable) {
@@ -1067,32 +1042,132 @@
           console.log(`Updated context for generation ${generationIndex}:`, context);
         }
     
-        // Create a new row element to replace the old one
+        // Process the reroll result
         if (data.result) {
-          // Create a new temporary div to hold our HTML
-          const tempDiv = document.createElement('div');
+          console.log("Reroll result data:", data.result);
           
-          // Generate the HTML for the new result with dice icon
-          tempDiv.innerHTML = `
-            <div class="result-row" data-header="${header}">
-              <div class="result-header">${header}</div>
-              <div class="result-content">${renderResultItem(data.result.result, false, generationIndex)}</div>
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
-            </div>
-          `;
+          // Check if we have a marked career format from the server
+          const isCareer = data.result._isCareer === true;
+          // The result format from the server
+          const result = data.result.result;
           
-          // Keep a reference to the new node before replacing
-          const newRow = tempDiv.firstElementChild;
+          // Format flag from the DOM element
+          const rowFormat = resultRow.getAttribute('data-format') || '';
           
-          // Replace the old row with the new one
-          resultRow.parentNode.replaceChild(newRow, resultRow);
-          
-          // Update context for this table
-          if (header && typeof data.result.result !== 'undefined') {
-            context[header] = data.result.result;
+          // 1. Handle Knave's Careers (array with two string elements)
+          if (isCareer || 
+              (Array.isArray(result) && result.length === 2 && 
+               typeof result[0] === 'string' && typeof result[1] === 'string')) {
+            
+            console.log("Handling career format:", result);
+            // Clear existing content divs
+            const existingContents = resultRow.querySelectorAll('.result-content');
+            existingContents.forEach(div => div.remove());
+            
+            const headerDiv = resultRow.querySelector('.result-header');
+            const rerollBtn = resultRow.querySelector('.reroll-btn');
+            
+            // Create first content div (career)
+            const firstContent = document.createElement('div');
+            firstContent.className = 'result-content';
+            firstContent.textContent = Array.isArray(result) ? result[0] : result;
+            firstContent.title = firstContent.textContent;
+            headerDiv.insertAdjacentElement('afterend', firstContent);
+            
+            // Create second content div (items)
+            const secondContent = document.createElement('div');
+            secondContent.className = 'result-content';
+            secondContent.textContent = Array.isArray(result) ? result[1] : '';
+            secondContent.title = secondContent.textContent;
+            firstContent.insertAdjacentElement('afterend', secondContent);
           }
+          // 2. Handle Viridian Dice style arrays (string array)
+          else if (rowFormat === 'string-array' || 
+                  (Array.isArray(result) && result.every(item => typeof item === 'string'))) {
+            
+            console.log("Handling string array:", result);
+            
+            // Clear existing content divs
+            const existingContents = resultRow.querySelectorAll('.result-content');
+            existingContents.forEach(div => div.remove());
+            
+            const headerDiv = resultRow.querySelector('.result-header');
+            const rerollBtn = resultRow.querySelector('.reroll-btn');
+            
+            // Create a new div for each item in the array
+            const arrayItems = Array.isArray(result) ? result : [result];
+            let previousElement = headerDiv;
+            
+            arrayItems.forEach(item => {
+              const contentDiv = document.createElement('div');
+              contentDiv.className = 'result-content';
+              contentDiv.textContent = String(item);
+              contentDiv.title = String(item);
+              previousElement.insertAdjacentElement('afterend', contentDiv);
+              previousElement = contentDiv;
+            });
+          }
+          // 3. Handle standard single value results
+          else if (typeof result === 'string' || typeof result === 'number') {
+            const contentDivs = resultRow.querySelectorAll('.result-content');
+            if (contentDivs.length === 1) {
+              contentDivs[0].textContent = String(result);
+              contentDivs[0].title = String(result);
+            } else {
+              // Clear and recreate
+              const headerDiv = resultRow.querySelector('.result-header');
+              const rerollBtn = resultRow.querySelector('.reroll-btn');
+              
+              // Remove all existing content divs
+              contentDivs.forEach(div => div.remove());
+              
+              // Create a new content div
+              const contentDiv = document.createElement('div');
+              contentDiv.className = 'result-content';
+              contentDiv.textContent = String(result);
+              contentDiv.title = String(result);
+              
+              // Insert after the header
+              headerDiv.insertAdjacentElement('afterend', contentDiv);
+            }
+          }
+          // 4. Handle complex objects or fallback
+          else {
+            // If the data is an object or complex structure
+            const contentDiv = resultRow.querySelector('.result-content');
+            if (contentDiv) {
+              let displayText;
+              
+              // Format the result based on type
+              if (Array.isArray(result)) {
+                displayText = result.map(item => 
+                  typeof item === 'object' ? JSON.stringify(item) : String(item)
+                ).join(', ');
+              } else if (typeof result === 'object' && result !== null) {
+                displayText = Object.entries(result)
+                  .filter(([key]) => !key.startsWith('_'))
+                  .map(([key, val]) => `${key}: ${
+                    typeof val === 'object' ? JSON.stringify(val) : String(val)
+                  }`)
+                  .join(', ');
+              } else {
+                displayText = String(result);
+              }
+              
+              contentDiv.textContent = displayText;
+              contentDiv.title = displayText;
+            } else {
+              console.error("Could not find content div to update");
+            }
+          }
+          
+          // Store result in context
+          if (header) {
+            context[header] = result;
+          }
+          
+          // Reset opacity
+          resultRow.style.opacity = '1';
         } else {
           throw new Error('No result returned from reroll');
         }
@@ -1104,7 +1179,7 @@
         alert('Failed to reroll content. Please try again.');
       });
     }
-    
+
     // New function to reroll an entire generation/card
     function rerollAllContent(generationContainer) {
       if (!currentSelectedTable) {
@@ -1421,200 +1496,172 @@
       return resultObj ? String(resultObj) : '';
     }
 
-    // Create a completely fresh, clean version of the renderResultItem function
-    function renderResultItem(item, isTopLevel = true, generationIndex = 0) {
-      // If the item is an array...
-      if (Array.isArray(item)) {
-        // Special case for Knave career-style entries with format ["CAREER", "items"]
-        if (item.length === 2 && typeof item[0] === 'string' && typeof item[1] === 'string') {
-          // Create a single row with multiple content cells
-          return `
-            <div class="result-row">
-              <div class="result-header">Career</div>
-              <div class="result-content">${item[0]}</div>
-              <div class="result-content">${item[1]}</div>
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
-            </div>
-          `;
-        } 
-        // Check if this is an array of strings or basic values (not objects)
-        else if (item.every(el => typeof el !== 'object' || el === null)) {
-          // Create a single row with multiple content cells
-          const contentCells = item.map(element => 
-            `<div class="result-content">${String(element)}</div>`
-          ).join('');
-          
-          return `
-            <div class="result-row">
-              <div class="result-header">Array Result</div>
-              ${contentCells}
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
-            </div>
-          `;
-        } 
-        // Default case for arrays (complex objects)
-        else {
-          return item.map(i => renderResultItem(i, isTopLevel)).join("");
-        }
-      }
-    
-      // If the item is an object with "header" and "result"
-      else if (item && typeof item === "object" && "header" in item && "result" in item) {
-        // For array results, use our special rendering
-        if (Array.isArray(item.result) && item.result.every(el => typeof el !== 'object' || el === null)) {
-          const contentCells = item.result.map(element => 
-            `<div class="result-content">${String(element)}</div>`
-          ).join('');
-          
-          // Get source table information if available
-          const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
-          
-          return `
-            <div class="result-row"${sourceTable}>
-              <div class="result-header">${item.header}</div>
-              ${contentCells}
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
-            </div>
-          `;
-        }
-        
-        // Standard object rendering for nested objects
-        const renderedSub = renderResultItem(item.result, false);
+    // Updated renderResultItem function - properly handling different table formats
+    function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
+      // Special handling for career format flagged by the server
+      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
         const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
         
-        if (isTopLevel) {
-          return `
-            <div style="background-color: white; padding: 6px; border-radius: 4px;">
-              ${renderedSub}
-            </div>
-          `;
-        } else {
-          const contentForTooltip = renderedSub.replace(/"/g, '&quot;');
+        // Get the career and items values
+        const career = item.result[0] || '';
+        const items = item.result[1] || '';
+        
+        // Escape values for HTML attributes
+        const careerEscaped = career.replace(/"/g, '&quot;');
+        const itemsEscaped = items.replace(/"/g, '&quot;');
+        
+        // Create a single row with both elements
+        const rerollButton = !isNestedContent ? `
+          <button class="reroll-btn" onclick="rerollContent(this)">
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+          </button>` : '';
+        
+        return `
+          <div class="result-row"${sourceTable} data-format="career">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            <div class="result-content" title="${careerEscaped}">${career}</div>
+            <div class="result-content" title="${itemsEscaped}">${items}</div>
+            ${rerollButton}
+          </div>
+        `;
+      }
+      
+      // Handle arrays with proper detection
+      if (Array.isArray(item)) {
+        // Case for arrays of simple values where each element is not an object
+        if (item.every(el => typeof el !== 'object' || el === null)) {
+          const contentCells = item.map(element => {
+            const valueStr = String(element);
+            const escapedValue = valueStr.replace(/"/g, '&quot;');
+            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+          }).join('');
+          
+          // Only add reroll button at top level, not in nested content
+          const rerollButton = !isNestedContent ? `
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>` : '';
           
           return `
-            <div class="result-row"${sourceTable}>
-              <div class="result-header">${item.header}</div>
-              <div class="result-content" title="${contentForTooltip}">${renderedSub}</div>
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
+            <div class="result-row" data-format="array">
+              <div class="result-header" title="Array Result">Array Result</div>
+              ${contentCells}
+              ${rerollButton}
             </div>
           `;
         }
-      }
-    
-      // For primitive values, just return as string
-      else {
-        return String(item);
-      }
-    }
-    
-    // Create a completely fresh version of the rerollContent function
-    function rerollContent(button) {
-      if (!currentSelectedTable) {
-        console.error('No table currently selected');
-        return;
-      }
-    
-      // Get the row containing this button
-      const resultRow = button.closest('.result-row');
-      if (!resultRow) {
-        console.error('Could not find parent result row');
-        return;
-      }
-    
-      // Get the header text to know what to reroll
-      const header = resultRow.querySelector('.result-header').textContent;
-      
-      // Find which generation this belongs to
-      const generationContainer = button.closest('.generation-container');
-      if (!generationContainer) {
-        console.error('Could not find parent generation container');
-        return;
+        
+        // For arrays of complex objects
+        return item.map(i => renderResultItem(i, isTopLevel, generationIndex)).join("");
       }
       
-      const generationIndex = generationContainer.dataset.index;
-      const context = generationContexts[generationIndex] || {};
-      
-      console.log(`Rerolling ${header} with context:`, context);
-      
-      // Show loading indicator in the row
-      resultRow.style.opacity = '0.5';
-      
-      // Call the server to reroll just this item
-      fetch('/api/reroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          table: currentSelectedTable,
-          header: header,
-          context: context
-        })
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(`Server responded with an error: ${err.error}`);
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Update the context with any new values
-        if (data.context) {
-          Object.assign(context, data.context);
-          generationContexts[generationIndex] = context;
-          console.log(`Updated context for generation ${generationIndex}:`, context);
-        }
-    
-        // Create a new row element to replace the old one
-        if (data.result) {
-          // Create a new temporary div to hold our HTML
-          const tempDiv = document.createElement('div');
+      // Handle objects with header and result properties
+      if (item && typeof item === 'object' && "header" in item && "result" in item) {
+        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        
+        // Special case for Knave Careers or similar two-element string arrays
+        if (Array.isArray(item.result) && 
+            item.result.length === 2 && 
+            typeof item.result[0] === 'string' && 
+            typeof item.result[1] === 'string') {
           
-          // Generate the HTML for the new result with dice icon
-          tempDiv.innerHTML = `
-            <div class="result-row" data-header="${header}">
-              <div class="result-header">${header}</div>
-              <div class="result-content">${renderResultItem(data.result.result, false, generationIndex)}</div>
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
+          const career = item.result[0].replace(/"/g, '&quot;');
+          const items = item.result[1].replace(/"/g, '&quot;');
+          
+          const rerollButton = !isNestedContent ? `
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>` : '';
+          
+          return `
+            <div class="result-row"${sourceTable} data-format="career">
+              <div class="result-header" title="${headerTitle}">${item.header}</div>
+              <div class="result-content" title="${career}">${item.result[0]}</div>
+              <div class="result-content" title="${items}">${item.result[1]}</div>
+              ${rerollButton}
             </div>
           `;
+        }
+        
+        // Viridian Dice style - array of simple strings
+        if (Array.isArray(item.result) && 
+            item.result.every(el => typeof el === 'string' || typeof el === 'number')) {
           
-          // Keep a reference to the new node before replacing
-          const newRow = tempDiv.firstElementChild;
+          const contentCells = item.result.map(element => {
+            const valueStr = String(element);
+            const escapedValue = valueStr.replace(/"/g, '&quot;');
+            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+          }).join('');
           
-          // Replace the old row with the new one
-          resultRow.parentNode.replaceChild(newRow, resultRow);
+          const rerollButton = !isNestedContent ? `
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>` : '';
           
-          // Update context for this table
-          if (header && typeof data.result.result !== 'undefined') {
-            context[header] = data.result.result;
-          }
+          return `
+            <div class="result-row"${sourceTable} data-format="string-array">
+              <div class="result-header" title="${headerTitle}">${item.header}</div>
+              ${contentCells}
+              ${rerollButton}
+            </div>
+          `;
+        }
+        
+        // Complex nested objects - handle deeper structures
+        if (Array.isArray(item.result) && 
+            item.result.some(el => typeof el === 'object' && el !== null)) {
+          // ShadowDark-style nested tables
+          return item.result.map(subItem => renderResultItem(subItem, false, generationIndex)).join("");
+        }
+        
+        // Standard single value
+        const resultStr = typeof item.result === 'string' || typeof item.result === 'number' ? 
+                        String(item.result) : JSON.stringify(item.result);
+        const escapedResult = resultStr.replace(/"/g, '&quot;');
+        
+        const rerollButton = !isNestedContent ? `
+          <button class="reroll-btn" onclick="rerollContent(this)">
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+          </button>` : '';
+        
+        return `
+          <div class="result-row"${sourceTable} data-format="simple">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            <div class="result-content" title="${escapedResult}">${resultStr}</div>
+            ${rerollButton}
+          </div>
+        `;
+      }
+      
+      // Handle generic objects
+      if (item && typeof item === 'object' && item !== null && !Array.isArray(item)) {
+        const formattedResult = Object.entries(item)
+          .filter(([key]) => !key.startsWith('_'))
+          .map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`)
+          .join(', ');
+        
+        if (isNestedContent) {
+          return formattedResult;
         } else {
-          throw new Error('No result returned from reroll');
+          return `
+            <div class="result-row" data-format="object">
+              <div class="result-header">Object</div>
+              <div class="result-content" title="${formattedResult.replace(/"/g, '&quot;')}">${formattedResult}</div>
+            </div>
+          `;
         }
-      })
-      .catch(error => {
-        console.error('Error rerolling content:', error);
-        // Restore original row appearance on error
-        resultRow.style.opacity = '1';
-        alert('Failed to reroll content. Please try again.');
-      });
+      }
+      
+      // For primitive values
+      return item !== undefined && item !== null ? String(item) : '';
     }
 
     // Add the missing extractContext function that is being called but wasn't defined
     function extractContext(item, context) {
       if (!item || typeof item !== 'object') return;
-      
+
       // If item has a header and result
       if ("header" in item && "result" in item) {
         // Store result for tables that would be used as context
@@ -1623,7 +1670,6 @@
           context[item.header] = item.result;
           console.log(`Stored context: ${item.header} = ${JSON.stringify(item.result)}`);
         }
-        
         // Recursively check result for nested objects
         if (Array.isArray(item.result)) {
           item.result.forEach(subItem => extractContext(subItem, context));
