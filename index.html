@@ -984,267 +984,325 @@
       });
     }
 
-// Replace the existing rerollContent function with this improved version
-function rerollContent(button) {
-  if (!currentSelectedTable) {
-    console.error('No table currently selected');
-    return;
-  }
-
-  // Get the row containing this button
-  const resultRow = button.closest('.result-row');
-  if (!resultRow) {
-    console.error('Could not find parent result row');
-    return;
-  }
-
-  // Get the header text to know what to reroll
-  const header = resultRow.querySelector('.result-header').textContent;
+    function rerollContent(button) {
+      if (!currentSelectedTable) {
+        console.error('No table currently selected');
+        return;
+      }
   
-  // Find which generation this belongs to
-  const generationContainer = button.closest('.generation-container');
-  if (!generationContainer) {
-    console.error('Could not find parent generation container');
-    return;
-  }
+      // Get the row containing this button
+      const resultRow = button.closest('.result-row');
+      if (!resultRow) {
+        console.error('Could not find parent result row');
+        return;
+      }
   
-  const generationIndex = generationContainer.dataset.index;
-  const context = generationContexts[generationIndex] || {};
-  
-  // Determine table type based on filename or other attributes
-  const isKnaveTable = currentSelectedTable.filename && 
-                      currentSelectedTable.filename.includes('Knave_Careers');
-  const isViridianTable = currentSelectedTable.filename && 
-                       currentSelectedTable.filename.includes('ViridianDice_Locations');
-  
-  // Get the format of the existing row to help with re-rendering
-  const rowFormat = resultRow.getAttribute('data-format') || '';
-  console.log(`Rerolling ${header} in table ${currentSelectedTable.filename} (format: ${rowFormat}, isKnave: ${isKnaveTable}, isViridian: ${isViridianTable})`);
-  console.log(`Context:`, context);
-  
-  // Show loading indicator in the row
-  resultRow.style.opacity = '0.5';
-  
-  // Call the server to reroll just this item
-  fetch('/api/reroll', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      table: currentSelectedTable,
-      header: header,
-      context: context
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    console.log(`Received reroll response for ${header}:`, data);
-    
-    // Update the context if provided
-    if (data.context) {
-      Object.assign(context, data.context);
-    }
-    
-    // Make sure we have data.result
-    if (!data.result) {
-      throw new Error('No result data returned from server');
-    }
-    
-    try {
-      // IMPORTANT: Clear all existing content divs first
-      const contentDivs = resultRow.querySelectorAll('.result-content');
-      contentDivs.forEach(div => div.remove());
+      // Get the header text to know what to reroll
+      const header = resultRow.querySelector('.result-header').textContent;
       
-      // Get reference to header div
-      const headerDiv = resultRow.querySelector('.result-header');
-      
-      // Variables to store the new content value for the title update
-      let newTitleValue = '';
-      
-      // CASE 1: ARRAY RESULT FORMAT
-      if ((Array.isArray(data.result.result) && data.result.result.length >= 1 && data.result.result.length <= 4) || 
-          rowFormat === 'array' || data.result._isArray === true) {
-        console.log('Processing array format:', data.result);
-        
-        // Make sure we have an array to work with
-        const resultArray = Array.isArray(data.result.result) ? data.result.result : [];
-        
-        // Check array length
-        if (resultArray.length > 4) {
-          console.error('Array too large:', resultArray);
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'result-content';
-          errorDiv.textContent = 'Error: Array too large (max 4 items)';
-          errorDiv.title = 'Error: Array too large';
-          headerDiv.insertAdjacentElement('afterend', errorDiv);
-          resultRow.style.opacity = '1';
-          return;
-        }
-        
-        // Process each array element and create corresponding content divs
-        const resultValues = [];
-        for (let i = 0; i < resultArray.length; i++) {
-          const arrayValue = String(resultArray[i] || '');
-          resultValues.push(arrayValue);
-          
-          const contentDiv = document.createElement('div');
-          contentDiv.className = 'result-content';
-          contentDiv.textContent = arrayValue;
-          contentDiv.title = arrayValue;
-          
-          if (i === 0) {
-            // First element goes right after the header
-            headerDiv.insertAdjacentElement('afterend', contentDiv);
-          } else {
-            // Subsequent elements go after the previous one
-            const prevDiv = resultRow.querySelector(`.result-content:nth-of-type(${i})`);
-            if (prevDiv) {
-              prevDiv.insertAdjacentElement('afterend', contentDiv);
-            } else {
-              // Fallback if previous div not found
-              headerDiv.insertAdjacentElement('afterend', contentDiv);
-            }
-          }
-        }
-        
-        // Update context with the array
-        context[header] = resultValues;
-        
-        // Use first array element for title update
-        if (resultValues.length > 0) {
-          newTitleValue = resultValues[0];
-        }
+      // Find which generation this belongs to
+      const generationContainer = button.closest('.generation-container');
+      if (!generationContainer) {
+        console.error('Could not find parent generation container');
+        return;
       }
       
-      // CASE 2: VIRIDIAN LOCATIONS
-      else if (isViridianTable || header === 'Dungeon Locations') {
-        console.log('Processing Viridian location format:', data.result);
+      const generationIndex = generationContainer.dataset.index;
+      const context = generationContexts[generationIndex] || {};
+      
+      // Get the format of the existing row to help with re-rendering
+      const rowFormat = resultRow.getAttribute('data-format') || '';
+      console.log(`Rerolling ${header} in table ${currentSelectedTable.filename} (format: ${rowFormat})`);
+      console.log(`Context:`, context);
+      
+      // Show loading indicator in the row
+      resultRow.style.opacity = '0.5';
+      
+      // Call the server to reroll just this item
+      fetch('/api/reroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          table: currentSelectedTable,
+          header: header,
+          context: context
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(`Received reroll response for ${header}:`, data);
         
-        let locationValue = "";
+        // Update the context if provided
+        if (data.context) {
+          Object.assign(context, data.context);
+        }
         
-        // Try to extract just the location name - start with simplest case
-        if (typeof data.result.result === 'string') {
-          locationValue = data.result.result;
-          console.log('Found location as string:', locationValue);
-        } 
-        // Handle nested object case
-        else if (typeof data.result.result === 'object' && data.result.result !== null) {
-          // Most common case: data.result.result contains the location name
-          if (typeof data.result.result.result === 'string') {
-            locationValue = data.result.result.result;
-            console.log('Found location inside nested result:', locationValue);
+        // Make sure we have data.result
+        if (!data.result) {
+          throw new Error('No result data returned from server');
+        }
+        
+        try {
+          // IMPORTANT: Clear all existing content divs first
+          const contentDivs = resultRow.querySelectorAll('.result-content');
+          contentDivs.forEach(div => div.remove());
+          
+          // Get reference to header div
+          const headerDiv = resultRow.querySelector('.result-header');
+          
+          // Variables to store the new content value for the title update
+          let newTitleValue = '';
+          let shouldUpdateTitle = false;
+          
+          // First, check if this was a career-style row (from original format or from array structure)
+          const isCareerRow = rowFormat === 'career' || 
+                             (Array.isArray(data.result.result) && 
+                              data.result.result.length === 2 && 
+                              typeof data.result.result[0] === 'string' && 
+                              typeof data.result.result[1] === 'string');
+
+          // Career-style array handling (array with exactly two string elements)
+          if (isCareerRow) {
+            console.log('Processing career-style array:', data.result.result);
+            
+            let career, items;
+            // Extract the two string values from the result
+            if (Array.isArray(data.result.result) && data.result.result.length === 2) {
+              // Normal array of two strings
+              [career, items] = data.result.result;
+            } else if (typeof data.result.result === 'object' && data.result.result.career && data.result.result.items) {
+              // Object with career and items properties
+              career = data.result.result.career;
+              items = data.result.result.items;
+            } else if (typeof data.result.result === 'string') {
+              // Split string result if needed (fallback)
+              const parts = data.result.result.split(',');
+              career = parts[0];
+              items = parts.slice(1).join(',');
+            } else {
+              console.error('Unexpected career format:', data.result.result);
+              career = "Unknown Career";
+              items = "Unknown Items";
+            }
+            
+            // Create first content div for career
+            const careerDiv = document.createElement('div');
+            careerDiv.className = 'result-content';
+            careerDiv.textContent = career;
+            careerDiv.title = career;
+            headerDiv.insertAdjacentElement('afterend', careerDiv);
+            
+            // Create second content div for items
+            const itemsDiv = document.createElement('div');
+            itemsDiv.className = 'result-content';
+            itemsDiv.textContent = items;
+            itemsDiv.title = items;
+            careerDiv.insertAdjacentElement('afterend', itemsDiv);
+            
+            // Update the row's format attribute
+            resultRow.setAttribute('data-format', 'career');
+            
+            // Update context with the array
+            context[header] = [career, items];
+            
+            // Use career for title update if this is the first row
+            if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+              newTitleValue = career;
+              shouldUpdateTitle = true;
+            }
           }
-          // Alternative: check for a string property that might be the location
-          else {
-            for (const key in data.result.result) {
-              if (typeof data.result.result[key] === 'string' && !key.startsWith('_')) {
-                locationValue = data.result.result[key];
-                console.log(`Using value from property ${key}:`, locationValue);
-                break;
+          // Simple string handling
+          else if (typeof data.result.result === 'string' || typeof data.result.result === 'number') {
+            // This handles most simple cases
+            console.log('Processing simple string value:', data.result.result);
+            
+            const stringValue = String(data.result.result);
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'result-content';
+            contentDiv.textContent = stringValue;
+            contentDiv.title = stringValue;
+            headerDiv.insertAdjacentElement('afterend', contentDiv);
+            
+            // Update context
+            context[header] = stringValue;
+            
+            // Only update title if this is the first row
+            if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+              newTitleValue = stringValue;
+              shouldUpdateTitle = true;
+            }
+          }
+          // Regular array handling (non-career arrays)
+          else if (Array.isArray(data.result.result)) {
+            console.log('Processing array format:', data.result.result);
+            
+            // Special case for weighted arrays [value, weight]
+            if (data.result.result.length === 2 && 
+                typeof data.result.result[0] === 'string' && 
+                typeof data.result.result[1] === 'number') {
+              
+              const value = data.result.result[0];
+              const contentDiv = document.createElement('div');
+              contentDiv.className = 'result-content';
+              contentDiv.textContent = value;
+              contentDiv.title = value;
+              headerDiv.insertAdjacentElement('afterend', contentDiv);
+              
+              // Update context with just the value
+              context[header] = value;
+              
+              // Check if this is the first row
+              if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                newTitleValue = value;
+                shouldUpdateTitle = true;
+              }
+            }
+            // Normal array case
+            else {
+              // Process each array element and create corresponding content divs
+              let resultValues = [];
+              let lastInsertedDiv = headerDiv;
+              
+              // Loop through array items (limit to max 4)
+              const maxItems = Math.min(data.result.result.length, 4); 
+              for (let i = 0; i < maxItems; i++) {
+                let arrayValue;
+                // Handle nested weighted arrays
+                if (Array.isArray(data.result.result[i]) && 
+                    data.result.result[i].length === 2 && 
+                    typeof data.result.result[i][0] === 'string' && 
+                    typeof data.result.result[i][1] === 'number') {
+                  arrayValue = data.result.result[i][0]; // Just take the value
+                } else {
+                  arrayValue = String(data.result.result[i] || '');
+                }
+                
+                resultValues.push(arrayValue);
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'result-content';
+                contentDiv.textContent = arrayValue;
+                contentDiv.title = arrayValue;
+                
+                lastInsertedDiv.insertAdjacentElement('afterend', contentDiv);
+                lastInsertedDiv = contentDiv;
+              }
+              
+              // Update context with the array
+              context[header] = resultValues;
+              
+              // Use first array element for title update if this is the first row
+              if (resultValues.length > 0 && resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                newTitleValue = resultValues[0];
+                shouldUpdateTitle = true;
               }
             }
           }
-        }
-        
-        // Last resort if we still don't have a location
-        if (!locationValue && data.result && typeof data.result === 'object') {
-          // Check if the data.result object itself has the location
-          for (const key in data.result) {
-            if (typeof data.result[key] === 'string' && !key.startsWith('_') && key !== 'header') {
-              locationValue = data.result[key];
-              console.log(`Using value from top-level property ${key}:`, locationValue);
-              break;
+          // Object result handling
+          else if (typeof data.result.result === 'object' && data.result.result !== null) {
+            console.log('Processing object result:', data.result);
+            
+            let extractedValue = "";
+            
+            // Try to extract a usable string value from the object
+            // First, look for a 'result' property in the nested result
+            if (typeof data.result.result.result === 'string') {
+              extractedValue = data.result.result.result;
+            } 
+            // Otherwise look for any string property that's not special (starts with _)
+            else {
+              for (const key in data.result.result) {
+                if (typeof data.result.result[key] === 'string' && !key.startsWith('_')) {
+                  extractedValue = data.result.result[key];
+                  break;
+                }
+              }
+            }
+            
+            // If nothing found in nested result, check top level
+            if (!extractedValue && typeof data.result === 'object') {
+              for (const key in data.result) {
+                if (typeof data.result[key] === 'string' && !key.startsWith('_') && key !== 'header') {
+                  extractedValue = data.result[key];
+                  break;
+                }
+              }
+            }
+            
+            // If still no value found, use a generic message
+            if (!extractedValue) {
+              extractedValue = "No string value found";
+              console.warn('Could not extract string value from result:', data.result);
+            }
+            
+            // Create the content div with the extracted value
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'result-content';
+            contentDiv.textContent = extractedValue;
+            contentDiv.title = extractedValue;
+            headerDiv.insertAdjacentElement('afterend', contentDiv);
+            
+            // Update context with the string value
+            context[header] = extractedValue;
+            
+            // Use extracted value for title update if this is the first row
+            if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+              newTitleValue = extractedValue;
+              shouldUpdateTitle = true;
             }
           }
+          // Fallback for any other type
+          else {
+            console.log('Using fallback handling for result:', data.result);
+            
+            const resultStr = JSON.stringify(data.result.result);
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'result-content';
+            contentDiv.textContent = resultStr;
+            contentDiv.title = resultStr;
+            headerDiv.insertAdjacentElement('afterend', contentDiv);
+            
+            // Only update title if this is the first row
+            if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+              newTitleValue = resultStr;
+              shouldUpdateTitle = true;
+            }
+          }
+          
+          // UPDATE CARD TITLE if appropriate
+          if (newTitleValue && newTitleValue.trim() && shouldUpdateTitle) {
+            updateCardTitle(generationContainer, newTitleValue);
+          }
+          
+          // Always reset opacity
+          resultRow.style.opacity = '1';
+        } catch (error) {
+          console.error('Error processing reroll result:', error);
+          console.error('Data that caused error:', data);
+          resultRow.style.opacity = '1';
+          alert(`Error processing result: ${error.message}`);
         }
-        
-        // If we still don't have a location value, use a fallback
-        if (!locationValue) {
-          locationValue = "Location not found";
-          console.error('Could not extract location value from response:', data.result);
-        }
-        
-        console.log(`Final location value: ${locationValue}`);
-        
-        // Create the content div with the location
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'result-content';
-        contentDiv.textContent = locationValue;
-        contentDiv.title = locationValue;
-        headerDiv.insertAdjacentElement('afterend', contentDiv);
-        
-        // Update context
-        context[header] = locationValue;
-        
-        // Store location for title update
-        newTitleValue = locationValue;
-      }
-      
-      // CASE 3: SIMPLE STRING VALUE
-      else if (typeof data.result.result === 'string') {
-        console.log('Processing simple string value:', data.result.result);
-        
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'result-content';
-        contentDiv.textContent = data.result.result;
-        contentDiv.title = data.result.result;
-        headerDiv.insertAdjacentElement('afterend', contentDiv);
-        
-        // Update context
-        context[header] = data.result.result;
-        
-        // MODIFIED: Only update title for the first row, not for any row with "Name" in the header
-        // This fixes the issue with ShadowDark NPCs
-        if (resultRow === generationContainer.querySelector('.result-row')) {
-          newTitleValue = data.result.result;
-        }
-      }
-      
-      // CASE 4: OTHER FORMATS (fallback to existing code)
-      else {
-        // Handle other result types...
-        console.log('Using fallback handling for result:', data.result);
-        
-        const resultStr = JSON.stringify(data.result.result);
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'result-content';
-        contentDiv.textContent = resultStr;
-        contentDiv.title = resultStr;
-        headerDiv.insertAdjacentElement('afterend', contentDiv);
-        
-        if (resultRow === generationContainer.querySelector('.result-row')) {
-          newTitleValue = resultStr;
-        }
-      }
-      
-      // UPDATE CARD TITLE if we have a new value
-      if (newTitleValue && newTitleValue.trim()) {
-        newTitleValue = newTitleValue.trim();
-        if (newTitleValue.length > 30) {
-          newTitleValue = newTitleValue.substring(0, 27) + '...';
-        }
-        
-        const titleText = generationContainer.querySelector('.card-title-text');
-        if (titleText) {
-          titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newTitleValue}`;
-        }
-      }
-      
-      // Always reset opacity
-      resultRow.style.opacity = '1';
-    } catch (error) {
-      console.error('Error processing reroll result:', error);
-      console.error('Data that caused error:', data);
-      resultRow.style.opacity = '1';
-      alert(`Error processing result: ${error.message}`);
+      })
+      .catch(error => {
+        console.error('Error rerolling content:', error);
+        resultRow.style.opacity = '1';
+        alert('Failed to reroll content. Please try again.');
+      });
     }
-  })
-  .catch(error => {
-    console.error('Error rerolling content:', error);
-    resultRow.style.opacity = '1';
-    alert('Failed to reroll content. Please try again.');
-  });
-}
-
+    
+    // Helper function to update card title
+    function updateCardTitle(container, newValue) {
+      newValue = newValue.trim();
+      if (newValue.length > 30) {
+        newValue = newValue.substring(0, 27) + '...';
+      }
+      
+      const titleText = container.querySelector('.card-title-text');
+      if (titleText) {
+        titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newValue}`;
+      }
+    }
+    
     // New function to reroll an entire generation/card
     function rerollAllContent(generationContainer) {
       if (!currentSelectedTable) {
@@ -1555,6 +1613,17 @@ function rerollContent(button) {
         }
         // Recurse into nested result structure
         return extractDisplayValueForTitle(resultObj.result);
+      }
+      
+      // Special handling for ShadowDark NPCs - look for the name field
+      if (resultObj && typeof resultObj === 'object' && resultObj.result && Array.isArray(resultObj.result)) {
+        // Try to find the NPC Names entry
+        const nameEntry = resultObj.result.find(item => 
+          item && typeof item === 'object' && item.header === 'NPC Names by Ancestry');
+        
+        if (nameEntry) {
+          return nameEntry.result;
+        }
       }
       
       // If it's a simple value, return it as string
