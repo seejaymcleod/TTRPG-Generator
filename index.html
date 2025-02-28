@@ -1060,51 +1060,59 @@ function rerollContent(button) {
       // Variables to store the new content value for the title update
       let newTitleValue = '';
       
-      // CASE 1: KNAVE CAREERS FORMAT
-      if (isKnaveTable || rowFormat === 'career' || data.result._isCareer === true) {
-        console.log('Processing Knave career format:', data.result);
+      // CASE 1: ARRAY RESULT FORMAT
+      if ((Array.isArray(data.result.result) && data.result.result.length >= 1 && data.result.result.length <= 4) || 
+          rowFormat === 'array' || data.result._isArray === true) {
+        console.log('Processing array format:', data.result);
         
-        // Initialize with default values
-        let firstValue = 'Unknown Career';
-        let secondValue = 'Unknown Items';
+        // Make sure we have an array to work with
+        const resultArray = Array.isArray(data.result.result) ? data.result.result : [];
         
-        // Check different possible formats for the career data
-        if (Array.isArray(data.result.result) && data.result.result.length >= 2) {
-          // Format: { result: ["Career", "Items"] }
-          firstValue = String(data.result.result[0]);
-          secondValue = String(data.result.result[1]);
-          console.log('Found career data as array:', [firstValue, secondValue]);
-        } 
-        else if (typeof data.result.result === 'object' && data.result.result !== null) {
-          // Format: { result: { career: "Career", items: "Items" } }
-          if (data.result.result.career && data.result.result.items) {
-            firstValue = String(data.result.result.career);
-            secondValue = String(data.result.result.items);
-            console.log('Found career data as object properties:', [firstValue, secondValue]);
+        // Check array length
+        if (resultArray.length > 4) {
+          console.error('Array too large:', resultArray);
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'result-content';
+          errorDiv.textContent = 'Error: Array too large (max 4 items)';
+          errorDiv.title = 'Error: Array too large';
+          headerDiv.insertAdjacentElement('afterend', errorDiv);
+          resultRow.style.opacity = '1';
+          return;
+        }
+        
+        // Process each array element and create corresponding content divs
+        const resultValues = [];
+        for (let i = 0; i < resultArray.length; i++) {
+          const arrayValue = String(resultArray[i] || '');
+          resultValues.push(arrayValue);
+          
+          const contentDiv = document.createElement('div');
+          contentDiv.className = 'result-content';
+          contentDiv.textContent = arrayValue;
+          contentDiv.title = arrayValue;
+          
+          if (i === 0) {
+            // First element goes right after the header
+            headerDiv.insertAdjacentElement('afterend', contentDiv);
+          } else {
+            // Subsequent elements go after the previous one
+            const prevDiv = resultRow.querySelector(`.result-content:nth-of-type(${i})`);
+            if (prevDiv) {
+              prevDiv.insertAdjacentElement('afterend', contentDiv);
+            } else {
+              // Fallback if previous div not found
+              headerDiv.insertAdjacentElement('afterend', contentDiv);
+            }
           }
         }
         
-        console.log(`Final career values: [${firstValue}, ${secondValue}]`);
+        // Update context with the array
+        context[header] = resultValues;
         
-        // Create and append career div
-        const careerDiv = document.createElement('div');
-        careerDiv.className = 'result-content';
-        careerDiv.textContent = firstValue;
-        careerDiv.title = firstValue;
-        headerDiv.insertAdjacentElement('afterend', careerDiv);
-        
-        // Create and append items div
-        const itemsDiv = document.createElement('div');
-        itemsDiv.className = 'result-content';
-        itemsDiv.textContent = secondValue;
-        itemsDiv.title = secondValue;
-        careerDiv.insertAdjacentElement('afterend', itemsDiv);
-        
-        // Update context
-        context[header] = [firstValue, secondValue];
-        
-        // Store career name for title update
-        newTitleValue = firstValue;
+        // Use first array element for title update
+        if (resultValues.length > 0) {
+          newTitleValue = resultValues[0];
+        }
       }
       
       // CASE 2: VIRIDIAN LOCATIONS

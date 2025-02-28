@@ -95,36 +95,36 @@ app.post('/api/reroll', (req, res) => {
     const isViridianLocation = table.filename && table.filename.includes('ViridianDice_Locations') || 
                               header === 'Dungeon Locations';
     
-    // Special handling for Knave careers
+    // Special handling for Knave careers (rename to array format handler)
     if (isKnaveCareer) {
-      console.log('Processing Knave career reroll');
+      console.log('Processing array format reroll');
       
       // Find the Careers table directly from the loaded table structure
-      const careersTable = selectedTable.tables && 
-                          selectedTable.tables.find(t => t.name === 'Careers');
+      const arrayTable = selectedTable.tables && 
+                        selectedTable.tables.find(t => t.name === 'Careers');
       
-      if (!careersTable || !careersTable.results || !careersTable.results.length) {
-        console.error('Invalid Knave careers structure:', selectedTable);
-        return res.status(500).json({ error: 'Could not find careers data' });
+      if (!arrayTable || !arrayTable.results || !arrayTable.results.length) {
+        console.error('Invalid array structure:', selectedTable);
+        return res.status(500).json({ error: 'Could not find array data' });
       }
       
-      // Get random career directly from the results
-      const careerEntry = careersTable.results[Math.floor(Math.random() * careersTable.results.length)];
-      console.log('Selected career:', careerEntry);
+      // Get random array entry directly from the results
+      const arrayEntry = arrayTable.results[Math.floor(Math.random() * arrayTable.results.length)];
+      console.log('Selected array entry:', arrayEntry);
       
-      // Validate the career entry format
-      if (!Array.isArray(careerEntry) || careerEntry.length < 2) {
-        console.error('Invalid career format:', careerEntry);
-        return res.status(500).json({ error: 'Invalid career data format' });
+      // Validate the array entry format
+      if (!Array.isArray(arrayEntry)) {
+        console.error('Invalid array format:', arrayEntry);
+        return res.status(500).json({ error: 'Invalid array data format' });
       }
       
-      // Return the career in proper format
+      // Return the array in proper format
       return res.json({
         result: {
           header: header || 'Careers',
-          result: [careerEntry[0], careerEntry[1]],
-          _isCareer: true,
-          _tableName: 'Knave Careers'
+          result: arrayEntry,
+          _isArray: true,
+          _tableName: 'Array Data'
         },
         context
       });
