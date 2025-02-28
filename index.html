@@ -182,9 +182,9 @@
     
     /* Keep header at single line height */
     .result-row .result-header {
-      flex: 0 0 120px !important;
-      min-width: 120px !important;
-      max-width: 120px !important;
+      flex: 0 0 240px !important;
+      min-width: 240px !important;
+      max-width: 240px !important;
       height: 28px !important;
       line-height: 28px !important;
       margin-right: 8px !important;
@@ -1057,6 +1057,9 @@ function rerollContent(button) {
       // Get reference to header div
       const headerDiv = resultRow.querySelector('.result-header');
       
+      // Variables to store the new content value for the title update
+      let newTitleValue = '';
+      
       // CASE 1: KNAVE CAREERS FORMAT
       if (isKnaveTable || rowFormat === 'career' || data.result._isCareer === true) {
         console.log('Processing Knave career format:', data.result);
@@ -1100,13 +1103,12 @@ function rerollContent(button) {
         // Update context
         context[header] = [firstValue, secondValue];
         
-        // Reset opacity and return
-        resultRow.style.opacity = '1';
-        return;
+        // Store career name for title update
+        newTitleValue = firstValue;
       }
       
       // CASE 2: VIRIDIAN LOCATIONS
-      if (isViridianTable || header === 'Dungeon Locations') {
+      else if (isViridianTable || header === 'Dungeon Locations') {
         console.log('Processing Viridian location format:', data.result);
         
         let locationValue = "";
@@ -1165,13 +1167,12 @@ function rerollContent(button) {
         // Update context
         context[header] = locationValue;
         
-        // Reset opacity and return
-        resultRow.style.opacity = '1';
-        return;
+        // Store location for title update
+        newTitleValue = locationValue;
       }
       
       // CASE 3: SIMPLE STRING VALUE
-      if (typeof data.result.result === 'string') {
+      else if (typeof data.result.result === 'string') {
         console.log('Processing simple string value:', data.result.result);
         
         const contentDiv = document.createElement('div');
@@ -1183,22 +1184,50 @@ function rerollContent(button) {
         // Update context
         context[header] = data.result.result;
         
-        // Reset opacity and return
-        resultRow.style.opacity = '1';
-        return;
+        // MODIFIED: Only update title for the first row, not for any row with "Name" in the header
+        // This fixes the issue with ShadowDark NPCs
+        if (resultRow === generationContainer.querySelector('.result-row')) {
+          newTitleValue = data.result.result;
+        }
       }
       
       // CASE 4: OTHER FORMATS (fallback to existing code)
-      // ...existing code for handling other result types...
+      else {
+        // Handle other result types...
+        console.log('Using fallback handling for result:', data.result);
+        
+        const resultStr = JSON.stringify(data.result.result);
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'result-content';
+        contentDiv.textContent = resultStr;
+        contentDiv.title = resultStr;
+        headerDiv.insertAdjacentElement('afterend', contentDiv);
+        
+        if (resultRow === generationContainer.querySelector('.result-row')) {
+          newTitleValue = resultStr;
+        }
+      }
       
+      // UPDATE CARD TITLE if we have a new value
+      if (newTitleValue && newTitleValue.trim()) {
+        newTitleValue = newTitleValue.trim();
+        if (newTitleValue.length > 30) {
+          newTitleValue = newTitleValue.substring(0, 27) + '...';
+        }
+        
+        const titleText = generationContainer.querySelector('.card-title-text');
+        if (titleText) {
+          titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newTitleValue}`;
+        }
+      }
+      
+      // Always reset opacity
+      resultRow.style.opacity = '1';
     } catch (error) {
       console.error('Error processing reroll result:', error);
       console.error('Data that caused error:', data);
       resultRow.style.opacity = '1';
       alert(`Error processing result: ${error.message}`);
-    } finally {
-      // Always reset opacity, even if there was an error
-      resultRow.style.opacity = '1';
     }
   })
   .catch(error => {
