@@ -1,0 +1,39 @@
+filename: Custom_NPC.yaml
+game: Custom
+setting: Fantasy
+subtype: none
+tablename: NPC
+tables:
+  - name: Name
+    customDisplay: "[{Part1}{Part2}]"
+    subTables:
+      - name: Part1
+        results: 
+          - "{Knave_Surname1}"
+      - name: Part2
+        results: 
+          - "{Knave_Surname2}"
+  - name: Archetype
+    results: 
+      - "{Knave_Archetypes}"
+  - name: Relevant Profession
+    results: 
+      - "{Knave_Professions}"
+  - name: Goal
+    results: 
+      - "{Knave_Goals}"
+  - name: Personality
+    results: 
+      - "{Knave_Personalities}"
+  - name: Trait
+    results: 
+      - "{Knave_NPCDetails}"
+  - name: Asset
+    results: 
+      - "{Knave_Assets}"
+  - name: Libility
+    results: 
+      - "{Knave_Liabilities}"
+  - name: Important Relationship
+    results: 
+      - "{Knave_Relationships}"

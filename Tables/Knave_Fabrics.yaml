@@ -8,7 +8,7 @@ tables:
     results:
       - "Alligator skin"
       - "Alpaca wool"
-      - {Knave_Animals} skin"
+      - "{Knave_Animals} skin"
       - "Badger skin"
       - "Bamboo weave"
       - "Barkcloth"
