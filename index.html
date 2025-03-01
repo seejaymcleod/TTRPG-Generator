@@ -912,10 +912,19 @@
         const button = document.createElement('button');
         button.className = 'matching-table-button';
         button.textContent = `${table.game ?? 'Unknown'} : ${table.tablename ?? 'Undefined'}`;
+        
+        // Add additional info for debugging when hovering
+        button.title = `Filename: ${table.filename}`;
+        
         button.onclick = () => {
+          console.log('Selected table from list:', {
+            tablename: table.tablename,
+            filename: table.filename,
+            game: table.game
+          });
           displayTableDetails(table);
           clearGeneratedList();
-          generateContent(); // Automatically generate one result when a matching table is selected
+          generateContent(); // Automatically generate one result
         };
 
         matchingTablesContainer.appendChild(button);
@@ -941,17 +950,28 @@
     }
 
     function displayTableDetails(table) {
+      // Add debugging to see which table is being selected
+      console.log('Selected table details:', {
+        tablename: table.tablename,
+        filename: table.filename,
+        game: table.game
+      });
+
       const tableHeadersContainer = document.getElementById('tableHeaders');
       tableHeadersContainer.innerHTML = '';
 
       const tableNameTitle = document.createElement('h2');
       tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
+      // Store the filename as a data attribute for clear identification
+      tableNameTitle.dataset.filename = table.filename;
+      tableNameTitle.dataset.game = table.game;
       tableHeadersContainer.appendChild(tableNameTitle);
 
       const details = [
         { key: 'game', label: 'Game' },
         { key: 'type', label: 'Type' },
-        { key: 'setting', label: 'Setting' }
+        { key: 'setting', label: 'Setting' },
+        { key: 'filename', label: 'Filename' } // Add filename to display for debugging
       ];
 
       details.forEach(detail => {
@@ -991,22 +1011,61 @@
       clearGeneratedList();
 
       const numberOfGenerations = document.getElementById('generationSlider').value;
-      const selectedTable = tablesData.find(t => t.tablename === document.querySelector('#tableHeaders h2')?.textContent);
+      // Get the header element with the table name
+      const tableHeader = document.querySelector('#tableHeaders h2');
       
-      if (!selectedTable) {
-        console.error('No table selected for generation.');
+      if (!tableHeader) {
+        console.error('No table header found');
         displayErrorMessage('Error: No table selected for generation.');
         return;
       }
+      
+      // Get the filename and game from data attributes
+      const selectedTableName = tableHeader.textContent;
+      const selectedFileName = tableHeader.dataset.filename;
+      const selectedGameName = tableHeader.dataset.game;
+      
+      console.log('Looking for table with:', {
+        tablename: selectedTableName,
+        filename: selectedFileName,
+        game: selectedGameName
+      });
+      
+      // Find the selected table using multiple criteria to ensure precision
+      const selectedTable = tablesData.find(t => {
+        // First try exact filename match (most reliable)
+        if (selectedFileName && t.filename === selectedFileName) {
+          console.log(`Found table by filename: ${t.filename}`);
+          return true;
+        }
+        
+        // If no filename match, try tablename + game
+        if (t.tablename === selectedTableName && t.game === selectedGameName) {
+          console.log(`Found table by name and game: ${t.tablename} (${t.game})`);
+          return true;
+        }
+        
+        return false;
+      });
+      
+      if (!selectedTable) {
+        console.error(`No matching table found for "${selectedTableName}" (${selectedFileName})`);
+        displayErrorMessage(`Error: Table "${selectedTableName}" (${selectedFileName}) not found.`);
+        return;
+      }
 
+      // Log full table details for debugging
+      console.log('Selected table for generation:', {
+        tablename: selectedTable.tablename,
+        filename: selectedTable.filename,
+        game: selectedTable.game
+      });
+
+      // Keep full table object for reference
       currentSelectedTable = selectedTable;
+      
       // Reset contexts
       generationContexts = {};
-
-      console.log('Generating content with the following data:', {
-        table: selectedTable,
-        number: numberOfGenerations
-      });
 
       // Show loading indicator
       const resultsContainer = document.getElementById('results');
@@ -1016,10 +1075,14 @@
       loadingDiv.textContent = 'Loading...';
       resultsContainer.appendChild(loadingDiv);
 
+      // Send the complete table object to ensure proper identification
       fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table: selectedTable, number: parseInt(numberOfGenerations) })
+        body: JSON.stringify({ 
+          table: selectedTable, 
+          number: parseInt(numberOfGenerations) 
+        })
       })
       .then(response => {
         // First remove the loading indicator
@@ -2084,10 +2147,50 @@
 
     // Function to display the table contents
     function showTableContent() {
-      if (!currentSelectedTable) {
-        console.error('No table selected');
+      // Use the same table selection logic as generateContent
+      const tableHeader = document.querySelector('#tableHeaders h2');
+      
+      if (!tableHeader) {
+        console.error('No table header found');
+        displayErrorMessage('Error: No table selected.');
         return;
       }
+      
+      const selectedTableName = tableHeader.textContent;
+      const selectedFileName = tableHeader.dataset.filename;
+      const selectedGameName = tableHeader.dataset.game;
+      
+      console.log('Looking for table with:', {
+        tablename: selectedTableName,
+        filename: selectedFileName,
+        game: selectedGameName  
+      });
+      
+      const selectedTable = tablesData.find(t => {
+        // First try exact filename match
+        if (selectedFileName && t.filename === selectedFileName) {
+          return true;
+        }
+        // Then try name + game
+        if (t.tablename === selectedTableName && t.game === selectedGameName) {
+          return true;
+        }
+        return false;
+      });
+      
+      if (!selectedTable) {
+        console.error(`No table found for "${selectedTableName}"`);
+        displayErrorMessage(`Error: Table "${selectedTableName}" not found.`);
+        return;
+      }
+      
+      console.log('Selected table for showing contents:', {
+        tablename: selectedTable.tablename,
+        filename: selectedTable.filename,
+        game: selectedTable.game
+      });
+
+      currentSelectedTable = selectedTable;
 
       // Show loading indicator
       const resultsContainer = document.getElementById('results');
@@ -2100,7 +2203,7 @@
       fetch('/api/table-contents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table: currentSelectedTable })
+        body: JSON.stringify({ table: selectedTable })
       })
       .then(response => {
         if (!response.ok) {

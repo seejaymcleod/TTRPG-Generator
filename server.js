@@ -40,11 +40,53 @@ app.post('/api/generate', (req, res) => {
     return res.status(400).json({ error: 'Invalid request data.' });
   }
 
-  // Find the table by both filename and tablename to be more flexible
-  const selectedTable = tables.find(t => 
-    (t.filename === table.filename) || 
-    (t.tablename === table.tablename));
+  // Log full details of the table being requested
+  console.log('Generate request received for table:', {
+    requestedFilename: table.filename,
+    requestedTablename: table.tablename,
+    requestedGame: table.game
+  });
   
+  // Get list of matching tables to help diagnose the issue
+  const matchingByFilename = tables.filter(t => t.filename === table.filename);
+  const matchingByName = tables.filter(t => t.tablename === table.tablename);
+  
+  console.log(`Found ${matchingByFilename.length} tables matching filename "${table.filename}"`);
+  console.log(`Found ${matchingByName.length} tables matching tablename "${table.tablename}"`);
+  
+  if (matchingByName.length > 1) {
+    console.log('Multiple tables match this tablename:', 
+      matchingByName.map(t => ({ filename: t.filename, game: t.game })));
+  }
+
+  // First try to find by filename (most specific)
+  let selectedTable = null;
+  
+  if (table.filename) {
+    selectedTable = tables.find(t => t.filename === table.filename);
+    if (selectedTable) {
+      console.log(`Found table by filename: ${table.filename}`);
+    }
+  }
+  
+  // If not found by filename, try to find by tablename AND game (more specific than just tablename)
+  if (!selectedTable && table.tablename && table.game) {
+    selectedTable = tables.find(t => 
+      t.tablename === table.tablename && 
+      t.game === table.game);
+    if (selectedTable) {
+      console.log(`Found table by name and game: ${table.tablename} (${table.game})`);
+    }
+  }
+  
+  // Last resort: find by tablename only (least specific)
+  if (!selectedTable && table.tablename) {
+    selectedTable = tables.find(t => t.tablename === table.tablename);
+    if (selectedTable) {
+      console.log(`Found table by name only: ${table.tablename} (may be ambiguous)`);
+    }
+  }
+
   if (!selectedTable) {
     console.error('Table not found:', table);
     return res.status(404).json({ error: 'Table not found.' });
