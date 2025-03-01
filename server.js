@@ -155,14 +155,151 @@ app.post('/api/reroll', (req, res) => {
   }
 });
 
+// Replace the /api/table-contents endpoint with this improved version
+app.post('/api/table-contents', (req, res) => {
+  const { table } = req.body;
+  if (!table) {
+    return res.status(400).json({ error: 'Invalid request data: table is required' });
+  }
+
+  console.log(`Table contents request for table "${table.filename || table.tablename}"`);
+
+  const selectedTable = tables.find(t => t.filename === table.filename);
+  if (!selectedTable) {
+    console.error(`Table not found: ${table.filename}`);
+    return res.status(404).json({ error: 'Table not found.' });
+  }
+
+  try {
+    // For complex tables, build a hierarchical structure of all subtables and their results
+    const processedTable = processTableForDisplay(selectedTable);
+    
+    if (!processedTable || (processedTable.subtables && processedTable.subtables.length === 0)) {
+      return res.status(404).json({ 
+        error: 'No valid table structure found.',
+        tableInfo: {
+          name: selectedTable.tablename || selectedTable.name || selectedTable.filename,
+          type: selectedTable.type || 'Unknown',
+          game: selectedTable.game || 'Unknown'
+        }
+      });
+    }
+    
+    return res.json({ tableData: processedTable });
+  } catch (error) {
+    console.error('Error processing table contents:', error);
+    res.status(500).json({ error: 'Failed to get table contents: ' + error.message });
+  }
+});
+
+// Helper function to process a table for display
+function processTableForDisplay(table) {
+  const result = {
+    name: table.tablename || table.name || 'Unnamed Table',
+    filename: table.filename,
+    type: table.type || 'Unknown',
+    game: table.game || 'Unknown',
+    setting: table.setting || 'Unknown',
+    subtables: []
+  };
+
+  // Process direct results if they exist
+  if (table.results && Array.isArray(table.results) && table.results.length > 0) {
+    result.subtables.push({
+      name: 'Main Results',
+      results: processResultsForDisplay(table.results)
+    });
+  }
+
+  // Process tables array
+  if (table.tables && Array.isArray(table.tables)) {
+    for (const subTable of table.tables) {
+      const processedSubtable = {
+        name: subTable.name || 'Unnamed Subtable',
+        results: []
+      };
+      
+      // Handle customDisplay tables
+      if (subTable.customDisplay) {
+        processedSubtable.customDisplay = subTable.customDisplay;
+      }
+      
+      // Process results if they exist
+      if (subTable.results && Array.isArray(subTable.results)) {
+        processedSubtable.results = processResultsForDisplay(subTable.results);
+      }
+      
+      // Process nested subtables
+      if (subTable.subTables && Array.isArray(subTable.subTables)) {
+        processedSubtable.nestedSubtables = subTable.subTables.map(nestedTable => {
+          return {
+            name: nestedTable.name || 'Unnamed Nested',
+            results: nestedTable.results ? processResultsForDisplay(nestedTable.results) : []
+          };
+        });
+      }
+      
+      result.subtables.push(processedSubtable);
+    }
+  }
+
+  // Process subTables array (in case table uses this format)
+  if (table.subTables && Array.isArray(table.subTables)) {
+    for (const subTable of table.subTables) {
+      result.subtables.push({
+        name: subTable.name || 'Unnamed Subtable',
+        results: subTable.results ? processResultsForDisplay(subTable.results) : []
+      });
+    }
+  }
+
+  return result;
+}
+
+// Helper function to process results array for display
+function processResultsForDisplay(results) {
+  if (!results || !Array.isArray(results)) return [];
+  
+  return results.map(item => {
+    // Handle weighted arrays like [value, weight]
+    if (Array.isArray(item) && item.length >= 2) {
+      const lastElement = item[item.length - 1];
+      // Check if the last element is a number (weight)
+      if (typeof lastElement === 'number' || 
+          (typeof lastElement === 'string' && !isNaN(parseInt(lastElement)))) {
+        const weight = typeof lastElement === 'number' ? lastElement : parseInt(lastElement);
+        const value = item.length === 2 ? item[0] : item.slice(0, -1);
+        return { value, weight, isWeighted: true };
+      }
+      // Handle career format [career, items]
+      else if (item.length === 2 && 
+               typeof item[0] === 'string' && 
+               typeof item[1] === 'string') {
+        return { career: item[0], items: item[1], isCareer: true };
+      }
+      // Regular array
+      return { value: item };
+    } 
+    // Handle objects
+    else if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+      return { ...item };
+    }
+    // Simple values
+    return { value: item };
+  });
+}
+
 // Helper function to find a specific table by its header/name
 function findSpecificTable(rootTable, targetName) {
-  // Check if this is the table we're looking for
-  if ((rootTable.name === targetName) || (rootTable.tablename === targetName)) {
+  if (!rootTable || !targetName) return null;
+  
+  // Check if the current table matches by name
+  if ((rootTable.name || rootTable.tablename) && 
+      (rootTable.name || rootTable.tablename).toLowerCase() === targetName.toLowerCase()) {
     return rootTable;
   }
   
-  // Check tables array
+  // Check in tables array
   if (rootTable.tables && Array.isArray(rootTable.tables)) {
     for (const subTable of rootTable.tables) {
       const found = findSpecificTable(subTable, targetName);
@@ -170,7 +307,7 @@ function findSpecificTable(rootTable, targetName) {
     }
   }
   
-  // Check subTables array
+  // Check in subTables array (some table formats use this property)
   if (rootTable.subTables && Array.isArray(rootTable.subTables)) {
     for (const subTable of rootTable.subTables) {
       const found = findSpecificTable(subTable, targetName);
@@ -179,36 +316,6 @@ function findSpecificTable(rootTable, targetName) {
   }
   
   return null;
-}
-
-// Function to load all YAML files
-function loadAllTables() {
-  try {
-    const files = fs.readdirSync(TABLES_DIR);
-    tables = files
-      .filter(file => file.endsWith('.yaml'))
-      .map(filename => {
-        try {
-          const table = yaml.load(
-            fs.readFileSync(path.join(TABLES_DIR, filename), 'utf8')
-          );
-          table.filename = filename;
-          table.game = table.game || 'Unknown';
-          table.type = table.type || 'Unknown';
-          table.setting = table.setting || 'Unknown';
-          if (DEBUG) {
-            console.log('Loaded table:', JSON.stringify(table, null, 2));
-          }
-          return table;
-        } catch (err) {
-          console.error('Error loading YAML file:', filename, err);
-          return null;
-        }
-      })
-      .filter(Boolean);
-  } catch (err) {
-    console.error('Error reading tables directory:', err);
-  }
 }
 
 // Utility: simple random selection
@@ -834,4 +941,41 @@ function findTableWithSimpleResults(rootTable) {
   }
   
   return null;
+}
+
+// Function to load all tables from the tables directory
+function loadAllTables() {
+  console.log(`Loading tables from ${TABLES_DIR}`);
+  tables = [];
+
+  try {
+    const files = fs.readdirSync(TABLES_DIR);
+    
+    files.forEach(file => {
+      if (file.endsWith('.yml') || file.endsWith('.yaml')) {
+        try {
+          const filePath = path.join(TABLES_DIR, file);
+          const fileContent = fs.readFileSync(filePath, 'utf8');
+          const tableData = yaml.load(fileContent);
+          
+          // Add the filename to the table data for reference
+          tableData.filename = file;
+          
+          tables.push(tableData);
+          
+          if (DEBUG) {
+            console.log(`Loaded table: ${tableData.tablename || file}`);
+          }
+        } catch (err) {
+          console.error(`Error loading table ${file}:`, err);
+        }
+      }
+    });
+    
+    if (DEBUG) {
+      console.log(`Successfully loaded ${tables.length} tables.`);
+    }
+  } catch (err) {
+    console.error('Error reading tables directory:', err);
+  }
 }

@@ -486,6 +486,130 @@
     .card-content > div {
       background-color: #e8e8e8 !important;
     }
+    
+    /* Add to your existing styles */
+    #clearBtn {
+      margin-top: 10px;
+      margin-left: 10px;
+      padding: 5px 15px;
+    }
+    
+    /* Fix the layout - ensure contentWrapper properly contains 3 columns */
+    #contentWrapper {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    
+    #mainContent {
+      flex: 1;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    
+    /* Ensure saved cards appears as a right column */
+    #savedGenerations {
+      width: 25%;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-left: 2px solid #ccc;
+      overflow-y: auto;
+    }
+    
+    /* Style for table display entries */
+    .table-entries {
+      padding: 10px;
+    }
+    
+    .table-entry {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    /* Table display styles */
+    .table-display {
+      margin: 15px 0;
+    }
+    
+    .subtable-container {
+      margin: 15px 0;
+      border-top: 1px dashed #ccc;
+      padding-top: 10px;
+    }
+    
+    .subtable-header {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 5px;
+      color: #390249;
+    }
+    
+    .subtable-custom-display {
+      font-family: monospace;
+      background-color: #f8f8f8;
+      padding: 5px;
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+    
+    .table-entry {
+      margin: 4px 0;
+      padding: 4px 8px;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .entry-number {
+      flex: 0 0 30px;
+      font-weight: bold;
+      color: #666;
+    }
+    
+    .entry-content {
+      flex: 1;
+    }
+    
+    .entry-weight {
+      flex: 0 0 50px;
+      text-align: right;
+      font-style: italic;
+      color: #888;
+      padding-right: 5px;
+      border-left: 1px solid #e0e0e0;
+      margin-left: 10px;
+      padding-left: 10px;
+    }
+    
+    .nested-subtables {
+      margin-left: 20px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding-left: 10px;
+      border-left: 3px solid #e0e0e0;
+    }
+    
+    /* Career format styling */
+    .career-entry {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    
+    .career-name {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .career-items {
+      font-style: italic;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -531,6 +655,8 @@
         <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
         <input type="range" id="generationSlider" min="1" max="20" value="1" oninput="updateGenerationValue()">
         <button id="generateBtn" style="margin-top: 10px;" onclick="generateContent()">Generate</button>
+        <button id="showTableBtn" style="margin-top: 10px; margin-left: 10px;" onclick="showTableContent()">Show Table</button>
+        <button id="clearBtn" style="margin-top: 10px; margin-left: 10px;" onclick="clearGeneratedList()">Clear All</button>
       </div>
       <div id="results" class="generation-list">
         <!-- Generation List goes here, each generation being its own object in the list. -->
@@ -1908,6 +2034,351 @@
       else if (Array.isArray(item)) {
         item.forEach(subItem => extractContext(subItem, context));
       }
+    }
+
+    // Function to display the table contents
+    function showTableContent() {
+      if (!currentSelectedTable) {
+        console.error('No table selected');
+        return;
+      }
+
+      // Show loading indicator
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'generation-object';
+      loadingDiv.textContent = 'Loading table contents...';
+      resultsContainer.appendChild(loadingDiv);
+
+      fetch('/api/table-contents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: currentSelectedTable })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.error || 'Failed to retrieve table contents');
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        resultsContainer.innerHTML = '';
+        if (!data.tableData || !data.tableData.subtables || data.tableData.subtables.length === 0) {
+          const noContentDiv = document.createElement('div');
+          noContentDiv.className = 'generation-object';
+          noContentDiv.textContent = 'No table entries found.';
+          resultsContainer.appendChild(noContentDiv);
+          return;
+        }
+
+        // Create a container for the table display
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'table-display generation-container';
+        tableContainer.dataset.index = `table-${Date.now()}`;
+        
+        // Make it draggable like other cards
+        tableContainer.draggable = true;
+        tableContainer.addEventListener('dragstart', handleCardDragStart);
+        tableContainer.addEventListener('dragend', handleCardDragEnd);
+
+        // Add the collapse button
+        const collapseBtn = document.createElement('button');
+        collapseBtn.className = 'collapse-btn';
+        collapseBtn.onclick = (e) => {
+          e.stopPropagation(); // Prevent card drag
+          toggleCardCollapse(collapseBtn);
+        };
+        collapseBtn.innerHTML = `
+          <span class="down-arrow">▼</span>
+          <span class="up-arrow">▲</span>
+        `;
+        tableContainer.appendChild(collapseBtn);
+        
+        // Add table header with title and action buttons
+        const tableHeader = document.createElement('div');
+        tableHeader.className = 'card-title';
+        
+        // Title text
+        const titleText = document.createElement('span');
+        titleText.className = 'card-title-text';
+        titleText.textContent = data.tableData.name;
+        tableHeader.appendChild(titleText);
+        
+        // Action buttons
+        const cardActions = document.createElement('div');
+        cardActions.className = 'card-actions';
+        
+        // Copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.onclick = (e) => {
+          e.stopPropagation(); // Prevent drag when clicking buttons
+          copyTableToMarkdown(tableContainer, data.tableData);
+        };
+        copyBtn.innerHTML = `
+          Copy
+          <img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">
+        `;
+        cardActions.appendChild(copyBtn);
+        
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-card-btn';
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation(); // Prevent drag when clicking buttons
+          deleteCard(tableContainer);
+        };
+        deleteBtn.innerHTML = `
+          Delete
+          <img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">
+        `;
+        cardActions.appendChild(deleteBtn);
+        
+        tableHeader.appendChild(cardActions);
+        tableContainer.appendChild(tableHeader);
+
+        // Create the content wrapper
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'card-content';
+        
+        // Process each subtable
+        data.tableData.subtables.forEach(subtable => {
+          const subtableContainer = document.createElement('div');
+          subtableContainer.className = 'subtable-container';
+          
+          // Add subtable header
+          const subtableHeader = document.createElement('div');
+          subtableHeader.className = 'subtable-header';
+          subtableHeader.textContent = subtable.name;
+          subtableContainer.appendChild(subtableHeader);
+          
+          // Add customDisplay if present
+          if (subtable.customDisplay) {
+            const customDisplay = document.createElement('div');
+            customDisplay.className = 'subtable-custom-display';
+            customDisplay.textContent = subtable.customDisplay;
+            subtableContainer.appendChild(customDisplay);
+          }
+          
+          // Add results
+          if (subtable.results && subtable.results.length > 0) {
+            subtable.results.forEach((entry, index) => {
+              const entryDiv = document.createElement('div');
+              entryDiv.className = 'table-entry';
+              
+              // Add entry number
+              const entryNumber = document.createElement('div');
+              entryNumber.className = 'entry-number';
+              entryNumber.textContent = `${index + 1}.`;
+              entryDiv.appendChild(entryNumber);
+              
+              // Add content based on type
+              const entryContent = document.createElement('div');
+              entryContent.className = 'entry-content';
+              
+              // Handle different entry types
+              if (entry.isWeighted) {
+                // It's a weighted entry
+                if (typeof entry.value === 'object' && !Array.isArray(entry.value)) {
+                  entryContent.textContent = JSON.stringify(entry.value);
+                } else if (Array.isArray(entry.value)) {
+                  entryContent.textContent = entry.value.join(', ');
+                } else {
+                  entryContent.textContent = entry.value;
+                }
+                
+                // Add weight display
+                const entryWeight = document.createElement('div');
+                entryWeight.className = 'entry-weight';
+                entryWeight.textContent = `Weight: ${entry.weight}`;
+                entryDiv.appendChild(entryWeight);
+              } 
+              else if (entry.isCareer) {
+                // It's a career entry format
+                const careerEntry = document.createElement('div');
+                careerEntry.className = 'career-entry';
+                
+                const careerName = document.createElement('span');
+                careerName.className = 'career-name';
+                careerName.textContent = entry.career;
+                careerEntry.appendChild(careerName);
+                
+                const careerItems = document.createElement('span');
+                careerItems.className = 'career-items';
+                careerItems.textContent = entry.items;
+                careerEntry.appendChild(careerItems);
+                
+                entryContent.appendChild(careerEntry);
+              }
+              else if (typeof entry.value !== 'undefined') {
+                // It's a simple value
+                if (typeof entry.value === 'object') {
+                  entryContent.textContent = JSON.stringify(entry.value);
+                } else {
+                  entryContent.textContent = entry.value;
+                }
+              }
+              else {
+                // It's a generic object
+                entryContent.textContent = JSON.stringify(entry);
+              }
+              
+              entryDiv.appendChild(entryContent);
+              subtableContainer.appendChild(entryDiv);
+            });
+          } else {
+            const noResults = document.createElement('div');
+            noResults.className = 'table-entry';
+            noResults.textContent = '(No results found)';
+            subtableContainer.appendChild(noResults);
+          }
+          
+          // Add nested subtables if present
+          if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
+            const nestedContainer = document.createElement('div');
+            nestedContainer.className = 'nested-subtables';
+            
+            subtable.nestedSubtables.forEach(nestedTable => {
+              const nestedHeader = document.createElement('div');
+              nestedHeader.className = 'subtable-header';
+              nestedHeader.textContent = `${nestedTable.name} (nested)`;
+              nestedContainer.appendChild(nestedHeader);
+              
+              if (nestedTable.results && nestedTable.results.length > 0) {
+                nestedTable.results.forEach((entry, index) => {
+                  const entryDiv = document.createElement('div');
+                  entryDiv.className = 'table-entry';
+                  
+                  // Add entry number
+                  const entryNumber = document.createElement('div');
+                  entryNumber.className = 'entry-number';
+                  entryNumber.textContent = `${index + 1}.`;
+                  entryDiv.appendChild(entryNumber);
+                  
+                  // Add content
+                  const entryContent = document.createElement('div');
+                  entryContent.className = 'entry-content';
+                  
+                  if (typeof entry.value !== 'undefined') {
+                    entryContent.textContent = entry.value;
+                  } else {
+                    entryContent.textContent = JSON.stringify(entry);
+                  }
+                  
+                  entryDiv.appendChild(entryContent);
+                  nestedContainer.appendChild(entryDiv);
+                });
+              }
+            });
+            
+            subtableContainer.appendChild(nestedContainer);
+          }
+          
+          contentWrapper.appendChild(subtableContainer);
+        });
+        
+        tableContainer.appendChild(contentWrapper);
+        resultsContainer.appendChild(tableContainer);
+      })
+      .catch(error => {
+        resultsContainer.innerHTML = '';
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'generation-object error';
+        errorDiv.textContent = `Error: ${error.message}`;
+        resultsContainer.appendChild(errorDiv);
+      });
+    }
+    
+    // Add function to copy table contents to markdown
+    function copyTableToMarkdown(tableContainer, tableData) {
+      if (!tableData) {
+        // Fallback to old method if tableData isn't passed
+        const title = tableContainer.querySelector('.card-title-text').textContent;
+        const sourceInfo = currentSelectedTable ? `${currentSelectedTable.filename}: ${currentSelectedTable.tablename}` : '';
+        
+        let markdown = `# ${title}\n`;
+        if (sourceInfo) {
+          markdown += `*Source: ${sourceInfo}*\n`;
+        }
+        markdown += '\n';
+        
+        // Get all table entries
+        const entries = tableContainer.querySelectorAll('.table-entry');
+        entries.forEach(entry => {
+          markdown += `- ${entry.textContent}\n`;
+        });
+        
+        copyToClipboardWithToast(markdown);
+        return;
+      }
+      
+      // Enhanced method with structured data
+      const title = tableData.name;
+      const sourceInfo = `${tableData.filename}: ${tableData.game} (${tableData.type})`;
+      
+      let markdown = `# ${title}\n`;
+      markdown += `*Source: ${sourceInfo}*\n\n`;
+      
+      // Process each subtable
+      tableData.subtables.forEach(subtable => {
+        markdown += `## ${subtable.name}\n\n`;
+        
+        if (subtable.customDisplay) {
+          markdown += `*Custom Display: \`${subtable.customDisplay}\`*\n\n`;
+        }
+        
+        if (subtable.results && subtable.results.length > 0) {
+          subtable.results.forEach((entry, index) => {
+            let entryText = '';
+            
+            if (entry.isWeighted) {
+              const valueText = typeof entry.value === 'object' ? JSON.stringify(entry.value) : entry.value;
+              entryText = `${valueText} *(Weight: ${entry.weight})*`;
+            } else if (entry.isCareer) {
+              entryText = `**${entry.career}** - ${entry.items}`;
+            } else if (typeof entry.value !== 'undefined') {
+              entryText = typeof entry.value === 'object' ? JSON.stringify(entry.value) : entry.value;
+            } else {
+              entryText = JSON.stringify(entry);
+            }
+            
+            markdown += `${index + 1}. ${entryText}\n`;
+          });
+          markdown += '\n';
+        }
+        
+        // Handle nested subtables
+        if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
+          subtable.nestedSubtables.forEach(nestedTable => {
+            markdown += `### ${nestedTable.name} (nested)\n\n`;
+            
+            if (nestedTable.results && nestedTable.results.length > 0) {
+              nestedTable.results.forEach((entry, index) => {
+                const entryText = typeof entry.value !== 'undefined' ? 
+                    entry.value : JSON.stringify(entry);
+                markdown += `${index + 1}. ${entryText}\n`;
+              });
+              markdown += '\n';
+            }
+          });
+        }
+      });
+      
+      copyToClipboardWithToast(markdown);
+    }
+    
+    function copyToClipboardWithToast(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          showToast('Copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+          showToast('Failed to copy to clipboard');
+        });
     }
   </script>
 </body>
