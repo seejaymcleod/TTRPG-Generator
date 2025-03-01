@@ -37,3 +37,6 @@ tables:
   - name: Important Relationship
     results: 
       - "{Knave_Relationships}"
+  - name: Secret
+    results: 
+      - "{ShadowDark_NPC|Secret}"

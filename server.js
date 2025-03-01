@@ -1063,12 +1063,27 @@ function loadAllTables() {
 function processTableReferences(input, allTables, context = {}) {
   // Handle string inputs
   if (typeof input === 'string') {
-    // Use existing string replacement logic
+    // Use enhanced string replacement logic with pipe support
     const tableRefRegex = /\{([^}]+)\}/g;
     
-    return input.replace(tableRefRegex, (match, tableName) => {
-      if (DEBUG) console.log(`Processing table reference: ${tableName}`);
+    return input.replace(tableRefRegex, (match, reference) => {
+      if (DEBUG) console.log(`Processing table reference: ${reference}`);
       
+      // Check if the reference contains a pipe to indicate subtable
+      const parts = reference.split('|');
+      const tableName = parts[0].trim();
+      const subtableName = parts.length > 1 ? parts[1].trim() : null;
+      
+      // Log information about the reference
+      if (DEBUG) {
+        if (subtableName) {
+          console.log(`Looking for subtable "${subtableName}" within table "${tableName}"`);
+        } else {
+          console.log(`Looking for table "${tableName}"`);
+        }
+      }
+      
+      // First find the referenced table
       const referencedTable = findReferencedTable(tableName, allTables);
       
       if (!referencedTable) {
@@ -1077,6 +1092,30 @@ function processTableReferences(input, allTables, context = {}) {
       }
       
       try {
+        // If a specific subtable is requested
+        if (subtableName) {
+          // Find the specified subtable within the referenced table
+          const subtable = findSubtableByName(referencedTable, subtableName);
+          
+          if (!subtable) {
+            console.error(`Subtable "${subtableName}" not found in table "${tableName}"`);
+            return `[${subtableName} not found in ${tableName}]`;
+          }
+          
+          if (DEBUG) {
+            console.log(`Found subtable "${subtableName}" in "${tableName}"`);
+          }
+          
+          // Generate from the subtable
+          if (subtable.results && Array.isArray(subtable.results)) {
+            return getWeightedRandomResult({ results: subtable.results });
+          } else {
+            console.error(`Subtable "${subtableName}" has no valid results array`);
+            return `[No results in ${tableName}|${subtableName}]`;
+          }
+        }
+        
+        // For whole-table references (no subtable specified)
         if (referencedTable.results && Array.isArray(referencedTable.results)) {
           return getWeightedRandomResult({ results: referencedTable.results });
         }
@@ -1090,7 +1129,7 @@ function processTableReferences(input, allTables, context = {}) {
         console.error(`No valid results found in referenced table: ${tableName}`);
         return `[No results in ${tableName}]`;
       } catch (error) {
-        console.error(`Error processing table reference ${tableName}:`, error);
+        console.error(`Error processing table reference ${reference}:`, error);
         return `[Error: ${error.message}]`;
       }
     });
@@ -1127,4 +1166,58 @@ function findReferencedTable(tableRef, allTables) {
   }
   
   return table;
+}
+
+// New helper function to find a subtable by name within a table
+function findSubtableByName(table, subtableName) {
+  if (!table || !subtableName) return null;
+  
+  // First check in the tables array
+  if (table.tables && Array.isArray(table.tables)) {
+    for (const subtable of table.tables) {
+      // Direct match by name
+      if (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase()) {
+        return subtable;
+      }
+    }
+  }
+  
+  // Then check in the subTables array (some tables use this property)
+  if (table.subTables && Array.isArray(table.subTables)) {
+    for (const subtable of table.subTables) {
+      if (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase()) {
+        return subtable;
+      }
+    }
+  }
+  
+  // If not found, look recursively in nested tables
+  if (table.tables && Array.isArray(table.tables)) {
+    for (const subtable of table.tables) {
+      if (subtable.tables || subtable.subTables) {
+        const nestedResult = findSubtableByName(subtable, subtableName);
+        if (nestedResult) return nestedResult;
+      }
+    }
+  }
+  
+  if (DEBUG) {
+    // List available subtable names to help debugging
+    const availableSubtables = [];
+    
+    if (table.tables && Array.isArray(table.tables)) {
+      availableSubtables.push(...table.tables.map(t => t.name).filter(Boolean));
+    }
+    
+    if (table.subTables && Array.isArray(table.subTables)) {
+      availableSubtables.push(...table.subTables.map(t => t.name).filter(Boolean));
+    }
+    
+    console.log(`Could not find subtable "${subtableName}" in table "${table.tablename || table.name || table.filename}"`);
+    if (availableSubtables.length > 0) {
+      console.log(`Available subtables: ${availableSubtables.join(', ')}`);
+    }
+  }
+  
+  return null;
 }
