@@ -45,7 +45,7 @@ tables:
       - "Forge weapon"
       - "Frame NPC"
       - "Frighten NPC"
-      - "Goal (p. 57)"
+      - "{Knave_Goals}"
       - "Haunt NPC"
       - "Hide item"
       - "Hide NPC"

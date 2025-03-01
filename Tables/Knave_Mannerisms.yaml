@@ -7,7 +7,7 @@ tables:
   - name: Mannerisms
     results:
       - "Anecdotes"
-      - "Archetype (p. 53)"
+      - "{Knave_Archetypes}"
       - "Asides"
       - "Authoritative"
       - "Booming"
@@ -92,7 +92,7 @@ tables:
       - "Sneering"
       - "Sonorous"
       - "Soothing"
-      - "Sound (p. 66)"
+      - "{Knave_Sounds}"
       - "Speechifying"
       - "Squeaky"
       - "Street slang"

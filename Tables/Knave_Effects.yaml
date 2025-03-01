@@ -8,7 +8,7 @@ tables:
     results:
       - "Absorbing"
       - "Accelerating"
-      - "Activity (p. 19)"
+      - "{Knave_Activities}"
       - "Amusing"
       - "Animating"
       - "Armoring"
@@ -100,7 +100,7 @@ tables:
       - "Teleporting"
       - "Terrifying"
       - "Transmuting"
-      - "Trap effect (p. 16)"
+      - "{Knave_TrapEffects}"
       - "Transporting"
       - "Vaporizing"
       - "Warding"

@@ -6,8 +6,8 @@ tablename: Sounds
 tables:
   - name: Sounds
     results:
-      - "Activity (p. 19)"
-      - "Animal (p. 64)"
+      - "{Knave_Activities}"
+      - "{Knave_Animals}"
       - "Banging"
       - "Barking"
       - "Bashing"

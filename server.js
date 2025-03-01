@@ -427,7 +427,14 @@ function getWeightedRandomResult(table) {
     return 'Error: No valid entries found';
   }
   
-  return randomChoice(weightedEntries);
+  let result = randomChoice(weightedEntries);
+  
+  // Process table references if the result is a string
+  if (typeof result === 'string') {
+    result = processTableReferences(result, tables);
+  }
+  
+  return result;
 }
 
 // Process a customDisplay string.
@@ -611,8 +618,13 @@ function processCustomDisplay(table, allTables, context) {
     }
   });
 
+  // Process the final result for table references before returning
+  if (typeof finalResult === 'string') {
+    finalResult = processTableReferences(finalResult, allTables, context);
+  }
+
   if (DEBUG) {
-    console.log(`Final customDisplay result: "${finalResult}"`);
+    console.log(`Final customDisplay result after processing references: "${finalResult}"`);
   }
   return finalResult;
 }
@@ -689,12 +701,17 @@ function processTable(table, parentHeader, allTables, context) {
     const result = randomChoice(table.results);
     console.log(`Selected result: ${result}`);
     
-    // Store result in context
+    // Process table references in the result
+    const processedResult = typeof result === 'string' ? 
+                           processTableReferences(result, allTables, context) : 
+                           result;
+    
+    // Store processed result in context
     if (context && header) {
-      context[header] = result;
+      context[header] = processedResult;
     }
     
-    return { header, result, ...sourceInfo };
+    return { header, result: processedResult, ...sourceInfo };
   }
 
   // Pattern 2: Career-style tables (array of two-element arrays)
@@ -706,15 +723,24 @@ function processTable(table, parentHeader, allTables, context) {
     
     const career = randomChoice(table.results);
     
-    // Store result in context
+    // Process table references in career strings
+    let processedCareer = [...career];
+    if (typeof processedCareer[0] === 'string') {
+      processedCareer[0] = processTableReferences(processedCareer[0], allTables, context);
+    }
+    if (typeof processedCareer[1] === 'string') {
+      processedCareer[1] = processTableReferences(processedCareer[1], allTables, context);
+    }
+    
+    // Store processed result in context
     if (context && header) {
-      context[header] = career;
+      context[header] = processedCareer;
     }
     
     // Include the _isCareer flag
     return { 
       header, 
-      result: career,
+      result: processedCareer,
       _isCareer: true,
       ...sourceInfo 
     };
@@ -735,12 +761,23 @@ function processTable(table, parentHeader, allTables, context) {
   else if (table.results && Array.isArray(table.results) && table.results.length > 0) {
     const result = getWeightedRandomResult(table);
     
-    // Store result in context
-    if (context && header) {
-      context[header] = result;
-      if (DEBUG) console.log(`Stored result "${result}" for table "${header}" in context`);
+    // Process the result further for any string values that might contain references
+    let processedResult = result;
+    
+    // Process string values in arrays
+    if (Array.isArray(result)) {
+      processedResult = result.map(item => 
+        typeof item === 'string' ? processTableReferences(item, allTables, context) : item
+      );
     }
     
+    // Store processed result in context
+    if (context && header) {
+      context[header] = processedResult;
+      if (DEBUG) console.log(`Stored result "${processedResult}" for table "${header}" in context`);
+    }
+    
+    // The rest of the logic for handling special cases remains the same
     // Special detection for Knave Careers format - preserve the original array structure
     if (Array.isArray(result) && result.length === 2 && 
         typeof result[0] === 'string' && typeof result[1] === 'string') {
@@ -790,7 +827,7 @@ function processTable(table, parentHeader, allTables, context) {
       }
     }
     
-    return { header, result, ...sourceInfo };
+    return { header, result: processedResult, ...sourceInfo };
   }
   // 3) If the table has subTables => gather from each subTable
   else if (table.tables && Array.isArray(table.tables)) {
@@ -978,4 +1015,74 @@ function loadAllTables() {
   } catch (err) {
     console.error('Error reading tables directory:', err);
   }
+}
+
+// New function to process references to other tables in result strings
+function processTableReferences(input, allTables, context = {}) {
+  // Handle string inputs
+  if (typeof input === 'string') {
+    // Use existing string replacement logic
+    const tableRefRegex = /\{([^}]+)\}/g;
+    
+    return input.replace(tableRefRegex, (match, tableName) => {
+      if (DEBUG) console.log(`Processing table reference: ${tableName}`);
+      
+      const referencedTable = findReferencedTable(tableName, allTables);
+      
+      if (!referencedTable) {
+        console.error(`Referenced table not found: ${tableName}`);
+        return `[${tableName} not found]`;
+      }
+      
+      try {
+        if (referencedTable.results && Array.isArray(referencedTable.results)) {
+          return getWeightedRandomResult({ results: referencedTable.results });
+        }
+        else if (referencedTable.tables && Array.isArray(referencedTable.tables) && referencedTable.tables.length > 0) {
+          const subtable = referencedTable.tables[0];
+          if (subtable.results && Array.isArray(subtable.results)) {
+            return getWeightedRandomResult(subtable);
+          }
+        }
+        
+        console.error(`No valid results found in referenced table: ${tableName}`);
+        return `[No results in ${tableName}]`;
+      } catch (error) {
+        console.error(`Error processing table reference ${tableName}:`, error);
+        return `[Error: ${error.message}]`;
+      }
+    });
+  }
+  // Handle arrays by processing each string element
+  else if (Array.isArray(input)) {
+    return input.map(item => 
+      typeof item === 'string' ? processTableReferences(item, allTables, context) : item
+    );
+  }
+  // Return non-string inputs unchanged
+  return input;
+}
+
+// Helper function to find a referenced table by name or filename
+function findReferencedTable(tableRef, allTables) {
+  // Remove file extension if present
+  const normalizedRef = tableRef.replace(/\.ya?ml$/i, '');
+  
+  // First try by exact filename match
+  let table = allTables.find(t => 
+    t.filename === `${normalizedRef}.yaml` || 
+    t.filename === `${normalizedRef}.yml`);
+  
+  // If not found, try by table name
+  if (!table) {
+    table = allTables.find(t => 
+      (t.tablename && t.tablename.toLowerCase() === normalizedRef.toLowerCase()) ||
+      (t.name && t.name.toLowerCase() === normalizedRef.toLowerCase()));
+  }
+  
+  if (DEBUG && table) {
+    console.log(`Found referenced table: ${table.filename} (${table.tablename || table.name})`);
+  }
+  
+  return table;
 }

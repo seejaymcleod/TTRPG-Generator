@@ -8,7 +8,7 @@ tables:
     results:
       - "Alligator skin"
       - "Alpaca wool"
-      - "Animal skin (p. 64)"
+      - {Knave_Animals} skin"
       - "Badger skin"
       - "Bamboo weave"
       - "Barkcloth"
@@ -70,7 +70,7 @@ tables:
       - "Mink fur"
       - "Mink skin"
       - "Mohair wool"
-      - "Monster skin (p. 61)"
+      - "{Knave_Monsters} skin"
       - "Muslin"
       - "Oilcloth"
       - "Ostrich skin"

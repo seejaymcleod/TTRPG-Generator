@@ -7,7 +7,7 @@ tables:
   - name: Faction Traits
     results:
       - "Activist"
-      - "Activity (p. 19)"
+      - "{Knave_Activities}"
       - "Aging"
       - "Anarchic"
       - "Ancient"
@@ -69,7 +69,7 @@ tables:
       - "Obnoxious"
       - "Ostentatious"
       - "Patriotic"
-      - "Personality (p. 56)"
+      - "{Knave_Personalities}"
       - "Pious"
       - "Popular"
       - "Predatory"

@@ -491,7 +491,7 @@
     #clearBtn {
       margin-top: 10px;
       margin-left: 10px;
-      padding: 5px 15px;
+      padding: 1px 6px;
     }
     
     /* Fix the layout - ensure contentWrapper properly contains 3 columns */
@@ -609,6 +609,52 @@
     .career-items {
       font-style: italic;
       color: #555;
+    }
+
+    /* Fix spacing in table cards to match regular cards */
+    .subtable-container:first-child {
+      margin-top: 0;
+    }
+    
+    .table-display .card-content {
+      padding-top: 6px;
+    }
+    
+    .subtable-container {
+      margin: 10px 0;
+      padding-top: 10px;
+      border-top: 1px dashed #ccc;
+    }
+    
+    /* First subtable shouldn't have a border */
+    .subtable-container:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+    
+    /* Make table card content align better with regular cards */
+    .table-display {
+      margin: 15px 0;
+    }
+    
+    /* Fix alignment of entry numbers */
+    .entry-number {
+      flex: 0 0 25px;
+      font-weight: bold;
+      color: #666;
+      text-align: right;
+      margin-right: 5px;
+    }
+    
+    /* Improve spacing within table entries */
+    .table-entry {
+      margin: 4px 0;
+      padding: 4px 8px;
+      background-color: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
     }
   </style>
 </head>

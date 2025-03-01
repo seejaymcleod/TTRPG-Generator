@@ -74,7 +74,7 @@ tables:
       - "Lead faction"
       - "Map wild"
       - "Master skill"
-      - "Mission (p. 51)"
+      - "{Knave_Missions}"
       - "Overthrow ruler"
       - "Pacify faction"
       - "Protect artifacts"
