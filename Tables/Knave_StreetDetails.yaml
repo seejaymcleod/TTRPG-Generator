@@ -59,7 +59,7 @@ tables:
       - "Livestock"
       - "Long steps"
       - "Manure pile"
-      - "Knave_MiscellaneousItems"
+      - "{Knave_MiscellaneousItems}"
       - "Mud"
       - "Narrow"
       - "Nobility"

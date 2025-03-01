@@ -1,0 +1,20 @@
+filename: Knave_SpellFormulae.yaml
+game: Knave
+setting: Fantasy
+subtype: none
+tablename: SpellFormulae
+tables:
+  - name: SpellFormulae
+    results:
+      - "{Knave_Elements} {Knave_Forms}"
+      - "{Knave_Effects} {Knave_Forms}"
+      - "{Knave_Effects} {Knave_Elements}"
+      - "The {Knave_Qualities} {Knave_Elements} {Knave_Forms}"
+      - "The {Knave_Qualities} {Knave_Effects} {Knave_Forms}"
+      - "The {Knave_Qualities} {Knave_Effects} {Knave_Elements}"
+      - "{Knave_WizardNames}’s {Knave_Elements} {Knave_Forms}"
+      - "{Knave_WizardNames}’s {Knave_Effects} {Knave_Forms}"
+      - "{Knave_WizardNames}’s {Knave_Effects} {Knave_Elements}"
+      - "{Knave_WizardNames}’s {Knave_Qualities} {Knave_Elements} {Knave_Forms}"
+      - "{Knave_WizardNames}’s {Knave_Qualities} {Knave_Effects} {Knave_Forms}"
+      - "{Knave_WizardNames}’s {Knave_Qualities} {Knave_Effects} {Knave_Elements}"

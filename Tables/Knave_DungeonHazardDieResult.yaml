@@ -1,0 +1,14 @@
+filename: Knave_DungeonHazardDieResult.yaml
+game: Knave
+setting: Fantasy
+subtype: none
+tablename: Dungeon Hazard Die Result
+tables:
+  - name: Dungeon Hazard Die Result
+    results:
+      - ["Encounter", "The party has a random encounter."]
+      - ["Fatigue", "Each party member takes 1 damage unless they spend the next turn resting. Ignore while resting."]
+      - ["Burn", "Lit torches burn out."]
+      - ["Dungeon shift", "The dungeon environment changes."]
+      - ["Sign", "PCs find a sign of a nearby encounter or a clue to a secret."]
+      - ["Free", "No effect."]
