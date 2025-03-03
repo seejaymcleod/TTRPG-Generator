@@ -1,7 +1,7 @@
 filename: Custom_NPC.yaml
 game: Custom
 setting: Fantasy
-subtype: none
+type: People
 tablename: NPC
 tables:
   - name: Name

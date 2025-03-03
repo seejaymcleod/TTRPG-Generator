@@ -27,7 +27,7 @@ app.get('/api/tables', (req, res) => {
     filename: table.filename,
     tablename: table.tablename || 'Unknown',
     game: table.game || 'Unknown',
-    type: table.type || 'Unknown',
+    type: table.subtype || table.type || 'Unknown',  // Use subtype first, then fallback to type
     setting: table.setting || 'Unknown'
   })));
 });

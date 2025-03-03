@@ -1,7 +1,7 @@
 filename: Knave_Effects.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Powers
 tablename: Effects
 tables:
   - name: Effects

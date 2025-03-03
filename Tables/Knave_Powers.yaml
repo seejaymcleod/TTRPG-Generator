@@ -1,7 +1,7 @@
 filename: Knave_Powers.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Powers
 tablename: Powers
 tables:
   - name: Powers

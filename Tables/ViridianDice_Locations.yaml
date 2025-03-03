@@ -2,8 +2,7 @@ tablename: Dungeon Locations
 filename: ViridianDice_Locations.yaml
 game: ViridianDice
 setting: Fantasy
-type: Locations
-subtype: none
+type: Places
 tables:
   - name: Dungeon Locations
     results:

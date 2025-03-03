@@ -1,7 +1,7 @@
 filename: Knave_TravelShifts.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Adventure
 tablename: Travel Shifts
 tables:
   - name: Travel Shifts

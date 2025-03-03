@@ -1,7 +1,7 @@
 filename: Knave_Missions.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Adventure
 tablename: Missions
 tables:
   - name: Missions

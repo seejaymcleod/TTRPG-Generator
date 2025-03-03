@@ -1,7 +1,7 @@
 filename: Knave_Animals.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Bestiary
 tablename: Animals
 tables:
   - name: Animals

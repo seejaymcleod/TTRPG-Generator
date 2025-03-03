@@ -1,7 +1,7 @@
 filename: Knave_Tools.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Stuff
 tablename: Tools
 tables:
   - name: Tools

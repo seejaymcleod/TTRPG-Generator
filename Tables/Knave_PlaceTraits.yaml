@@ -1,7 +1,7 @@
 filename: Knave_PlaceTraits.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Places
 tablename: Place Traits
 tables:
   - name: Place Traits

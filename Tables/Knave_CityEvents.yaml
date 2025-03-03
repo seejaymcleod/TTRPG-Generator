@@ -1,7 +1,7 @@
 filename: Knave_CityEvents.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Places
 tablename: City Events
 tables:
   - name: City Events

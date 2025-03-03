@@ -1,7 +1,7 @@
 filename: Knave_DelveShifts.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Adventure
 tablename: Delve Shifts
 tables:
   - name: Delve Shifts
@@ -15,7 +15,7 @@ tables:
       - "Blood scent"
       - "Ceiling moves"
       - "Ceremony"
-      - "City event (p. 46)"
+      - "{Knave_CityEvents}"
       - "Cleaning"
       - "Cloud of flies"
       - "Combat sounds"
@@ -25,9 +25,9 @@ tables:
       - "Dead rise"
       - "Decay scent"
       - "Decreased patrols"
-      - "Delusion (p. 30)"
+      - "{Knave_Delusions}"
       - "Device activates"
-      - "Disaster (p. 31)"
+      - "{Knave_Disasters}"
       - "Doors close"
       - "Doors open"
       - "Draining"
@@ -36,7 +36,7 @@ tables:
       - "Dungeon tilts"
       - "Dust cloud"
       - "Earthquake"
-      - "Element flow (p. 29)"
+      - "{Knave_Elements} flow"
       - "Eruption"
       - "Excavation"
       - "Faction alliance"
@@ -88,15 +88,15 @@ tables:
       - "Rooms filled in"
       - "Rooms rearrange"
       - "Sand flow"
-      - "Scent (p. 66)"
+      - "{Knave_Scents}"
       - "Singing"
       - "Sleep"
       - "Smoke"
-      - "Sound (p. 66)"
+      - "{Knave_Sounds}"
       - "Static charge"
       - "Summoning"
       - "Total silence"
-      - "Trap effect (p. 16)"
+      - "{Knave_TrapEffects}"
       - "Traps rearm"
       - "Vermin swarm"
       - "Voices"

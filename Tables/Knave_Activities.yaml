@@ -1,7 +1,7 @@
 filename: Knave_Activities.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Adventure
 tablename: Activities
 tables:
   - name: Activities

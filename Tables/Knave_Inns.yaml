@@ -1,7 +1,7 @@
 filename: Knave_Inns.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Places
 tablename: Inns
 tables:
   - name: Inns

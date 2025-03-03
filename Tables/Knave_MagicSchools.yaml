@@ -1,7 +1,7 @@
 filename: Knave_MagicSchools.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Powers
 tablename: Magic Schools
 tables:
   - name: Magic Schools

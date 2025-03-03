@@ -1,7 +1,7 @@
 filename: Knave_ItemTraits.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Stuff
 tablename: Item Traits
 tables:
   - name: Item Traits

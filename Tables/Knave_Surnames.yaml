@@ -1,7 +1,7 @@
 filename: Knave_Surnames.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: People
 tablename: Surnames
 tables:
   - name: Surnames

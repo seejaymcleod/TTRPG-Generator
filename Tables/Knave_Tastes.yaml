@@ -1,7 +1,7 @@
 filename: Knave_Tastes.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Sensory
 tablename: Tastes
 tables:
   - name: Tastes

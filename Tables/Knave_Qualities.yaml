@@ -1,7 +1,7 @@
 filename: Knave_Qualities.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Sensory
 tablename: Qualities
 tables:
   - name: Qualities

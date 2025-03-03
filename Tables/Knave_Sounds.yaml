@@ -1,7 +1,7 @@
 filename: Knave_Sounds.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Sensory
 tablename: Sounds
 tables:
   - name: Sounds

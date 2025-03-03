@@ -1,7 +1,7 @@
 filename: Knave_MonsterTraits.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Bestiary
 tablename: Monster Traits
 tables:
   - name: Monster Traits

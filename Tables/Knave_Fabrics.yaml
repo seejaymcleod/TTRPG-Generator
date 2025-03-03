@@ -1,7 +1,7 @@
 filename: Knave_Fabrics.yaml
 game: Knave
 setting: Fantasy
-subtype: none
+type: Sensory
 tablename: Fabrics
 tables:
   - name: Fabrics

@@ -1,7 +1,7 @@
 filename: ShadowDark_NPC.yaml
 game: ShadowDark
 setting: Fantasy
-subtype: none
+type: People
 tablename: NPC
 tables:
   - name: NPC Names by Ancestry
