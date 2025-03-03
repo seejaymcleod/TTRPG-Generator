@@ -1,7 +1,7 @@
 filename: Knave_Weather2.yaml
 game: Knave
 setting: Fantasy
-type: Adventure
+type: Adventure4
 tablename: Weather2
 tables:
   - name: Weather2

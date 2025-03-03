@@ -77,13 +77,33 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      max-height: 80px;
+      max-height: 74px; /* Reduced from 110px to show only 2 rows */
       overflow-y: hidden;
+      position: relative;
+      padding-bottom: 5px; /* Space for gradient indicator */
       transition: max-height 0.3s;
     }
+    .filter-buttons::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 15px;
+      background: linear-gradient(to bottom, transparent, #e0e0e0);
+      pointer-events: none; /* Allow clicks to pass through */
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .filter-buttons.has-overflow::after {
+      opacity: 1;
+    }
     .filter-buttons.expanded {
-      max-height: 300px;
+      max-height: 200px; /* Increased height when expanded */
       overflow-y: auto;
+    }
+    .filter-buttons.expanded::after {
+      opacity: 0;
     }
     .filter-btn {
       background-color: #ccc; /* DefaultState - gray */
@@ -106,16 +126,23 @@
     .expand-btn {
       width: 100%;
       border: none;
-      background-color: #e0e0e0;
+      background-color: #d0d0d0;
       border-top: 1px solid #ccc;
       cursor: pointer;
       padding: 4px;
       margin-top: 4px;
       text-align: center;
       font-size: 1em;
+      color: #555;
+      font-weight: bold;
+      display: none; /* Hide by default */
+    }
+    .filter-container.has-significant-overflow .expand-btn,
+    .filter-container .filter-buttons.expanded + .expand-btn {
+      display: block;
     }
     .expand-btn:hover {
-      background-color: #d0d0d0;
+      background-color: #c0c0c0;
     }
     #resetButton {
       margin-left: 20px;
@@ -926,6 +953,32 @@
         };
         filterContainer.appendChild(button);
       });
+      
+      // Check if the container has overflow and add indicator class
+      setTimeout(() => {
+        checkFilterOverflow(filterId);
+      }, 0);
+    }
+    
+    // New function to check if filter container has significant overflow content
+    function checkFilterOverflow(filterId) {
+      const container = document.getElementById(filterId);
+      const significantOverflowThreshold = 10; // Reduced from 30 to make "Show More" appear sooner
+      
+      if (container.scrollHeight > container.clientHeight) {
+        // Add has-overflow class regardless of amount
+        container.classList.add('has-overflow');
+        
+        // Check if overflow is significant enough to show controls
+        if (container.scrollHeight - container.clientHeight > significantOverflowThreshold) {
+          container.closest('.filter-container').classList.add('has-significant-overflow');
+        } else {
+          container.closest('.filter-container').classList.remove('has-significant-overflow');
+        }
+      } else {
+        container.classList.remove('has-overflow');
+        container.closest('.filter-container').classList.remove('has-significant-overflow');
+      }
     }
 
     // Toggle filter button states
@@ -983,8 +1036,20 @@
       const filterContainer = document.getElementById(filterId);
       filterContainer.classList.toggle('expanded');
       
-      const expandBtn = filterContainer.nextElementSibling;
-      expandBtn.textContent = filterContainer.classList.contains('expanded') ? '▲' : '▼';
+      const expandBtn = filterContainer.closest('.filter-container').querySelector('.expand-btn');
+      if (filterContainer.classList.contains('expanded')) {
+        expandBtn.textContent = '▲ Show Less';
+        // Add a class to the parent container to keep the button visible
+        expandBtn.classList.add('visible-when-expanded');
+      } else {
+        expandBtn.textContent = '▼ Show More';
+        expandBtn.classList.remove('visible-when-expanded');
+      }
+      
+      // Recalculate overflow after toggling
+      setTimeout(() => {
+        checkFilterOverflow(filterId);
+      }, 300);
     }
 
     // Reset all filters to default state
@@ -1946,6 +2011,16 @@
         
         // Show confirmation
         showToast('Card saved!');
+      });
+      
+      // Initialize expand buttons with proper text
+      document.querySelectorAll('.expand-btn').forEach(btn => {
+        btn.textContent = '▼ Show More';
+      });
+      
+      // Check initial overflow for all filter containers
+      ['gameFilter', 'typeFilter', 'settingFilter'].forEach(filterId => {
+        checkFilterOverflow(filterId);
       });
     });
 
