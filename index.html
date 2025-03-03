@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TTRPG Generator - Version 120</title>
-  <link href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  <!-- REMOVE Choices.js dependency since we're using buttons instead -->
   <style>
     /* Base styles */
     body {
@@ -38,7 +37,7 @@
       border-radius: 5px;
     }
     
-    /* Filter styles */
+    /* Filter styles - NEW BUTTON-BASED IMPLEMENTATION */
     #filtersContainer {
       display: flex;
       padding: 6px;
@@ -52,23 +51,71 @@
       position: relative;
       flex: 1;
     }
-    .choices {
-      margin-bottom: 0 !important;
+    .filter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
     }
-    .filter-dropdown {
-      width: 100%;
-      margin-top: 5px;
+    .filter-title {
+      font-weight: bold;
+      color: #333;
     }
-    .clear-button {
-      position: absolute;
-      right: 10px;
-      top: 0;
+    .filter-clear {
       background: none;
       border: none;
-      font-size: 1.2em;
-      cursor: pointer;
       color: #007bff;
-      display: block;
+      cursor: pointer;
+      font-size: 1.2em;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      line-height: 20px;
+      text-align: center;
+    }
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 80px;
+      overflow-y: hidden;
+      transition: max-height 0.3s;
+    }
+    .filter-buttons.expanded {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .filter-btn {
+      background-color: #ccc; /* DefaultState - gray */
+      border: 2px solid transparent;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .filter-btn.unselected {
+      background-color: #f0f0f0; /* UnSelectedState - light gray */
+    }
+    .filter-btn.selected {
+      background-color: #888; /* SelectedState - dark gray */
+      border-color: #390249; /* Highlighted border */
+      color: white;
+    }
+    .expand-btn {
+      width: 100%;
+      border: none;
+      background-color: #e0e0e0;
+      border-top: 1px solid #ccc;
+      cursor: pointer;
+      padding: 4px;
+      margin-top: 4px;
+      text-align: center;
+      font-size: 1em;
+    }
+    .expand-btn:hover {
+      background-color: #d0d0d0;
     }
     #resetButton {
       margin-left: 20px;
@@ -667,23 +714,42 @@
     <input type="text" id="searchInput" placeholder="Search for tables..." oninput="performSearch()">
   </div>
 
+  <!-- REPLACE the filter section with our new button-based UI -->
   <div id="filtersContainer">
     <div class="filter-container">
-      <label for="gameFilter">Game</label>
-      <select id="gameFilter" class="filter-dropdown" multiple="multiple"></select>
-      <button class="clear-button" onclick="clearFilter('gameFilter')">&times;</button>
+      <div class="filter-header">
+        <span class="filter-title">Game</span>
+        <button class="filter-clear" onclick="clearFilter('game')">&times;</button>
+      </div>
+      <div id="gameFilter" class="filter-buttons" data-mode="all-selected">
+        <!-- Game filter buttons will be added here dynamically -->
+      </div>
+      <button class="expand-btn" onclick="toggleFilterExpand('gameFilter')">▼</button>
     </div>
+    
     <div class="filter-container">
-      <label for="typeFilter">Type</label>
-      <select id="typeFilter" class="filter-dropdown" multiple="multiple"></select>
-      <button class="clear-button" onclick="clearFilter('typeFilter')">&times;</button>
+      <div class="filter-header">
+        <span class="filter-title">Type</span>
+        <button class="filter-clear" onclick="clearFilter('type')">&times;</button>
+      </div>
+      <div id="typeFilter" class="filter-buttons" data-mode="all-selected">
+        <!-- Type filter buttons will be added here dynamically -->
+      </div>
+      <button class="expand-btn" onclick="toggleFilterExpand('typeFilter')">▼</button>
     </div>
+    
     <div class="filter-container">
-      <label for="settingFilter">Setting</label>
-      <select id="settingFilter" class="filter-dropdown" multiple="multiple"></select>
-      <button class="clear-button" onclick="clearFilter('settingFilter')">&times;</button>
+      <div class="filter-header">
+        <span class="filter-title">Setting</span>
+        <button class="filter-clear" onclick="clearFilter('setting')">&times;</button>
+      </div>
+      <div id="settingFilter" class="filter-buttons" data-mode="all-selected">
+        <!-- Setting filter buttons will be added here dynamically -->
+      </div>
+      <button class="expand-btn" onclick="toggleFilterExpand('settingFilter')">▼</button>
     </div>
-    <button id="resetButton" onclick="resetFilters()">Reset</button>
+    
+    <button id="resetButton" onclick="resetFilters()">Reset All</button>
   </div>
 
   <div id="contentWrapper">
@@ -724,42 +790,11 @@
         const response = await fetch('/api/tables');
         tablesData = await response.json();
         console.log('Tables Data:', tablesData);
-        populateDropdowns(tablesData);
+        populateFilterButtons(tablesData); // New function to populate filter buttons
         applyFilters();
       } catch (error) {
         console.error('Error fetching tables:', error);
       }
-
-      // Initialize filter dropdowns with Choices.js
-      window.gameChoices = new Choices('#gameFilter', {
-        removeItemButton: true,
-        placeholder: true,
-        searchPlaceholderValue: 'Select games...',
-        allowHTML: true,
-        noResultsText: '',
-        noChoicesText: ''
-      });
-      document.getElementById('gameFilter').addEventListener('change', applyFilters);
-
-      window.typeChoices = new Choices('#typeFilter', {
-        removeItemButton: true,
-        placeholder: true,
-        searchPlaceholderValue: 'Select types...',
-        allowHTML: true,
-        noResultsText: '',
-        noChoicesText: ''
-      });
-      document.getElementById('typeFilter').addEventListener('change', applyFilters);
-
-      window.settingChoices = new Choices('#settingFilter', {
-        removeItemButton: true,
-        placeholder: true,
-        searchPlaceholderValue: 'Select settings...',
-        allowHTML: true,
-        noResultsText: '',
-        noChoicesText: ''
-      });
-      document.getElementById('settingFilter').addEventListener('change', applyFilters);
 
       // Set up drag and drop for saved cards
       const savedArea = document.getElementById('savedGenerations');
@@ -850,7 +885,8 @@
       });
     });
 
-    function populateDropdowns(tables) {
+    // New function to populate filter buttons
+    function populateFilterButtons(tables) {
       const gameSet = new Set();
       const typeSet = new Set();
       const settingSet = new Set();
@@ -861,33 +897,108 @@
         if (table.setting) settingSet.add(table.setting);
       });
 
-      populateOptions('#gameFilter', Array.from(gameSet));
-      populateOptions('#typeFilter', Array.from(typeSet));
-      populateOptions('#settingFilter', Array.from(settingSet));
+      createFilterButtons('gameFilter', Array.from(gameSet));
+      createFilterButtons('typeFilter', Array.from(typeSet));
+      createFilterButtons('settingFilter', Array.from(settingSet));
     }
 
-    function populateOptions(selectId, options) {
-      const select = document.querySelector(selectId);
-      select.innerHTML = '';
-      options.forEach(option => {
-        const opt = document.createElement('option');
-        opt.value = option;
-        opt.textContent = option;
-        select.appendChild(opt);
+    // Helper function to create filter buttons
+    function createFilterButtons(filterId, options) {
+      const filterContainer = document.getElementById(filterId);
+      filterContainer.innerHTML = '';
+      
+      options.sort().forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'filter-btn';
+        button.textContent = option;
+        button.dataset.value = option;
+        button.onclick = function() {
+          toggleFilterButton(this, filterId);
+        };
+        filterContainer.appendChild(button);
       });
+    }
+
+    // Toggle filter button states
+    function toggleFilterButton(button, filterId) {
+      const filterContainer = document.getElementById(filterId);
+      const currentMode = filterContainer.dataset.mode;
+      
+      if (currentMode === 'all-selected') {
+        // Switching from AllSelectedMode to ChoiceMode
+        filterContainer.dataset.mode = 'choice';
+        
+        // Set all buttons to unselected state
+        const buttons = filterContainer.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+          btn.classList.add('unselected');
+          btn.classList.remove('selected');
+        });
+        
+        // Set the clicked button to selected
+        button.classList.remove('unselected');
+        button.classList.add('selected');
+      } else {
+        // Already in ChoiceMode, toggle this button
+        button.classList.toggle('unselected');
+        button.classList.toggle('selected');
+        
+        // If no buttons are selected, switch back to all-selected mode
+        const selectedButtons = filterContainer.querySelectorAll('.filter-btn.selected');
+        if (selectedButtons.length === 0) {
+          clearFilter(filterId.replace('Filter', ''));
+        }
+      }
+      
+      // Apply filters with the new selection
+      applyFilters();
+    }
+
+    // Clear a specific filter (reset to all-selected mode)
+    function clearFilter(filterType) {
+      const filterId = filterType + 'Filter';
+      const filterContainer = document.getElementById(filterId);
+      
+      filterContainer.dataset.mode = 'all-selected';
+      const buttons = filterContainer.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('unselected', 'selected');
+      });
+      
+      console.log('Filter cleared:', filterType);
+      applyFilters();
+    }
+
+    // Toggle filter section expansion
+    function toggleFilterExpand(filterId) {
+      const filterContainer = document.getElementById(filterId);
+      filterContainer.classList.toggle('expanded');
+      
+      const expandBtn = filterContainer.nextElementSibling;
+      expandBtn.textContent = filterContainer.classList.contains('expanded') ? '▲' : '▼';
+    }
+
+    // Reset all filters to default state
+    function resetFilters() {
+      clearFilter('game');
+      clearFilter('type');
+      clearFilter('setting');
+      document.getElementById('searchInput').value = '';
+      applyFilters();
     }
 
     function performSearch() {
       applyFilters();
     }
 
+    // Updated applyFilters function to work with the new button-based UI
     function applyFilters() {
       const searchQuery = document.getElementById('searchInput').value.toLowerCase();
       
-      // Get selected filter values safely
-      const gameFilter = Array.from(document.querySelectorAll('#gameFilter option:checked')).map(option => option.value);
-      const typeFilter = Array.from(document.querySelectorAll('#typeFilter option:checked')).map(option => option.value);
-      const settingFilter = Array.from(document.querySelectorAll('#settingFilter option:checked')).map(option => option.value);
+      // Get selected filter values from the new button UI
+      const gameFilter = getSelectedValues('gameFilter');
+      const typeFilter = getSelectedValues('typeFilter');
+      const settingFilter = getSelectedValues('settingFilter');
       
       console.log('Applying filters:', { 
         search: searchQuery,
@@ -930,23 +1041,20 @@
         matchingTablesContainer.appendChild(button);
       });
     }
-
-    function clearFilter(filterId) {
-      const choicesInstance = window[`${filterId.replace('Filter', 'Choices')}`];
-      if (choicesInstance) {
-        choicesInstance.removeActiveItems();
-        console.log('Active items cleared for:', filterId);
-      } else {
-        console.warn('Choices instance not found for:', filterId);
+    
+    // Helper function to get selected values from button-based filter
+    function getSelectedValues(filterId) {
+      const filterContainer = document.getElementById(filterId);
+      const mode = filterContainer.dataset.mode;
+      
+      // If in all-selected mode, return empty array (no filtering)
+      if (mode === 'all-selected') {
+        return [];
       }
-      applyFilters();
-    }
-
-    function resetFilters() {
-      window.gameChoices.removeActiveItems();
-      window.typeChoices.removeActiveItems();
-      window.settingChoices.removeActiveItems();
-      applyFilters();
+      
+      // Otherwise get selected button values
+      const selectedButtons = filterContainer.querySelectorAll('.filter-btn.selected');
+      return Array.from(selectedButtons).map(btn => btn.dataset.value);
     }
 
     function displayTableDetails(table) {
