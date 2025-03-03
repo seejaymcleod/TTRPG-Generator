@@ -1,7 +1,7 @@
 filename: Knave_Elements.yaml
 game: Knave
 setting: Fantasy
-type: Sensory
+type: ["Sensory", "Powers"]
 tablename: Elements
 tables:
   - name: Elements

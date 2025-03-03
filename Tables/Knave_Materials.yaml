@@ -1,7 +1,7 @@
 filename: Knave_Materials.yaml
 game: Knave
 setting: Fantasy
-type: Sensory
+type: ["Sensory", "Stuff"]
 tablename: Materials
 tables:
   - name: Materials

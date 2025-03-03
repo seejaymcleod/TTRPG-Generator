@@ -893,7 +893,16 @@
 
       tables.forEach(table => {
         if (table.game) gameSet.add(table.game);
-        if (table.type) typeSet.add(table.type);
+        
+        // Handle type as either an array or string
+        if (Array.isArray(table.type)) {
+          table.type.forEach(t => {
+            if (t) typeSet.add(t);
+          });
+        } else if (table.type) {
+          typeSet.add(table.type);
+        }
+        
         if (table.setting) settingSet.add(table.setting);
       });
 
@@ -1010,12 +1019,33 @@
       const matchingTablesContainer = document.getElementById('matchingTablesContainer');
       matchingTablesContainer.innerHTML = '';
 
-      const filteredTables = tablesData.filter(table =>
-        (searchQuery === '' || (table.tablename && table.tablename.toLowerCase().includes(searchQuery))) &&
-        (gameFilter.length === 0 || (table.game && gameFilter.includes(table.game))) &&
-        (typeFilter.length === 0 || (table.type && typeFilter.includes(table.type))) &&
-        (settingFilter.length === 0 || (table.setting && settingFilter.includes(table.setting)))
-      );
+      const filteredTables = tablesData.filter(table => {
+        // Search by name
+        const matchesSearch = searchQuery === '' || 
+                            (table.tablename && table.tablename.toLowerCase().includes(searchQuery));
+        
+        // Filter by game
+        const matchesGame = gameFilter.length === 0 || 
+                          (table.game && gameFilter.includes(table.game));
+        
+        // Handle type filter when type is an array
+        let matchesType = false;
+        if (typeFilter.length === 0) {
+          matchesType = true;
+        } else if (Array.isArray(table.type)) {
+          // Check if any type in the array matches any selected type filter
+          matchesType = table.type.some(t => typeFilter.includes(t));
+        } else {
+          // Handle single type as before
+          matchesType = table.type && typeFilter.includes(table.type);
+        }
+        
+        // Filter by setting
+        const matchesSetting = settingFilter.length === 0 || 
+                             (table.setting && settingFilter.includes(table.setting));
+        
+        return matchesSearch && matchesGame && matchesType && matchesSetting;
+      });
       
       console.log(`Found ${filteredTables.length} matching tables`);
 

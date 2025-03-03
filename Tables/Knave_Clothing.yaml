@@ -1,7 +1,7 @@
 filename: Knave_Clothing.yaml
 game: Knave
 setting: Fantasy
-type: Stuff
+type: ["Sensory", "Stuff"]
 tablename: Clothing
 tables:
   - name: Clothing

@@ -20,16 +20,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Add a route to serve images from the Images directory
 app.use('/Images', express.static(path.join(__dirname, 'Images')));
 
-// Endpoint to fetch table names and details
+// Modify the API endpoint to handle types as arrays
 app.get('/api/tables', (req, res) => {
   if (DEBUG) console.log('Sending tables data:', tables);
-  res.json(tables.map(table => ({
-    filename: table.filename,
-    tablename: table.tablename || 'Unknown',
-    game: table.game || 'Unknown',
-    type: table.subtype || table.type || 'Unknown',  // Use subtype first, then fallback to type
-    setting: table.setting || 'Unknown'
-  })));
+  res.json(tables.map(table => {
+    let typeValue; 
+    
+    // Handle type field as either string or array
+    if (Array.isArray(table.type)) {
+      typeValue = table.type;
+    } else if (table.subtype) {
+      typeValue = table.subtype;
+    } else if (table.type) {
+      typeValue = table.type;
+    } else {
+      typeValue = 'Unknown';
+    }
+    
+    return {
+      filename: table.filename,
+      tablename: table.tablename || 'Unknown',
+      game: table.game || 'Unknown',
+      type: typeValue,  // This can now be a string or an array
+      setting: table.setting || 'Unknown'
+    };
+  }));
 });
 
 // Add enhanced error handling to the generate endpoint

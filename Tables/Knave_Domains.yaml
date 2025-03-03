@@ -1,7 +1,7 @@
 filename: Knave_Domains.yaml
 game: Knave
 setting: Fantasy
-type: People
+type: ["People", "Powers"]
 tablename: Domains
 tables:
   - name: Domains

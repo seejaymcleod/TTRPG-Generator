@@ -1,7 +1,7 @@
 filename: Knave_WizardNames.yaml
 game: Knave
 setting: Fantasy
-type: People
+type: ["People", "Powers"]
 tablename: Wizard Names
 tables:
   - name: Wizard Names

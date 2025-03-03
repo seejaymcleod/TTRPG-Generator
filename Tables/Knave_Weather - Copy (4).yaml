@@ -1,0 +1,19 @@
+filename: Knave_Weather4.yaml
+game: Knave
+setting: Fantasy
+type: Adventure1
+tablename: Weather4
+tables:
+  - name: Weather4
+    results:
+      - ["Thunderstorm, Blizzard in winter", 1]
+      - ["Heavy rain, Heavy snow in winter", 2]
+      - ["Cold for the season", 3]
+      - ["Light rain, Snow in winter", 4]
+      - ["Cool for the season", 5]
+      - ["Mild for the season", 6]
+      - ["Warm for the season", 5]
+      - ["Windy", 4]
+      - ["Hot for the season", 3]
+      - ["Strong winds", 2]
+      - ["Hail in spring, Humidity in summer, Fog in fall, Frost in winter", 1]

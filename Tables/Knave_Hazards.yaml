@@ -1,7 +1,7 @@
 filename: Knave_Hazards.yaml
 game: Knave
 setting: Fantasy
-type: Adventure
+type: ["Places","Adventure"]
 tablename: Hazards
 tables:
   - name: Hazards

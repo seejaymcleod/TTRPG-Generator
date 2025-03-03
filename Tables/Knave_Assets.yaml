@@ -1,7 +1,7 @@
 filename: Knave_Assets.yaml
 game: Knave
 setting: Fantasy
-type: People
+type: ["Stuff", "People"]
 tablename: Assets
 tables:
   - name: Assets
