@@ -14,36 +14,42 @@
       height: 100vh;
       margin: 0;
       transition: background-color 0.3s, color 0.3s;
+      font-size: 14px; /* Reduced base font size */
     }
     
-    /* Header containers */
+    /* Header containers - REDUCED SIZE */
     #titleContainer {
       text-align: center;
-      padding: 10px;
+      padding: 5px; /* Reduced from 10px */
       background-color: #390249;
       color: #fff;
     }
+    #titleContainer h1 {
+      margin: 5px 0; /* Smaller margin for h1 */
+      font-size: 1.4em; /* Smaller title */
+    }
     #searchContainer {
       display: flex;
-      padding: 15px;
+      padding: 8px; /* Reduced from 15px */
       background-color: #f0f0f0;
-      border-bottom: 2px solid #ccc;
+      border-bottom: 1px solid #ccc; /* Thinner border */
     }
     #searchInput {
       flex: 1;
-      padding: 10px;
-      font-size: 1em;
+      padding: 5px 8px; /* Reduced padding */
+      font-size: 0.9em; /* Smaller font */
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 3px; /* Smaller radius */
+      height: 22px; /* Explicit height */
     }
     
-    /* Filter styles - NEW BUTTON-BASED IMPLEMENTATION */
+    /* Filter styles - MORE COMPACT BUTTON IMPLEMENTATION */
     #filtersContainer {
       display: flex;
-      padding: 6px;
+      padding: 4px; /* Reduced from 6px */
       background-color: #e0e0e0;
-      border-bottom: 2px solid #ccc;
-      gap: 15px;
+      border-bottom: 1px solid #ccc; /* Thinner border */
+      gap: 8px; /* Reduced gap from 15px */
     }
     .filter-container {
       display: flex;
@@ -55,32 +61,33 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 3px; /* Reduced from 8px */
     }
     .filter-title {
       font-weight: bold;
       color: #333;
+      font-size: 0.9em; /* Smaller title */
     }
     .filter-clear {
       background: none;
       border: none;
       color: #007bff;
       cursor: pointer;
-      font-size: 1.2em;
+      font-size: 1em; /* Slightly smaller */
       padding: 0;
-      width: 24px;
-      height: 24px;
-      line-height: 20px;
+      width: 20px; /* Smaller button */
+      height: 20px; /* Smaller button */
+      line-height: 18px; /* Adjusted line height */
       text-align: center;
     }
     .filter-buttons {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      max-height: 74px; /* Reduced from 110px to show only 2 rows */
+      gap: 4px; /* Reduced from 6px */
+      max-height: 56px; /* Reduced from 74px to show fewer rows */
       overflow-y: hidden;
       position: relative;
-      padding-bottom: 5px; /* Space for gradient indicator */
+      padding-bottom: 2px; /* Reduced space for gradient */
       transition: max-height 0.3s;
     }
     .filter-buttons::after {
@@ -89,9 +96,9 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 15px;
+      height: 10px; /* Thinner gradient */
       background: linear-gradient(to bottom, transparent, #e0e0e0);
-      pointer-events: none; /* Allow clicks to pass through */
+      pointer-events: none;
       opacity: 0;
       transition: opacity 0.3s;
     }
@@ -99,7 +106,7 @@
       opacity: 1;
     }
     .filter-buttons.expanded {
-      max-height: 200px; /* Increased height when expanded */
+      max-height: 160px; /* Reduced from 200px */
       overflow-y: auto;
     }
     .filter-buttons.expanded::after {
@@ -107,11 +114,11 @@
     }
     .filter-btn {
       background-color: #ccc; /* DefaultState - gray */
-      border: 2px solid transparent;
-      border-radius: 4px;
-      padding: 4px 8px;
+      border: 1px solid transparent; /* Thinner border */
+      border-radius: 3px; /* Smaller radius */
+      padding: 2px 6px; /* Less padding */
       cursor: pointer;
-      font-size: 0.9em;
+      font-size: 0.85em; /* Smaller text */
       white-space: nowrap;
       transition: all 0.2s;
     }
@@ -129,10 +136,10 @@
       background-color: #d0d0d0;
       border-top: 1px solid #ccc;
       cursor: pointer;
-      padding: 4px;
-      margin-top: 4px;
+      padding: 2px; /* Less padding */
+      margin-top: 2px; /* Reduced margin */
       text-align: center;
-      font-size: 1em;
+      font-size: 0.85em; /* Smaller text */
       color: #555;
       font-weight: bold;
       display: none; /* Hide by default */
@@ -145,14 +152,15 @@
       background-color: #c0c0c0;
     }
     #resetButton {
-      margin-left: 20px;
-      font-size: 1em;
+      margin-left: 10px; /* Reduced from 20px */
+      font-size: 0.85em; /* Smaller text */
       cursor: pointer;
       border: 1px solid #ccc;
       background-color: #fff;
-      border-radius: 5px;
-      height: 30px;
+      border-radius: 3px; /* Smaller radius */
+      height: 24px; /* Reduced height */
       align-self: center;
+      padding: 0 8px; /* Added horizontal padding */
     }
     
     /* Content layout */
@@ -162,32 +170,35 @@
       overflow: hidden;
     }
     #leftColumn {
-      width: 25%;
-      padding: 5px;
+      width: 20%; /* Reduced from 25% */
+      padding: 3px; /* Reduced padding */
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      border-right: 2px solid #ccc;
+      border-right: 1px solid #ccc; /* Thinner border */
       overflow-y: auto;
     }
     .matching-table-button {
       width: 100%;
-      padding: 6px;
-      margin-bottom: 6px;
-      font-size: 1em;
+      padding: 4px; /* Reduced padding */
+      margin-bottom: 3px; /* Reduced margin */
+      font-size: 0.85em; /* Smaller font */
       background-color: #f0f0f0;
       border: none;
-      border-radius: 5px;
+      border-radius: 3px; /* Smaller radius */
       text-align: center;
       cursor: pointer;
       transition: background-color 0.3s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .matching-table-button:hover {
       background-color: #e0e0e0;
     }
     #mainContent {
       flex: 1;
-      padding: 20px;
+      padding: 10px; /* Reduced padding */
       box-sizing: border-box;
       overflow-y: auto;
     }
@@ -195,19 +206,19 @@
     /* Card styles */
     .generation-container,
     #savedGenerations .generation-container {
-      margin: 15px 0;
-      padding: 10px;
-      border-radius: 8px;
+      margin: 10px 0; /* Reduced from 15px */
+      padding: 8px; /* Reduced padding */
+      border-radius: 6px; /* Smaller radius */
       background-color: #e8e8e8 !important;
       border: 1px solid #ddd;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Lighter shadow */
       position: relative;
     }
     .generation-object {
-      margin: 10px;
-      padding: 10px;
+      margin: 8px; /* Reduced margin */
+      padding: 8px; /* Reduced padding */
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 3px; /* Smaller radius */
       background-color: #f9f9f9;
       cursor: grab;
     }
@@ -222,10 +233,10 @@
       width: 100% !important;
       overflow-x: auto !important;
       background-color: transparent !important;
-      padding: 2px 0 !important;
-      margin-bottom: 4px !important;
-      min-height: 30px !important;
-      max-height: 40px !important; 
+      padding: 1px 0 !important; /* Reduced padding */
+      margin-bottom: 3px !important; /* Reduced margin */
+      min-height: 24px !important; /* Smaller height */
+      max-height: 30px !important; /* Smaller max height */
       border: none !important;
       box-sizing: border-box !important;
     }
@@ -235,43 +246,45 @@
       display: none;
     }
     
-    /* Make content cells wider and more readable */
+    /* Make content cells more compact */
     .result-row .result-content {
       flex: 0 0 auto !important;
-      min-width: 200px !important;
-      max-width: 600px !important;
-      height: 28px !important;
-      line-height: 28px !important;
-      margin-right: 8px !important;
-      padding: 0 8px !important;
+      min-width: 180px !important; /* Smaller min-width */
+      max-width: 400px !important; /* Smaller max-width */
+      height: 22px !important; /* Shorter height */
+      line-height: 22px !important; /* Adjusted line height */
+      margin-right: 6px !important; /* Less margin */
+      padding: 0 6px !important; /* Less padding */
       border: 1px solid #ccc !important;
       background-color: white !important;
       white-space: nowrap !important;
       overflow: hidden !important;
       text-overflow: ellipsis !important;
-      border-radius: 3px !important;
+      border-radius: 2px !important; /* Smaller radius */
       position: relative !important;
       z-index: 1 !important;
+      font-size: 0.9em !important; /* Smaller text */
     }
     
     /* Keep header at single line height */
     .result-row .result-header {
-      flex: 0 0 240px !important;
-      min-width: 240px !important;
-      max-width: 240px !important;
-      height: 28px !important;
-      line-height: 28px !important;
-      margin-right: 8px !important;
-      padding: 0 5px !important;
+      flex: 0 0 180px !important; /* Reduced from 240px */
+      min-width: 180px !important;
+      max-width: 180px !important;
+      height: 22px !important; /* Shorter height */
+      line-height: 22px !important; /* Adjusted line height */
+      margin-right: 6px !important; /* Less margin */
+      padding: 0 4px !important; /* Less padding */
       border: 1px solid #ccc !important;
       font-weight: bold !important;
       background-color: white !important;
       white-space: nowrap !important;
       overflow: hidden !important;
       text-overflow: ellipsis !important;
-      border-radius: 3px !important;
+      border-radius: 2px !important; /* Smaller radius */
       position: relative !important;
       z-index: 1 !important;
+      font-size: 0.9em !important; /* Smaller text */
     }
     
     /* Ensure reroll button stays at end */
@@ -283,8 +296,8 @@
       background-color: white !important;
       border-radius: 50% !important;
       z-index: 2 !important;
-      width: 30px !important;
-      height: 30px !important;
+      width: 22px !important; /* Smaller button */
+      height: 22px !important; /* Smaller button */
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -294,10 +307,10 @@
     .result-row .reroll-btn::before {
       content: '';
       position: absolute;
-      top: -5px;
-      right: -5px;
-      bottom: -5px;
-      left: -5px;
+      top: -3px; /* Less padding */
+      right: -3px; /* Less padding */
+      bottom: -3px; /* Less padding */
+      left: -3px; /* Less padding */
       background-color: rgba(255,255,255,0.7);
       z-index: -1;
       border-radius: 50%;
@@ -310,17 +323,17 @@
     
     /* Button hover effect */
     .reroll-btn:hover {
-      transform: scale(1.2);
+      transform: scale(1.15); /* Slightly reduced scale */
     }
     
     /* Card title and button styles */
     .card-title {
       margin-top: 0;
-      margin-bottom: 6px;
-      font-size: 1.1em;
+      margin-bottom: 4px; /* Reduced from 6px */
+      font-size: 1em; /* Smaller font */
       color: #444;
       border-bottom: 1px solid #ddd;
-      padding-bottom: 8px;
+      padding-bottom: 4px; /* Reduced padding */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -333,10 +346,11 @@
       flex-grow: 1;
       color: #333 !important;
       font-weight: bold;
+      font-size: 0.95em; /* Smaller text */
     }
     .card-actions {
       display: flex;
-      gap: 12px;
+      gap: 8px; /* Reduced from 12px */
       align-items: center;
     }
     
@@ -361,32 +375,33 @@
       color: #ff3333;
     }
     .reroll-all-btn img, .copy-btn img, .delete-card-btn img {
-      width: 18px;
-      height: 18px;
-      margin-left: 6px;
-      border-radius: 3px;
-      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
+      width: 16px; /* Smaller icons */
+      height: 16px; /* Smaller icons */
+      margin-left: 4px; /* Reduced margin */
+      border-radius: 2px; /* Smaller radius */
+      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.15));
     }
     .reroll-btn img {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
-      filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.3));
+      width: 18px; /* Smaller icon */
+      height: 18px; /* Smaller icon */
+      border-radius: 3px; /* Smaller radius */
+      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
     }
     
     /* Toast notification */
     .toast-message {
       position: fixed;
-      bottom: 20px;
+      bottom: 15px; /* Moved up slightly */
       left: 50%;
       transform: translateX(-50%);
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
-      padding: 10px 20px;
-      border-radius: 5px;
+      padding: 6px 15px; /* Less padding */
+      border-radius: 3px; /* Smaller radius */
       z-index: 1000;
       opacity: 0;
       transition: opacity 0.3s;
+      font-size: 0.9em; /* Smaller text */
     }
     .toast-visible {
       opacity: 1;
@@ -394,33 +409,35 @@
     
     /* Saved cards section */
     .saved-cards {
-      width: 25%;
-      padding: 15px;
+      width: 20%; /* Reduced from 25% */
+      padding: 8px; /* Reduced padding */
       background-color: #f0f0f0;
-      border-left: 2px solid #ccc;
+      border-left: 1px solid #ccc; /* Thinner border */
       overflow-y: auto;
     }
     #savedGenerations h2 {
       margin-top: 0;
-      padding-bottom: 10px;
+      margin-bottom: 8px; /* Added specific bottom margin */
+      padding-bottom: 6px; /* Reduced padding */
       border-bottom: 1px solid #ccc;
       color: #333 !important;
       font-weight: bold;
+      font-size: 1.1em; /* Smaller heading */
     }
     #savedGenerations .generation-container {
-      margin-bottom: 20px;
-      box-shadow: 0 3px 5px rgba(0,0,0,0.15);
+      margin-bottom: 12px; /* Reduced margin */
+      box-shadow: 0 2px 3px rgba(0,0,0,0.1); /* Lighter shadow */
     }
     
     /* Drag and drop styles */
     .card-being-dragged {
       opacity: 0.6;
       transform: scale(0.98);
-      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15); /* Lighter shadow */
     }
     .drop-target-highlight {
       background-color: #e6f7ff;
-      border: 2px dashed #66b3ff;
+      border: 1px dashed #66b3ff; /* Thinner border */
     }
     .dragging {
       opacity: 0.5;
@@ -431,12 +448,12 @@
     
     /* Force consistent styling for all cards */
     .generation-container {
-      margin: 15px 0;
-      padding: 15px;
-      border-radius: 8px;
+      margin: 10px 0; /* Reduced margin */
+      padding: 10px; /* Reduced padding */
+      border-radius: 6px; /* Smaller radius */
       background-color: #e8e8e8 !important;
       border: 1px solid #ddd;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Lighter shadow */
       position: relative;
     }
     .result-header, .result-content {
@@ -515,37 +532,37 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 30px;
-      height: 30px;
+      width: 22px; /* Smaller button */
+      height: 22px; /* Smaller button */
       background: none;
       border: none;
       cursor: pointer;
       padding: 0;
-      font-size: 16px;
+      font-size: 14px; /* Smaller text */
       color: #777;
       transition: transform 0.2s, color 0.2s;
       position: absolute;
-      top: 15px;
+      top: 10px; /* Moved up */
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
       border-radius: 50%;
       background-color: white !important;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1); /* Lighter shadow */
     }
     .collapse-btn:hover {
       color: #333;
       background-color: #f5f5f5;
     }
     .card-title {
-      padding-top: 5px;
+      padding-top: 3px; /* Reduced padding */
       position: relative;
     }
     .generation-container.collapsed .card-content {
       display: none;
     }
     .generation-container.collapsed {
-      padding-bottom: 5px;
+      padding-bottom: 3px; /* Reduced padding */
     }
     .card-content {
       transition: max-height 0.3s ease-out;
@@ -563,9 +580,10 @@
     
     /* Add to your existing styles */
     #clearBtn {
-      margin-top: 10px;
-      margin-left: 10px;
+      margin-top: 5px; /* Reduced margin */
+      margin-left: 5px; /* Reduced margin */
       padding: 1px 6px;
+      font-size: 0.9em; /* Smaller text */
     }
     
     /* Fix the layout - ensure contentWrapper properly contains 3 columns */
@@ -577,96 +595,99 @@
     
     #mainContent {
       flex: 1;
-      padding: 20px;
+      padding: 10px; /* Reduced padding */
       box-sizing: border-box;
       overflow-y: auto;
     }
     
     /* Ensure saved cards appears as a right column */
     #savedGenerations {
-      width: 25%;
-      padding: 15px;
+      width: 20%; /* Reduced from 25% */
+      padding: 8px; /* Reduced padding */
       background-color: #f0f0f0;
-      border-left: 2px solid #ccc;
+      border-left: 1px solid #ccc; /* Thinner border */
       overflow-y: auto;
     }
     
     /* Style for table display entries */
     .table-entries {
-      padding: 10px;
+      padding: 8px; /* Reduced padding */
     }
     
     .table-entry {
-      margin: 5px 0;
-      padding: 5px;
+      margin: 3px 0; /* Reduced margin */
+      padding: 4px; /* Reduced padding */
       border-bottom: 1px solid #ddd;
     }
 
-    /* Table display styles */
+    /* Table display styles - MORE COMPACT */
     .table-display {
-      margin: 15px 0;
+      margin: 10px 0; /* Reduced margin */
     }
     
     .subtable-container {
-      margin: 15px 0;
+      margin: 10px 0; /* Reduced margin */
       border-top: 1px dashed #ccc;
-      padding-top: 10px;
+      padding-top: 6px; /* Reduced padding */
     }
     
     .subtable-header {
       font-weight: bold;
-      font-size: 1.1em;
-      margin-bottom: 5px;
+      font-size: 1em; /* Smaller text */
+      margin-bottom: 3px; /* Reduced margin */
       color: #390249;
     }
     
     .subtable-custom-display {
       font-family: monospace;
       background-color: #f8f8f8;
-      padding: 5px;
+      padding: 3px; /* Reduced padding */
       border: 1px solid #e0e0e0;
-      border-radius: 3px;
-      margin-bottom: 10px;
+      border-radius: 2px; /* Smaller radius */
+      margin-bottom: 6px; /* Reduced margin */
       font-style: italic;
+      font-size: 0.9em; /* Smaller text */
     }
     
     .table-entry {
-      margin: 4px 0;
-      padding: 4px 8px;
+      margin: 2px 0; /* Reduced margin */
+      padding: 2px 6px; /* Reduced padding */
       background-color: white;
       border: 1px solid #e0e0e0;
-      border-radius: 3px;
+      border-radius: 2px; /* Smaller radius */
       display: flex;
       align-items: center;
     }
     
     .entry-number {
-      flex: 0 0 30px;
+      flex: 0 0 22px; /* Smaller width */
       font-weight: bold;
       color: #666;
     }
     
     .entry-content {
       flex: 1;
+      font-size: 0.9em; /* Smaller text */
     }
     
     .entry-weight {
-      flex: 0 0 50px;
+      flex: 0 0 42px; /* Reduced from 50px */
       text-align: right;
       font-style: italic;
       color: #888;
-      padding-right: 5px;
+      padding-right: 3px; /* Less padding */
       border-left: 1px solid #e0e0e0;
-      margin-left: 10px;
-      padding-left: 10px;
+      margin-left: 6px; /* Less margin */
+      padding-left: 6px; /* Less padding */
+      font-size: 0.85em; /* Smaller text */
     }
     
     .nested-subtables {
-      margin-left: 20px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      padding-left: 10px;
-      border-left: 3px solid #e0e0e0;
+      margin-left: 15px; /* Reduced margin */
+      margin-top: 6px; /* Reduced margin */
+      margin-bottom: 6px; /* Reduced margin */
+      padding-left: 6px; /* Less padding */
+      border-left: 2px solid #e0e0e0; /* Thinner border */
     }
     
     /* Career format styling */
@@ -677,12 +698,14 @@
     
     .career-name {
       font-weight: bold;
-      margin-right: 10px;
+      margin-right: 6px; /* Reduced margin */
+      font-size: 0.9em; /* Smaller text */
     }
     
     .career-items {
       font-style: italic;
       color: #555;
+      font-size: 0.9em; /* Smaller text */
     }
 
     /* Fix spacing in table cards to match regular cards */
@@ -691,12 +714,12 @@
     }
     
     .table-display .card-content {
-      padding-top: 6px;
+      padding-top: 4px; /* Reduced padding */
     }
     
     .subtable-container {
-      margin: 10px 0;
-      padding-top: 10px;
+      margin: 6px 0; /* Reduced margin */
+      padding-top: 6px; /* Reduced padding */
       border-top: 1px dashed #ccc;
     }
     
@@ -708,27 +731,72 @@
     
     /* Make table card content align better with regular cards */
     .table-display {
-      margin: 15px 0;
+      margin: 10px 0; /* Reduced margin */
     }
     
     /* Fix alignment of entry numbers */
     .entry-number {
-      flex: 0 0 25px;
+      flex: 0 0 22px; /* Smaller width */
       font-weight: bold;
       color: #666;
       text-align: right;
-      margin-right: 5px;
+      margin-right: 4px; /* Less margin */
     }
     
     /* Improve spacing within table entries */
     .table-entry {
-      margin: 4px 0;
-      padding: 4px 8px;
+      margin: 2px 0; /* Reduced margin */
+      padding: 2px 6px; /* Less padding */
       background-color: white;
       border: 1px solid #e0e0e0;
-      border-radius: 3px;
+      border-radius: 2px; /* Smaller radius */
       display: flex;
       align-items: center;
+      min-height: 20px; /* Set minimum height */
+    }
+
+    /* Controls area - more compact */
+    #generationControls {
+      margin: 5px 0; /* Reduced margin */
+      padding: 6px; /* Added padding */
+      background-color: #f5f5f5;
+      border-radius: 3px; /* Smaller radius */
+      border: 1px solid #e0e0e0;
+    }
+
+    #generationControls label {
+      font-size: 0.9em; /* Smaller text */
+    }
+
+    #generationSlider {
+      margin: 5px 0; /* Less margin */
+      width: 100%;
+      height: 5px; /* Thinner slider */
+    }
+
+    #generateBtn, #showTableBtn, #clearBtn {
+      padding: 3px 8px; /* Less padding */
+      font-size: 0.85em; /* Smaller text */
+      border-radius: 2px; /* Smaller radius */
+      border: 1px solid #ccc;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      margin-right: 5px; /* Consistent margins */
+    }
+
+    /* Table headers area */
+    #tableHeaders {
+      margin-bottom: 10px; /* Added specific margin */
+    }
+
+    #tableHeaders h2 {
+      margin: 0 0 5px 0; /* Reduced margins */
+      font-size: 1.2em; /* Smaller heading */
+    }
+
+    #tableHeaders .header {
+      margin: 2px 0; /* Less margin */
+      font-size: 0.9em; /* Smaller text */
     }
   </style>
 </head>
