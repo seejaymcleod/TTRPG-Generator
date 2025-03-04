@@ -1,10 +1,10 @@
-filename: Knave_InnName2.yaml
+filename: Knave_InnNameNoun.yaml
 game: Knave
 setting: Fantasy
 type: Places
-tablename: Inn Name 2
+tablename: Inn Name Noun
 tables:
-  - name: Inn Name 2
+  - name: Inn Name Noun
     results:
       - "{Knave_Animals}"
       - "Ant"

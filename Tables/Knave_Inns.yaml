@@ -6,4 +6,4 @@ tablename: Inns
 tables:
   - name: Inns
     results:
-      - "{Knave_InnName1} {Knave_InnName2}"
+      - "{Knave_InnNameAdjective} {Knave_InnNameNoun}"

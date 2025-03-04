@@ -1,10 +1,10 @@
-filename: Knave_InnName1.yaml
+filename: Knave_InnNameAdjective.yaml
 game: Knave
 setting: Fantasy
 type: Places
-tablename: Inn Name 1
+tablename: Inn Name Adjective
 tables:
-  - name: Inn Name 1
+  - name: Inn Name Adjective
     results:
       - "Ashen"
       - "Bewitching"
