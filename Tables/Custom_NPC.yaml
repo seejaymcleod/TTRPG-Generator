@@ -4,33 +4,33 @@ setting: Fantasy
 type: People
 tablename: NPC
 tables:
-  - name: Name
+  - tablename: Name
     results: 
       - "{Knave_Names}"
-  - name: Archetype
+  - tablename: Archetype
     results: 
       - "{Knave_Archetypes}"
-  - name: Relevant Profession
+  - tablename: Relevant Profession
     results: 
       - "{Knave_Professions}"
-  - name: Goal
+  - tablename: Goal
     results: 
       - "{Knave_Goals}"
-  - name: Personality
+  - tablename: Personality
     results: 
       - "{Knave_Personalities}"
-  - name: Trait
+  - tablename: Trait
     results: 
       - "{Knave_NPCDetails}"
-  - name: Asset
+  - tablename: Asset
     results: 
       - "{Knave_Assets}"
-  - name: Libility
+  - tablename: Libility
     results: 
       - "{Knave_Liabilities}"
-  - name: Important Relationship
+  - tablename: Important Relationship
     results: 
       - "{Knave_Relationships}"
-  - name: Secret
+  - tablename: Secret
     results: 
       - "{ShadowDark_NPC|Secret}"

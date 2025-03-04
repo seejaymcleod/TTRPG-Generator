@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Books
 tables:
-  - name: Books
-    results:
+  - results:
       - "Adventure novel"
       - "Agriculture"
       - "Almanac"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Dungeons
 tables:
-  - name: Dungeons
-    results:
+  - results:
       - "Alchemy lab"
       - "Animal burrow"
       - "Aquarium"

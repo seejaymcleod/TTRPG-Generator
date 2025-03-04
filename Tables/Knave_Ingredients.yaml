@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Ingredients
 tables:
-  - name: Ingredients
-    results:
+  - results:
       - "{Knave_Animals}"
       - "Antimony"
       - "Arsenic"

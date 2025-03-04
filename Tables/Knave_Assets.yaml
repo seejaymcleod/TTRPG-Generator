@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["Stuff", "People"]
 tablename: Assets
 tables:
-  - name: Assets
-    results:
+  - results:
       - "Agile"
       - "Assassin leader"
       - "Bodyguards"

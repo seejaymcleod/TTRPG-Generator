@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Missions
 tables:
-  - name: Missions
-    results:
+  - results:
       - "Apprehend NPC"
       - "Arrange marriage"
       - "Awaken monster"

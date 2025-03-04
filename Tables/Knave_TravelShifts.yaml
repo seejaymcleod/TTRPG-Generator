@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Travel Shifts
 tables:
-  - name: Travel Shifts
-    results:
+  - results:
       - "Acid rain"
       - "Animal migration"
       - "Anvil cloud"

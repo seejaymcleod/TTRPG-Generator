@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Liabilities
 tables:
-  - name: Liabilities
-    results:
+  - results:
       - "Alcoholic"
       - "Arthritis"
       - "Bad leader"

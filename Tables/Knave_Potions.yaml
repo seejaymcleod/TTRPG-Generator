@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Potions
 tables:
-  - name: Potions
-    results:
+  - results:
       - "Age"
       - "All languages"
       - "Alter body"

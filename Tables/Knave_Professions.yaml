@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Professions
 tables:
-  - name: Professions
-    results:
+  - results:
       - "Abbot"
       - "Acolyte"
       - "Acrobat"

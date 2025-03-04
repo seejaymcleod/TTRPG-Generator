@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Delve Shifts
 tables:
-  - name: Delve Shifts
-    results:
+  - results:
       - "Alarm"
       - "Animal sounds"
       - "Apparition"

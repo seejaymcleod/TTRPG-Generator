@@ -1,14 +1,13 @@
-tablename: Shop
 filename: ShadowDark_Shop.yaml
 game: ShadowDark
 setting: Fantasy
 type: Places
-subtype: none
+tablename: Shop
 tables:
-  - name: Name
-    customDisplay: "{Name1] {Name2] {Name3]"
+  - tablename: Name
+    customDisplay: "[{Name1} {Name2}]"
     subTables:
-      - name: Name1
+      - tablename: Name1
         results:
           - Fink &
           - Imperial
@@ -31,7 +30,7 @@ tables:
           - The Merry
           - The Jade
 
-      - name: Name2
+      - tablename: Name2
         results:
           - Sons
           - Toad
@@ -54,7 +53,7 @@ tables:
           - Vendibles
           - Stocks
 
-  - name: Poor Shop
+  - tablename: Poor Shop
     results:
       - Filthy bakery
       - Used adventuring gear
@@ -69,7 +68,7 @@ tables:
       - Gambling house
       - Drug den
 
-  - name: Standard Shop
+  - tablename: Standard Shop
     results:
       - Brewer
       - Butcher
@@ -82,7 +81,7 @@ tables:
       - Herald/town crier
       - Livestock
 
-  - name: Wealthy Shop
+  - tablename: Wealthy Shop
     results:
       - Fine tailor
       - Glassblower
@@ -95,7 +94,7 @@ tables:
       - Master blacksmith
       - Antiques and curios
 
-  - name: Known For
+  - tablename: Known For
     results:
       - Ancient, beloved owner
       - Buying anything of value
@@ -118,7 +117,7 @@ tables:
       - Being haunted
       - Aggressive rodent problem
 
-  - name: Interesting Customer
+  - tablename: Interesting Customer
     results:
       - Odd wizard
       - 1d10 children

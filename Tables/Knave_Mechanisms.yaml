@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Mechanisms
 tables:
-  - name: Mechanisms
-    results:
+  - results:
       - "Air pump"
       - "Ball bearings"
       - "Barrel"

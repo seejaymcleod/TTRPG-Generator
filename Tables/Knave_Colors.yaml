@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Colors
 tables:
-  - name: Colors
-    results:
+  - results:
       - "Acid green"
       - "Alabaster"
       - "Amber"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Buildings
 tables:
-  - name: Buildings
-    results:
+  - results:
       - "Academy"
       - "Alchemist"
       - "Apothecary"

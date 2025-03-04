@@ -3,9 +3,9 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure
 tablename: Quests
-customDisplay: "{Action] {Targer] {Context]"
+customDisplay: "[{Action} {Targer} {Context}]"
 tables:
-  - name: Action
+  - tablename: Action
     results:
       - Rescue the
       - Find the
@@ -27,7 +27,7 @@ tables:
       - Escort the
       - Banish the
       - Free the
-  - name: Target
+  - tablename: Target
     results:
       - Goblet
       - Prisoner
@@ -49,7 +49,7 @@ tables:
       - Witch
       - Ritual
       - Vampire
-  - name: Context
+  - tablename: Context
     results:
       - of the evil wizard
       - stalking the wastes

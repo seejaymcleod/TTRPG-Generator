@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: NPC Reaction
 tables:
-  - name: NPC Reaction
-    results:
+  - results:
       - ["Kill the PCs", 1]
       - ["Injure or capture the PCs", 2]
       - ["Harass or rob the PCs", 3]

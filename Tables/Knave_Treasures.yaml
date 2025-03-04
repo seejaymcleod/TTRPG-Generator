@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Treasures
 tables:
-  - name: Treasures
-    results:
+  - results:
       - "Alchemical device"
       - "Amulet"
       - "Armor"

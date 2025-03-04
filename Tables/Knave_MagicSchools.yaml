@@ -4,8 +4,7 @@ setting: Fantasy
 type: Powers
 tablename: Magic Schools
 tables:
-  - name: Magic Schools
-    results:
+  - results:
       - "Abjuration"
       - "Air"
       - "Alchemy"

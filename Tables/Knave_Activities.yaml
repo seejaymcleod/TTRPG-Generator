@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["Adventure", "People", "Bestiary"]
 tablename: Activities
 tables:
-  - name: Activities
-    results:
+  - results:
       - "Ambushing"
       - "Arguing"
       - "Awarding"

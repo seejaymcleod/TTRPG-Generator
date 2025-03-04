@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Food
 tables:
-  - name: Food
-    results:
+  - results:
       - "Acorn"
       - "Alligator"
       - "Almond"

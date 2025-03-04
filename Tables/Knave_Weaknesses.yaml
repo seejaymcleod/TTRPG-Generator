@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Weaknesses
 tables:
-  - name: Weaknesses
-    results:
+  - results:
       - "Acid"
       - "Alcohol"
       - "{Knave_Animals}"

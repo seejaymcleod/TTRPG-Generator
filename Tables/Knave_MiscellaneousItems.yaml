@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Miscellaneous Items
 tables:
-  - name: Miscellaneous Items
-    results:
+  - results:
       - "Amulet"
       - "Arrowhead"
       - "Birdcage"

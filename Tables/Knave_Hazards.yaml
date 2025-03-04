@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["Places","Adventure"]
 tablename: Hazards
 tables:
-  - name: Hazards
-    results:
+  - results:
       - "Acceleration"
       - "Acid"
       - "Alarm"

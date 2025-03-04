@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Mannerisms
 tables:
-  - name: Mannerisms
-    results:
+  - results:
       - "Anecdotes"
       - "{Knave_Archetypes}"
       - "Asides"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Item Traits
 tables:
-  - name: Item Traits
-    results:
+  - results:
       - "Ancient"
       - "Avant-garde"
       - "Blessed"

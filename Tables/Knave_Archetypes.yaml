@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Archetypes
 tables:
-  - name: Archetypes
-    results:
+  - results:
       - "Adventurous lad"
       - "Airhead scholar"
       - "Ambitious novice"

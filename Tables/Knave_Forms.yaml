@@ -4,8 +4,7 @@ setting: Fantasy
 type: Powers
 tablename: Forms
 tables:
-  - name: Forms
-    results:
+  - results:
       - "{Knave_Animals}"
       - "Arc"
       - "Archer"

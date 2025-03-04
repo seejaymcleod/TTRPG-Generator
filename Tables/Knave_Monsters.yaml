@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Monsters
 tables:
-  - name: Monsters
-    results:
+  - results:
       - "Aboleth"
       - "Air elemental"
       - "Angel"

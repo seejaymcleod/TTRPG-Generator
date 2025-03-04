@@ -4,9 +4,8 @@ setting: Fantasy
 type: People
 tablename: Character Bonds
 tables:  
-  - name: Character Bonds
-    results:
-      - You inherited a single <b>Gem (500gp)</b>, cold and brittle, from a long-dead relative. It arrived with a warning: squander your newfound riches, and a debt long thought forgotten would be called in.
+  - results:
+      - "You inherited a single <b>Gem (500gp)</b>, cold and brittle, from a long-dead relative. It arrived with a warning: squander your newfound riches, and a debt long thought forgotten would be called in."
       - A distant cousin left you a small inheritance. Take <b>20gp</b> and a <b>Strange Compass</b> (pretty) that always points towards something deep in the Wood.
       - You carry a hand-drawn <b>Portrait</b> (pretty) of a past love who disappeared into the Wood long ago. Somehow you know that they are still alive.
       - You found a <b>Tiny Crystal Prism</b> (pretty) buried in the dirt. When held up to the light, it shows visions of an unknown location deep within the Wood. Sometimes you feel a presence looking back at you.

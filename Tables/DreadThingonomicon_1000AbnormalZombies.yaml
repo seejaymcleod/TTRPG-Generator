@@ -4,7 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: 1000AbnormalZombies
 tables: 
-  - name: Physical Description
+  - tablename: Physical Description
     results:
       - One side of the creature’s face is nothing more than a suppurating, bloody mess; one of its eyes is missing.
       - The zombie’s left arm is unnaturally bent at the elbow. As the zombie moves, shards of bone break through its rotting flesh.
@@ -16,7 +16,7 @@ tables:
       - This corpulent zombie is naked and filled with noxious gases. If struck with a sharp melee weapon, it explodes coating adjacent creatures with blood, bone, and viscera.
       - This zombie has no jaw. Blood and gore cover its chest.
       - A gaping wound pierces this creature’s rib cage, exposing the desiccated organs.
-  - name: Battle Tactics
+  - tablename: Battle Tactics
     results:
       - This zombie is much slower than its companions due to a broken leg. It moves at half speed.
       - As it advances, this zombie stumbles and falls. In the next round, it struggles back to its feet.
@@ -28,7 +28,7 @@ tables:
       - This zombie is fast and easily outpaces its fellows.
       - This zombie has a smashed voice box. It yips and cackles in a similar way to a hunting jackal as it approaches.
       - This zombie moans and groans as it approaches its prey.
-  - name: Treasure
+  - tablename: Treasure
     results:
       - This zombie wears a wide bloodstained leather belt which seems worthless at first glance. If the belt is cleaned, however, a complex pattern of stitches emerges, depicting what seems to be a section of dungeon complete with a secret room!
       - A golden hoop earring hangs from one of the zombie’s decomposing ears. The plain band is worth 2 gp.

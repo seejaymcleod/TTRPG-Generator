@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Weather
 tables:
-  - name: Weather
-    results:
+  - results:
       - ["Thunderstorm, Blizzard in winter", 1]
       - ["Heavy rain, Heavy snow in winter", 2]
       - ["Cold for the season", 3]

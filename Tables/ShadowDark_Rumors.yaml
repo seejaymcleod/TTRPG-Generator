@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Rumors
 tables:
-  - name: Rumors
-    results:
+  - results:
       - ["An armored beast the size of a ship is rampaging nearby", 0.5]
       - "A team of assassins is on its way to kill your group"
       - "The local ruler has placed a 2,000 gp bounty on your heads"

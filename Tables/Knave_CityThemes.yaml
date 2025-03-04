@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: City Themes
 tables:
-  - name: City Themes
-    results:
+  - results:
       - "Alchemy"
       - "{Knave_Animals}"
       - "Aristocracy"

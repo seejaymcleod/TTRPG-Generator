@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Signs
 tables:
-  - name: Signs
-    results:
+  - results:
       - "Arguing"
       - "Ash"
       - "Bile"

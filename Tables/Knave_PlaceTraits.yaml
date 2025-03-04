@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Place Traits
 tables:
-  - name: Place Traits
-    results:
+  - results:
       - "Ashen"
       - "Bewitching"
       - "Black"

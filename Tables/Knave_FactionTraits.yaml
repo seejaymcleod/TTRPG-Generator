@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Faction Traits
 tables:
-  - name: Faction Traits
-    results:
+  - results:
       - "Activist"
       - "{Knave_Activities}"
       - "Aging"

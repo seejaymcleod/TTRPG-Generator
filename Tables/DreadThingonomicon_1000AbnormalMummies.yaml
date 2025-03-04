@@ -4,7 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: 1000AbnormalMummies
 tables: 
-  - name: Physical Description
+  - tablename: Physical Description
     results:
       - The creature’s crazed eyes—one red and one blue—glimmer balefully.
       - Eldritch symbols cover the wrappings around the creature’s head—giving the impression of tattoos.
@@ -16,7 +16,7 @@ tables:
       - Large and hulking, the creature lumbers about with no semblance of stealth.
       - The creature’s head lolls unnaturally on a broken neck.
       - The creature wears the ornate funeral mask of a priest.
-  - name: Battle Tactics
+  - tablename: Battle Tactics
     results:
       - This mummy mournfully moans and groans as it enters combat. It bellows in anger when damaged.
       - Driven mad by its unlife, this mummy cackles and capers in combat—sometimes wasting actions to do so.
@@ -28,7 +28,7 @@ tables:
       - The mummy hates followers of good gods. It attacks folk bearing such symbols before all other targets.
       - The mummy grapples its opponents before beating them to death with its mighty fists.
       - Abnormally resistant to fire and flames, being burnt does not scare this mummy.
-  - name: Treasure
+  - tablename: Treasure
     results:
       - A thick gold bangle worth 50 gp encircles the mummy’s left leg.
       - One strip of the mummy’s wrappings radiates faint magic. It is a scroll of bless.

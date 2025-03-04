@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["Sensory", "Powers"]
 tablename: Elements
 tables:
-  - name: Elements
-    results:
+  - results:
       - "Acid"
       - "Amber"
       - "Ash"

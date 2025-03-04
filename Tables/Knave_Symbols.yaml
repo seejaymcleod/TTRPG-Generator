@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Symbols
 tables:
-  - name: Symbols
-    results:
+  - results:
       - "{Knave_Animals}"
       - "Antlers"
       - "Arrow"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Inn Name Noun
 tables:
-  - name: Inn Name Noun
-    results:
+  - results:
       - "{Knave_Animals}"
       - "Ant"
       - "Axe"

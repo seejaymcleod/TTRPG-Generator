@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Room Themes
 tables:
-  - name: Room Themes
-    results:
+  - results:
       - "{Knave_Activities}"
       - "Blessings"
       - "Blindness"

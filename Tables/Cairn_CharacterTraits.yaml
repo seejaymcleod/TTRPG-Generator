@@ -4,7 +4,7 @@ setting: Fantasy
 type: People
 tablename: Character Traits
 tables:  
-  - name: Physique
+  - tablename: Physique
     results:
       - Athletic
       - Brawny
@@ -16,8 +16,7 @@ tables:
       - Statuesque
       - Stout
       - Towering
-
-  - name: Skin
+  - tablename: Skin
     results:
       - Birthmarked
       - Marked
@@ -29,8 +28,7 @@ tables:
       - Tattooed
       - Weathered
       - Webbed
-
-  - name: Hair
+  - tablename: Hair
     results:
       - Bald
       - Braided
@@ -42,8 +40,7 @@ tables:
       - Oily
       - Wavy
       - Wispy
-
-  - name: Face
+  - tablename: Face
     results:
       - Bony
       - Broken
@@ -55,8 +52,7 @@ tables:
       - Sharp
       - Square
       - Sunken
-
-  - name: Speech
+  - tablename: Speech
     results:
       - Blunt
       - Booming
@@ -68,8 +64,7 @@ tables:
       - Squeaky
       - Stuttering
       - Whispery
-
-  - name: Clothing
+  - tablename: Clothing
     results:
       - Antique
       - Bloody
@@ -81,8 +76,7 @@ tables:
       - Livery
       - Rancid
       - Soiled
-
-  - name: Virtue
+  - tablename: Virtue
     results:
       - Ambitious
       - Cautious
@@ -94,8 +88,7 @@ tables:
       - Merciful
       - Serene
       - Tolerant
-
-  - name: Vice
+  - tablename: Vice
     results:
       - Aggressive
       - Bitter

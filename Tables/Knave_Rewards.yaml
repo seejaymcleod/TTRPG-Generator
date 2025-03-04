@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Rewards
 tables:
-  - name: Rewards
-    results:
+  - results:
       - "A blind eye"
       - "Alcohol"
       - "{Knave_Animals}"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Tastes
 tables:
-  - name: Tastes
-    results:
+  - results:
       - "Absinthe"
       - "Allspice"
       - "Almond"

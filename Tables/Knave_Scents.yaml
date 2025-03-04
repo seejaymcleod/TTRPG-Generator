@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Scents
 tables:
-  - name: Scents
-    results:
+  - results:
       - "Acid"
       - "Alcohol"
       - "Almond"

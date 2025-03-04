@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: NPC Details
 tables:
-  - name: NPC Details
-    results:
+  - results:
       - "Acid scar"
       - "Aquiline face"
       - "Arrow scar"

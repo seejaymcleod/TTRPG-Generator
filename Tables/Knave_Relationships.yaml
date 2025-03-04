@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Relationships
 tables:
-  - name: Relationships
-    results:
+  - results:
       - "Acquaintance"
       - "Admirer"
       - "Adviser"

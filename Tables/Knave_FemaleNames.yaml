@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Female Names
 tables:
-  - name: Female Names
-    results:
+  - results:
       - "Adelaide"
       - "Agnes"
       - "Alma"

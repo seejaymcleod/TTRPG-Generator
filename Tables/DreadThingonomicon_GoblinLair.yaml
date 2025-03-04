@@ -4,7 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Goblin Lair
 tables:
-  - name: General Activities
+  - tablename: General Activities
     results:
       - Patrolling their lair
       - Shirking their duties (drinking, gambling, sleeping etc.)
@@ -26,7 +26,7 @@ tables:
       - Plotting against their chieftain, leader, or another enemy
       - Nefariously sneaking about
       - Making a lot of noise—perhaps shouting or singing
-  - name: Minor Random Encounters
+  - tablename: Minor Random Encounters
     results:
       - The characters hear whistling from the direction they are heading. A few moments later, a goblin female carrying an empty water jug wanders around the corner. If she gets the chance, she screams, hurls the jug at the nearest intruder's head, and then flees.
       - The characters hear whistling from the direction they are heading. A few moments later, a goblin female carrying a young child with her. She screams for help and tries to hold off the characters while her child escapes to raise the alarm.
@@ -38,7 +38,7 @@ tables:
       - Two goblin children have cornered a rat and are poking at it with sharp sticks. Their rapacious cries betray their presence before the characters stumble into view. If left to their own devices, they quickly kill the rat and begin skinning it.
       - Two goblins have sneaked off for some “quiet time” together. Lost in each other’s company, they are completely oblivious to the characters.
       - This goblin is lurking in the hopes of catching and killing his rival. The characters’ arrival gives him an idea. He offers to give them information on the layout of the lair, where the guards are and so on, if they promise to kill his enemy (a particularly large goblin who always wears a black hood and carries a wickedly notched sword).
-  - name: Outside a Goblin Lair
+  - tablename: Outside a Goblin Lair
     results:
       - Yellowing bones are tied to the branches of a stunted bush growing nearby the entrance to the tribe’s lair. Tied onto the bush with ribbons, bits of twine, and thin strips of leather, the bones clack together in the breeze.
       - A gallimaufry of tracks mars the ground. Scraps of broken equipment lie scattered about.

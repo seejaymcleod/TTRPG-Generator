@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: City Events
 tables:
-  - name: City Events
-    results:
+  - results:
       - "{Knave_Activities}"
       - "Alcohol ban"
       - "Art trend"

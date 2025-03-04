@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Personalities
 tables:
-  - name: Personalities
-    results:
+  - results:
       - "Always bored"
       - "Anxious"
       - "{Knave_Archetypes}"

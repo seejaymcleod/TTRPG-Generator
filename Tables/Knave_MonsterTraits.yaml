@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Monster Traits
 tables:
-  - name: Monster Traits
-    results:
+  - results:
       - "Acid blood"
       - "Amphibious"
       - "Ancient"

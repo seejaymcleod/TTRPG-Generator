@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Trap Effects
 tables:
-  - name: Trap Effects
-    results:
+  - results:
       - "Absorbing"
       - "Accelerating"
       - "Arranging"

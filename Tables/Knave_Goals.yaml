@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Goals
 tables:
-  - name: Goals
-    results:
+  - results:
       - "Achieve holiness"
       - "Acquire followers"
       - "Acquire land"

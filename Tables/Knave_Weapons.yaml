@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Weapons
 tables:
-  - name: Weapons
-    results:
+  - results:
       - "Arming sword"
       - "Backsword"
       - "Bardiche"

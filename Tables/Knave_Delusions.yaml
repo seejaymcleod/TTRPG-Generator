@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Delusions
 tables:
-  - name: Delusions
-    results:
+  - results:
       - "{Knave_Activities}"
       - "Always drunk"
       - "Always polite"

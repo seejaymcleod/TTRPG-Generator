@@ -4,10 +4,10 @@ setting: Fantasy
 type: People
 tablename: NPC
 tables:
-  - name: NPC Names by Ancestry
+  - tablename: NPC Names by Ancestry
     customDisplay: "[{selectedResult, Ancestry}]"
     subTables:
-      - name: Dwarf
+      - tablename: Dwarf
         results:
           - Hera
           - Torin
@@ -29,7 +29,7 @@ tables:
           - Egrim 
           - Elsa
           - Orgo
-      - name: Elf
+      - tablename: Elf
         results:
           - Sarenia
           - Ravos
@@ -51,7 +51,7 @@ tables:
           - Cydaros
           - Tiramel
           - Varond
-      - name: Goblin
+      - tablename: Goblin
         results:
           - Kog
           - Diibs
@@ -73,7 +73,7 @@ tables:
           - Hink
           - Bree
           - Kreeb
-      - name: Halfling
+      - tablename: Halfling
         results:
           - Myrtle
           - Robby
@@ -95,7 +95,7 @@ tables:
           - Sage
           - Reenie
           - Wendry
-      - name: Half-orc
+      - tablename: Half-orc
         results:
           - Troga
           - Boraal
@@ -117,7 +117,7 @@ tables:
           - Gartak
           - Iskana
           - Ziraak
-      - name: Human
+      - tablename: Human
         results:
           - Hesta
           - Matteo
@@ -139,10 +139,10 @@ tables:
           - Vakesh
           - Una
           - Nabilo
-  - name: NameBySyllable
+  - tablename: NameBySyllable
     customDisplay: "[{Syllable1}{Syllable2, 0.5}{Syllable3, 0.5}{Syllable4}]"
     subTables:
-      - name: Syllable1
+      - tablename: Syllable1
         results:
           - Ir
           - Van
@@ -164,7 +164,7 @@ tables:
           - Par
           - Tor
           - Lem
-      - name: Syllable2
+      - tablename: Syllable2
         results:
           - an
           - ish
@@ -186,7 +186,7 @@ tables:
           - el
           - un
           - nar
-      - name: Syllable3
+      - tablename: Syllable3
         results:
           - l
           - n
@@ -208,7 +208,7 @@ tables:
           - r
           - jen
           - w
-      - name: Syllable4
+      - tablename: Syllable4
         results:
           - int
           - us
@@ -231,7 +231,7 @@ tables:
           - enne
           - ynne
   
-  - name: Ancestry
+  - tablename: Ancestry
     results:
       - [Human, 4]
       - [Elf, 2]
@@ -239,7 +239,7 @@ tables:
       - [Halfling, 2]
       - Half-orc
       - Goblin
-  - name: Title
+  - tablename: Title
     results:
       - The Gray
       - One-Eye
@@ -257,12 +257,12 @@ tables:
       - The Craven
       - The Red
       - Six-Finger
-  - name: Alignment
+  - tablename: Alignment
     results:
       - [Lawful, 3]
       - Neutral
       - [Chaotic, 2]
-  - name: Age
+  - tablename: Age
     results:
       - Child
       - Adolescent
@@ -270,13 +270,13 @@ tables:
       - [Middle-Aged, 2]
       - Elderly
       - Ancient
-  - name: Wealth
+  - tablename: Wealth
     results:
       - Poor
       - [Standard, 2]
       - [Wealthy, 2]
       - Extravagant
-  - name: Occupation
+  - tablename: Occupation
     results:
       - Gravedigger
       - Tax collector
@@ -293,7 +293,7 @@ tables:
       - Sailor
       - Butcher
       - Merchant
-  - name: Appearance
+  - tablename: Appearance
     results:
       - Balding
       - Stocky build
@@ -315,7 +315,7 @@ tables:
       - Six fingers
       - Very short
       - Large nose
-  - name: Does
+  - tablename: Does
     results:
       - Spits
       - Always eating
@@ -337,7 +337,7 @@ tables:
       - Speaks loudly
       - Swaggers
       - Smokes pipe 
-  - name: Secret
+  - tablename: Secret
     results:
       - Hiding a fugitive
       - Adores baby animals

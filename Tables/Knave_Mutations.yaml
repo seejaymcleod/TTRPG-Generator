@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Mutations
 tables:
-  - name: Mutations
-    results:
+  - results:
       - "Ages backwards"
       - "Ages faster"
       - "{Knave_Animals} body"

@@ -3,9 +3,9 @@ game: ShadowDark
 setting: Fantasy
 type: Places
 tablename: Adventuring Site Names
-customDisplay: "[{PlaceOf, Adjective, Noun }]"
+customDisplay: "[{PlaceOf} {Adjective} {Noun}]"
 tables:
-  - name: PlaceOf
+  - tablename: PlaceOf
     results:
       - Mines of the
       - Abbey of the
@@ -28,7 +28,7 @@ tables:
       - Necropolis of the
       - Shrine of the
 
-  - name: Adjective
+  - tablename: Adjective
     results:
       - Cursed
       - Whispering
@@ -51,7 +51,7 @@ tables:
       - Enchanted
       - Immortal
 
-  - name: Noun
+  - tablename: Noun
     results:
       - Flame
       - Ghost

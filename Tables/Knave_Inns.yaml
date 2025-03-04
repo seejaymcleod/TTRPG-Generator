@@ -4,6 +4,5 @@ setting: Fantasy
 type: Places
 tablename: Inns
 tables:
-  - name: Inns
-    results:
+  - results:
       - "{Knave_InnNameAdjective} {Knave_InnNameNoun}"

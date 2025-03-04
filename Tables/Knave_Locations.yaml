@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Locations
 tables:
-  - name: Locations
-    results:
+  - results:
       - "Ashland"
       - "Badland"
       - "Bamboo forest"

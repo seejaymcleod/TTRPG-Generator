@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Decorations
 tables:
-  - name: Decorations
-    results:
+  - results:
       - "Antique"
       - "Beaded"
       - "Beast motif"

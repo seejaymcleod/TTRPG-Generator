@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Tactics
 tables:
-  - name: Tactics
-    results:
+  - results:
       - "Ambush"
       - "Annoy"
       - "Bind"

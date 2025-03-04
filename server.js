@@ -272,7 +272,7 @@ function processTableForDisplay(table) {
   if (table.tables && Array.isArray(table.tables)) {
     for (const subTable of table.tables) {
       const processedSubtable = {
-        name: subTable.name || 'Unnamed Subtable',
+        name: subTable.tablename || subTable.name || 'Unnamed Subtable', // For backward compatibility
         results: []
       };
       
@@ -290,7 +290,7 @@ function processTableForDisplay(table) {
       if (subTable.subTables && Array.isArray(subTable.subTables)) {
         processedSubtable.nestedSubtables = subTable.subTables.map(nestedTable => {
           return {
-            name: nestedTable.name || 'Unnamed Nested',
+            name: nestedTable.tablename || nestedTable.name || 'Unnamed Nested',
             results: nestedTable.results ? processResultsForDisplay(nestedTable.results) : []
           };
         });
@@ -304,7 +304,7 @@ function processTableForDisplay(table) {
   if (table.subTables && Array.isArray(table.subTables)) {
     for (const subTable of table.subTables) {
       result.subtables.push({
-        name: subTable.name || 'Unnamed Subtable',
+        name: subTable.tablename || subTable.name || 'Unnamed Subtable', // For backward compatibility
         results: subTable.results ? processResultsForDisplay(subTable.results) : []
       });
     }
@@ -351,8 +351,7 @@ function findSpecificTable(rootTable, targetName) {
   if (!rootTable || !targetName) return null;
   
   // Check if the current table matches by name
-  if ((rootTable.name || rootTable.tablename) && 
-      (rootTable.name || rootTable.tablename).toLowerCase() === targetName.toLowerCase()) {
+  if (rootTable.tablename && rootTable.tablename.toLowerCase() === targetName.toLowerCase()) {
     return rootTable;
   }
   
@@ -537,9 +536,34 @@ function processCustomDisplay(table, allTables, context) {
       }
       // Roll for inclusion based on weight probability
       if (Math.random() < weight) {
-        let subTable = table.subTables?.find(
-          t => t.name.toLowerCase() === subTableName.toLowerCase()
-        );
+        // Look first in the tables array
+        let subTable = null;
+        if (table.tables && Array.isArray(table.tables)) {
+          subTable = table.tables.find(
+            t => t.tablename && t.tablename.toLowerCase() === subTableName.toLowerCase()
+          );
+        }
+        
+        // If not found, look for tables with name property for backward compatibility
+        if (!subTable && table.tables && Array.isArray(table.tables)) {
+          subTable = table.tables.find(
+            t => t.name && t.name.toLowerCase() === subTableName.toLowerCase()
+          );
+        }
+        
+        // If still not found, look in subTables for backward compatibility
+        if (!subTable && table.subTables && Array.isArray(table.subTables)) {
+          subTable = table.subTables.find(
+            t => t.tablename && t.tablename.toLowerCase() === subTableName.toLowerCase()
+          );
+          
+          if (!subTable) {
+            subTable = table.subTables.find(
+              t => t.name && t.name.toLowerCase() === subTableName.toLowerCase()
+            );
+          }
+        }
+        
         if (subTable && subTable.results?.length > 0) {
           let choice = randomChoice(subTable.results);
           normalResult += choice;
@@ -602,7 +626,7 @@ function processCustomDisplay(table, allTables, context) {
       if (!refTable) {
         for (let i = 0; i < allTables.length; i++) {
           const t = allTables[i];
-          const tableName = t.name || t.tablename;
+          const tableName = t.tablename;
           if (tableName && tableName.toLowerCase() === tableToLookup.toLowerCase()) {
             refTable = t;
             break;
@@ -611,7 +635,7 @@ function processCustomDisplay(table, allTables, context) {
         
         if (DEBUG && !refTable) {
           console.log(`Deferred token: Could not find a table named "${tableToLookup}" anywhere.`);
-          console.log(`Available top-level table names:`, allTables.map(t => t.name || t.tablename));
+          console.log(`Available top-level table names:`, allTables.map(t => t.tablename));
         }
       }
 
@@ -640,37 +664,48 @@ function processCustomDisplay(table, allTables, context) {
     }
 
     // Now use that pick as the subtable name in the *current* table
-    if (table.subTables) {
-      let subTable = null;
-      for (let i = 0; i < table.subTables.length; i++) {
-        const st = table.subTables[i];
-        if (st.name.toLowerCase() === pickedResult.toLowerCase()) {
+    let subTable = null;
+    
+    // First check in tables array
+    if (table.tables && Array.isArray(table.tables)) {
+      for (let i = 0; i < table.tables.length; i++) {
+        const st = table.tables[i];
+        if ((st.tablename && st.tablename.toLowerCase() === pickedResult.toLowerCase()) ||
+            (st.name && st.name.toLowerCase() === pickedResult.toLowerCase())) {
           subTable = st;
           break;
         }
       }
+    }
+    
+    // If not found, check in subTables for backward compatibility
+    if (!subTable && table.subTables && Array.isArray(table.subTables)) {
+      for (let i = 0; i < table.subTables.length; i++) {
+        const st = table.subTables[i];
+        if ((st.tablename && st.tablename.toLowerCase() === pickedResult.toLowerCase()) ||
+            (st.name && st.name.toLowerCase() === pickedResult.toLowerCase())) {
+          subTable = st;
+          break;
+        }
+      }
+    }
 
-      if (subTable && subTable.results?.length > 0) {
-        let finalPick = randomChoice(subTable.results);
-        finalResult = finalPick;
-        if (DEBUG) {
-          console.log(
-            `Deferred token: Found subtable "${pickedResult}" in current table. Picked "${finalPick}".`
-          );
-        }
-      } else {
-        if (DEBUG) {
-          console.log(
-            `Deferred token: No subtable named "${pickedResult}" in current table or it has no results.`
-          );
-          if (table.subTables && table.subTables.length > 0) {
-            console.log(`Available subtable names:`, table.subTables.map(st => st.name));
-          }
-        }
+    if (subTable && subTable.results?.length > 0) {
+      let finalPick = randomChoice(subTable.results);
+      finalResult = finalPick;
+      if (DEBUG) {
+        console.log(
+          `Deferred token: Found subtable "${pickedResult}" in current table. Picked "${finalPick}".`
+        );
       }
     } else {
       if (DEBUG) {
-        console.log(`Current table has no subTables property.`);
+        console.log(
+          `Deferred token: No subtable named "${pickedResult}" in current table or it has no results.`
+        );
+        if (table.subTables && table.subTables.length > 0) {
+          console.log(`Available subtable names:`, table.subTables.map(st => st.tablename || st.name));
+        }
       }
     }
   });
@@ -691,8 +726,8 @@ function findTableInHierarchy(rootTable, tableName) {
   if (!rootTable) return null;
   
   // Check if the current table matches
-  if ((rootTable.name || rootTable.tablename) && 
-      (rootTable.name || rootTable.tablename).toLowerCase() === tableName.toLowerCase()) {
+  if ((rootTable.tablename && rootTable.tablename.toLowerCase() === tableName.toLowerCase()) ||
+      (rootTable.name && rootTable.name.toLowerCase() === tableName.toLowerCase())) { // For backward compatibility
     return rootTable;
   }
   
@@ -739,11 +774,11 @@ function isTableContained(parentTable, childTable) {
 
 // Process a table and generate results
 function processTable(table, parentHeader, allTables, context) {
-  const header = table.name || table.tablename || parentHeader;
+  const header = table.tablename || parentHeader;
 
   // Store the source table name for reference (will be hidden in UI)
   const sourceInfo = {
-    _tableName: table.name || table.tablename,
+    _tableName: table.tablename,
     _fileName: table.filename
   };
 
@@ -941,7 +976,7 @@ app.listen(PORT, () => {
 function debugTableStructure(table) {
   if (!DEBUG) return;
   
-  console.log(`Table debug for: ${table.name || table.tablename || 'unnamed table'}`);
+  console.log(`Table debug for: ${table.tablename || 'unnamed table'}`);
   console.log(`Filename: ${table.filename || 'N/A'}`);
   console.log(`Has customDisplay: ${table.customDisplay ? 'YES' : 'NO'}`);
   console.log(`Has results: ${table.results ? `YES (${table.results.length} entries)` : 'NO'}`);
@@ -1130,7 +1165,7 @@ function processTableReferences(input, allTables, context = {}) {
             const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
             if (customDisplayTable) {
               mainTable = customDisplayTable;
-              if (DEBUG) console.log(`Found customDisplay in subtable: ${mainTable.name}`);
+              if (DEBUG) console.log(`Found customDisplay in subtable: ${mainTable.tablename}`);
             }
           }
           
@@ -1144,7 +1179,7 @@ function processTableReferences(input, allTables, context = {}) {
           // Look for a table with customDisplay first
           const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
           if (customDisplayTable) {
-            if (DEBUG) console.log(`Found table with customDisplay: ${customDisplayTable.name}`);
+            if (DEBUG) console.log(`Found table with customDisplay: ${customDisplayTable.tablename}`);
             result = processCustomDisplay(customDisplayTable, allTables, context);
           } else {
             // Otherwise use the first subtable with results
@@ -1236,7 +1271,7 @@ function findReferencedTable(tableRef, allTables) {
   }
   
   if (DEBUG && table) {
-    console.log(`Found referenced table: ${table.filename} (${table.tablename || table.name})`);
+    console.log(`Found referenced table: ${table.filename} (${table.tablename})`);
   } else if (DEBUG && !table) {
     console.log(`Could not find referenced table: ${normalizedRef}`);
     console.log(`Available tables:`, allTables.map(t => t.filename).join(', '));
@@ -1256,8 +1291,9 @@ function findSubtableByName(table, subtableName) {
   // First check directly in the tables array at the table's root level
   if (table.tables && Array.isArray(table.tables)) {
     for (const subtable of table.tables) {
-      // Direct match by name
-      if (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase()) {
+      // Direct match by tablename or name (for backward compatibility)
+      if ((subtable.tablename && subtable.tablename.toLowerCase() === subtableName.toLowerCase()) ||
+          (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase())) {
         if (DEBUG) console.log(`Found subtable "${subtableName}" directly in table.tables`);
         return subtable;
       }
@@ -1267,7 +1303,8 @@ function findSubtableByName(table, subtableName) {
   // Then check in the subTables array (some tables use this property)
   if (table.subTables && Array.isArray(table.subTables)) {
     for (const subtable of table.subTables) {
-      if (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase()) {
+      if ((subtable.tablename && subtable.tablename.toLowerCase() === subtableName.toLowerCase()) ||
+          (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase())) {
         if (DEBUG) console.log(`Found subtable "${subtableName}" in table.subTables`);
         return subtable;
       }
@@ -1284,8 +1321,7 @@ function findSubtableByName(table, subtableName) {
   // Special case for tables where the subtable names are directly at the root level
   for (const key in table) {
     if (key.toLowerCase() === subtableName.toLowerCase() && 
-        typeof table[key] === 'object' && 
-        table[key] !== null &&
+        typeof table[key] === 'object' && table[key] !== null &&
         (Array.isArray(table[key]) || table[key].results)) {
       if (DEBUG) console.log(`Found direct table property matching "${subtableName}"`);
       return table[key];
@@ -1305,7 +1341,8 @@ function findSubtableByName(table, subtableName) {
   // Last attempt: Try going through the top level tables array to find the matching table
   if (table.tables && Array.isArray(table.tables)) {
     for (const topTable of table.tables) {
-      if (topTable.name && topTable.name.toLowerCase() === subtableName.toLowerCase()) {
+      if ((topTable.tablename && topTable.tablename.toLowerCase() === subtableName.toLowerCase()) ||
+          (topTable.name && topTable.name.toLowerCase() === subtableName.toLowerCase())) {
         if (DEBUG) console.log(`Found "${subtableName}" in top level tables array`);
         return topTable;
       }
@@ -1317,11 +1354,11 @@ function findSubtableByName(table, subtableName) {
     const availableSubtables = [];
     
     if (table.tables && Array.isArray(table.tables)) {
-      availableSubtables.push(...table.tables.map(t => t.name).filter(Boolean));
+      availableSubtables.push(...table.tables.map(t => t.tablename || t.name).filter(Boolean));
     }
     
     if (table.subTables && Array.isArray(table.subTables)) {
-      availableSubtables.push(...table.subTables.map(t => t.name).filter(Boolean));
+      availableSubtables.push(...table.subTables.map(t => t.tablename || t.name).filter(Boolean));
     }
     
     // Also check for tables at the root level
@@ -1339,7 +1376,7 @@ function findSubtableByName(table, subtableName) {
     // Print more detailed info about table structure
     console.log('Table structure overview:', 
                 JSON.stringify({
-                  name: table.name || table.tablename,
+                  name: table.tablename || 'unnamed',
                   hasTablesProp: !!table.tables,
                   hasSubTablesProp: !!table.subTables,
                   topLevelKeys: Object.keys(table)

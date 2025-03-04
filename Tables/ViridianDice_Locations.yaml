@@ -1,11 +1,10 @@
-tablename: Dungeon Locations
 filename: ViridianDice_Locations.yaml
 game: ViridianDice
 setting: Fantasy
 type: Places
+tablename: Dungeon Locations
 tables:
-  - name: Dungeon Locations
-    results:
+  - results:
       - Armory
       - Common Room
       - Crypt

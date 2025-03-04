@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Inn Name Adjective
 tables:
-  - name: Inn Name Adjective
-    results:
+  - results:
       - "Ashen"
       - "Bewitching"
       - "Black"

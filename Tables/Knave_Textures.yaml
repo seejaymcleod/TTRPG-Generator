@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Textures
 tables:
-  - name: Textures
-    results:
+  - results:
       - "Aerated"
       - "Battery"
       - "Blended"

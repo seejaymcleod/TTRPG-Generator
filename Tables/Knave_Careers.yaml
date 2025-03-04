@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Careers
 tables:
-  - name: Careers
-    results:
+  - results:
       - [ACOLYTE, candlestick, censer, incense]
       - [ACROBAT, flash powder, balls, lamp oil]
       - [ACTOR, wig, makeup, costume]

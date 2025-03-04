@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Qualities
 tables:
-  - name: Qualities
-    results:
+  - results:
       - "Abnormal"
       - "Abominable"
       - "Advanced"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Room Details
 tables:
-  - name: Room Details
-    results:
+  - results:
       - "Alcohol"
       - "Alcove"
       - "Altar"

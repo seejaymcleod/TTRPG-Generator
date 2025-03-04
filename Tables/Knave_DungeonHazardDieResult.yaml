@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Dungeon Hazard Die Result
 tables:
-  - name: Dungeon Hazard Die Result
-    results:
+  - results:
       - ["Encounter", "The party has a random encounter."]
       - ["Fatigue", "Each party member takes 1 damage unless they spend the next turn resting. Ignore while resting."]
       - ["Burn", "Lit torches burn out."]

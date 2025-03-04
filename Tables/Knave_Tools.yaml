@@ -4,8 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Tools
 tables:
-  - name: Tools
-    results:
+  - results:
       - "Acid vial"
       - "Animal scent"
       - "Antitoxin"

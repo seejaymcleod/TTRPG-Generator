@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Food Traits
 tables:
-  - name: Food Traits
-    results:
+  - results:
       - "Aged"
       - "Bacon-wrapped"
       - "Baked"

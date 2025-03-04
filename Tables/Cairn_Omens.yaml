@@ -4,7 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Omens
 tables:  
-  - name: Omens
+  - tablename: Omens
     results:
       - "The once rich waters of a life-giving river have turned black and putrid, rotting the land and sickening those who drink from it. A village elder points to some recent desecration as the cause, but most do not heed their words."
       - "It feels like winter has arrived too quickly this year. Frost and snows paint their appearance much earlier than expected. There is a smell of iron to the frost found in windows, ponds, and cracks in the ground. It almost looks like a map."

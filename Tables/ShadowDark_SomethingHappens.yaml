@@ -4,8 +4,7 @@ setting: Fantasy
 type: Adventure
 tablename: Something Happens
 tables:
-  - name: Something Happens
-    results:
+  - results:
       - ["The ground shakes violently and a massive fissure opens",0.5]
       - An unseen foe leaps out of hiding at close range
       - A horrible buzzing fills the air, growing louder and louder

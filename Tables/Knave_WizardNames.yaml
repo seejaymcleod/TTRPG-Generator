@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["People", "Powers"]
 tablename: Wizard Names
 tables:
-  - name: Wizard Names
-    results:
+  - results:
       - "Abrogast"
       - "Angvar"
       - "Armolok"

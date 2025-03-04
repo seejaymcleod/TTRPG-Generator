@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Structures
 tables:
-  - name: Structures
-    results:
+  - results:
       - "Abbey"
       - "Altar"
       - "Amphitheater"

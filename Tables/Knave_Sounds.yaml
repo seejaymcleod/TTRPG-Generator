@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Sounds
 tables:
-  - name: Sounds
-    results:
+  - results:
       - "{Knave_Activities}"
       - "{Knave_Animals}"
       - "Banging"

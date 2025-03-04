@@ -4,8 +4,7 @@ setting: Fantasy
 type: Powers
 tablename: Powers
 tables:
-  - name: Powers
-    results:
+  - results:
       - "Absorb abilities"
       - "Acid aura"
       - "Acid bolt"

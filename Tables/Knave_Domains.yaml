@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["People", "Powers"]
 tablename: Domains
 tables:
-  - name: Domains
-    results:
+  - results:
       - "Acid"
       - "Alchemy"
       - "Beauty"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Male Names
 tables:
-  - name: Male Names
-    results:
+  - results:
       - "Alaric"
       - "Aldous"
       - "Alton"

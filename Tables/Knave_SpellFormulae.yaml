@@ -4,8 +4,7 @@ setting: Fantasy
 type: Powers
 tablename: SpellFormulae
 tables:
-  - name: SpellFormulae
-    results:
+  - results:
       - "{Knave_Elements} {Knave_Forms}"
       - "{Knave_Effects} {Knave_Forms}"
       - "{Knave_Effects} {Knave_Elements}"

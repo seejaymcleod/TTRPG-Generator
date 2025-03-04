@@ -4,8 +4,7 @@ setting: Fantasy
 type: Places
 tablename: Street Details
 tables:
-  - name: Street Details
-    results:
+  - results:
       - "{Knave_Activities}"
       - "{Knave_Animals}"
       - "Aqueduct"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: Powers
 tablename: Effects
 tables:
-  - name: Effects
-    results:
+  - results:
       - "Absorbing"
       - "Accelerating"
       - "{Knave_Activities}"

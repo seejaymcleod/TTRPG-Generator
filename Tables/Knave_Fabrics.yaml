@@ -4,8 +4,7 @@ setting: Fantasy
 type: Sensory
 tablename: Fabrics
 tables:
-  - name: Fabrics
-    results:
+  - results:
       - "Alligator skin"
       - "Alpaca wool"
       - "{Knave_Animals} skin"

@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["Adventure", "Places"]
 tablename: Disasters
 tables:
-  - name: Disasters
-    results:
+  - results:
       - "Acid rain"
       - "Aging accelerates"
       - "Aging reverses"

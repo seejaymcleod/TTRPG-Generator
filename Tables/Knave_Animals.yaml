@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Animals
 tables:
-  - name: Animals
-    results:
+  - results:
       - "Ant"
       - "Anteater"
       - "Ape"

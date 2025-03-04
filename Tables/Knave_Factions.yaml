@@ -4,8 +4,7 @@ setting: Fantasy
 type: People
 tablename: Factions
 tables:
-  - name: Factions
-    results:
+  - results:
       - "Actors’ guild"
       - "Angelic army"
       - "Art movement"

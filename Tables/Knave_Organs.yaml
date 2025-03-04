@@ -4,8 +4,7 @@ setting: Fantasy
 type: Bestiary
 tablename: Organs
 tables:
-  - name: Organs
-    results:
+  - results:
       - "Antennae"
       - "Antlers"
       - "Baleen"

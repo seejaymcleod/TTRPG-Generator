@@ -4,8 +4,7 @@ setting: Fantasy
 type: Powers
 tablename: Spells 
 tables: 
-  - name: Spells
-    results: 
+  - results: 
       - ["ADHERE", "INT objects become sticky enough to hold a PC to a ceiling. Lasts until washed."]
       - ["ANIMAL FRIENDSHIP", "INT animals obey your orders as well as a trained dog for one day."]
       - ["ANIMATE OBJECT", "INT objects obey your orders. They move 15' per round."]

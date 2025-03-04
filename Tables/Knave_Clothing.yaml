@@ -4,8 +4,7 @@ setting: Fantasy
 type: ["Sensory", "Stuff"]
 tablename: Clothing
 tables:
-  - name: Clothing
-    results:
+  - results:
       - "Alb"
       - "Arm wrap"
       - "Arming doublet"
