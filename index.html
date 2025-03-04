@@ -130,6 +130,15 @@
       border-color: #390249; /* Highlighted border */
       color: white;
     }
+
+    /* Add styles for unavailable filter options */
+    .filter-btn.unavailable {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: #eee;
+      color: #999;
+      pointer-events: none;  /* Disable interaction */
+    }
     .expand-btn {
       width: 100%;
       border: none;
@@ -1203,6 +1212,9 @@
 
         matchingTablesContainer.appendChild(button);
       });
+
+      // Update available options in other filters based on current selection
+      updateAvailableOptions(filteredTables);
     }
     
     // Helper function to get selected values from button-based filter
@@ -2809,6 +2821,64 @@
           console.error('Failed to copy text: ', err);
           showToast('Failed to copy to clipboard');
         });
+    }
+
+    // New function to update available options in other filters based on current selection
+    function updateAvailableOptions(filteredTables) {
+      const gameFilter = document.getElementById('gameFilter');
+      const typeFilter = document.getElementById('typeFilter');
+      const settingFilter = document.getElementById('settingFilter');
+      
+      // Get selected values
+      const selectedGames = getSelectedValues('gameFilter');
+      const selectedTypes = getSelectedValues('typeFilter');
+      const selectedSettings = getSelectedValues('settingFilter');
+      
+      // Create sets to store available options
+      const availableGames = new Set();
+      const availableTypes = new Set();
+      const availableSettings = new Set();
+      
+      // Populate available options based on filtered tables
+      filteredTables.forEach(table => {
+        if (table.game) availableGames.add(table.game);
+        
+        if (Array.isArray(table.type)) {
+          table.type.forEach(t => {
+            if (t) availableTypes.add(t);
+          });
+        } else if (table.type) {
+          availableTypes.add(table.type);
+        }
+        
+        if (table.setting) availableSettings.add(table.setting);
+      });
+      
+      // Update filter buttons to reflect available options
+      updateFilterButtons(gameFilter, availableGames, selectedGames);
+      updateFilterButtons(typeFilter, availableTypes, selectedTypes);
+      updateFilterButtons(settingFilter, availableSettings, selectedSettings);
+    }
+    
+    // Helper function to update filter buttons
+    function updateFilterButtons(filterContainer, availableOptions, selectedOptions) {
+      const buttons = filterContainer.querySelectorAll('.filter-btn');
+      buttons.forEach(button => {
+        const value = button.dataset.value;
+        if (availableOptions.has(value)) {
+          button.classList.remove('unavailable');
+          button.disabled = false;
+        } else {
+          button.classList.add('unavailable');
+          button.disabled = true;
+        }
+        
+        // Restore selected state if previously selected
+        if (selectedOptions.includes(value)) {
+          button.classList.add('selected');
+          button.classList.remove('unselected');
+        }
+      });
     }
   </script>
 </body>
