@@ -149,22 +149,54 @@ app.post('/api/reroll', (req, res) => {
   try {
     const context = clientContext || {};
     
-    // Find the specific subtable for this header
+    // Find the specific subtable for this header with improved fallback logic
     let targetSubTable = null;
     
-    // Search through the tables array for the matching header
+    // Search through the tables array for the matching header name
     if (selectedTable.tables && Array.isArray(selectedTable.tables)) {
+      // First attempt: Look for exact name match
       for (const subTable of selectedTable.tables) {
-        if (subTable.name === header) {
+        if (subTable.name === header || subTable.tablename === header) {
           targetSubTable = subTable;
           break;
         }
       }
+      
+      // Second attempt: If header matches the top-level tablename, use the first subtable
+      if (!targetSubTable && selectedTable.tablename === header) {
+        console.log(`Header "${header}" matches top-level tablename, using first subtable`);
+        targetSubTable = selectedTable.tables[0];
+      }
+      
+      // Third attempt: For unnamed subtables, check if there's only one subtable
+      if (!targetSubTable && selectedTable.tables.length === 1) {
+        console.log(`No named subtable found, using the only subtable available`);
+        targetSubTable = selectedTable.tables[0];
+      }
+      
+      // Fourth attempt: If still not found, try a case-insensitive match
+      if (!targetSubTable) {
+        const headerLower = header.toLowerCase();
+        for (const subTable of selectedTable.tables) {
+          const subTableName = subTable.name || subTable.tablename || '';
+          if (subTableName.toLowerCase() === headerLower) {
+            console.log(`Found subtable using case-insensitive match: ${subTableName}`);
+            targetSubTable = subTable;
+            break;
+          }
+        }
+      }
+    }
+    
+    // If not found in tables array, check if the top-level table itself has results
+    if (!targetSubTable && selectedTable.results && Array.isArray(selectedTable.results)) {
+      console.log(`Using top-level table results for header "${header}"`);
+      targetSubTable = selectedTable;
     }
     
     if (!targetSubTable) {
       console.error(`Could not find subtable for header: ${header}`);
-      return res.status(404).json({ error: `Could not find subtable for: ${header}` });
+      return res.status(404).json({ error: `Could not find subtable for header: ${header}` });
     }
     
     // Process the subtable based on its structure
@@ -172,7 +204,7 @@ app.post('/api/reroll', (req, res) => {
     
     // Case 1: Table uses customDisplay
     if (targetSubTable.customDisplay) {
-      console.log(`Processing table with customDisplay: ${targetSubTable.name}`);
+      console.log(`Processing table with customDisplay: ${targetSubTable.name || header}`);
       result = processCustomDisplay(targetSubTable, tables, context);
     }
     // Case 2: Table has simple array results
@@ -202,7 +234,7 @@ app.post('/api/reroll', (req, res) => {
       result: {
         header: header,
         result: result,
-        _tableName: targetSubTable.name
+        _tableName: targetSubTable.name || targetSubTable.tablename || header
       },
       context
     });
