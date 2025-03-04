@@ -5,6 +5,4 @@ type: Adventure
 tablename: Test
 tables:
   - results:
-      - ["An execution is about to happen; it's a PC's family member", 0.5]
-      - ["Normal", 1]
-      - ["Some Text. {ShadowDark_Rumors}", 1]
+      - ["Some Text: {ShadowDark_Rumors}", 1]

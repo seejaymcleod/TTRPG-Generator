@@ -779,7 +779,8 @@ function processTable(table, parentHeader, allTables, context) {
   // Store the source table name for reference (will be hidden in UI)
   const sourceInfo = {
     _tableName: table.tablename,
-    _fileName: table.filename
+    _fileName: table.filename,
+    _originalSource: table._originalSource || table.tablename // Track original source
   };
 
   // Check for table structure patterns rather than specific names
@@ -846,6 +847,7 @@ function processTable(table, parentHeader, allTables, context) {
       header, 
       result, 
       _hasCustomDisplay: true,
+      _originalSource: sourceInfo._originalSource, // Track origin
       ...sourceInfo 
     };
   }
@@ -878,6 +880,7 @@ function processTable(table, parentHeader, allTables, context) {
         header, 
         result,
         _isCareer: true,  // Add this marker to identify it as a career format
+        _originalSource: sourceInfo._originalSource, // Track origin
         ...sourceInfo 
       };
     }
@@ -890,6 +893,7 @@ function processTable(table, parentHeader, allTables, context) {
           header, 
           result: [result.career, result.items],
           _isCareer: true,
+          _originalSource: sourceInfo._originalSource, // Track origin
           ...sourceInfo 
         };
       }
@@ -903,6 +907,7 @@ function processTable(table, parentHeader, allTables, context) {
           header,
           result,
           _isMultiElementArray: true,  // Add flag for multi-element arrays
+          _originalSource: sourceInfo._originalSource, // Track origin
           ...sourceInfo 
         };
       }
@@ -914,6 +919,7 @@ function processTable(table, parentHeader, allTables, context) {
           header, 
           result,
           _isCareer: true,  // Add career marker
+          _originalSource: sourceInfo._originalSource, // Track origin
           ...sourceInfo 
         };
       }
@@ -1127,6 +1133,15 @@ function processTableReferences(input, allTables, context = {}) {
       if (!referencedTable) {
         console.error(`Referenced table not found: ${tableName}`);
         return `[${tableName} not found]`;
+      }
+      
+      // Make a copy of the referenced table to avoid modifying the original
+      const workingTable = Object.assign({}, referencedTable);
+      
+      // IMPORTANT: Add original source tracking - first reference is preserved
+      if (!workingTable._originalSource) {
+        workingTable._originalSource = tableName;
+        if (DEBUG) console.log(`Setting original source for referenced table to: ${tableName}`);
       }
       
       try {

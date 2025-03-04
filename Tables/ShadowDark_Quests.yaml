@@ -3,7 +3,7 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure
 tablename: Quests
-customDisplay: "[{Action} {Targer} {Context}]"
+customDisplay: "[{Action} {Target} {Context}]"
 tables:
   - tablename: Action
     results:

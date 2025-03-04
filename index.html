@@ -1957,31 +1957,62 @@
       });
     }
 
-    // Function to convert card content to markdown and copy to clipboard
+    // Improved function to correctly detect root tables even with spaces in names
     function copyToMarkdown(generationContainer) {
-      // Get the card title and add source information
-      const cardTitle = generationContainer.querySelector('.card-title-text').textContent;
-      const sourceInfo = currentSelectedTable ? `${currentSelectedTable.filename}: ${currentSelectedTable.tablename}` : '';
+      let markdown = '';
       
-      let markdown = `# ${cardTitle}\n`;   
-      if (sourceInfo) {
-        markdown += `*Source: ${sourceInfo}*\n`;   
+      // Get the main table information
+      let mainTableName = '';
+      let mainTableDisplayName = '';
+      
+      if (currentSelectedTable) {
+        // Get table name from filename (without extension) for references
+        if (currentSelectedTable.filename) {
+          mainTableName = currentSelectedTable.filename.replace(/\.(yaml|yml)$/, '');
+        }
+        
+        // Get the display name from the tablename property
+        mainTableDisplayName = currentSelectedTable.tablename || '';
       }
-      markdown += '\n';
-          
+      
       // Extract all the rows
       const rows = generationContainer.querySelectorAll('.result-row');
+      
+      // Helper function to normalize strings for comparison
+      const normalize = str => str.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/gi, '');
       
       // Process each row
       rows.forEach(row => {
         const header = row.querySelector('.result-header').textContent;
-        const content = row.querySelector('.result-content').textContent.trim();
-        let rowMd = `**${header}**: ${content}`;
+        const contentCells = row.querySelectorAll('.result-content');
         
-        // Add source table if available
-        const sourceTable = row.getAttribute('data-source-table');
-        if (sourceTable) {
-          rowMd += ` *(from ${sourceTable})*`;
+        // Start building the markdown line for this row
+        let rowMd = `*${header}*: `;
+        
+        // Handle multiple content cells (like career-style rows)
+        if (contentCells.length > 1) {
+          // For career-style format, join the first two cells with a separator
+          rowMd += `${contentCells[0].textContent.trim()} - ${contentCells[1].textContent.trim()}`;
+        } else if (contentCells.length === 1) {
+          // Normal case - single content cell
+          rowMd += contentCells[0].textContent.trim();
+        }
+        
+        // Check if this is a root table reference
+        // Compare the normalized header with the normalized tablename
+        const normalizedHeader = normalize(header);
+        const normalizedTableName = normalize(mainTableDisplayName);
+        const isRootTableReference = normalizedHeader === normalizedTableName;
+        
+        // Add table reference
+        if (mainTableName) {
+          if (isRootTableReference) {
+            // Simplified format for root table references
+            rowMd += `.:{${mainTableName}}`;
+          } else {
+            // Full format for subtable references
+            rowMd += `.:{${mainTableName}|${header}}`;
+          }
         }
         
         markdown += rowMd + '\n';
@@ -2205,12 +2236,18 @@
       return resultObj ? String(resultObj) : '';
     }
 
-    // Updated renderResultItem function - properly handling different table formats
+    // Updated renderResultItem function to store original source information
     function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
       // Special handling for career format flagged by the server
       if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        // Store both tableName and originalSource - originalSource takes priority
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        // Include the subtable name if different from table name
+        const isSubtable = item._tableName && item.header && item._tableName !== item.header;
+        const subtableName = isSubtable ? ` data-subtable-name="${item.header}"` : '';
         
         // Get the career and items values
         const career = item.result[0] || '';
@@ -2227,7 +2264,7 @@
           </button>` : '';
         
         return `
-          <div class="result-row"${sourceTable} data-format="career">
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
             <div class="result-content" title="${careerEscaped}">${career}</div>
             <div class="result-content" title="${itemsEscaped}">${items}</div>
@@ -2239,7 +2276,11 @@
       // New case: Handle multi-element array format flagged by the server
       if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        // Store both tableName and originalSource
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
         
         // Create content cells for each element in the array (max 4 elements)
         const contentCells = item.result.map(element => {
@@ -2254,14 +2295,14 @@
           </button>` : '';
         
         return `
-          <div class="result-row"${sourceTable} data-format="multi-array">
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="multi-array">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
             ${contentCells}
             ${rerollButton}
           </div>
         `;
       }
-      
+
       // Handle arrays with better weight detection
       if (Array.isArray(item.result)) {
         // Check if the last element is numeric (a weight)
@@ -2360,7 +2401,10 @@
       
       // Handle objects with header and result properties
       if (item && typeof item === 'object' && "header" in item && "result" in item) {
-        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
         
         // Special case for Knave Careers or similar two-element string arrays
@@ -2378,7 +2422,7 @@
             </button>` : '';
           
           return `
-            <div class="result-row"${sourceTable} data-format="career">
+            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
               <div class="result-header" title="${headerTitle}">${item.header}</div>
               <div class="result-content" title="${career}">${item.result[0]}</div>
               <div class="result-content" title="${items}">${item.result[1]}</div>
@@ -2403,7 +2447,7 @@
             </button>` : '';
           
           return `
-            <div class="result-row"${sourceTable} data-format="string-array">
+            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="string-array">
               <div class="result-header" title="${headerTitle}">${item.header}</div>
               ${contentCells}
               ${rerollButton}
@@ -2429,7 +2473,7 @@
           </button>` : '';
         
         return `
-          <div class="result-row"${sourceTable} data-format="simple">
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
             <div class="result-content" title="${escapedResult}">${resultStr}</div>
             ${rerollButton}
@@ -2780,40 +2824,27 @@
     // Add function to copy table contents to markdown
     function copyTableToMarkdown(tableContainer, tableData) {
       if (!tableData) {
-        // Fallback to old method if tableData isn't passed
-        const title = tableContainer.querySelector('.card-title-text').textContent;
-        const sourceInfo = currentSelectedTable ? `${currentSelectedTable.filename}: ${currentSelectedTable.tablename}` : '';
-        
-        let markdown = `# ${title}\n`;
-        if (sourceInfo) {
-          markdown += `*Source: ${sourceInfo}*\n`;
-        }
-        markdown += '\n';
+        // Simple fallback when structured data isn't available
+        let markdown = '';
         
         // Get all table entries
         const entries = tableContainer.querySelectorAll('.table-entry');
         entries.forEach(entry => {
-          markdown += `- ${entry.textContent}\n`;
+          const entryNumber = entry.querySelector('.entry-number')?.textContent || '';
+          const entryContent = entry.querySelector('.entry-content')?.textContent || '';
+          markdown += `${entryNumber} ${entryContent}\n`;
         });
         
         copyToClipboardWithToast(markdown);
         return;
       }
       
-      // Enhanced method with structured data
-      const title = tableData.name;
-      const sourceInfo = `${tableData.filename}: ${tableData.game} (${tableData.type})`;
-      
-      let markdown = `# ${title}\n`;
-      markdown += `*Source: ${sourceInfo}*\n\n`;
+      // For structured table data
+      let markdown = `*${tableData.name}*\n\n`;
       
       // Process each subtable
       tableData.subtables.forEach(subtable => {
         markdown += `## ${subtable.name}\n\n`;
-        
-        if (subtable.customDisplay) {
-          markdown += `*Custom Display: \`${subtable.customDisplay}\`*\n\n`;
-        }
         
         if (subtable.results && subtable.results.length > 0) {
           subtable.results.forEach((entry, index) => {
@@ -2821,9 +2852,9 @@
             
             if (entry.isWeighted) {
               const valueText = typeof entry.value === 'object' ? JSON.stringify(entry.value) : entry.value;
-              entryText = `${valueText} *(Weight: ${entry.weight})*`;
+              entryText = `${valueText} (${entry.weight})`;
             } else if (entry.isCareer) {
-              entryText = `**${entry.career}** - ${entry.items}`;
+              entryText = `${entry.career} - ${entry.items}`;
             } else if (typeof entry.value !== 'undefined') {
               entryText = typeof entry.value === 'object' ? JSON.stringify(entry.value) : entry.value;
             } else {
@@ -2833,22 +2864,6 @@
             markdown += `${index + 1}. ${entryText}\n`;
           });
           markdown += '\n';
-        }
-        
-        // Handle nested subtables
-        if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
-          subtable.nestedSubtables.forEach(nestedTable => {
-            markdown += `### ${nestedTable.name} (nested)\n\n`;
-            
-            if (nestedTable.results && nestedTable.results.length > 0) {
-              nestedTable.results.forEach((entry, index) => {
-                const entryText = typeof entry.value !== 'undefined' ? 
-                    entry.value : JSON.stringify(entry);
-                markdown += `${index + 1}. ${entryText}\n`;
-              });
-              markdown += '\n';
-            }
-          });
         }
       });
       
