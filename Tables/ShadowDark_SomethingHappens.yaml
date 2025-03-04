@@ -1,13 +1,12 @@
-tablename: Something Happens
-filename: ShadowDark_Encounter_SomethingHappens.yaml.yaml
+filename: ShadowDark_SomethingHappens.yaml
 game: ShadowDark
 setting: Fantasy
-type: Encounter
-subtype: none
+type: Adventure
+tablename: Something Happens
 tables:
-  - name: SomethingHappens
+  - name: Something Happens
     results:
-      - The ground shakes violently and a massive fissure opens^0.5
+      - ["The ground shakes violently and a massive fissure opens",0.5]
       - An unseen foe leaps out of hiding at close range
       - A horrible buzzing fills the air, growing louder and louder
       - You catch the acrid smell of smoke and flame
@@ -56,4 +55,4 @@ tables:
       - A runaway wagon crashes toward you
       - An NPC throws off their disguise, revealing an enemy
       - A demon appears to you and presents a tempting offer
-      - A radiant being appears to you with a message of warning^0.5
+      - ["A radiant being appears to you with a message of warning",0.5]

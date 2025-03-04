@@ -1,9 +1,8 @@
-tablename: Adventures
-filename: ShadowDark_Quest_Adventures.yaml
+filename: ShadowDark_Quests.yaml
 game: ShadowDark
 setting: Fantasy
-type: Quest
-subtype: none
+type: Adventure
+tablename: Quests
 customDisplay: "{Action] {Targer] {Context]"
 tables:
   - name: Action

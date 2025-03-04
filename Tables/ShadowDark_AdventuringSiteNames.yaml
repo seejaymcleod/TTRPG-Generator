@@ -1,9 +1,8 @@
-tablename: Adventuring Site Names
-filename: ShadowDark_Location_AdventuringSiteNames.yaml
+filename: ShadowDark_AdventuringSiteNames.yaml
 game: ShadowDark
 setting: Fantasy
-type: Location
-subtype: none
+type: Places
+tablename: Adventuring Site Names
 customDisplay: "{PlaceOf] {Adjective] {Noun]"
 tables:
   - name: PlaceOf

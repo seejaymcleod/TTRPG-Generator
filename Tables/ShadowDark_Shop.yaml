@@ -2,7 +2,7 @@ tablename: Shop
 filename: ShadowDark_Shop.yaml
 game: ShadowDark
 setting: Fantasy
-type: Location
+type: Places
 subtype: none
 tables:
   - name: Name

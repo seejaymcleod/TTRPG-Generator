@@ -370,14 +370,21 @@
     }
     .card-title-text {
       flex-grow: 1;
+      flex-shrink: 1; /* Allow the title to shrink */
       color: #333 !important;
       font-weight: bold;
       font-size: 0.95em; /* Smaller text */
+      white-space: nowrap; /* Keep on single line */
+      overflow: hidden; /* Hide overflow */
+      text-overflow: ellipsis; /* Add ellipsis */
+      min-width: 0; /* Important for text-overflow to work in flex */
+      margin-right: 8px; /* Space between title and buttons */
     }
     .card-actions {
       display: flex;
       gap: 8px; /* Reduced from 12px */
       align-items: center;
+      flex-shrink: 0; /* Don't shrink buttons */
     }
     
     /* Button styles */
@@ -553,22 +560,22 @@
       outline: none !important;
     }
     
-    /* Collapse/expand functionality */
+    /* Collapse/expand functionality - UPDATED FOR BOTTOM POSITIONING */
     .collapse-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 22px; /* Smaller button */
-      height: 22px; /* Smaller button */
+      width: 18px; /* Smaller button */
+      height: 18px; /* Smaller button */
       background: none;
       border: none;
       cursor: pointer;
       padding: 0;
-      font-size: 14px; /* Smaller text */
+      font-size: 12px; /* Smaller text */
       color: #777;
       transition: transform 0.2s, color 0.2s;
       position: absolute;
-      top: 10px; /* Moved up */
+      bottom: 3px; /* Position at bottom */
       left: 50%;
       transform: translateX(-50%);
       z-index: 2;
@@ -588,20 +595,24 @@
       display: none;
     }
     .generation-container.collapsed {
-      padding-bottom: 3px; /* Reduced padding */
+      padding-bottom: 16px; /* Space for collapse button at bottom */
     }
+    .generation-container:not(.collapsed) {
+      padding-bottom: 16px; /* Space for collapse button at bottom */
+    }
+    
+    /* FIX: Reverse the arrow logic - previously was backward */
+    .generation-container.collapsed .collapse-btn .up-arrow {
+      display: none;
+    }
+    .generation-container:not(.collapsed) .collapse-btn .down-arrow {
+      display: none;
+    }
+    
     .card-content {
       transition: max-height 0.3s ease-out;
       overflow: hidden;
-    }
-    .generation-container.collapsed .collapse-btn .down-arrow {
-      display: none;
-    }
-    .generation-container:not(.collapsed) .collapse-btn .up-arrow {
-      display: none;
-    }
-    .card-content > div {
-      background-color: #e8e8e8 !important;
+      margin-bottom: 10px; /* Space above collapse button */
     }
     
     /* Add to your existing styles */
