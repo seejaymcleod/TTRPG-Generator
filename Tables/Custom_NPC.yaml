@@ -5,14 +5,8 @@ type: People
 tablename: NPC
 tables:
   - name: Name
-    customDisplay: "[{Part1}{Part2}]"
-    subTables:
-      - name: Part1
-        results: 
-          - "{Knave_Surname1}"
-      - name: Part2
-        results: 
-          - "{Knave_Surname2}"
+    results: 
+      - "{Knave_Names}"
   - name: Archetype
     results: 
       - "{Knave_Archetypes}"

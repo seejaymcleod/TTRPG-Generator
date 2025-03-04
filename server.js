@@ -1130,11 +1130,36 @@ function processTableReferences(input, allTables, context = {}) {
           }
         }
         
+        // NEW: Check if the referenced table has customDisplay and process it
+        if (referencedTable.customDisplay) {
+          if (DEBUG) console.log(`Table "${tableName}" uses customDisplay, processing...`);
+          // Find the main table object that contains the customDisplay
+          let mainTable = referencedTable;
+          
+          if (referencedTable.tables && Array.isArray(referencedTable.tables)) {
+            const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
+            if (customDisplayTable) {
+              mainTable = customDisplayTable;
+              if (DEBUG) console.log(`Found customDisplay in subtable: ${mainTable.name}`);
+            }
+          }
+          
+          return processCustomDisplay(mainTable, allTables, context);
+        }
+        
         // For whole-table references (no subtable specified)
         if (referencedTable.results && Array.isArray(referencedTable.results)) {
           return getWeightedRandomResult({ results: referencedTable.results });
         }
         else if (referencedTable.tables && Array.isArray(referencedTable.tables) && referencedTable.tables.length > 0) {
+          // Look for a table with customDisplay first
+          const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
+          if (customDisplayTable) {
+            if (DEBUG) console.log(`Found table with customDisplay: ${customDisplayTable.name}`);
+            return processCustomDisplay(customDisplayTable, allTables, context);
+          }
+          
+          // Otherwise use the first subtable with results
           const subtable = referencedTable.tables[0];
           if (subtable.results && Array.isArray(subtable.results)) {
             return getWeightedRandomResult(subtable);
