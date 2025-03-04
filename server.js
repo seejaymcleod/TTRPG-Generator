@@ -1080,16 +1080,11 @@ function processTableReferences(input, allTables, context = {}) {
   if (typeof input === 'string') {
     // Enhanced regex to capture both simple table references {TableName}
     // and indexed array references {TableName[0]} or {TableName[index]}
-    const tableRefRegex = /\{([^}\[\]]+)(?:\[(\d+)\])?([^}]*)\}/g;
+    // AND the pipe syntax {TableName|SubtableName}
+    const tableRefRegex = /\{([^}\[\]|]+)(?:\[(\d+)\])?(?:\|([^}]+))?\}/g;
     
-    return input.replace(tableRefRegex, (match, tableName, arrayIndex, pipeAndSubtable) => {
-      if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${tableName}, Index: ${arrayIndex || 'none'})`);
-      
-      // Handle pipe syntax for subtables (if present)
-      let subtableName = null;
-      if (pipeAndSubtable && pipeAndSubtable.startsWith('|')) {
-        subtableName = pipeAndSubtable.substring(1).trim();
-      }
+    return input.replace(tableRefRegex, (match, tableName, arrayIndex, subtableName) => {
+      if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${tableName}, Index: ${arrayIndex || 'none'}, Subtable: ${subtableName || 'none'})`);
       
       // First find the referenced table
       const referencedTable = findReferencedTable(tableName, allTables);
@@ -1102,7 +1097,7 @@ function processTableReferences(input, allTables, context = {}) {
       try {
         let result;
         
-        // If a specific subtable is requested
+        // If a specific subtable is requested through pipe syntax
         if (subtableName) {
           // Find the specified subtable within the referenced table
           const subtable = findSubtableByName(referencedTable, subtableName);
@@ -1114,6 +1109,8 @@ function processTableReferences(input, allTables, context = {}) {
           
           if (DEBUG) {
             console.log(`Found subtable "${subtableName}" in "${tableName}"`);
+            // Print the structure of the found subtable
+            console.log('Subtable structure:', JSON.stringify(subtable, null, 2).substring(0, 200) + '...');
           }
           
           // Generate from the subtable
@@ -1240,20 +1237,28 @@ function findReferencedTable(tableRef, allTables) {
   
   if (DEBUG && table) {
     console.log(`Found referenced table: ${table.filename} (${table.tablename || table.name})`);
+  } else if (DEBUG && !table) {
+    console.log(`Could not find referenced table: ${normalizedRef}`);
+    console.log(`Available tables:`, allTables.map(t => t.filename).join(', '));
   }
   
   return table;
 }
 
-// New helper function to find a subtable by name within a table
+// Improved helper function to find a subtable by name within a table
 function findSubtableByName(table, subtableName) {
   if (!table || !subtableName) return null;
   
-  // First check in the tables array
+  if (DEBUG) {
+    console.log(`Looking for subtable "${subtableName}" in table "${table.tablename || table.name || table.filename}"`);
+  }
+  
+  // First check directly in the tables array at the table's root level
   if (table.tables && Array.isArray(table.tables)) {
     for (const subtable of table.tables) {
       // Direct match by name
       if (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase()) {
+        if (DEBUG) console.log(`Found subtable "${subtableName}" directly in table.tables`);
         return subtable;
       }
     }
@@ -1263,8 +1268,27 @@ function findSubtableByName(table, subtableName) {
   if (table.subTables && Array.isArray(table.subTables)) {
     for (const subtable of table.subTables) {
       if (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase()) {
+        if (DEBUG) console.log(`Found subtable "${subtableName}" in table.subTables`);
         return subtable;
       }
+    }
+  }
+  
+  // Look for a direct property at root level with this name
+  // This handles cases like the ShadowDark_NPC "Secret" table which is at root level
+  if (table[subtableName] && typeof table[subtableName] === 'object') {
+    if (DEBUG) console.log(`Found subtable "${subtableName}" as direct property of table`);
+    return table[subtableName];
+  }
+  
+  // Special case for tables where the subtable names are directly at the root level
+  for (const key in table) {
+    if (key.toLowerCase() === subtableName.toLowerCase() && 
+        typeof table[key] === 'object' && 
+        table[key] !== null &&
+        (Array.isArray(table[key]) || table[key].results)) {
+      if (DEBUG) console.log(`Found direct table property matching "${subtableName}"`);
+      return table[key];
     }
   }
   
@@ -1274,6 +1298,16 @@ function findSubtableByName(table, subtableName) {
       if (subtable.tables || subtable.subTables) {
         const nestedResult = findSubtableByName(subtable, subtableName);
         if (nestedResult) return nestedResult;
+      }
+    }
+  }
+  
+  // Last attempt: Try going through the top level tables array to find the matching table
+  if (table.tables && Array.isArray(table.tables)) {
+    for (const topTable of table.tables) {
+      if (topTable.name && topTable.name.toLowerCase() === subtableName.toLowerCase()) {
+        if (DEBUG) console.log(`Found "${subtableName}" in top level tables array`);
+        return topTable;
       }
     }
   }
@@ -1290,10 +1324,26 @@ function findSubtableByName(table, subtableName) {
       availableSubtables.push(...table.subTables.map(t => t.name).filter(Boolean));
     }
     
+    // Also check for tables at the root level
+    Object.keys(table).forEach(key => {
+      if (typeof table[key] === 'object' && table[key] !== null && !key.startsWith('_')) {
+        availableSubtables.push(key);
+      }
+    });
+    
     console.log(`Could not find subtable "${subtableName}" in table "${table.tablename || table.name || table.filename}"`);
     if (availableSubtables.length > 0) {
-      console.log(`Available subtables: ${availableSubtables.join(', ')}`);
+      console.log(`Available subtable names: ${availableSubtables.join(', ')}`);
     }
+    
+    // Print more detailed info about table structure
+    console.log('Table structure overview:', 
+                JSON.stringify({
+                  name: table.name || table.tablename,
+                  hasTablesProp: !!table.tables,
+                  hasSubTablesProp: !!table.subTables,
+                  topLevelKeys: Object.keys(table)
+                }, null, 2));
   }
   
   return null;
