@@ -1,9 +1,0 @@
-filename: Knave_Surnames.yaml
-game: Knave
-setting: Fantasy
-type: People
-tablename: Surnames
-tables:
-  - name: Surnames
-    results:
-      - "{Knave_Surname1}{Knave_Surname2}"

@@ -17,7 +17,7 @@ tables:
       - As it advances, this creature begins to weep thick, oozing dark-red tears.
       - This creature’s back is a mass of claw and bite marks. The wounds are so deep, gleaming white ribs are visible.
   
-  - name: Combat Behavior
+  - name: Battle Tactics
     results:
       - This wight tries to sneak around the back and prefers to fight weak, unarmored opponents.
       - This wight clutches a spear and hurls it before charging.

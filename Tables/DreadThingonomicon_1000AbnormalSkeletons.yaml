@@ -1,0 +1,42 @@
+filename: DreadThingonomicon_1000AbnormalSkeletons.yaml
+game: DreadThingonomicon
+setting: Fantasy
+type: Bestiary
+tablename: 1000AbnormalSkeletons
+tables: 
+  - name: Physical Description
+    results:
+      - Scraps of hair grow from patches of decomposing flesh yet cling to the skeleton’s skull.
+      - Several bones are missing from the creature’s rib cage.
+      - The entire left side of the skeleton’s skull is crushed and broken—no doubt the result of a massively heavy blow.
+      - Dirty, torn rags cling to the skeleton’s frame. Covered in matted dirt and dried blood, the rags reek of death and the grave.
+      - Ending in a jagged stump, the skeleton’s right arm is missing below the elbow.
+      - Incongruously, this skeleton’s skull—minus its jaw—is wedged inside the creature’s ribcage.
+      - Clad in faded but serviceable clothes, this skeleton seems more recently animated than its brethren. Its bones are clean—perhaps even polished—and lumps of specially shaped ebon coal fill its eye sockets.
+      - One of the skeleton’s legs is smashed; the remains of its lower left leg hang from its kneecap.
+      - This skeleton’s bones are stained a mottled black. (The skeleton was immersed in oil long ago, which impregnated the bones; it burns easily—and brightly!)
+      - This tall skeleton’s body is tightly wrapped in strips of mouldering cloth; however, its skull has not been so wrapped. To the uninitiated, the skeleton could appear to be a mummy.
+  - name: Battle Tactics
+    results:
+      - With one missing leg, this skeleton literally hops into battle. It moves at half speed.
+      - This undead is faster than its companions; increase its speed by half.
+      - Every time the skeleton lands a successful hit, a few small bones fall away from its body.
+      - This skeleton walks loudly. The click-click of its bony feet is audible from a goodly distance.
+      - After it first misses in melee, the skeleton drops its weapon and reaches toward its foes with its claw-like bony fingers.
+      - Every time it strikes a foe in battle, the skeleton throws back its head in silent exultation.
+      - The skeleton carries a large, blood-spattered wooden shield—which it uses to beat its foes to death—strapped to its arm.
+      - With no legs, this badly damaged skeleton crawls into battle. It doesn’t use a weapon; instead, it tries to rip its target’s feet and lower legs to shreds.
+      - This skeleton beats its enemies to death with a mouldy arm ripped from a previous victim’s corpse.
+      - A glimmer of sentience remains in this skeleton. A thief in life, it dimly remembers the worth of striking from behind and manoeuvres accordingly.
+  - name: Treasure
+    results:
+      - The skeleton wears a stained broad leather belt that holds up the remains of a ragged pair of trousers. The belt has a secret compartment, which holds 3 platinum coins. (Only perceptive characters find the coins).
+      - This skeleton has gold fillings in its teeth; extracting the gold yields 1 gp worth of scrap metal.
+      - The hilt of the skeleton’s weapon has a small black gem (an onyx worth 15 gp) in its handle.
+      - The skeleton wears a leather necklace around its neck. The beaten copper and bronze locket hanging from the necklace is hopelessly wrapped around the skeleton’s rib bones.
+      - Worn gold coins of ancient design are firmly wedged into the skeleton’s eye sockets.
+      - Eldritch symbols are etched into one of the skeleton’s leg bones. The fell writings are a curse on the living and are worth 2 gp to a collector of such macabre things.
+      - A silver-tipped arrow is loosely wedged in the skeleton’s bony ribcage.
+      - The skeleton wears a small silver ring on its left-hand little finger. The ring has the stylised image of a spread fisherman’s net. The ring is worth 2 gp but might belong to a well-to-do local family (and therefore may be worth more to them).
+      - Bizarrely, this skeleton wears a ludicrously oversized fur hat sporting a wide brim. The hat is worn, blood-spattered and essentially worthless; however, an easily found secret pocket in the hat holds a tightly folded scroll of cure light wounds.
+      - This skeleton’s skull contains a largish iron key wedged into its brain cavity. The key unlocks a nearby door.

@@ -16,7 +16,7 @@ tables:
       - This corpulent zombie is naked and filled with noxious gases. If struck with a sharp melee weapon, it explodes coating adjacent creatures with blood, bone, and viscera.
       - This zombie has no jaw. Blood and gore cover its chest.
       - A gaping wound pierces this creature’s rib cage, exposing the desiccated organs.
-  - name: Combat Behavior
+  - name: Battle Tactics
     results:
       - This zombie is much slower than its companions due to a broken leg. It moves at half speed.
       - As it advances, this zombie stumbles and falls. In the next round, it struggles back to its feet.

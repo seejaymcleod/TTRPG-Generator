@@ -1,0 +1,42 @@
+filename: DreadThingonomicon_1000AbnormalMummies.yaml
+game: DreadThingonomicon
+setting: Fantasy
+type: Bestiary
+tablename: 1000AbnormalMummies
+tables: 
+  - name: Physical Description
+    results:
+      - The creature’s crazed eyes—one red and one blue—glimmer balefully.
+      - Eldritch symbols cover the wrappings around the creature’s head—giving the impression of tattoos.
+      - The wrappings around the creature’s left leg are loose and unravel as the battle rages.
+      - The creature’s blackened wrappings are ragged and—in a few places—scorched.
+      - Dried blood covers the creature’s hands—as if it has bludgeoned more than one foe to death.
+      - The heavy, cloying miasma of death radiates from the creature. (Investigation reveals the mummy’s body is rotting from the inside out).
+      - The creature’s eyes have been gouged out, and it is blind; it has excellent hearing, however, and sniffs the air like a hunting hound searching for prey.
+      - Large and hulking, the creature lumbers about with no semblance of stealth.
+      - The creature’s head lolls unnaturally on a broken neck.
+      - The creature wears the ornate funeral mask of a priest.
+  - name: Battle Tactics
+    results:
+      - This mummy mournfully moans and groans as it enters combat. It bellows in anger when damaged.
+      - Driven mad by its unlife, this mummy cackles and capers in combat—sometimes wasting actions to do so.
+      - Carrying an ornamental falchion into battle, this mummy hews mightily with the blade until reduced to half hit points (at which point, it reverts to its natural attacks).
+      - Every time it strikes a foe, the mummy lets out a deep, malevolent laugh.
+      - If the mummy knocks a foe unconscious, it spends several rounds battering its helpless enemy to death.
+      - Terrified by fire, the mummy cowers away from even the smallest flame.
+      - The mummy was a tomb robber; it sneaks about trying to attack with surprise (preferably from behind).
+      - The mummy hates followers of good gods. It attacks folk bearing such symbols before all other targets.
+      - The mummy grapples its opponents before beating them to death with its mighty fists.
+      - Abnormally resistant to fire and flames, being burnt does not scare this mummy.
+  - name: Treasure
+    results:
+      - A thick gold bangle worth 50 gp encircles the mummy’s left leg.
+      - One strip of the mummy’s wrappings radiates faint magic. It is a scroll of bless.
+      - A +1 arrow fletched with silver feathers is lodged in a fold in the mummy’s wrappings.
+      - The creature wears ancient tarnished silver earrings of a style not wrought for centuries. They are worth 100 gp but are blasphemous things.
+      - The mummy wears the unholy symbol of an evil god of death. Studded with tiny glittering blood-red rubies, the thing is beautiful and terrible. It is worth 350 gp.
+      - The mummy’s festering burial wrappings are stitched together with silver wire. Removed and cleaned, the wire is worth 75 gp.
+      - Ornate jade jars (worth 100 gp) hold the mummy’s shriveled internal organs.
+      - The mummy wears an ornate silver pendant adorned with a (now defaced) rising sun symbol. The pendant is only worth 50 gp due to the damage.
+      - The herbs replacing the mummy’s internal organs are rare and well preserved. They have a special connection to undeath.
+      - Jagged shards of transparent dark green stones (bloodstones) replace several of the mummy’s teeth. The teeth glimmer in the light. Each gem tooth enables the mummy to cast a minor cleric spell once per day.
