@@ -355,11 +355,11 @@
     /* Card title and button styles */
     .card-title {
       margin-top: 0;
-      margin-bottom: 4px; /* Reduced from 6px */
-      font-size: 1em; /* Smaller font */
+      margin-bottom: 4px;
+      font-size: 1em;
       color: #444;
       border-bottom: 1px solid #ddd;
-      padding-bottom: 4px; /* Reduced padding */
+      padding-bottom: 4px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -369,28 +369,56 @@
       cursor: grabbing;
     }
     .card-title-text {
-      flex-grow: 1;
-      flex-shrink: 1; /* Allow the title to shrink */
+      flex: 1 1 auto; /* Allow the title to grow and shrink as needed */
+      min-width: 0; /* Critical for text-overflow to work properly */
       color: #333 !important;
       font-weight: bold;
-      font-size: 0.95em; /* Smaller text */
-      white-space: nowrap; /* Keep on single line */
-      overflow: hidden; /* Hide overflow */
-      text-overflow: ellipsis; /* Add ellipsis */
-      min-width: 0; /* Important for text-overflow to work in flex */
-      margin-right: 8px; /* Space between title and buttons */
+      font-size: 0.95em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
     }
     .card-actions {
+      flex: 0 0 auto; /* Don't grow or shrink, use natural width */
       display: flex;
-      gap: 8px; /* Reduced from 12px */
+      gap: 4px; /* Reduced from 8px to save space */
       align-items: center;
-      flex-shrink: 0; /* Don't shrink buttons */
     }
     
-    /* Button styles */
-    .reroll-all-btn, .copy-btn, .delete-card-btn {
+    /* Make buttons more compact by removing text */
+    .copy-btn, .reroll-all-btn, .delete-card-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      width: 24px;
+      height: 24px; /* Preserving original button height */
       display: flex;
       align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .reroll-all-btn:hover, .copy-btn:hover {
+      transform: scale(1.05);
+      color: #333;
+    }
+    .delete-card-btn:hover {
+      transform: scale(1.05);
+      color: #ff3333;
+    }
+    .reroll-all-btn img, .copy-btn img, .delete-card-btn img {
+      width: 18px; /* Slightly larger icons since we removed text */
+      height: 18px;
+      border-radius: 2px;
+      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.15));
+    }
+    
+    /* Toast notification */
+    .toast-message {
+      position: fixed;
+      bottom: 15px; /* Moved up slightly */
+      left: 50%;
       font-size: 0.7em;
       background: none;
       border: none;
@@ -1460,11 +1488,7 @@
           let firstValue = extractDisplayValueForTitle(result);
           firstValue = firstValue.trim();
           
-          // Limit the length if it's too long
-          if (firstValue.length > 30) {
-            firstValue = firstValue.substring(0, 27) + '...';
-          }
-          
+          // Remove the truncation - let CSS handle it
           // Add the title text with both table name and first value
           titleText.textContent = firstValue ? 
             `${selectedTable.tablename || 'Result'} - ${firstValue}` :
@@ -1478,40 +1502,34 @@
           // Add the Copy button
           const copyBtn = document.createElement('button');
           copyBtn.className = 'copy-btn';
+          copyBtn.title = "Copy to Markdown"; // Add title attribute for hover text
           copyBtn.onclick = (e) => {
             e.stopPropagation(); // Prevent drag when clicking buttons
             copyToMarkdown(generationContainer);
           };
-          copyBtn.innerHTML = `
-            Copy
-            <img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">
-          `;
+          copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
           cardActions.appendChild(copyBtn);
           
           // Add the Reroll All button
           const rerollAllBtn = document.createElement('button');
           rerollAllBtn.className = 'reroll-all-btn';
+          rerollAllBtn.title = "Reroll All"; // Add title attribute for hover text
           rerollAllBtn.onclick = (e) => {
             e.stopPropagation(); // Prevent drag when clicking buttons
             rerollAllContent(generationContainer);
           };
-          rerollAllBtn.innerHTML = `
-            Reroll
-            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All" title="Reroll All">
-          `;
+          rerollAllBtn.innerHTML = `<img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All" title="Reroll All">`;
           cardActions.appendChild(rerollAllBtn);
           
           // Add the Delete button (in the action bar instead of corner)
           const deleteBtn = document.createElement('button');
           deleteBtn.className = 'delete-card-btn';
+          deleteBtn.title = "Delete Card"; // Add title attribute for hover text
           deleteBtn.onclick = (e) => {
             e.stopPropagation(); // Prevent drag when clicking buttons
             deleteCard(generationContainer);
           };
-          deleteBtn.innerHTML = `
-            Delete
-            <img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">
-          `;
+          deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">`;
           cardActions.appendChild(deleteBtn);
           
           // Add the actions to the card title
@@ -1846,13 +1864,12 @@
     // Helper function to update card title
     function updateCardTitle(container, newValue) {
       newValue = newValue.trim();
-      if (newValue.length > 30) {
-        newValue = newValue.substring(0, 27) + '...';
-      }
+      // Remove the hardcoded truncation - let CSS handle it
       
       const titleText = container.querySelector('.card-title-text');
       if (titleText) {
         titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newValue}`;
+        // Using the full text and letting CSS truncate
       }
     }
     
@@ -1914,12 +1931,7 @@
           let firstValue = extractDisplayValueForTitle(data.results[0]);
           firstValue = firstValue.trim();
           
-          // Limit the length if it's too long
-          if (firstValue.length > 30) {
-            firstValue = firstValue.substring(0, 27) + '...';
-          }
-          
-          // Update the title text
+          // Update the title text without truncation
           const titleText = cardHeader.querySelector('.card-title-text');
           if (titleText) {
             titleText.textContent = firstValue ? 
@@ -2591,27 +2603,23 @@
         // Copy button
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-btn';
+        copyBtn.title = "Copy to Markdown"; // Add title attribute for hover text
         copyBtn.onclick = (e) => {
-          e.stopPropagation(); // Prevent drag when clicking buttons
+          e.stopPropagation();
           copyTableToMarkdown(tableContainer, data.tableData);
         };
-        copyBtn.innerHTML = `
-          Copy
-          <img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">
-        `;
+        copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
         cardActions.appendChild(copyBtn);
         
         // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-card-btn';
+        deleteBtn.title = "Delete Card"; // Add title attribute for hover text
         deleteBtn.onclick = (e) => {
-          e.stopPropagation(); // Prevent drag when clicking buttons
+          e.stopPropagation();
           deleteCard(tableContainer);
         };
-        deleteBtn.innerHTML = `
-          Delete
-          <img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">
-        `;
+        deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">`;
         cardActions.appendChild(deleteBtn);
         
         tableHeader.appendChild(cardActions);

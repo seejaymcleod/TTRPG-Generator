@@ -3,7 +3,7 @@ game: ShadowDark
 setting: Fantasy
 type: Places
 tablename: Adventuring Site Names
-customDisplay: "{PlaceOf] {Adjective] {Noun]"
+customDisplay: "[{PlaceOf, Adjective, Noun }]"
 tables:
   - name: PlaceOf
     results:
