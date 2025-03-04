@@ -43,7 +43,7 @@
       height: 22px; /* Explicit height */
     }
     
-    /* Filter styles - MORE COMPACT BUTTON IMPLEMENTATION */
+    /* Filter styles - MODIFIED for horizontal layout */
     #filtersContainer {
       display: flex;
       padding: 4px; /* Reduced from 6px */
@@ -53,20 +53,24 @@
     }
     .filter-container {
       display: flex;
-      flex-direction: column;
+      flex-direction: row; /* Changed from column to row for horizontal layout */
       position: relative;
       flex: 1;
+      align-items: center; /* Align items vertically center */
+      gap: 8px; /* Gap between header and buttons */
     }
     .filter-header {
       display: flex;
+      flex-shrink: 0; /* Don't shrink header */
+      width: 75px; /* Fixed width for header */
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 3px; /* Reduced from 8px */
     }
     .filter-title {
       font-weight: bold;
       color: #333;
       font-size: 0.9em; /* Smaller title */
+      white-space: nowrap; /* Prevent wrapping */
     }
     .filter-clear {
       background: none;
@@ -79,15 +83,16 @@
       height: 20px; /* Smaller button */
       line-height: 18px; /* Adjusted line height */
       text-align: center;
+      margin-left: 4px; /* Add a small space between title and clear button */
     }
     .filter-buttons {
       display: flex;
       flex-wrap: wrap;
+      flex: 1; /* Take remaining space */
       gap: 4px; /* Reduced from 6px */
-      max-height: 56px; /* Reduced from 74px to show fewer rows */
+      max-height: 28px; /* Reduced from 56px for single row */
       overflow-y: hidden;
       position: relative;
-      padding-bottom: 2px; /* Reduced space for gradient */
       transition: max-height 0.3s;
     }
     .filter-buttons::after {
@@ -140,18 +145,24 @@
       pointer-events: none;  /* Disable interaction */
     }
     .expand-btn {
-      width: 100%;
+      position: absolute; /* Position absolute to place it below */
+      bottom: -24px; /* Position below the filter */
+      right: 0; /* Align to the right */
+      width: auto; /* Auto width rather than 100% */
+      min-width: 80px; /* Minimum width */
       border: none;
       background-color: #d0d0d0;
       border-top: 1px solid #ccc;
       cursor: pointer;
-      padding: 2px; /* Less padding */
+      padding: 2px 6px; /* Less padding */
       margin-top: 2px; /* Reduced margin */
       text-align: center;
       font-size: 0.85em; /* Smaller text */
       color: #555;
       font-weight: bold;
       display: none; /* Hide by default */
+      z-index: 10; /* Ensure it appears above content */
+      border-radius: 0 0 3px 3px; /* Rounded bottom corners */
     }
     .filter-container.has-significant-overflow .expand-btn,
     .filter-container .filter-buttons.expanded + .expand-btn {
@@ -170,6 +181,12 @@
       height: 24px; /* Reduced height */
       align-self: center;
       padding: 0 8px; /* Added horizontal padding */
+    }
+    
+    /* Add extra space below filters for expand buttons */
+    #filtersContainer {
+      margin-bottom: 26px; /* Space for expand buttons */
+      position: relative; /* For absolute positioning of children */
     }
     
     /* Content layout */
@@ -818,7 +835,7 @@
     <input type="text" id="searchInput" placeholder="Search for tables..." oninput="performSearch()">
   </div>
 
-  <!-- REPLACE the filter section with our new button-based UI -->
+  <!-- REPLACE the filter section with our new button-based UI in horizontal layout -->
   <div id="filtersContainer">
     <div class="filter-container">
       <div class="filter-header">
@@ -828,7 +845,7 @@
       <div id="gameFilter" class="filter-buttons" data-mode="all-selected">
         <!-- Game filter buttons will be added here dynamically -->
       </div>
-      <button class="expand-btn" onclick="toggleFilterExpand('gameFilter')">▼</button>
+      <button class="expand-btn" onclick="toggleFilterExpand('gameFilter')">▼ More</button>
     </div>
     
     <div class="filter-container">
@@ -839,7 +856,7 @@
       <div id="typeFilter" class="filter-buttons" data-mode="all-selected">
         <!-- Type filter buttons will be added here dynamically -->
       </div>
-      <button class="expand-btn" onclick="toggleFilterExpand('typeFilter')">▼</button>
+      <button class="expand-btn" onclick="toggleFilterExpand('typeFilter')">▼ More</button>
     </div>
     
     <div class="filter-container">
@@ -850,7 +867,7 @@
       <div id="settingFilter" class="filter-buttons" data-mode="all-selected">
         <!-- Setting filter buttons will be added here dynamically -->
       </div>
-      <button class="expand-btn" onclick="toggleFilterExpand('settingFilter')">▼</button>
+      <button class="expand-btn" onclick="toggleFilterExpand('settingFilter')">▼ More</button>
     </div>
     
     <button id="resetButton" onclick="resetFilters()">Reset All</button>
@@ -1040,14 +1057,18 @@
     // New function to check if filter container has significant overflow content
     function checkFilterOverflow(filterId) {
       const container = document.getElementById(filterId);
-      const significantOverflowThreshold = 10; // Reduced from 30 to make "Show More" appear sooner
+      const significantOverflowThreshold = 10; // Show "More" when we have this much overflow
       
-      if (container.scrollHeight > container.clientHeight) {
-        // Add has-overflow class regardless of amount
+      if (container.scrollHeight > container.clientHeight || container.scrollWidth > container.clientWidth) {
+        // Add has-overflow class for any overflow
         container.classList.add('has-overflow');
         
         // Check if overflow is significant enough to show controls
-        if (container.scrollHeight - container.clientHeight > significantOverflowThreshold) {
+        const hasSignificantOverflow = 
+          container.scrollHeight - container.clientHeight > significantOverflowThreshold || 
+          container.scrollWidth - container.clientWidth > 20; // Higher threshold for horizontal
+        
+        if (hasSignificantOverflow) {
           container.closest('.filter-container').classList.add('has-significant-overflow');
         } else {
           container.closest('.filter-container').classList.remove('has-significant-overflow');
@@ -1113,14 +1134,11 @@
       const filterContainer = document.getElementById(filterId);
       filterContainer.classList.toggle('expanded');
       
-      const expandBtn = filterContainer.closest('.filter-container').querySelector('.expand-btn');
+      const expandBtn = document.querySelector(`.expand-btn[onclick*="${filterId}"]`);
       if (filterContainer.classList.contains('expanded')) {
-        expandBtn.textContent = '▲ Show Less';
-        // Add a class to the parent container to keep the button visible
-        expandBtn.classList.add('visible-when-expanded');
+        expandBtn.textContent = '▲ Less';
       } else {
-        expandBtn.textContent = '▼ Show More';
-        expandBtn.classList.remove('visible-when-expanded');
+        expandBtn.textContent = '▼ More';
       }
       
       // Recalculate overflow after toggling
