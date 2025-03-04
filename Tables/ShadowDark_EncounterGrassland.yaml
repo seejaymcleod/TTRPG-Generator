@@ -1,13 +1,11 @@
-tablename: Grassland Encounters
-filename: ShadowDark_Encounter_Grassland.yaml
+filename: ShadowDark_EncounterGrassland.yaml
 game: ShadowDark
 setting: Fantasy
 type: Encounter
-subtype: none
+tablename: Grassland Encounters
 tables:
-  - name: Grassland_Encounters
-    results:
-      - A roc passes overhead and then divebombs the PCs^0.5
+  - results:
+      - ["A roc passes overhead and then divebombs the PCs", 0.5]
       - A hunting smilodon prowls through the tall grass
       - A baby mammoth flees a pack of 2d6 wolves
       - A pale wizard in black robes stands silently on a tall rock
@@ -47,7 +45,7 @@ tables:
       - A fossilized tree teeters on top of an eroding mud pillar
       - A T-Rex gallops along after a herd of panicked antelope
       - 2d6 gnolls creep below the tall grass line, spears ready
-      - A mammoth gently pats heads with its trunk: +1 luck token
+      - "A mammoth gently pats heads with its trunk: +1 luck token"
       - A mated pair of smilodons leaps down from grassy ridges
       - A stone golem made of glittering gypsum guards a field
       - A shadow ripples over the grass like a dark stain
@@ -55,5 +53,5 @@ tables:
       - A bull-headed shrine to a lost god repels roving beasts
       - A sun-blind cave brute wildly lurches toward sounds
       - The Wandering Merchant flees from a furious rhino
-      - Roll two encounters and combine the results [reroll 98-99)
-      - A principled angel strides from a storm cloud to gift a boon^0.5
+      - "Roll two encounters and combine." 
+      - ["A principled angel strides from a storm cloud to gift a boon", 0.5]

@@ -1,13 +1,11 @@
-tablename: Artisan District Encounters
 filename: ShadowDark_Encounter_Artisan_District.yaml
 game: ShadowDark
 setting: Fantasy
-type: Encounter
-subtype: none
+type: Adventure
+tablename: Artisan District Encounters
 tables:
-  - name: Artisan_District_Encounters
-    results:
-      - An execution is about to happen; it's a PC's family member^0.5
+  - results:
+      - ["An execution is about to happen; it's a PC's family member", 0.5]
       - An angry efreet rises out of a tarnished brass lamp
       - An assassin drops from above, mistaking a PC as a mark
       - A glassblower accuses a PC of breaking a priceless vase
@@ -38,7 +36,7 @@ tables:
       - An old, drunk noble challenges a PC to a duel to the death
       - An open square hosts a contest of insult-slinging bards
       - A bald, spectacled man watches the PCs and takes notes
-      - A jumpy woman palms a PC a note: They're watching!
+      - "A jumpy woman palms a PC a note: They're watching!"
       - A shiny object (crocodile eye) glints inside a sewer grate
       - Sneering onlookers throw tomatoes at a harried bard
       - A woman in a cowled cloak pulls down wanted posters
@@ -55,5 +53,5 @@ tables:
       - A ray of sunlight outlines a hidden door back in an alley
       - Rival crawlers challenge the group to a drinking contest
       - The Wandering Merchant appears with a potion for sale
-      - Roll two encounters and combine the results (reroll 96-99)
-      - An appraisal reveals a PC's weapon is actually magical^0.5
+      - "Roll two encounters and combine." 
+      - ["An appraisal reveals a PC's weapon is actually magical", 0.5]

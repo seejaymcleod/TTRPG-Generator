@@ -1,13 +1,11 @@
-tablename: Arctic Encounters
-filename: ShadowDark_Encounter_Arctic.yaml
+filename: ShadowDark_EncounterArctic.yaml
 game: ShadowDark
 setting: Fantasy
-type: Encounter
-subtype: none
+type: Adventure
+tablename: Arctic Encounters
 tables:
-  - name: Arctic_Encounters
-    results:
-    - An albino kraken twitches inside a glassy mountain of ice^0.5
+  - results:
+    - ["An albino kraken twitches inside a glassy mountain of ice.", 0.5]
     - 2d20 cannibalistic bandits led by a frost troll make camp
     - A group of orcs and a snow ape battle over deer meat
     - A murderous fur trader on the run tries to sell stolen pelts
@@ -55,5 +53,5 @@ tables:
     - Prismatic sun falling on the ice is a portal to the Fey realm
     - A banished succubi devil trudges angrily through the snow
     - The Wandering Merchant rides on a caribou pulling a sled
-    - Roll two encounters and combine the results (reroll 98-99)
-    - Steam rises from an oasis of sulfuric, regenerative springs^0.5
+    - "Roll two encounters and combine." 
+    - ["Steam rises from an oasis of sulfuric, regenerative springs.", 0.5]
