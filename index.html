@@ -2904,6 +2904,231 @@
         }
       });
     }
+
+    // Replace the updateAvailableOptions function with this improved version
+    function updateAvailableOptions(filteredTables) {
+      const gameFilter = document.getElementById('gameFilter');
+      const typeFilter = document.getElementById('typeFilter');
+      const settingFilter = document.getElementById('settingFilter');
+      
+      // Get currently selected values
+      const selectedGames = getSelectedValues('gameFilter');
+      const selectedTypes = getSelectedValues('typeFilter');
+      const selectedSettings = getSelectedValues('settingFilter');
+      
+      // Get current filter mode (all-selected vs. choice mode)
+      const gameFilterMode = gameFilter.dataset.mode;
+      const typeFilterMode = typeFilter.dataset.mode;
+      const settingFilterMode = settingFilter.dataset.mode;
+      
+      // Create sets to store all options that would produce results
+      // if added to the current selection
+      const availableGames = new Set();
+      const availableTypes = new Set();
+      const availableSettings = new Set();
+      
+      // Important: First collect all possible values from all tables
+      // These are used to determine what options should be enabled in each category
+      const allGames = new Set();
+      const allTypes = new Set();
+      const allSettings = new Set();
+      
+      tablesData.forEach(table => {
+        if (table.game) allGames.add(table.game);
+        
+        if (Array.isArray(table.type)) {
+          table.type.forEach(t => {
+            if (t) allTypes.add(t);
+          });
+        } else if (table.type) {
+          allTypes.add(table.type);
+        }
+        
+        if (table.setting) allSettings.add(table.setting);
+      });
+      
+      // Now determine which options would produce results with current filters
+      tablesData.forEach(table => {
+        // Create copies of the current filter selections for testing
+        const currentGameFilters = [...selectedGames];
+        const currentTypeFilters = [...selectedTypes]; 
+        const currentSettingFilters = [...selectedSettings];
+        
+        // Test each potential Game option
+        if (gameFilterMode === 'choice') {
+          // Only test for games not already selected
+          if (table.game && !currentGameFilters.includes(table.game)) {
+            // Would adding this game to the current selection produce results?
+            const testGameFilters = [...currentGameFilters, table.game];
+            
+            // Check if this table would pass filters with this game added
+            if (wouldTablePassFilters(table, testGameFilters, currentTypeFilters, currentSettingFilters)) {
+              availableGames.add(table.game);
+            }
+          }
+        } else {
+          // In all-selected mode, all games that would pass other filters are available
+          if (wouldTablePassFilters(table, [], currentTypeFilters, currentSettingFilters)) {
+            if (table.game) availableGames.add(table.game);
+          }
+        }
+        
+        // Test each potential Type option
+        if (typeFilterMode === 'choice') {
+          if (Array.isArray(table.type)) {
+            table.type.forEach(t => {
+              if (t && !currentTypeFilters.includes(t)) {
+                // Would adding this type to the current selection produce results?
+                const testTypeFilters = [...currentTypeFilters, t];
+                
+                if (wouldTablePassFilters(table, currentGameFilters, testTypeFilters, currentSettingFilters)) {
+                  availableTypes.add(t);
+                }
+              }
+            });
+          } else if (table.type && !currentTypeFilters.includes(table.type)) {
+            // Would adding this type to the current selection produce results?
+            const testTypeFilters = [...currentTypeFilters, table.type];
+            
+            if (wouldTablePassFilters(table, currentGameFilters, testTypeFilters, currentSettingFilters)) {
+              availableTypes.add(table.type);
+            }
+          }
+        } else {
+          // In all-selected mode, all types that would pass other filters are available
+          if (wouldTablePassFilters(table, currentGameFilters, [], currentSettingFilters)) {
+            if (Array.isArray(table.type)) {
+              table.type.forEach(t => {
+                if (t) availableTypes.add(t);
+              });
+            } else if (table.type) {
+              availableTypes.add(table.type);
+            }
+          }
+        }
+        
+        // Test each potential Setting option
+        if (settingFilterMode === 'choice') {
+          if (table.setting && !currentSettingFilters.includes(table.setting)) {
+            // Would adding this setting to the current selection produce results?
+            const testSettingFilters = [...currentSettingFilters, table.setting];
+            
+            if (wouldTablePassFilters(table, currentGameFilters, currentTypeFilters, testSettingFilters)) {
+              availableSettings.add(table.setting);
+            }
+          }
+        } else {
+          // In all-selected mode, all settings that would pass other filters are available
+          if (wouldTablePassFilters(table, currentGameFilters, currentTypeFilters, [])) {
+            if (table.setting) availableSettings.add(table.setting);
+          }
+        }
+      });
+      
+      // For buttons in each category that are already selected, always mark them as available
+      selectedGames.forEach(game => availableGames.add(game));
+      selectedTypes.forEach(type => availableTypes.add(type));
+      selectedSettings.forEach(setting => availableSettings.add(setting));
+      
+      // Next, in choice mode, we should keep options within the same category available for additional selection
+      if (gameFilterMode === 'choice') {
+        allGames.forEach(game => {
+          // We never disable items in their own category in choice mode
+          // If at least one item is selected, this option should be selectable too
+          if (selectedGames.length > 0) {
+            availableGames.add(game);
+          }
+        });
+      }
+      
+      if (typeFilterMode === 'choice') {
+        allTypes.forEach(type => {
+          if (selectedTypes.length > 0) {
+            availableTypes.add(type);
+          }
+        });
+      }
+      
+      if (settingFilterMode === 'choice') {
+        allSettings.forEach(setting => {
+          if (selectedSettings.length > 0) {
+            availableSettings.add(setting);
+          }
+        });
+      }
+      
+      // Update UI for each filter
+      updateFilterUI(gameFilter, availableGames, selectedGames, allGames);
+      updateFilterUI(typeFilter, availableTypes, selectedTypes, allTypes);
+      updateFilterUI(settingFilter, availableSettings, selectedSettings, allSettings);
+    }
+
+    // New helper function to determine if a table would pass the given filters
+    function wouldTablePassFilters(table, gameFilters, typeFilters, settingFilters) {
+      // Filter by game
+      const passesGame = gameFilters.length === 0 || 
+                        (table.game && gameFilters.includes(table.game));
+      
+      // Handle type filter when type is an array
+      let passesType = false;
+      if (typeFilters.length === 0) {
+        passesType = true;
+      } else if (Array.isArray(table.type)) {
+        // Check if any type in the array matches any selected type filter
+        passesType = table.type.some(t => typeFilters.includes(t));
+      } else {
+        // Handle single type as before
+        passesType = table.type && typeFilters.includes(table.type);
+      }
+      
+      // Filter by setting
+      const passesSetting = settingFilters.length === 0 || 
+                           (table.setting && settingFilters.includes(table.setting));
+      
+      return passesGame && passesType && passesSetting;
+    }
+
+    // Updated helper function to update filter UI
+    function updateFilterUI(filterContainer, availableOptions, selectedOptions, allOptions) {
+      const mode = filterContainer.dataset.mode;
+      const buttons = filterContainer.querySelectorAll('.filter-btn');
+      
+      buttons.forEach(button => {
+        const value = button.dataset.value;
+        const isAvailable = availableOptions.has(value);
+        const isSelected = selectedOptions.includes(value);
+        
+        // Reset all button states first
+        button.classList.remove('selected', 'unselected', 'unavailable');
+        button.disabled = false;
+        
+        if (mode === 'all-selected') {
+          // In all-selected mode (no explicit filters in this category)
+          if (!isAvailable) {
+            // Option not available with current filters
+            button.classList.add('unavailable');
+            button.disabled = true;
+          }
+          // Otherwise leave in default state (no classes)
+        } 
+        else {
+          // In choice mode (specific filters selected in this category)
+          if (isSelected) {
+            // This option is selected
+            button.classList.add('selected');
+          } else {
+            // This option is not selected
+            button.classList.add('unselected');
+            
+            // If it's also not available, mark as unavailable
+            if (!isAvailable) {
+              button.classList.add('unavailable');
+              button.disabled = true;
+            }
+          }
+        }
+      });
+    }
   </script>
 </body>
 </html>
