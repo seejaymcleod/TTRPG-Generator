@@ -1078,24 +1078,17 @@ function loadAllTables() {
 function processTableReferences(input, allTables, context = {}) {
   // Handle string inputs
   if (typeof input === 'string') {
-    // Use enhanced string replacement logic with pipe support
-    const tableRefRegex = /\{([^}]+)\}/g;
+    // Enhanced regex to capture both simple table references {TableName}
+    // and indexed array references {TableName[0]} or {TableName[index]}
+    const tableRefRegex = /\{([^}\[\]]+)(?:\[(\d+)\])?([^}]*)\}/g;
     
-    return input.replace(tableRefRegex, (match, reference) => {
-      if (DEBUG) console.log(`Processing table reference: ${reference}`);
+    return input.replace(tableRefRegex, (match, tableName, arrayIndex, pipeAndSubtable) => {
+      if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${tableName}, Index: ${arrayIndex || 'none'})`);
       
-      // Check if the reference contains a pipe to indicate subtable
-      const parts = reference.split('|');
-      const tableName = parts[0].trim();
-      const subtableName = parts.length > 1 ? parts[1].trim() : null;
-      
-      // Log information about the reference
-      if (DEBUG) {
-        if (subtableName) {
-          console.log(`Looking for subtable "${subtableName}" within table "${tableName}"`);
-        } else {
-          console.log(`Looking for table "${tableName}"`);
-        }
+      // Handle pipe syntax for subtables (if present)
+      let subtableName = null;
+      if (pipeAndSubtable && pipeAndSubtable.startsWith('|')) {
+        subtableName = pipeAndSubtable.substring(1).trim();
       }
       
       // First find the referenced table
@@ -1107,6 +1100,8 @@ function processTableReferences(input, allTables, context = {}) {
       }
       
       try {
+        let result;
+        
         // If a specific subtable is requested
         if (subtableName) {
           // Find the specified subtable within the referenced table
@@ -1123,17 +1118,15 @@ function processTableReferences(input, allTables, context = {}) {
           
           // Generate from the subtable
           if (subtable.results && Array.isArray(subtable.results)) {
-            return getWeightedRandomResult({ results: subtable.results });
+            result = getWeightedRandomResult({ results: subtable.results });
           } else {
             console.error(`Subtable "${subtableName}" has no valid results array`);
             return `[No results in ${tableName}|${subtableName}]`;
           }
         }
-        
-        // NEW: Check if the referenced table has customDisplay and process it
-        if (referencedTable.customDisplay) {
+        // Check if the referenced table has customDisplay
+        else if (referencedTable.customDisplay) {
           if (DEBUG) console.log(`Table "${tableName}" uses customDisplay, processing...`);
-          // Find the main table object that contains the customDisplay
           let mainTable = referencedTable;
           
           if (referencedTable.tables && Array.isArray(referencedTable.tables)) {
@@ -1144,32 +1137,70 @@ function processTableReferences(input, allTables, context = {}) {
             }
           }
           
-          return processCustomDisplay(mainTable, allTables, context);
+          result = processCustomDisplay(mainTable, allTables, context);
         }
-        
         // For whole-table references (no subtable specified)
-        if (referencedTable.results && Array.isArray(referencedTable.results)) {
-          return getWeightedRandomResult({ results: referencedTable.results });
+        else if (referencedTable.results && Array.isArray(referencedTable.results)) {
+          result = getWeightedRandomResult({ results: referencedTable.results });
         }
         else if (referencedTable.tables && Array.isArray(referencedTable.tables) && referencedTable.tables.length > 0) {
           // Look for a table with customDisplay first
           const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
           if (customDisplayTable) {
             if (DEBUG) console.log(`Found table with customDisplay: ${customDisplayTable.name}`);
-            return processCustomDisplay(customDisplayTable, allTables, context);
+            result = processCustomDisplay(customDisplayTable, allTables, context);
+          } else {
+            // Otherwise use the first subtable with results
+            const subtable = referencedTable.tables[0];
+            if (subtable.results && Array.isArray(subtable.results)) {
+              result = getWeightedRandomResult(subtable);
+            } else {
+              console.error(`No valid results found in first subtable of ${tableName}`);
+              return `[No valid results in ${tableName}]`;
+            }
           }
-          
-          // Otherwise use the first subtable with results
-          const subtable = referencedTable.tables[0];
-          if (subtable.results && Array.isArray(subtable.results)) {
-            return getWeightedRandomResult(subtable);
+        } else {
+          console.error(`No valid results found in referenced table: ${tableName}`);
+          return `[No results in ${tableName}]`;
+        }
+        
+        // Now handle array indexing if specified
+        if (arrayIndex !== undefined && Array.isArray(result)) {
+          const index = parseInt(arrayIndex, 10);
+          if (index >= 0 && index < result.length) {
+            if (DEBUG) console.log(`Extracting index [${index}] from array result: ${JSON.stringify(result)}`);
+            return result[index];
+          } else {
+            console.error(`Array index ${index} out of bounds for result: ${JSON.stringify(result)}`);
+            return `[Index ${index} out of bounds]`;
           }
         }
         
-        console.error(`No valid results found in referenced table: ${tableName}`);
-        return `[No results in ${tableName}]`;
+        // Also handle automatic extraction of first element for arrays in string contexts
+        if (Array.isArray(result)) {
+          if (DEBUG) console.log(`Using first element of array result: ${result[0]} (from ${JSON.stringify(result)})`);
+          return result[0]; // Return just the first element
+        }
+        
+        // Handle object results by converting to string
+        if (result && typeof result === 'object' && !Array.isArray(result)) {
+          try {
+            // Try to extract a meaningful string property if one exists
+            if (result.name) return result.name;
+            if (result.title) return result.title;
+            if (result.value) return String(result.value);
+            
+            // Convert to JSON string as last resort
+            return JSON.stringify(result);
+          } catch (e) {
+            console.error(`Error converting object result to string: ${e.message}`);
+            return "[Object]";
+          }
+        }
+        
+        return result ? String(result) : '';
       } catch (error) {
-        console.error(`Error processing table reference ${reference}:`, error);
+        console.error(`Error processing table reference ${match}:`, error);
         return `[Error: ${error.message}]`;
       }
     });
