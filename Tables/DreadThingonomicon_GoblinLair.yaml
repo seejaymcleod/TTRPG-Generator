@@ -1,7 +1,7 @@
 filename: DreadThingonomicon_GoblinLair.yaml
 game: DreadThingonomicon
 setting: Fantasy
-type: Lair
+type: Places
 tablename: Goblin Lair
 tables:
   - name: General Activities

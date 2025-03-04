@@ -1,9 +1,8 @@
-tablename: Character Traits
-filename: Cairn_NPC_Character_Traits.yaml
+filename: Cairn_CharacterTraits.yaml
 game: Cairn
 setting: Fantasy
-type: Character
-subtype: none
+type: People
+tablename: Character Traits
 tables:  
   - name: Physique
     results:

@@ -1,9 +1,8 @@
-tablename: Character Bonds
-filename: Cairn_NPC_Character_Bonds.yaml
+filename: Cairn_CharacterBonds.yaml
 game: Cairn
 setting: Fantasy
-type: Character
-subtype: none
+type: People
+tablename: Character Bonds
 tables:  
   - name: Character Bonds
     results:
