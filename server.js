@@ -1176,13 +1176,19 @@ function processTableReferences(input, allTables, context = {}) {
           }
         }
         
+        // NEW: Check for object with career/items format first (common for spells)
+        if (result && typeof result === 'object' && !Array.isArray(result) && result.career) {
+          if (DEBUG) console.log(`Found object with career property: ${result.career}`);
+          return result.career; // Return just the career (spell name)
+        }
+        
         // Also handle automatic extraction of first element for arrays in string contexts
         if (Array.isArray(result)) {
           if (DEBUG) console.log(`Using first element of array result: ${result[0]} (from ${JSON.stringify(result)})`);
           return result[0]; // Return just the first element
         }
         
-        // Handle object results by converting to string
+        // Handle other object results by converting to string
         if (result && typeof result === 'object' && !Array.isArray(result)) {
           try {
             // Try to extract a meaningful string property if one exists

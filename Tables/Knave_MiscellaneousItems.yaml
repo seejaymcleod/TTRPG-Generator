@@ -74,7 +74,7 @@ tables:
       - "Pipes"
       - "Poem"
       - "Portrait"
-      - "{Knave_Potions}"
+      - "{Knave_Potions} potion"
       - "{Knave_Potions} potion recipe"
       - "Prayer"
       - "Pressed flower"
