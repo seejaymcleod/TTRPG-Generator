@@ -20,6 +20,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Add a route to serve images from the Images directory
 app.use('/Images', express.static(path.join(__dirname, 'Images')));
 
+// Add a route to serve the extractContext function directly
+app.get('/js/extractContext.js', (req, res) => {
+  if (DEBUG) console.log('Serving extractContext.js');
+  res.setHeader('Content-Type', 'application/javascript');
+  res.send(`
+/**
+ * Global extractContext function to fix "extractContext is not defined" error
+ * This needs to be included before any other scripts
+ */
+(function() {
+    console.log("Loading extractContext polyfill");
+
+    // Define globally with both naming conventions
+    window.extractContext = function(context, key, defaultValue = null) {
+        if (!context || typeof context !== 'object') return defaultValue;
+        if (key in context) return context[key];
+        return defaultValue;
+    };
+    
+    // Also define with capital E for consistency
+    window.ExtractContext = window.extractContext;
+    
+    console.log("extractContext polyfill loaded successfully");
+})();
+  `);
+});
+
 // Modify the API endpoint to handle types as arrays
 app.get('/api/tables', (req, res) => {
   if (DEBUG) console.log(`Sending data for ${tables.length} tables (use verbose logging to see full data)`);
