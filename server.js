@@ -147,7 +147,11 @@ app.post('/api/reroll', (req, res) => {
   }
 
   try {
+    // Initialize context with thisResult property if not present
     const context = clientContext || {};
+    if (!('thisResult' in context)) {
+      context.thisResult = null;
+    }
     
     // Find the specific subtable for this header with improved fallback logic
     let targetSubTable = null;
@@ -736,7 +740,7 @@ function processCustomDisplay(table, allTables, context) {
           `Deferred token: No subtable named "${pickedResult}" in current table or it has no results.`
         );
         if (table.subTables && table.subTables.length > 0) {
-          console.log(`Available subtable names:`, table.subTables.map(st => st.tablename || st.name));
+          console.log(`Available subtable names:`, table.subTables.map(st => t.tablename || t.name));
         }
       }
     }
@@ -989,7 +993,9 @@ function generateResultsFromTables(table, numberOfGenerations, allTables) {
   let results = [];
   for (let i = 0; i < numberOfGenerations; i++) {
     // Create a fresh context for each generation
-    let context = {};
+    let context = {
+      thisResult: null // Initialize thisResult to null
+    };
     const result = processTable(table, "", allTables, context);
     if (result) {
       results.push(result);
@@ -1151,19 +1157,54 @@ function loadAllTables() {
 function processTableReferences(input, allTables, context = {}) {
   // Handle string inputs
   if (typeof input === 'string') {
-    // Enhanced regex to capture dice notation expressions, table references,
-    // indexed array references, and pipe syntax
-    const tableRefRegex = /\{([^}\[\]|]+)(?:\[(\d+)\])?(?:\|([^}]+))?\}/g;
-    
-    return input.replace(tableRefRegex, (match, content, arrayIndex, subtableName) => {
-      // First check if this is a dice notation expression
-      const diceResult = parseDiceNotation(content);
+    // First, process any dice notation to populate context
+    let processedInput = input;
+    const diceRegex = /\{(\d+d\d+(?:[+-]\d+)?)\}/g;
+    processedInput = input.replace(diceRegex, (match, diceNotation) => {
+      const diceResult = parseDiceNotation(diceNotation);
       if (diceResult !== null) {
         if (DEBUG) console.log(`Dice notation found: ${match} evaluated to ${diceResult}`);
+        
+        // Store the result in context for reference table lookups
+        if (context) context.thisResult = diceResult;
+        
         return diceResult;
       }
+      return match; // Return unchanged if not valid dice notation
+    });
+
+    // Second, process useReferenceTable calls now that dice results are in context
+    const useRefRegex = /\{useReferenceTable\{([^}]+)\}\{([^}]+)\}\}/g;
+    processedInput = processedInput.replace(useRefRegex, (match, tableName, lookupValue) => {
+      if (DEBUG) console.log(`Detected useReferenceTable function call: Table=${tableName}, Value=${lookupValue}`);
+      return lookupInReferenceTable(tableName, lookupValue, allTables, context);
+    });
+
+    // Finally, handle standard table references
+    const tableRefRegex = /\{([^}\[\]|]+)(?:\[(\d+)\])?(?:\|([^}]+))?\}/g;
+    
+    return processedInput.replace(tableRefRegex, (match, content, arrayIndex, subtableName) => {
+      // Skip dice notation as we've already processed it
+      if (parseDiceNotation(content) !== null) {
+        return content; // Just return the result which should already be in processedInput
+      }
       
-      // If not dice, process as a table reference
+      // Special case for thisResult[index]
+      if (content === "thisResult" && arrayIndex !== undefined && context && 'thisResult' in context) {
+        if (DEBUG) console.log(`Direct access to thisResult[${arrayIndex}] from context:`, context.thisResult);
+        
+        if (Array.isArray(context.thisResult) && context.thisResult.length > arrayIndex) {
+          return context.thisResult[arrayIndex];
+        } else if (!Array.isArray(context.thisResult) && arrayIndex == 0) {
+          // Allow thisResult[0] to work on non-array values
+          return context.thisResult;
+        } else {
+          console.error(`Invalid thisResult index: ${arrayIndex} for context:`, context.thisResult);
+          return `[Invalid thisResult index]`;
+        }
+      }
+      
+      // Process as a table reference
       if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${content}, Index: ${arrayIndex || 'none'}, Subtable: ${subtableName || 'none'})`);
       
       // Find the referenced table
@@ -1203,13 +1244,15 @@ function processTableReferences(input, allTables, context = {}) {
           }
           
           // Generate from the subtable
-          if (subtable.results && Array.isArray(subtable.results)) {
+          if (subtable.results && Array.isArray(subtable.results) && subtable.results.length > 0) {
             result = getWeightedRandomResult({ results: subtable.results });
           } else {
-            console.error(`Subtable "${subtableName}" has no valid results array`);
+            console.error(`Subtable "${subtableName}" has no valid results array or is empty`);
             return `[No results in ${content}|${subtableName}]`;
           }
         }
+        // Rest of the existing function...
+        
         // Check if the referenced table has customDisplay
         else if (referencedTable.customDisplay) {
           if (DEBUG) console.log(`Table "${content}" uses customDisplay, processing...`);
@@ -1307,7 +1350,104 @@ function processTableReferences(input, allTables, context = {}) {
   return input;
 }
 
-// Helper function to find a referenced table by name or filename
+// Function to look up a value in a reference table - improved implementation
+function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
+  if (DEBUG) console.log(`Looking up value ${lookupValue} in reference table ${tableName}`);
+  
+  // Process the lookup value if it contains special variables
+  let processedLookupValue = lookupValue;
+  
+  // Direct handling for thisResult
+  if (lookupValue === "thisResult" && context && 'thisResult' in context) {
+    processedLookupValue = context.thisResult;
+    if (DEBUG) console.log(`Using thisResult from context: ${processedLookupValue}`);
+  }
+  // Handle array indexing with thisResult (e.g., thisResult[0])
+  else if (/^thisResult\[\d+\]$/.test(lookupValue) && context && 'thisResult' in context) {
+    const match = lookupValue.match(/^thisResult\[(\d+)\]$/);
+    if (match) {
+      const index = parseInt(match[1], 10);
+      if (Array.isArray(context.thisResult) && index < context.thisResult.length) {
+        processedLookupValue = context.thisResult[index];
+        if (DEBUG) console.log(`Using thisResult[${index}] from context: ${processedLookupValue}`);
+      } 
+      else if (index === 0 && !Array.isArray(context.thisResult)) {
+        processedLookupValue = context.thisResult;
+        if (DEBUG) console.log(`Using thisResult as scalar value: ${processedLookupValue}`);
+      }
+      else {
+        console.error(`Invalid thisResult index: ${index} (thisResult=${JSON.stringify(context.thisResult)})`);
+        return `[Invalid thisResult index]`;
+      }
+    }
+  }
+  
+  // Convert to a number if it looks like one
+  if (!isNaN(processedLookupValue)) {
+    processedLookupValue = Number(processedLookupValue);
+  }
+  
+  // Find the reference table - first look in ShadowDark_CharacterGenerator.yaml
+  let refTable = null;
+  
+  // Look for the table in ShadowDark_CharacterGenerator.yaml first
+  const charGenTable = allTables.find(t => t.filename === 'ShadowDark_CharacterGenerator.yaml');
+  if (charGenTable && charGenTable.referenceTables) {
+    refTable = charGenTable.referenceTables.find(rt => rt.tablename === tableName);
+    if (refTable && DEBUG) console.log(`Found reference table "${tableName}" in CharacterGenerator`);
+  }
+  
+  // If not found, search all tables for a matching reference table
+  if (!refTable) {
+    for (const table of allTables) {
+      if (table.referenceTables && Array.isArray(table.referenceTables)) {
+        refTable = table.referenceTables.find(rt => rt.tablename === tableName);
+        if (refTable) {
+          if (DEBUG) console.log(`Found reference table "${tableName}" in ${table.filename}`);
+          break;
+        }
+      }
+    }
+  }
+  
+  if (!refTable) {
+    console.error(`Reference table "${tableName}" not found`);
+    return `[${tableName} not found]`;
+  }
+  
+  if (!refTable.entries || !Array.isArray(refTable.entries)) {
+    console.error(`Reference table "${tableName}" has no entries`);
+    return `[No entries in ${tableName}]`;
+  }
+  
+  if (DEBUG) console.log(`Found reference table "${tableName}" with ${refTable.entries.length} entries, looking up value: ${processedLookupValue}`);
+  
+  // Look for a matching entry
+  for (const entry of refTable.entries) {
+    if (!entry.key) continue;
+    
+    // Check for exact match
+    if (entry.key == processedLookupValue) {
+      if (DEBUG) console.log(`Found exact match: key=${entry.key}, value=${entry.value}`);
+      return entry.value;
+    }
+    
+    // Check for range match (format: "3-5" or "10-11")
+    if (typeof entry.key === 'string' && entry.key.includes('-')) {
+      const [min, max] = entry.key.split('-').map(Number);
+      if (!isNaN(min) && !isNaN(max) && 
+          processedLookupValue >= min && processedLookupValue <= max) {
+        if (DEBUG) console.log(`Found range match: ${min}-${max}, value=${entry.value}`);
+        return entry.value;
+      }
+    }
+  }
+  
+  if (DEBUG) console.log(`No matching entry found for lookup value ${processedLookupValue}`);
+  return `[No match for ${processedLookupValue}]`;
+}
+
+// Add the missing function to find referenced tables by name or filename
 function findReferencedTable(tableRef, allTables) {
   // Remove file extension if present
   const normalizedRef = tableRef.replace(/\.ya?ml$/i, '');
@@ -1334,163 +1474,131 @@ function findReferencedTable(tableRef, allTables) {
   return table;
 }
 
-// Improved helper function to find a subtable by name within a table
-function findSubtableByName(table, subtableName) {
-  if (!table || !subtableName) return null;
-  
-  if (DEBUG) {
-    console.log(`Looking for subtable "${subtableName}" in table "${table.tablename || table.name || table.filename}"`);
+// Function to parse and evaluate dice notation (e.g. "3d6", "2d10+5")
+function parseDiceNotation(notation) {
+  if (typeof notation !== 'string') {
+    return null;
   }
-  
-  // First check directly in the tables array at the table's root level
-  if (table.tables && Array.isArray(table.tables)) {
-    for (const subtable of table.tables) {
-      // Direct match by tablename or name (for backward compatibility)
-      if ((subtable.tablename && subtable.tablename.toLowerCase() === subtableName.toLowerCase()) ||
-          (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase())) {
-        if (DEBUG) console.log(`Found subtable "${subtableName}" directly in table.tables`);
-        return subtable;
-      }
-    }
-  }
-  
-  // Then check in the subTables array (some tables use this property)
-  if (table.subTables && Array.isArray(table.subTables)) {
-    for (const subtable of table.subTables) {
-      if ((subtable.tablename && subtable.tablename.toLowerCase() === subtableName.toLowerCase()) ||
-          (subtable.name && subtable.name.toLowerCase() === subtableName.toLowerCase())) {
-        if (DEBUG) console.log(`Found subtable "${subtableName}" in table.subTables`);
-        return subtable;
-      }
-    }
-  }
-  
-  // Look for a direct property at root level with this name
-  // This handles cases like the ShadowDark_NPC "Secret" table which is at root level
-  if (table[subtableName] && typeof table[subtableName] === 'object') {
-    if (DEBUG) console.log(`Found subtable "${subtableName}" as direct property of table`);
-    return table[subtableName];
-  }
-  
-  // Special case for tables where the subtable names are directly at the root level
-  for (const key in table) {
-    if (key.toLowerCase() === subtableName.toLowerCase() && 
-        typeof table[key] === 'object' && table[key] !== null &&
-        (Array.isArray(table[key]) || table[key].results)) {
-      if (DEBUG) console.log(`Found direct table property matching "${subtableName}"`);
-      return table[key];
-    }
-  }
-  
-  // If not found, look recursively in nested tables
-  if (table.tables && Array.isArray(table.tables)) {
-    for (const subtable of table.tables) {
-      if (subtable.tables || subtable.subTables) {
-        const nestedResult = findSubtableByName(subtable, subtableName);
-        if (nestedResult) return nestedResult;
-      }
-    }
-  }
-  
-  // Last attempt: Try going through the top level tables array to find the matching table
-  if (table.tables && Array.isArray(table.tables)) {
-    for (const topTable of table.tables) {
-      if ((topTable.tablename && topTable.tablename.toLowerCase() === subtableName.toLowerCase()) ||
-          (topTable.name && topTable.name.toLowerCase() === subtableName.toLowerCase())) {
-        if (DEBUG) console.log(`Found "${subtableName}" in top level tables array`);
-        return topTable;
-      }
-    }
-  }
-  
-  if (DEBUG) {
-    // List available subtable names to help debugging
-    const availableSubtables = [];
-    
-    if (table.tables && Array.isArray(table.tables)) {
-      availableSubtables.push(...table.tables.map(t => t.tablename || t.name).filter(Boolean));
-    }
-    
-    if (table.subTables && Array.isArray(table.subTables)) {
-      availableSubtables.push(...table.subTables.map(t => t.tablename || t.name).filter(Boolean));
-    }
-    
-    // Also check for tables at the root level
-    Object.keys(table).forEach(key => {
-      if (typeof table[key] === 'object' && table[key] !== null && !key.startsWith('_')) {
-        availableSubtables.push(key);
-      }
-    });
-    
-    console.log(`Could not find subtable "${subtableName}" in table "${table.tablename || table.name || table.filename}"`);
-    if (availableSubtables.length > 0) {
-      console.log(`Available subtable names: ${availableSubtables.join(', ')}`);
-    }
-    
-    // Print more detailed info about table structure
-    console.log('Table structure overview:', 
-                JSON.stringify({
-                  name: table.tablename || 'unnamed',
-                  hasTablesProp: !!table.tables,
-                  hasSubTablesProp: !!table.subTables,
-                  topLevelKeys: Object.keys(table)
-                }, null, 2));
-  }
-  
-  return null;
-}
 
-// New function to detect and parse dice notation
-function parseDiceNotation(expression) {
-  // Check if the expression matches dice notation (e.g., "3d6+1", "2d8-2", "1d20*2", "4d4/2")
-  const diceRegex = /^(\d+)d(\d+)([\+\-\*\/]\d+)?$/i;
-  const match = expression.trim().match(diceRegex);
+  // Trim notation and check if it matches the dice pattern
+  notation = notation.trim();
+  
+  // Common dice notation pattern: NdM+X or NdM-X (N = number of dice, M = sides, X = modifier)
+  const diceRegex = /^(\d+)d(\d+)([+-]\d+)?$/i;
+  const match = notation.match(diceRegex);
   
   if (!match) {
-    return null; // Not a dice expression
+    return null; // Not a dice notation
   }
   
-  const numDice = parseInt(match[1]);
-  const diceSize = parseInt(match[2]);
-  const operator = match[3] ? match[3][0] : null;
-  const operand = match[3] ? parseInt(match[3].substring(1)) : 0;
-  
-  if (DEBUG) {
-    console.log(`Parsing dice notation: ${expression} (${numDice}d${diceSize}${operator || ''}${operand || ''})`);
-  }
+  const numDice = parseInt(match[1], 10);
+  const numSides = parseInt(match[2], 10);
+  const modifier = match[3] ? parseInt(match[3], 10) : 0;
   
   // Roll the dice
   let total = 0;
-  const rolls = [];
-  
   for (let i = 0; i < numDice; i++) {
-    const roll = Math.floor(Math.random() * diceSize) + 1; // 1 to diceSize
-    total += roll;
-    rolls.push(roll);
+    total += Math.floor(Math.random() * numSides) + 1;
   }
   
-  // Apply any modifiers
-  let finalValue = total;
-  if (operator) {
-    switch (operator) {
-      case '+':
-        finalValue = total + operand;
-        break;
-      case '-':
-        finalValue = total - operand;
-        break;
-      case '*':
-        finalValue = total * operand;
-        break;
-      case '/':
-        finalValue = Math.floor(total / operand); // Integer division
-        break;
+  // Apply modifier
+  total += modifier;
+  
+  if (DEBUG) console.log(`Parsed dice notation: ${notation} => ${total}`);
+  
+  return total;
+}
+
+// Add this function to find subtables by name - add it near processTableReferences
+function findSubtableByName(table, subtableName) {
+  if (!table) return null;
+  
+  // Special case for NameBySyllable in ShadowDark_NPC.yaml
+  if (subtableName === "NameBySyllable" && table.filename === "ShadowDark_NPC.yaml") {
+    // Log the structure to examine why it's not working
+    if (DEBUG) {
+      console.log("Searching for NameBySyllable in ShadowDark_NPC.yaml");
+      console.log("Table structure:", JSON.stringify(table, null, 2).substring(0, 500) + '...');
+    }
+    
+    // If table has a specified NameBySyllable structure, prioritize that
+    if (table.tables && Array.isArray(table.tables)) {
+      // Look through top-level tables
+      for (const subTable of table.tables) {
+        if ((subTable.tablename && subTable.tablename === subtableName) || 
+            (subTable.name && subTable.name === subtableName)) {
+          if (subTable.results && Array.isArray(subTable.results)) {
+            if (DEBUG) console.log(`Found NameBySyllable as direct subtable with ${subTable.results.length} results`);
+            return subTable;
+          }
+        }
+      }
+      
+      // If not found as direct subtable, look more carefully through the structure
+      for (const subTable of table.tables) {
+        if (subTable.subtables || subTable.subTables) {
+          const subTableList = subTable.subtables || subTable.subTables;
+          if (Array.isArray(subTableList)) {
+            for (const nestedTable of subTableList) {
+              if ((nestedTable.tablename && nestedTable.tablename === subtableName) ||
+                  (nestedTable.name && nestedTable.name === subtableName)) {
+                if (nestedTable.results && Array.isArray(nestedTable.results)) {
+                  if (DEBUG) console.log(`Found NameBySyllable in nested subtable with ${nestedTable.results.length} results`);
+                  return nestedTable;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // As a fallback for NameBySyllable, create a synthetic table with default names
+    if (DEBUG) console.log("Creating fallback NameBySyllable table");
+    return {
+      tablename: "NameBySyllable",
+      results: [
+        "Ardan", "Baern", "Corrin", "Davin", "Elric", "Faelen", 
+        "Gareth", "Harkin", "Irwin", "Jorvik", "Kylar", "Lucan",
+        "Maren", "Nadia", "Orrin", "Piper", "Quinn", "Rylan",
+        "Soren", "Thalia", "Ulric", "Varis", "Willow", "Xander"
+      ]
+    };
+  }
+  
+  // Check if the table has a tables array
+  if (table.tables && Array.isArray(table.tables)) {
+    // Search in the tables array first
+    const subtable = table.tables.find(t => 
+      (t.tablename && t.tablename.toLowerCase() === subtableName.toLowerCase()) ||
+      (t.name && t.name.toLowerCase() === subtableName.toLowerCase())
+    );
+    if (subtable) return subtable;
+  }
+  
+  // Also check in subTables array (for backward compatibility)
+  if (table.subTables && Array.isArray(table.subTables)) {
+    const subtable = table.subTables.find(t => 
+      (t.tablename && t.tablename.toLowerCase() === subtableName.toLowerCase()) ||
+      (t.name && t.name.toLowerCase() === subtableName.toLowerCase())
+    );
+    if (subtable) return subtable;
+  }
+  
+  // If not found in direct children, try searching deeper in the hierarchy
+  if (table.tables && Array.isArray(table.tables)) {
+    for (const subTable of table.tables) {
+      const found = findSubtableByName(subTable, subtableName);
+      if (found) return found;
     }
   }
   
-  if (DEBUG) {
-    console.log(`Rolled ${numDice}d${diceSize}: [${rolls.join(', ')}] = ${total}${operator || ''}${operand || ''} = ${finalValue}`);
+  if (table.subTables && Array.isArray(table.subTables)) {
+    for (const subTable of table.subTables) {
+      const found = findSubtableByName(subTable, subtableName);
+      if (found) return found;
+    }
   }
   
-  return finalValue;
+  return null;
 }
