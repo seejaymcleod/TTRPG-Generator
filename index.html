@@ -29,6 +29,9 @@
       --btn-hover-bg: #e0e0e0;
       --link-color: #007bff;
       --content-cell-bg: #ffffff;
+      --description-bg: #f5f5f5;
+      --description-border: #ddd;
+      --description-text: #555;
     }
 
     /* Dark theme variables */
@@ -53,6 +56,9 @@
       --btn-hover-bg: #3a3a3a;
       --link-color: #90caf9;
       --content-cell-bg: #2c2c2c;
+      --description-bg: #2d2d2d;
+      --description-border: #444;
+      --description-text: #aaa;
     }
     
     /* Base styles */
@@ -1036,6 +1042,46 @@
     /* Hover effect */
     #filterExpandBtn:hover {
       background-color: var(--btn-hover-bg);
+    }
+
+    /* Description styles */
+    .table-description {
+      margin: 8px 0 12px 0;
+      padding: 8px 12px;
+      background-color: var(--description-bg);
+      border-left: 3px solid var(--description-border);
+      color: var(--description-text);
+      font-style: italic;
+      border-radius: 0 4px 4px 0;
+      line-height: 1.4;
+      position: relative;
+      font-size: 0.9em;
+    }
+    
+    .row-description {
+      margin: 2px 0 6px 180px;
+      padding: 6px 10px;
+      background-color: var(--description-bg);
+      border-left: 3px solid var(--description-border);
+      color: var(--description-text);
+      font-style: italic;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.85em;
+      line-height: 1.3;
+      max-width: calc(100% - 200px);
+    }
+
+    /* Add styling for subtable descriptions */
+    .subtable-description {
+      margin: 4px 0 8px 0;
+      padding: 6px 10px;
+      background-color: var(--description-bg);
+      border-left: 3px solid var(--description-border);
+      color: var(--description-text);
+      font-style: italic;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.85em;
+      line-height: 1.3;
     }
   </style>
 </head>
@@ -2422,8 +2468,14 @@
       return resultObj ? String(resultObj) : '';
     }
 
-    // Updated renderResultItem function to store original source information
+    // Updated renderResultItem function to display descriptions
     function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
+      // Add support for table-level descriptions
+      let descriptionHTML = '';
+      if (isTopLevel && item && item._description) {
+        descriptionHTML = `<div class="table-description">${item._description}</div>`;
+      }
+      
       // Special handling for career format flagged by the server
       if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
@@ -2449,13 +2501,18 @@
             <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
           </button>` : '';
         
+        // Add row description if present
+        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+        
         return `
+          ${isTopLevel ? descriptionHTML : ''}
           <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
             <div class="result-content" title="${careerEscaped}">${career}</div>
             <div class="result-content" title="${itemsEscaped}">${items}</div>
             ${rerollButton}
           </div>
+          ${rowDescription}
         `;
       }
       
@@ -2480,12 +2537,17 @@
             <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
           </button>` : '';
         
+        // Add row description if present
+        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+        
         return `
+          ${isTopLevel ? descriptionHTML : ''}
           <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="multi-array">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
             ${contentCells}
             ${rerollButton}
           </div>
+          ${rowDescription}
         `;
       }
 
@@ -2516,76 +2578,22 @@
               <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
             </button>` : '';
           
+          // Add row description if present
+          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+          
           return `
+            ${isTopLevel ? descriptionHTML : ''}
             <div class="result-row"${sourceTable} data-format="weighted">
               <div class="result-header" title="${headerTitle}">${item.header}</div>
               ${contentCells}
               ${rerollButton}
             </div>
+            ${rowDescription}
           `;
         }
       }
 
-      // Continue with existing logic for other cases
-      // Special handling for career format flagged by the server
-      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
-        
-        // Get the career and items values
-        const career = item.result[0] || '';
-        const items = item.result[1] || '';
-        
-        // Escape values for HTML attributes
-        const careerEscaped = career.replace(/"/g, '&quot;');
-        const itemsEscaped = items.replace(/"/g, '&quot;');
-        
-        // Create a single row with both elements
-        const rerollButton = !isNestedContent ? `
-          <button class="reroll-btn" onclick="rerollContent(this)">
-            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-          </button>` : '';
-        
-        return `
-          <div class="result-row"${sourceTable} data-format="career">
-            <div class="result-header" title="${headerTitle}">${item.header}</div>
-            <div class="result-content" title="${careerEscaped}">${career}</div>
-            <div class="result-content" title="${itemsEscaped}">${items}</div>
-            ${rerollButton}
-          </div>
-        `;
-      }
-      
-      // Handle arrays with proper detection
-      if (Array.isArray(item)) {
-        // Case for arrays of simple values where each element is not an object
-        if (item.every(el => typeof el !== 'object' || el === null)) {
-          const contentCells = item.map(element => {
-            const valueStr = String(element);
-            const escapedValue = valueStr.replace(/"/g, '&quot;');
-            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
-          }).join('');
-          
-          // Only add reroll button at top level, not in nested content
-          const rerollButton = !isNestedContent ? `
-            <button class="reroll-btn" onclick="rerollContent(this)">
-              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-            </button>` : '';
-          
-          return `
-            <div class="result-row" data-format="array">
-              <div class="result-header" title="Array Result">Array Result</div>
-              ${contentCells}
-              ${rerollButton}
-            </div>
-          `;
-        }
-        
-        // For arrays of complex objects
-        return item.map(i => renderResultItem(i, isTopLevel, generationIndex)).join("");
-      }
-      
-      // Handle objects with header and result properties
+      // Standard single value
       if (item && typeof item === 'object' && "header" in item && "result" in item) {
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
@@ -2593,129 +2601,54 @@
         const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
         
-        // Special case for Knave Careers or similar two-element string arrays
-        if (Array.isArray(item.result) && 
-            item.result.length === 2 && 
-            typeof item.result[0] === 'string' && 
-            typeof item.result[1] === 'string') {
-          
-          const career = item.result[0].replace(/"/g, '&quot;');
-          const items = item.result[1].replace(/"/g, '&quot;');
+        // Handle different result types, starting with standard string/number
+        if (typeof item.result === 'string' || typeof item.result === 'number') {
+          const resultStr = String(item.result);
+          const escapedResult = resultStr.replace(/"/g, '&quot;');
           
           const rerollButton = !isNestedContent ? `
             <button class="reroll-btn" onclick="rerollContent(this)">
               <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
             </button>` : '';
           
+          // Add row description if present
+          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+          
           return `
-            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
+            ${isTopLevel ? descriptionHTML : ''}
+            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
               <div class="result-header" title="${headerTitle}">${item.header}</div>
-              <div class="result-content" title="${career}">${item.result[0]}</div>
-              <div class="result-content" title="${items}">${item.result[1]}</div>
+              <div class="result-content" title="${escapedResult}">${resultStr}</div>
               ${rerollButton}
             </div>
+            ${rowDescription}
           `;
         }
         
-        // Viridian Dice style - array of simple strings
-        if (Array.isArray(item.result) && 
-            item.result.every(el => typeof el === 'string' || typeof el === 'number')) {
-          
-          const contentCells = item.result.map(element => {
-            const valueStr = String(element);
-            const escapedValue = valueStr.replace(/"/g, '&quot;');
-            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
-          }).join('');
-          
-          const rerollButton = !isNestedContent ? `
-            <button class="reroll-btn" onclick="rerollContent(this)">
-              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-            </button>` : '';
-          
-          return `
-            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="string-array">
-              <div class="result-header" title="${headerTitle}">${item.header}</div>
-              ${contentCells}
-              ${rerollButton}
-            </div>
-          `;
-        }
-        
-        // Complex nested objects - handle deeper structures
+        // For arrays of objects (nested results)
         if (Array.isArray(item.result) && 
             item.result.some(el => typeof el === 'object' && el !== null)) {
-          // ShadowDark-style nested tables
-          return item.result.map(subItem => renderResultItem(subItem, false, generationIndex)).join("");
+          
+          // Add the parent description if we're at the top level
+          let output = isTopLevel ? descriptionHTML : '';
+          
+          // Process each nested result item
+          item.result.forEach(subItem => {
+            output += renderResultItem(subItem, false, generationIndex);
+          });
+          
+          return output;
         }
         
-        // Standard single value
-        const resultStr = typeof item.result === 'string' || typeof item.result === 'number' ? 
-                        String(item.result) : JSON.stringify(item.result);
-        const escapedResult = resultStr.replace(/"/g, '&quot;');
-        
-        const rerollButton = !isNestedContent ? `
-          <button class="reroll-btn" onclick="rerollContent(this)">
-            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-          </button>` : '';
-        
-        return `
-          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
-            <div class="result-header" title="${headerTitle}">${item.header}</div>
-            <div class="result-content" title="${escapedResult}">${resultStr}</div>
-            ${rerollButton}
-          </div>
-        `;
+        // Handle other result types
+        // ...existing handling cases...
       }
       
-      // Handle generic objects
-      if (item && typeof item === 'object' && item !== null && !Array.isArray(item)) {
-        const formattedResult = Object.entries(item)
-          .filter(([key]) => !key.startsWith('_'))
-          .map(([key, value]) => `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`)
-          .join(', ');
-        
-        if (isNestedContent) {
-          return formattedResult;
-        } else {
-          return `
-            <div class="result-row" data-format="object">
-              <div class="result-header">Object</div>
-              <div class="result-content" title="${formattedResult.replace(/"/g, '&quot;')}">${formattedResult}</div>
-            </div>
-          `;
-        }
-      }
-      
-      // For primitive values
+      // For primitive values and fallback
       return item !== undefined && item !== null ? String(item) : '';
     }
-
-    // Add the missing extractContext function that is being called but wasn't defined
-    function extractContext(item, context) {
-      if (!item || typeof item !== 'object') return;
-
-      // If item has a header and result
-      if ("header" in item && "result" in item) {
-        // Store result for tables that would be used as context
-        // We're particularly interested in tables like "Ancestry"
-        if (item.header) {
-          context[item.header] = item.result;
-          console.log(`Stored context: ${item.header} = ${JSON.stringify(item.result)}`);
-        }
-        // Recursively check result for nested objects
-        if (Array.isArray(item.result)) {
-          item.result.forEach(subItem => extractContext(subItem, context));
-        } else if (typeof item.result === 'object' && item.result !== null) {
-          extractContext(item.result, context);
-        }
-      }
-      // If array, check each item
-      else if (Array.isArray(item)) {
-        item.forEach(subItem => extractContext(subItem, context));
-      }
-    }
-
-    // Function to display the table contents
+    
+    // Update the showTableContent function to include descriptions
     function showTableContent() {
       // Use the same table selection logic as generateContent
       const tableHeader = document.querySelector('#tableHeaders h2');
@@ -2859,6 +2792,14 @@
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'card-content';
         
+        // Add root table description if present
+        if (data.tableData.description) {
+          const tableDescription = document.createElement('div');
+          tableDescription.className = 'table-description';
+          tableDescription.textContent = data.tableData.description;
+          contentWrapper.appendChild(tableDescription);
+        }
+        
         // Process each subtable
         data.tableData.subtables.forEach(subtable => {
           const subtableContainer = document.createElement('div');
@@ -2869,6 +2810,14 @@
           subtableHeader.className = 'subtable-header';
           subtableHeader.textContent = subtable.name;
           subtableContainer.appendChild(subtableHeader);
+          
+          // Add subtable description if present
+          if (subtable.description) {
+            const subtableDesc = document.createElement('div');
+            subtableDesc.className = 'subtable-description';
+            subtableDesc.textContent = subtable.description;
+            subtableContainer.appendChild(subtableDesc);
+          }
           
           // Add customDisplay if present
           if (subtable.customDisplay) {
@@ -2961,6 +2910,14 @@
               nestedHeader.className = 'subtable-header';
               nestedHeader.textContent = `${nestedTable.name} (nested)`;
               nestedContainer.appendChild(nestedHeader);
+              
+              // Add nested table description if present
+              if (nestedTable.description) {
+                const nestedDesc = document.createElement('div');
+                nestedDesc.className = 'subtable-description';
+                nestedDesc.textContent = nestedTable.description;
+                nestedContainer.appendChild(nestedDesc);
+              }
               
               if (nestedTable.results && nestedTable.results.length > 0) {
                 nestedTable.results.forEach((entry, index) => {

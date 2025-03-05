@@ -295,6 +295,15 @@ function processTableForDisplay(table) {
     setting: table.setting || 'Unknown',
     subtables: []
   };
+  
+  // Include table description if present
+  if (table.description) {
+    if (Array.isArray(table.description)) {
+      result.description = table.description.join(' ');
+    } else if (typeof table.description === 'string') {
+      result.description = table.description;
+    }
+  }
 
   // Process direct results if they exist
   if (table.results && Array.isArray(table.results) && table.results.length > 0) {
@@ -312,6 +321,15 @@ function processTableForDisplay(table) {
         results: []
       };
       
+      // Add subtable description if present
+      if (subTable.description) {
+        if (Array.isArray(subTable.description)) {
+          processedSubtable.description = subTable.description.join(' ');
+        } else if (typeof subTable.description === 'string') {
+          processedSubtable.description = subTable.description;
+        }
+      }
+      
       // Handle customDisplay tables
       if (subTable.customDisplay) {
         processedSubtable.customDisplay = subTable.customDisplay;
@@ -325,10 +343,21 @@ function processTableForDisplay(table) {
       // Process nested subtables
       if (subTable.subTables && Array.isArray(subTable.subTables)) {
         processedSubtable.nestedSubtables = subTable.subTables.map(nestedTable => {
-          return {
+          const nestedResult = {
             name: nestedTable.tablename || nestedTable.name || 'Unnamed Nested',
             results: nestedTable.results ? processResultsForDisplay(nestedTable.results) : []
           };
+          
+          // Add nested subtable description
+          if (nestedTable.description) {
+            if (Array.isArray(nestedTable.description)) {
+              nestedResult.description = nestedTable.description.join(' ');
+            } else if (typeof nestedTable.description === 'string') {
+              nestedResult.description = nestedTable.description;
+            }
+          }
+          
+          return nestedResult;
         });
       }
       
@@ -819,6 +848,17 @@ function processTable(table, parentHeader, allTables, context) {
     _originalSource: table._originalSource || table.tablename // Track original source
   };
 
+  // Add description if present - handle both string and array formats
+  if (table.description) {
+    if (Array.isArray(table.description)) {
+      sourceInfo._description = table.description.join(' ');
+    } else if (typeof table.description === 'string') {
+      sourceInfo._description = table.description;
+    }
+    
+    if (DEBUG) console.log(`Found description for table ${header}:`, sourceInfo._description);
+  }
+
   // Check for table structure patterns rather than specific names
   
   // Pattern 1: Table with simple string results
@@ -838,6 +878,19 @@ function processTable(table, parentHeader, allTables, context) {
     // Store processed result in context
     if (context && header) {
       context[header] = processedResult;
+    }
+    
+    // Enhanced handling for arrays parsed from string notation
+    if (Array.isArray(processedResult)) {
+      console.log(`Array result detected for ${header}:`, processedResult);
+      
+      // Store the special array format flag
+      return {
+        header,
+        result: processedResult,
+        _isMultiElementArray: true, // This flag ensures proper array display in UI
+        ...sourceInfo
+      };
     }
     
     return { header, result: processedResult, ...sourceInfo };
@@ -1157,6 +1210,36 @@ function loadAllTables() {
 function processTableReferences(input, allTables, context = {}) {
   // Handle string inputs
   if (typeof input === 'string') {
+    // Special handling for array-like syntax: "[{...},{...}]"
+    if (input.trim().startsWith('[') && input.trim().endsWith(']')) {
+      // Extract content between brackets
+      const innerContent = input.trim().substring(1, input.trim().length - 1);
+      
+      // Split by commas, handling nested braces correctly
+      const elements = splitBalanced(innerContent, ',');
+      
+      if (DEBUG) console.log(`Detected array syntax with ${elements.length} elements:`, elements);
+      
+      // Process each element separately
+      const processedElements = elements.map(element => {
+        const processed = processTableReferences(element.trim(), allTables, context);
+        return processed;
+      });
+      
+      // For ability scores, format special arrays nicely
+      if (processedElements.length === 2 && 
+          typeof processedElements[0] === 'number' && 
+          typeof processedElements[1] === 'string' && 
+          (processedElements[1].startsWith('+') || processedElements[1].startsWith('-'))) {
+        console.log(`Detected ability score format: ${processedElements[0]} (${processedElements[1]})`);
+        // Format as readable ability score: "15 (+2)"
+        return `${processedElements[0]} (${processedElements[1]})`;
+      }
+      
+      // Return as array for other cases
+      return processedElements;
+    }
+    
     // First, process any dice notation to populate context
     let processedInput = input;
     const diceRegex = /\{(\d+d\d+(?:[+-]\d+)?)\}/g;
@@ -1601,4 +1684,31 @@ function findSubtableByName(table, subtableName) {
   }
   
   return null;
+}
+
+// Helper function to split a string by a delimiter while respecting nested braces
+function splitBalanced(str, delimiter) {
+  const results = [];
+  let bracketCount = 0;
+  let currentChunk = '';
+  
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    
+    if (char === '{') bracketCount++;
+    if (char === '}') bracketCount--;
+    
+    if (char === delimiter && bracketCount === 0) {
+      results.push(currentChunk);
+      currentChunk = '';
+    } else {
+      currentChunk += char;
+    }
+  }
+  
+  if (currentChunk) {
+    results.push(currentChunk);
+  }
+  
+  return results;
 }

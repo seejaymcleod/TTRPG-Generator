@@ -4,5 +4,12 @@ setting: Fantasy
 type: Adventure
 tablename: Test
 tables:
-  - results:
-      - ["Some {3d6} Text: {ShadowDark_Rumors}", 1]
+  - description: 
+    - "This is where a really long description should go. Maybe it can overlap, maybe it doesn't. Who knows at this point?"
+    results:
+      - ["Some {3d6} Text: {ShadowDark_Rumors}", 1]      
+  - tablename: Blarf
+    description: 
+    - "Blarf words go here a bunch. Blarf words go here a bunch.Blarf words go here a bunch.Blarf words go here a bunch."
+    results:
+      - ["Some MORE {3d6} Text: {ShadowDark_Rumors}", 1]
