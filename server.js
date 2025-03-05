@@ -1151,20 +1151,27 @@ function loadAllTables() {
 function processTableReferences(input, allTables, context = {}) {
   // Handle string inputs
   if (typeof input === 'string') {
-    // Enhanced regex to capture both simple table references {TableName}
-    // and indexed array references {TableName[0]} or {TableName[index]}
-    // AND the pipe syntax {TableName|SubtableName}
+    // Enhanced regex to capture dice notation expressions, table references,
+    // indexed array references, and pipe syntax
     const tableRefRegex = /\{([^}\[\]|]+)(?:\[(\d+)\])?(?:\|([^}]+))?\}/g;
     
-    return input.replace(tableRefRegex, (match, tableName, arrayIndex, subtableName) => {
-      if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${tableName}, Index: ${arrayIndex || 'none'}, Subtable: ${subtableName || 'none'})`);
+    return input.replace(tableRefRegex, (match, content, arrayIndex, subtableName) => {
+      // First check if this is a dice notation expression
+      const diceResult = parseDiceNotation(content);
+      if (diceResult !== null) {
+        if (DEBUG) console.log(`Dice notation found: ${match} evaluated to ${diceResult}`);
+        return diceResult;
+      }
       
-      // First find the referenced table
-      const referencedTable = findReferencedTable(tableName, allTables);
+      // If not dice, process as a table reference
+      if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${content}, Index: ${arrayIndex || 'none'}, Subtable: ${subtableName || 'none'})`);
+      
+      // Find the referenced table
+      const referencedTable = findReferencedTable(content, allTables);
       
       if (!referencedTable) {
-        console.error(`Referenced table not found: ${tableName}`);
-        return `[${tableName} not found]`;
+        console.error(`Referenced table not found: ${content}`);
+        return `[${content} not found]`;
       }
       
       // Make a copy of the referenced table to avoid modifying the original
@@ -1172,8 +1179,8 @@ function processTableReferences(input, allTables, context = {}) {
       
       // IMPORTANT: Add original source tracking - first reference is preserved
       if (!workingTable._originalSource) {
-        workingTable._originalSource = tableName;
-        if (DEBUG) console.log(`Setting original source for referenced table to: ${tableName}`);
+        workingTable._originalSource = content;
+        if (DEBUG) console.log(`Setting original source for referenced table to: ${content}`);
       }
       
       try {
@@ -1185,12 +1192,12 @@ function processTableReferences(input, allTables, context = {}) {
           const subtable = findSubtableByName(referencedTable, subtableName);
           
           if (!subtable) {
-            console.error(`Subtable "${subtableName}" not found in table "${tableName}"`);
-            return `[${subtableName} not found in ${tableName}]`;
+            console.error(`Subtable "${subtableName}" not found in table "${content}"`);
+            return `[${subtableName} not found in ${content}]`;
           }
           
           if (DEBUG) {
-            console.log(`Found subtable "${subtableName}" in "${tableName}"`);
+            console.log(`Found subtable "${subtableName}" in "${content}"`);
             // Print the structure of the found subtable
             console.log('Subtable structure:', JSON.stringify(subtable, null, 2).substring(0, 200) + '...');
           }
@@ -1200,12 +1207,12 @@ function processTableReferences(input, allTables, context = {}) {
             result = getWeightedRandomResult({ results: subtable.results });
           } else {
             console.error(`Subtable "${subtableName}" has no valid results array`);
-            return `[No results in ${tableName}|${subtableName}]`;
+            return `[No results in ${content}|${subtableName}]`;
           }
         }
         // Check if the referenced table has customDisplay
         else if (referencedTable.customDisplay) {
-          if (DEBUG) console.log(`Table "${tableName}" uses customDisplay, processing...`);
+          if (DEBUG) console.log(`Table "${content}" uses customDisplay, processing...`);
           let mainTable = referencedTable;
           
           if (referencedTable.tables && Array.isArray(referencedTable.tables)) {
@@ -1234,13 +1241,13 @@ function processTableReferences(input, allTables, context = {}) {
             if (subtable.results && Array.isArray(subtable.results)) {
               result = getWeightedRandomResult(subtable);
             } else {
-              console.error(`No valid results found in first subtable of ${tableName}`);
-              return `[No valid results in ${tableName}]`;
+              console.error(`No valid results found in first subtable of ${content}`);
+              return `[No valid results in ${content}]`;
             }
           }
         } else {
-          console.error(`No valid results found in referenced table: ${tableName}`);
-          return `[No results in ${tableName}]`;
+          console.error(`No valid results found in referenced table: ${content}`);
+          return `[No results in ${content}]`;
         }
         
         // Now handle array indexing if specified
@@ -1431,4 +1438,59 @@ function findSubtableByName(table, subtableName) {
   }
   
   return null;
+}
+
+// New function to detect and parse dice notation
+function parseDiceNotation(expression) {
+  // Check if the expression matches dice notation (e.g., "3d6+1", "2d8-2", "1d20*2", "4d4/2")
+  const diceRegex = /^(\d+)d(\d+)([\+\-\*\/]\d+)?$/i;
+  const match = expression.trim().match(diceRegex);
+  
+  if (!match) {
+    return null; // Not a dice expression
+  }
+  
+  const numDice = parseInt(match[1]);
+  const diceSize = parseInt(match[2]);
+  const operator = match[3] ? match[3][0] : null;
+  const operand = match[3] ? parseInt(match[3].substring(1)) : 0;
+  
+  if (DEBUG) {
+    console.log(`Parsing dice notation: ${expression} (${numDice}d${diceSize}${operator || ''}${operand || ''})`);
+  }
+  
+  // Roll the dice
+  let total = 0;
+  const rolls = [];
+  
+  for (let i = 0; i < numDice; i++) {
+    const roll = Math.floor(Math.random() * diceSize) + 1; // 1 to diceSize
+    total += roll;
+    rolls.push(roll);
+  }
+  
+  // Apply any modifiers
+  let finalValue = total;
+  if (operator) {
+    switch (operator) {
+      case '+':
+        finalValue = total + operand;
+        break;
+      case '-':
+        finalValue = total - operand;
+        break;
+      case '*':
+        finalValue = total * operand;
+        break;
+      case '/':
+        finalValue = Math.floor(total / operand); // Integer division
+        break;
+    }
+  }
+  
+  if (DEBUG) {
+    console.log(`Rolled ${numDice}d${diceSize}: [${rolls.join(', ')}] = ${total}${operator || ''}${operand || ''} = ${finalValue}`);
+  }
+  
+  return finalValue;
 }

@@ -5,4 +5,4 @@ type: Adventure
 tablename: Test
 tables:
   - results:
-      - ["Some Text: {ShadowDark_Rumors}", 1]
+      - ["Some {3d6} Text: {ShadowDark_Rumors}", 1]
