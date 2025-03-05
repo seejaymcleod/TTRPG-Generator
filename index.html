@@ -1989,11 +1989,22 @@
         // Start building the markdown line for this row
         let rowMd = `*${header}*: `;
         
-        // Handle multiple content cells (like career-style rows)
-        if (contentCells.length > 1) {
-          // For career-style format, join the first two cells with a separator
-          rowMd += `${contentCells[0].textContent.trim()} - ${contentCells[1].textContent.trim()}`;
-        } else if (contentCells.length === 1) {
+        // Handle career format - detect by format attribute
+        const rowFormat = row.getAttribute('data-format');
+        
+        if (rowFormat === 'career' && contentCells.length >= 2) {
+          // Career format - first cell is career, second cell is items
+          const career = contentCells[0].textContent.trim();
+          const items = contentCells[1].textContent.trim();
+          rowMd += `${career} - ${items}`;
+        }
+        // Handle general array format with multiple cells
+        else if (contentCells.length > 1) {
+          const cellTexts = Array.from(contentCells).map(cell => cell.textContent.trim());
+          // Join all cells with commas
+          rowMd += cellTexts.join(', ');
+        } 
+        else if (contentCells.length === 1) {
           // Normal case - single content cell
           rowMd += contentCells[0].textContent.trim();
         }
