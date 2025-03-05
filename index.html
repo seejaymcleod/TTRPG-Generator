@@ -126,13 +126,15 @@
       background-color: var(--bg-tertiary);
       border-bottom: 1px solid var(--border-color); /* Thinner border */
       gap: 8px; /* Reduced gap from 15px */
+      margin-bottom: 20px; /* Increased to accommodate expand buttons */
+      position: relative;
     }
     .filter-container {
       display: flex;
       flex-direction: row; /* Changed from column to row for horizontal layout */
       position: relative;
       flex: 1;
-      align-items: center; /* Align items vertically center */
+      align-items: flex-start; /* Changed to allow proper expansion */
       gap: 8px; /* Gap between header and buttons */
     }
     .filter-header {
@@ -167,9 +169,10 @@
       flex: 1; /* Take remaining space */
       gap: 4px; /* Reduced from 6px */
       max-height: 28px; /* Reduced from 56px for single row */
-      overflow-y: hidden;
+      overflow: hidden;
       position: relative;
-      transition: max-height 0.3s;
+      transition: max-height 0.3s ease-out;
+      align-content: flex-start;
     }
     .filter-buttons::after {
       content: '';
@@ -187,8 +190,9 @@
       opacity: 1;
     }
     .filter-buttons.expanded {
-      max-height: 160px; /* Reduced from 200px */
+      max-height: 200px; /* Reduced from 200px */
       overflow-y: auto;
+      padding-bottom: 10px; /* Better spacing at bottom */
     }
     .filter-buttons.expanded::after {
       opacity: 0;
@@ -223,22 +227,22 @@
     }
     .expand-btn {
       position: absolute; /* Position absolute to place it below */
-      bottom: -24px; /* Position below the filter */
-      right: 0; /* Align to the right */
-      width: auto; /* Auto width rather than 100% */
-      min-width: 80px; /* Minimum width */
-      border: none;
+      bottom: -18px; /* Position below the filter */
+      left: 50%; /* Center horizontally */
+      transform: translateX(-50%);
+      width: 24px; /* Fixed width */
+      height: 18px;
+      border: 1px solid var(--border-color);
+      border-top: none;
       background-color: var(--bg-tertiary);
-      border-top: 1px solid var(--border-color);
       cursor: pointer;
-      padding: 2px 6px; /* Less padding */
-      margin-top: 2px; /* Reduced margin */
+      padding: 0;
       text-align: center;
       font-size: 0.85em; /* Smaller text */
       color: var(--text-secondary);
       font-weight: bold;
       display: none; /* Hide by default */
-      z-index: 10; /* Ensure it appears above content */
+      z-index: 15; /* Ensure it appears above content */
       border-radius: 0 0 3px 3px; /* Rounded bottom corners */
     }
     .filter-container.has-significant-overflow .expand-btn,
@@ -697,7 +701,7 @@
       box-shadow: 0 1px 2px var(--shadow-color); /* Lighter shadow */
     }
     .collapse-btn:hover {
-      color: var(--text-primary);
+      color: var (--text-primary);
       background-color: var(--btn-hover-bg);
     }
     .card-title {
@@ -736,7 +740,7 @@
       font-size: 0.9em; /* Smaller text */
       background-color: var(--bg-secondary);
       color: var(--text-primary);
-      border: 1px solid var(--border-color);
+      border: 1px solid var (--border-color);
     }
     
     /* Fix the layout - ensure contentWrapper properly contains 3 columns */
@@ -789,7 +793,7 @@
       font-weight: bold;
       font-size: 1em; /* Smaller text */
       margin-bottom: 3px; /* Reduced margin */
-      color: var(--title-bg);
+      color: var (--title-bg);
     }
     
     .subtable-custom-display {
@@ -956,7 +960,82 @@
     #tableHeaders .header {
       margin: 2px 0; /* Less margin */
       font-size: 0.9em; /* Smaller text */
-      color: var(--text-primary);
+      color: var (--text-primary);
+    }
+
+    /* Updated filter container styles */
+    #filtersContainer {
+      display: flex;
+      padding: 4px;
+      background-color: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border-color);
+      gap: 8px;
+      margin-bottom: 20px; /* Space for expand button */
+      position: relative;
+    }
+    
+    /* Filter section styling */
+    .filter-container {
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      flex: 1;
+      align-items: flex-start; /* Better alignment for multi-row */
+      gap: 8px;
+    }
+    
+    /* Filter buttons container with default 2-row height */
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      flex: 1;
+      gap: 4px;
+      max-height: 56px; /* Height for 2 rows by default */
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      align-content: flex-start;
+    }
+    
+    /* Expanded state shows up to 4 rows */
+    .filters-expanded .filter-buttons {
+      max-height: 112px; /* Height for 4 rows when expanded */
+    }
+    
+    /* Add scroll when content exceeds 4 rows */
+    .filters-expanded .filter-buttons.has-overflow {
+      overflow-y: auto;
+      padding-right: 4px; /* Space for scrollbar */
+    }
+    
+    /* Single expand button for entire filter bar */
+    #filterExpandBtn {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 18px;
+      border: 1px solid var(--border-color);
+      border-top: none;
+      background-color: var(--bg-tertiary);
+      cursor: pointer;
+      padding: 0;
+      text-align: center;
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      display: none; /* Hidden by default */
+      z-index: 10;
+      border-radius: 0 0 3px 3px;
+    }
+    
+    /* Show expand button when filters have significant overflow */
+    #filtersContainer.has-significant-overflow #filterExpandBtn {
+      display: block;
+    }
+    
+    /* Hover effect */
+    #filterExpandBtn:hover {
+      background-color: var(--btn-hover-bg);
     }
   </style>
 </head>
@@ -982,7 +1061,6 @@
       <div id="gameFilter" class="filter-buttons" data-mode="all-selected">
         <!-- Game filter buttons will be added here dynamically -->
       </div>
-      <button class="expand-btn" onclick="toggleFilterExpand('gameFilter')">▼ More</button>
     </div>
     
     <div class="filter-container">
@@ -995,7 +1073,6 @@
       <div id="typeFilter" class="filter-buttons" data-mode="all-selected">
         <!-- Type filter buttons will be added here dynamically -->
       </div>
-      <button class="expand-btn" onclick="toggleFilterExpand('typeFilter')">▼ More</button>
     </div>
     
     <div class="filter-container">
@@ -1008,10 +1085,12 @@
       <div id="settingFilter" class="filter-buttons" data-mode="all-selected">
         <!-- Setting filter buttons will be added here dynamically -->
       </div>
-      <button class="expand-btn" onclick="toggleFilterExpand('settingFilter')">▼ More</button>
     </div>
     
     <button id="resetButton" onclick="resetFilters()">Reset</button>
+    
+    <!-- Single expand button for the entire filter bar -->
+    <button id="filterExpandBtn" onclick="toggleAllFilters()" aria-label="Show more filters">▼</button>
   </div>
 
   <div id="contentWrapper">
@@ -1277,9 +1356,9 @@
       
       const expandBtn = document.querySelector(`.expand-btn[onclick*="${filterId}"]`);
       if (filterContainer.classList.contains('expanded')) {
-        expandBtn.textContent = '▲ Less';
+        expandBtn.textContent = '▲';
       } else {
-        expandBtn.textContent = '▼ More';
+        expandBtn.textContent = '▼';
       }
       
       // Recalculate overflow after toggling
@@ -3276,6 +3355,127 @@
       const currentTheme = document.documentElement.getAttribute('data-theme');
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', newTheme);
+    }
+
+    // Check if the entire filter bar has significant overflow (3+ rows)
+    function checkFilterBarOverflow() {
+      const filterContainers = ['gameFilter', 'typeFilter', 'settingFilter'];
+      let totalHeight = 0;
+      let maxButtonHeight = 0;
+      
+      // Calculate total height of all buttons if not wrapped
+      filterContainers.forEach(filterId => {
+        const container = document.getElementById(filterId);
+        const buttons = container.querySelectorAll('.filter-btn');
+        
+        // Find the height of the tallest button
+        buttons.forEach(button => {
+          const buttonHeight = button.offsetHeight;
+          if (buttonHeight > maxButtonHeight) {
+            maxButtonHeight = buttonHeight;
+          }
+        });
+        
+        // Calculate unwrapped width
+        let rowWidth = 0;
+        const containerWidth = container.clientWidth;
+        const buttonGap = 4; // Gap between buttons
+        let rowCount = 1;
+        
+        buttons.forEach(button => {
+          const buttonWidth = button.offsetWidth + buttonGap;
+          
+          // If this button would overflow the current row, start a new row
+          if (rowWidth + buttonWidth > containerWidth && rowWidth > 0) {
+            rowCount++;
+            rowWidth = buttonWidth;
+          } else {
+            rowWidth += buttonWidth;
+          }
+        });
+        
+        // Store row count as data attribute
+        container.dataset.rowCount = rowCount;
+        
+        // If rows > 2, mark as has-overflow
+        if (rowCount > 2) {
+          container.classList.add('has-overflow');
+        } else {
+          container.classList.remove('has-overflow');
+        }
+      });
+      
+      // Calculate if any container needs 3+ rows
+      const hasSignificantOverflow = filterContainers.some(filterId => {
+        const container = document.getElementById(filterId);
+        return parseInt(container.dataset.rowCount || '0') >= 3;
+      });
+      
+      // Update the container class
+      const filtersContainer = document.getElementById('filtersContainer');
+      if (hasSignificantOverflow) {
+        filtersContainer.classList.add('has-significant-overflow');
+      } else {
+        filtersContainer.classList.remove('has-significant-overflow');
+        filtersContainer.classList.remove('filters-expanded');
+      }
+      
+      // Update the expand button text
+      const expandBtn = document.getElementById('filterExpandBtn');
+      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
+    }
+
+    // Toggle all filters expansion state
+    function toggleAllFilters() {
+      const filtersContainer = document.getElementById('filtersContainer');
+      filtersContainer.classList.toggle('filters-expanded');
+      
+      // Update button text
+      const expandBtn = document.getElementById('filterExpandBtn');
+      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
+    }
+
+    // Replace the createFilterButtons function
+    function createFilterButtons(filterId, options) {
+      const filterContainer = document.getElementById(filterId);
+      filterContainer.innerHTML = '';
+      
+      options.sort().forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'filter-btn';
+        button.textContent = option;
+        button.dataset.value = option;
+        button.onclick = function() {
+          toggleFilterButton(this, filterId);
+        };
+        filterContainer.appendChild(button);
+      });
+      
+      // After adding all buttons, check filter overflow
+      setTimeout(() => {
+        checkFilterBarOverflow();
+      }, 0);
+    }
+
+    // Add this to the document ready event
+    document.addEventListener('DOMContentLoaded', function() {
+      // ... existing code ...
+      
+      // Check filter overflow on window resize
+      window.addEventListener('resize', debounce(() => {
+        checkFilterBarOverflow();
+      }, 250));
+    });
+
+    // Debounce function to limit how often a function runs
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
     }
   </script>
 </body>
