@@ -4,6 +4,9 @@ setting: Fantasy
 type: People
 tablename: NPC
 tables:
+  - tablename: Blarf
+    results: 
+      - "{Knave_Names}"
   - tablename: Name
     results: 
       - "{Knave_Names}"

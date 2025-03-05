@@ -22,7 +22,7 @@ app.use('/Images', express.static(path.join(__dirname, 'Images')));
 
 // Modify the API endpoint to handle types as arrays
 app.get('/api/tables', (req, res) => {
-  if (DEBUG) console.log('Sending tables data:', tables);
+  if (DEBUG) console.log(`Sending data for ${tables.length} tables (use verbose logging to see full data)`);
   res.json(tables.map(table => {
     let typeValue; 
     
@@ -46,6 +46,13 @@ app.get('/api/tables', (req, res) => {
     };
   }));
 });
+
+// Function to extract values from context - will be used by client
+function ExtractContext(context, key, defaultValue = null) {
+  if (!context || typeof context !== 'object') return defaultValue;
+  if (key in context) return context[key];
+  return defaultValue;
+}
 
 // Add enhanced error handling to the generate endpoint
 app.post('/api/generate', (req, res) => {
@@ -233,8 +240,10 @@ app.post('/api/reroll', (req, res) => {
     // Update the context
     context[header] = result;
     
-    // Return the result with metadata to help client
+    // Return the result with metadata to help client - include both names for compatibility
     return res.json({
+      xtractContext: ExtractContext.toString(), // Renamed version
+      extractContext: ExtractContext.toString(), // Original name for backward compatibility
       result: {
         header: header,
         result: result,
@@ -295,7 +304,7 @@ function processTableForDisplay(table) {
     setting: table.setting || 'Unknown',
     subtables: []
   };
-  
+
   // Include table description if present
   if (table.description) {
     if (Array.isArray(table.description)) {
@@ -320,7 +329,7 @@ function processTableForDisplay(table) {
         name: subTable.tablename || subTable.name || 'Unnamed Subtable', // For backward compatibility
         results: []
       };
-      
+
       // Add subtable description if present
       if (subTable.description) {
         if (Array.isArray(subTable.description)) {
@@ -348,7 +357,7 @@ function processTableForDisplay(table) {
             results: nestedTable.results ? processResultsForDisplay(nestedTable.results) : []
           };
           
-          // Add nested subtable description
+          // Add nested subtable description if present
           if (nestedTable.description) {
             if (Array.isArray(nestedTable.description)) {
               nestedResult.description = nestedTable.description.join(' ');
@@ -356,11 +365,9 @@ function processTableForDisplay(table) {
               nestedResult.description = nestedTable.description;
             }
           }
-          
           return nestedResult;
         });
       }
-      
       result.subtables.push(processedSubtable);
     }
   }
@@ -381,7 +388,7 @@ function processTableForDisplay(table) {
 // Helper function to process results array for display
 function processResultsForDisplay(results) {
   if (!results || !Array.isArray(results)) return [];
-  
+
   return results.map(item => {
     // Handle weighted arrays like [value, weight]
     if (Array.isArray(item) && item.length >= 2) {
@@ -401,7 +408,7 @@ function processResultsForDisplay(results) {
       }
       // Regular array
       return { value: item };
-    } 
+    }
     // Handle objects
     else if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
       return { ...item };
@@ -419,7 +426,6 @@ function findSpecificTable(rootTable, targetName) {
   if (rootTable.tablename && rootTable.tablename.toLowerCase() === targetName.toLowerCase()) {
     return rootTable;
   }
-  
   // Check in tables array
   if (rootTable.tables && Array.isArray(rootTable.tables)) {
     for (const subTable of rootTable.tables) {
@@ -427,7 +433,6 @@ function findSpecificTable(rootTable, targetName) {
       if (found) return found;
     }
   }
-  
   // Check in subTables array (some table formats use this property)
   if (rootTable.subTables && Array.isArray(rootTable.subTables)) {
     for (const subTable of rootTable.subTables) {
@@ -435,7 +440,6 @@ function findSpecificTable(rootTable, targetName) {
       if (found) return found;
     }
   }
-  
   return null;
 }
 
@@ -490,7 +494,6 @@ function getWeightedRandomResult(table) {
           
           // Create value array without the weight
           const value = entry.slice(0, arrayLength - 1);
-          
           // If it's a single-value array, extract just the string
           const finalValue = value.length === 1 ? value[0] : value;
           
@@ -513,16 +516,15 @@ function getWeightedRandomResult(table) {
           // Check if the second string resembles items rather than a numeric string
           const secondElement = entry[1];
           const resemblesItems = secondElement.includes(',') || 
-                              secondElement.includes(' ') || 
-                              secondElement.length > 5;
+                                secondElement.includes(' ') || 
+                                secondElement.length > 5;
           
           if (resemblesItems) {
             // For career-style entries with [career, items] format
-            weightedEntries.push({
+            weightedEntries.push({ 
               career: entry[0],
               items: entry[1]
             });
-            
             if (DEBUG) {
               console.log(`Detected career-style entry: ${entry[0]}, ${entry[1]}`);
             }
@@ -533,7 +535,6 @@ function getWeightedRandomResult(table) {
       
       // If we got here, it's a regular array without special handling
       weightedEntries.push(entry);
-      
     } else if (typeof entry === 'object' && entry !== null) {
       // Support for object entries (like {career: "X", items: "Y"})
       weightedEntries.push(entry);
@@ -542,19 +543,15 @@ function getWeightedRandomResult(table) {
       weightedEntries.push(entry);
     }
   });
-  
   if (weightedEntries.length === 0) {
     console.error('Error: No valid entries found for weighting in table:', table.name);
     return 'Error: No valid entries found';
   }
-  
   let result = randomChoice(weightedEntries);
-  
   // Process table references if the result is a string
   if (typeof result === 'string') {
     result = processTableReferences(result, tables);
   }
-  
   return result;
 }
 
@@ -566,18 +563,15 @@ function processCustomDisplay(table, allTables, context) {
     console.error('Error: customDisplay is missing in the table:', table);
     return 'Error: customDisplay is missing';
   }
-
+  let deferredTokens = [];
   // Remove outer brackets.
   let displayStr = table.customDisplay.replace(/^\[|\]$/g, '');
 
   // Prepare variables:
   let normalResult = "";
-  let deferredTokens = [];
-
-  // Regex to capture tokens in the form {tokenContent}
-  const tokenRegex = /\{([^}]+)\}/g;
   let lastIndex = 0;
   let match;
+  const tokenRegex = /\{([^}]+)\}/g;
 
   while ((match = tokenRegex.exec(displayStr)) !== null) {
     // Append any text between tokens.
@@ -608,27 +602,23 @@ function processCustomDisplay(table, allTables, context) {
             t => t.tablename && t.tablename.toLowerCase() === subTableName.toLowerCase()
           );
         }
-        
         // If not found, look for tables with name property for backward compatibility
         if (!subTable && table.tables && Array.isArray(table.tables)) {
           subTable = table.tables.find(
             t => t.name && t.name.toLowerCase() === subTableName.toLowerCase()
           );
         }
-        
         // If still not found, look in subTables for backward compatibility
         if (!subTable && table.subTables && Array.isArray(table.subTables)) {
           subTable = table.subTables.find(
             t => t.tablename && t.tablename.toLowerCase() === subTableName.toLowerCase()
           );
-          
           if (!subTable) {
             subTable = table.subTables.find(
               t => t.name && t.name.toLowerCase() === subTableName.toLowerCase()
             );
           }
         }
-        
         if (subTable && subTable.results?.length > 0) {
           let choice = randomChoice(subTable.results);
           normalResult += choice;
@@ -668,7 +658,6 @@ function processCustomDisplay(table, allTables, context) {
     // Example tokenContent: "selectedResult, Ancestry"
     let parts = tokenContent.split(',');
     let tableToLookup = parts[1] ? parts[1].trim() : "Ancestry";
-
     // Check if we already have a cached result for this dependency
     let pickedResult = null;
     if (context && context[tableToLookup]) {
@@ -679,14 +668,13 @@ function processCustomDisplay(table, allTables, context) {
     } else {
       // Find the root table object
       const rootTable = findRootTable(table, allTables);
-      
       // First try to find the table within the current hierarchy
       let refTable = findTableInHierarchy(rootTable, tableToLookup);
       
       if (DEBUG) {
         console.log(`Looking for table "${tableToLookup}" within current hierarchy: ${refTable ? "Found" : "Not found"}`);
       }
-
+      
       // If not found in hierarchy, fallback to global search
       if (!refTable) {
         for (let i = 0; i < allTables.length; i++) {
@@ -697,17 +685,14 @@ function processCustomDisplay(table, allTables, context) {
             break;
           }
         }
-        
         if (DEBUG && !refTable) {
           console.log(`Deferred token: Could not find a table named "${tableToLookup}" anywhere.`);
           console.log(`Available top-level table names:`, allTables.map(t => t.tablename));
         }
       }
-
       if (!refTable) {
         return; // Skip further processing for this token
       }
-
       if (!refTable.results || !Array.isArray(refTable.results) || refTable.results.length === 0) {
         if (DEBUG) {
           console.log(`Deferred token: Found table "${tableToLookup}" but it has no valid results.`);
@@ -720,17 +705,14 @@ function processCustomDisplay(table, allTables, context) {
       if (context) {
         context[tableToLookup] = pickedResult;
       }
-      
       if (DEBUG) {
         console.log(
           `Deferred token: Picked "${pickedResult}" from table "${tableToLookup}" and stored in context.`
         );
       }
     }
-
     // Now use that pick as the subtable name in the *current* table
     let subTable = null;
-    
     // First check in tables array
     if (table.tables && Array.isArray(table.tables)) {
       for (let i = 0; i < table.tables.length; i++) {
@@ -742,7 +724,6 @@ function processCustomDisplay(table, allTables, context) {
         }
       }
     }
-    
     // If not found, check in subTables for backward compatibility
     if (!subTable && table.subTables && Array.isArray(table.subTables)) {
       for (let i = 0; i < table.subTables.length; i++) {
@@ -754,7 +735,6 @@ function processCustomDisplay(table, allTables, context) {
         }
       }
     }
-
     if (subTable && subTable.results?.length > 0) {
       let finalPick = randomChoice(subTable.results);
       finalResult = finalPick;
@@ -795,7 +775,6 @@ function findTableInHierarchy(rootTable, tableName) {
       (rootTable.name && rootTable.name.toLowerCase() === tableName.toLowerCase())) { // For backward compatibility
     return rootTable;
   }
-  
   // Check in tables array
   if (rootTable.tables && Array.isArray(rootTable.tables)) {
     for (const subTable of rootTable.tables) {
@@ -803,7 +782,13 @@ function findTableInHierarchy(rootTable, tableName) {
       if (found) return found;
     }
   }
-  
+  // Check in subTables array (for backward compatibility)
+  if (rootTable.subTables && Array.isArray(rootTable.subTables)) {
+    for (const subTable of rootTable.subTables) {
+      const found = findTableInHierarchy(subTable, tableName);
+      if (found) return found;
+    }
+  }
   return null;
 }
 
@@ -813,14 +798,12 @@ function findRootTable(currentTable, allTables) {
   if (allTables.includes(currentTable)) {
     return currentTable;
   }
-  
   // Otherwise, find the top-level table that contains the current table
   for (const topTable of allTables) {
     if (isTableContained(topTable, currentTable)) {
       return topTable;
     }
   }
-  
   return null;
 }
 
@@ -833,14 +816,12 @@ function isTableContained(parentTable, childTable) {
       if (isTableContained(subTable, childTable)) return true;
     }
   }
-  
   return false;
 }
 
 // Process a table and generate results
 function processTable(table, parentHeader, allTables, context) {
   const header = table.tablename || parentHeader;
-
   // Store the source table name for reference (will be hidden in UI)
   const sourceInfo = {
     _tableName: table.tablename,
@@ -858,7 +839,7 @@ function processTable(table, parentHeader, allTables, context) {
     
     if (DEBUG) console.log(`Found description for table ${header}:`, sourceInfo._description);
   }
-
+  
   // Check for table structure patterns rather than specific names
   
   // Pattern 1: Table with simple string results
@@ -866,7 +847,6 @@ function processTable(table, parentHeader, allTables, context) {
       table.results.length > 0 && 
       table.results.every(item => typeof item === 'string' || typeof item === 'number')) {
     console.log(`Processing simple string results table: ${header}`);
-    
     const result = randomChoice(table.results);
     console.log(`Selected result: ${result}`);
     
@@ -874,7 +854,6 @@ function processTable(table, parentHeader, allTables, context) {
     const processedResult = typeof result === 'string' ? 
                            processTableReferences(result, allTables, context) : 
                            result;
-    
     // Store processed result in context
     if (context && header) {
       context[header] = processedResult;
@@ -883,7 +862,6 @@ function processTable(table, parentHeader, allTables, context) {
     // Enhanced handling for arrays parsed from string notation
     if (Array.isArray(processedResult)) {
       console.log(`Array result detected for ${header}:`, processedResult);
-      
       // Store the special array format flag
       return {
         header,
@@ -895,14 +873,13 @@ function processTable(table, parentHeader, allTables, context) {
     
     return { header, result: processedResult, ...sourceInfo };
   }
-
+  
   // Pattern 2: Career-style tables (array of two-element arrays)
   if (table.results && Array.isArray(table.results) && 
       table.results.length > 0 && 
       table.results.every(item => Array.isArray(item) && item.length === 2 && 
                          typeof item[0] === 'string' && typeof item[1] === 'string')) {
     console.log(`Processing career-style table: ${header}`);
-    
     const career = randomChoice(table.results);
     
     // Process table references in career strings
@@ -913,14 +890,13 @@ function processTable(table, parentHeader, allTables, context) {
     if (typeof processedCareer[1] === 'string') {
       processedCareer[1] = processTableReferences(processedCareer[1], allTables, context);
     }
-    
     // Store processed result in context
     if (context && header) {
       context[header] = processedCareer;
     }
     
     // Include the _isCareer flag
-    return { 
+    return {
       header, 
       result: processedCareer,
       _isCareer: true,
@@ -946,7 +922,6 @@ function processTable(table, parentHeader, allTables, context) {
     
     // Process the result further for any string values that might contain references
     let processedResult = result;
-    
     // Process string values in arrays
     if (Array.isArray(result)) {
       processedResult = result.map(item => 
@@ -960,13 +935,13 @@ function processTable(table, parentHeader, allTables, context) {
       if (DEBUG) console.log(`Stored result "${processedResult}" for table "${header}" in context`);
     }
     
-    // The rest of the logic for handling special cases remains the same
+    // The rest of the logic for handling special cases remains the same 
     // Special detection for Knave Careers format - preserve the original array structure
     if (Array.isArray(result) && result.length === 2 && 
         typeof result[0] === 'string' && typeof result[1] === 'string') {
       // Mark this as a Knave careers result with a special type marker
-      return { 
-        header, 
+      return {
+        header,
         result,
         _isCareer: true,  // Add this marker to identify it as a career format
         _originalSource: sourceInfo._originalSource, // Track origin
@@ -978,8 +953,8 @@ function processTable(table, parentHeader, allTables, context) {
     if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
       if (result.career && result.items) {
         // Preserve as a two-element array
-        return { 
-          header, 
+        return {
+          header,
           result: [result.career, result.items],
           _isCareer: true,
           _originalSource: sourceInfo._originalSource, // Track origin
@@ -992,23 +967,23 @@ function processTable(table, parentHeader, allTables, context) {
     if (Array.isArray(result)) {
       // Mark multi-element arrays (3+ elements) with a special flag
       if (result.length >= 3) {
-        return { 
+        return {
           header,
           result,
           _isMultiElementArray: true,  // Add flag for multi-element arrays
-          _originalSource: sourceInfo._originalSource, // Track origin
+          _originalSource: sourceInfo._originalSource, // Track origin 
           ...sourceInfo 
         };
-      }
+      } 
       // Handle career-style entries (2 elements)
       else if (result.length === 2 && 
                typeof result[0] === 'string' && 
                typeof result[1] === 'string') {
-        return { 
-          header, 
+        return {
+          header,
           result,
           _isCareer: true,  // Add career marker
-          _originalSource: sourceInfo._originalSource, // Track origin
+          _originalSource: sourceInfo._originalSource, // Track origin 
           ...sourceInfo 
         };
       }
@@ -1046,7 +1021,7 @@ function generateResultsFromTables(table, numberOfGenerations, allTables) {
   let results = [];
   for (let i = 0; i < numberOfGenerations; i++) {
     // Create a fresh context for each generation
-    let context = {
+    let context = { 
       thisResult: null // Initialize thisResult to null
     };
     const result = processTable(table, "", allTables, context);
@@ -1072,7 +1047,6 @@ app.listen(PORT, () => {
 // Add this new helper function to debug table data
 function debugTableStructure(table) {
   if (!DEBUG) return;
-  
   console.log(`Table debug for: ${table.tablename || 'unnamed table'}`);
   console.log(`Filename: ${table.filename || 'N/A'}`);
   console.log(`Has customDisplay: ${table.customDisplay ? 'YES' : 'NO'}`);
@@ -1081,14 +1055,12 @@ function debugTableStructure(table) {
   if (table.results && table.results.length > 0) {
     const sampleEntry = table.results[0];
     console.log(`Sample result entry: ${typeof sampleEntry === 'object' ? JSON.stringify(sampleEntry) : sampleEntry}`);
-    
     // Check for career format
     if (Array.isArray(sampleEntry) && sampleEntry.length === 2 && 
         typeof sampleEntry[0] === 'string' && typeof sampleEntry[1] === 'string') {
       console.log(`Table appears to use career format [career, items]`);
     }
   }
-  
   console.log(`Has tables: ${table.tables ? `YES (${table.tables.length} tables)` : 'NO'}`);
   console.log(`Has subTables: ${table.subTables ? `YES (${table.subTables.length} subtables)` : 'NO'}`);
 }
@@ -1120,30 +1092,16 @@ function findTableWithArrayResults(rootTable) {
       rootTable.results.length > 0 && Array.isArray(rootTable.results[0])) {
     return rootTable;
   }
-  
   if (rootTable.tables && Array.isArray(rootTable.tables)) {
     for (const subTable of rootTable.tables) {
       if (subTable.results && Array.isArray(subTable.results) && 
           subTable.results.length > 0 && Array.isArray(subTable.results[0])) {
         return subTable;
       }
-      
       const result = findTableWithArrayResults(subTable);
       if (result) return result;
     }
   }
-  
-  // Check for Knave career format specifically
-  if (rootTable.tables) {
-    for (const subTable of rootTable.tables) {
-      if (subTable.name === 'Careers' && subTable.results && 
-          Array.isArray(subTable.results) && subTable.results.length > 0 && 
-          Array.isArray(subTable.results[0])) {
-        return subTable;
-      }
-    }
-  }
-  
   return null;
 }
 
@@ -1153,19 +1111,16 @@ function findTableWithSimpleResults(rootTable) {
       rootTable.results.length > 0 && typeof rootTable.results[0] === 'string') {
     return rootTable;
   }
-  
   if (rootTable.tables && Array.isArray(rootTable.tables)) {
     for (const subTable of rootTable.tables) {
       if (subTable.results && Array.isArray(subTable.results) && 
           subTable.results.length > 0 && typeof subTable.results[0] === 'string') {
         return subTable;
       }
-      
       const result = findTableWithSimpleResults(subTable);
       if (result) return result;
     }
   }
-  
   return null;
 }
 
@@ -1176,7 +1131,6 @@ function loadAllTables() {
 
   try {
     const files = fs.readdirSync(TABLES_DIR);
-    
     files.forEach(file => {
       if (file.endsWith('.yml') || file.endsWith('.yaml')) {
         try {
@@ -1188,7 +1142,6 @@ function loadAllTables() {
           tableData.filename = file;
           
           tables.push(tableData);
-          
           if (DEBUG) {
             console.log(`Loaded table: ${tableData.tablename || file}`);
           }
@@ -1197,7 +1150,6 @@ function loadAllTables() {
         }
       }
     });
-    
     if (DEBUG) {
       console.log(`Successfully loaded ${tables.length} tables.`);
     }
@@ -1217,7 +1169,6 @@ function processTableReferences(input, allTables, context = {}) {
       
       // Split by commas, handling nested braces correctly
       const elements = splitBalanced(innerContent, ',');
-      
       if (DEBUG) console.log(`Detected array syntax with ${elements.length} elements:`, elements);
       
       // Process each element separately
@@ -1225,7 +1176,6 @@ function processTableReferences(input, allTables, context = {}) {
         const processed = processTableReferences(element.trim(), allTables, context);
         return processed;
       });
-      
       // For ability scores, format special arrays nicely
       if (processedElements.length === 2 && 
           typeof processedElements[0] === 'number' && 
@@ -1247,10 +1197,8 @@ function processTableReferences(input, allTables, context = {}) {
       const diceResult = parseDiceNotation(diceNotation);
       if (diceResult !== null) {
         if (DEBUG) console.log(`Dice notation found: ${match} evaluated to ${diceResult}`);
-        
         // Store the result in context for reference table lookups
         if (context) context.thisResult = diceResult;
-        
         return diceResult;
       }
       return match; // Return unchanged if not valid dice notation
@@ -1289,7 +1237,6 @@ function processTableReferences(input, allTables, context = {}) {
       
       // Process as a table reference
       if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${content}, Index: ${arrayIndex || 'none'}, Subtable: ${subtableName || 'none'})`);
-      
       // Find the referenced table
       const referencedTable = findReferencedTable(content, allTables);
       
@@ -1334,13 +1281,10 @@ function processTableReferences(input, allTables, context = {}) {
             return `[No results in ${content}|${subtableName}]`;
           }
         }
-        // Rest of the existing function...
-        
         // Check if the referenced table has customDisplay
         else if (referencedTable.customDisplay) {
           if (DEBUG) console.log(`Table "${content}" uses customDisplay, processing...`);
           let mainTable = referencedTable;
-          
           if (referencedTable.tables && Array.isArray(referencedTable.tables)) {
             const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
             if (customDisplayTable) {
@@ -1348,14 +1292,12 @@ function processTableReferences(input, allTables, context = {}) {
               if (DEBUG) console.log(`Found customDisplay in subtable: ${mainTable.tablename}`);
             }
           }
-          
           result = processCustomDisplay(mainTable, allTables, context);
         }
         // For whole-table references (no subtable specified)
         else if (referencedTable.results && Array.isArray(referencedTable.results)) {
           result = getWeightedRandomResult({ results: referencedTable.results });
-        }
-        else if (referencedTable.tables && Array.isArray(referencedTable.tables) && referencedTable.tables.length > 0) {
+        } else if (referencedTable.tables && Array.isArray(referencedTable.tables) && referencedTable.tables.length > 0) {
           // Look for a table with customDisplay first
           const customDisplayTable = referencedTable.tables.find(t => t.customDisplay);
           if (customDisplayTable) {
@@ -1407,7 +1349,6 @@ function processTableReferences(input, allTables, context = {}) {
             if (result.name) return result.name;
             if (result.title) return result.title;
             if (result.value) return String(result.value);
-            
             // Convert to JSON string as last resort
             return JSON.stringify(result);
           } catch (e) {
@@ -1415,7 +1356,6 @@ function processTableReferences(input, allTables, context = {}) {
             return "[Object]";
           }
         }
-        
         return result ? String(result) : '';
       } catch (error) {
         console.error(`Error processing table reference ${match}:`, error);
@@ -1453,18 +1393,15 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
       if (Array.isArray(context.thisResult) && index < context.thisResult.length) {
         processedLookupValue = context.thisResult[index];
         if (DEBUG) console.log(`Using thisResult[${index}] from context: ${processedLookupValue}`);
-      } 
-      else if (index === 0 && !Array.isArray(context.thisResult)) {
+      } else if (index === 0 && !Array.isArray(context.thisResult)) {
         processedLookupValue = context.thisResult;
         if (DEBUG) console.log(`Using thisResult as scalar value: ${processedLookupValue}`);
-      }
-      else {
+      } else {
         console.error(`Invalid thisResult index: ${index} (thisResult=${JSON.stringify(context.thisResult)})`);
         return `[Invalid thisResult index]`;
       }
     }
   }
-  
   // Convert to a number if it looks like one
   if (!isNaN(processedLookupValue)) {
     processedLookupValue = Number(processedLookupValue);
@@ -1472,7 +1409,6 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
   
   // Find the reference table - first look in ShadowDark_CharacterGenerator.yaml
   let refTable = null;
-  
   // Look for the table in ShadowDark_CharacterGenerator.yaml first
   const charGenTable = allTables.find(t => t.filename === 'ShadowDark_CharacterGenerator.yaml');
   if (charGenTable && charGenTable.referenceTables) {
@@ -1497,13 +1433,11 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
     console.error(`Reference table "${tableName}" not found`);
     return `[${tableName} not found]`;
   }
-  
+  if (DEBUG) console.log(`Found reference table "${tableName}" with ${refTable.entries.length} entries, looking up value: ${processedLookupValue}`);
   if (!refTable.entries || !Array.isArray(refTable.entries)) {
     console.error(`Reference table "${tableName}" has no entries`);
     return `[No entries in ${tableName}]`;
   }
-  
-  if (DEBUG) console.log(`Found reference table "${tableName}" with ${refTable.entries.length} entries, looking up value: ${processedLookupValue}`);
   
   // Look for a matching entry
   for (const entry of refTable.entries) {
@@ -1525,7 +1459,6 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
       }
     }
   }
-  
   if (DEBUG) console.log(`No matching entry found for lookup value ${processedLookupValue}`);
   return `[No match for ${processedLookupValue}]`;
 }
@@ -1534,26 +1467,22 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
 function findReferencedTable(tableRef, allTables) {
   // Remove file extension if present
   const normalizedRef = tableRef.replace(/\.ya?ml$/i, '');
-  
   // First try by exact filename match
   let table = allTables.find(t => 
     t.filename === `${normalizedRef}.yaml` || 
     t.filename === `${normalizedRef}.yml`);
-  
   // If not found, try by table name
   if (!table) {
     table = allTables.find(t => 
       (t.tablename && t.tablename.toLowerCase() === normalizedRef.toLowerCase()) ||
       (t.name && t.name.toLowerCase() === normalizedRef.toLowerCase()));
   }
-  
   if (DEBUG && table) {
     console.log(`Found referenced table: ${table.filename} (${table.tablename})`);
   } else if (DEBUG && !table) {
     console.log(`Could not find referenced table: ${normalizedRef}`);
     console.log(`Available tables:`, allTables.map(t => t.filename).join(', '));
   }
-  
   return table;
 }
 
@@ -1562,7 +1491,6 @@ function parseDiceNotation(notation) {
   if (typeof notation !== 'string') {
     return null;
   }
-
   // Trim notation and check if it matches the dice pattern
   notation = notation.trim();
   
@@ -1583,12 +1511,8 @@ function parseDiceNotation(notation) {
   for (let i = 0; i < numDice; i++) {
     total += Math.floor(Math.random() * numSides) + 1;
   }
-  
-  // Apply modifier
   total += modifier;
-  
   if (DEBUG) console.log(`Parsed dice notation: ${notation} => ${total}`);
-  
   return total;
 }
 
@@ -1598,7 +1522,6 @@ function findSubtableByName(table, subtableName) {
   
   // Special case for NameBySyllable in ShadowDark_NPC.yaml
   if (subtableName === "NameBySyllable" && table.filename === "ShadowDark_NPC.yaml") {
-    // Log the structure to examine why it's not working
     if (DEBUG) {
       console.log("Searching for NameBySyllable in ShadowDark_NPC.yaml");
       console.log("Table structure:", JSON.stringify(table, null, 2).substring(0, 500) + '...');
@@ -1623,7 +1546,7 @@ function findSubtableByName(table, subtableName) {
           const subTableList = subTable.subtables || subTable.subTables;
           if (Array.isArray(subTableList)) {
             for (const nestedTable of subTableList) {
-              if ((nestedTable.tablename && nestedTable.tablename === subtableName) ||
+              if ((nestedTable.tablename && nestedTable.tablename === subtableName) || 
                   (nestedTable.name && nestedTable.name === subtableName)) {
                 if (nestedTable.results && Array.isArray(nestedTable.results)) {
                   if (DEBUG) console.log(`Found NameBySyllable in nested subtable with ${nestedTable.results.length} results`);
@@ -1634,19 +1557,19 @@ function findSubtableByName(table, subtableName) {
           }
         }
       }
+      
+      // As a fallback for NameBySyllable, create a synthetic table with default names
+      if (DEBUG) console.log("Creating fallback NameBySyllable table");
+      return {
+        tablename: "NameBySyllable",
+        results: [
+          "Ardan", "Baern", "Corrin", "Davin", "Elric", "Faelen", 
+          "Gareth", "Harkin", "Irwin", "Jorvik", "Kylar", "Lucan",
+          "Maren", "Nadia", "Orrin", "Piper", "Quinn", "Rylan",
+          "Soren", "Thalia", "Ulric", "Varis", "Willow", "Xander"
+        ]
+      };
     }
-    
-    // As a fallback for NameBySyllable, create a synthetic table with default names
-    if (DEBUG) console.log("Creating fallback NameBySyllable table");
-    return {
-      tablename: "NameBySyllable",
-      results: [
-        "Ardan", "Baern", "Corrin", "Davin", "Elric", "Faelen", 
-        "Gareth", "Harkin", "Irwin", "Jorvik", "Kylar", "Lucan",
-        "Maren", "Nadia", "Orrin", "Piper", "Quinn", "Rylan",
-        "Soren", "Thalia", "Ulric", "Varis", "Willow", "Xander"
-      ]
-    };
   }
   
   // Check if the table has a tables array
@@ -1675,14 +1598,12 @@ function findSubtableByName(table, subtableName) {
       if (found) return found;
     }
   }
-  
   if (table.subTables && Array.isArray(table.subTables)) {
     for (const subTable of table.subTables) {
       const found = findSubtableByName(subTable, subtableName);
       if (found) return found;
     }
   }
-  
   return null;
 }
 
@@ -1691,10 +1612,9 @@ function splitBalanced(str, delimiter) {
   const results = [];
   let bracketCount = 0;
   let currentChunk = '';
-  
+
   for (let i = 0; i < str.length; i++) {
     const char = str[i];
-    
     if (char === '{') bracketCount++;
     if (char === '}') bracketCount--;
     
@@ -1705,10 +1625,8 @@ function splitBalanced(str, delimiter) {
       currentChunk += char;
     }
   }
-  
   if (currentChunk) {
     results.push(currentChunk);
   }
-  
   return results;
 }
