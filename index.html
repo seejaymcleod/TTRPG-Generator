@@ -1078,6 +1078,7 @@
     }
 
     /* Add styling for subtable descriptions */
+    .subtable-description {
       border-left: 3px solid var(--description-border);
       color: var(--description-text);
       font-style: italic;
@@ -1086,21 +1087,19 @@
       line-height: 1.3;
     }
 
-    /* Title description styles - updated to be more subtle */
+    /* Title description styles - updated to match other descriptions */
     .title-description {
       margin: 8px 0 12px 0;
       padding: 8px 12px;
-      background-color: var(--bg-secondary);
-      color: var(--text-secondary);
+      background-color: var(--description-bg);
+      border-left: 3px solid var(--description-border);
+      color: var(--description-text);
       font-style: italic;
-      border-left: 3px solid var(--border-color);
-      line-height: 1.5;
-      position: relative;
-      font-size: 0.95em;
-      text-align: left;
-      letter-spacing: 0.01em;
       border-radius: 0 4px 4px 0;
-      box-shadow: none;
+      line-height: 1.4;
+      position: relative;
+      font-size: 0.9em;
+      text-align: left;
     }
   </style>
 </head>
