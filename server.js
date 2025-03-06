@@ -853,7 +853,8 @@ function processTable(table, parentHeader, allTables, context) {
   const sourceInfo = {
     _tableName: table.tablename,
     _fileName: table.filename,
-    _originalSource: table._originalSource || table.tablename // Track original source
+    _originalSource: table._originalSource || table.tablename, // Track original source
+    _titleDescription: table.titleDescription || null // Include the title description if present
   };
 
   // Add description if present - handle both string and array formats

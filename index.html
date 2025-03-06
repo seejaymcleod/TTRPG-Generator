@@ -1085,6 +1085,20 @@
       font-size: 0.85em;
       line-height: 1.3;
     }
+
+    /* Title description styles */
+    .title-description {
+      margin: 8px 0;
+      padding: 10px 12px;
+      background-color: var(--title-bg);
+      color: var(--text-title);
+      font-style: italic;
+      border-radius: 4px;
+      line-height: 1.4;
+      position: relative;
+      font-size: 0.95em;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -2470,12 +2484,22 @@
       return resultObj ? String(resultObj) : '';
     }
 
-    // Updated renderResultItem function to display descriptions
+    // Updated renderResultItem function to display descriptions and titleDescription
     function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
-      // Add support for table-level descriptions
+      // Add support for table-level descriptions and title descriptions
       let descriptionHTML = '';
-      if (isTopLevel && item && item._description) {
-        descriptionHTML = `<div class="table-description">${item._description}</div>`;
+      let titleDescriptionHTML = '';
+      
+      if (isTopLevel) {
+        // Add title description if present
+        if (item && item._titleDescription) {
+          titleDescriptionHTML = `<div class="title-description">${item._titleDescription}</div>`;
+        }
+        
+        // Standard description
+        if (item && item._description) {
+          descriptionHTML = `<div class="table-description">${item._description}</div>`;
+        }
       }
       
       // Special handling for career format flagged by the server
@@ -2507,6 +2531,7 @@
         const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
         
         return `
+          ${isTopLevel ? titleDescriptionHTML : ''}
           ${isTopLevel ? descriptionHTML : ''}
           <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
@@ -2521,7 +2546,7 @@
       // New case: Handle multi-element array format flagged by the server
       if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        // Store both tableName and originalSource
+        // Store both tableName and originalSource - originalSource takes priority
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
@@ -2543,6 +2568,7 @@
         const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
         
         return `
+          ${isTopLevel ? titleDescriptionHTML : ''}
           ${isTopLevel ? descriptionHTML : ''}
           <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="multi-array">
             <div class="result-header" title="${headerTitle}">${item.header}</div>
@@ -2584,6 +2610,7 @@
           const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
           
           return `
+            ${isTopLevel ? titleDescriptionHTML : ''}
             ${isTopLevel ? descriptionHTML : ''}
             <div class="result-row"${sourceTable} data-format="weighted">
               <div class="result-header" title="${headerTitle}">${item.header}</div>
@@ -2617,6 +2644,7 @@
           const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
           
           return `
+            ${isTopLevel ? titleDescriptionHTML : ''}
             ${isTopLevel ? descriptionHTML : ''}
             <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
               <div class="result-header" title="${headerTitle}">${item.header}</div>
@@ -2630,9 +2658,9 @@
         // For arrays of objects (nested results)
         if (Array.isArray(item.result) && 
             item.result.some(el => typeof el === 'object' && el !== null)) {
-          
+             
           // Add the parent description if we're at the top level
-          let output = isTopLevel ? descriptionHTML : '';
+          let output = isTopLevel ? titleDescriptionHTML + descriptionHTML : '';
           
           // Process each nested result item
           item.result.forEach(subItem => {
@@ -2650,7 +2678,7 @@
       return item !== undefined && item !== null ? String(item) : '';
     }
     
-    // Update the showTableContent function to include descriptions
+    // Update the showTableContent function to include descriptions and title descriptions
     function showTableContent() {
       // Use the same table selection logic as generateContent
       const tableHeader = document.querySelector('#tableHeaders h2');
@@ -2668,7 +2696,7 @@
       console.log('Looking for table with:', {
         tablename: selectedTableName,
         filename: selectedFileName,
-        game: selectedGameName  
+        game: selectedGameName
       });
       
       const selectedTable = tablesData.find(t => {
@@ -2682,7 +2710,7 @@
         }
         return false;
       });
-      
+            
       if (!selectedTable) {
         console.error(`No table found for "${selectedTableName}"`);
         displayErrorMessage(`Error: Table "${selectedTableName}" not found.`);
@@ -2775,7 +2803,7 @@
         };
         copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
         cardActions.appendChild(copyBtn);
-        
+                
         // Delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-card-btn';
@@ -2876,7 +2904,7 @@
                 careerItems.className = 'career-items';
                 careerItems.textContent = entry.items;
                 careerEntry.appendChild(careerItems);
-                
+                 
                 entryContent.appendChild(careerEntry);
               }
               else if (typeof entry.value !== 'undefined') {
@@ -2931,11 +2959,11 @@
                   entryNumber.className = 'entry-number';
                   entryNumber.textContent = `${index + 1}.`;
                   entryDiv.appendChild(entryNumber);
-                  
+                     
                   // Add content
                   const entryContent = document.createElement('div');
                   entryContent.className = 'entry-content';
-                  
+                         
                   if (typeof entry.value !== 'undefined') {
                     entryContent.textContent = entry.value;
                   } else {
@@ -2950,7 +2978,7 @@
             
             subtableContainer.appendChild(nestedContainer);
           }
-          
+               
           contentWrapper.appendChild(subtableContainer);
         });
         
@@ -3005,13 +3033,13 @@
             } else {
               entryText = JSON.stringify(entry);
             }
-            
+              
             markdown += `${index + 1}. ${entryText}\n`;
           });
           markdown += '\n';
         }
       });
-      
+            
       copyToClipboardWithToast(markdown);
     }
     
@@ -3075,7 +3103,7 @@
           button.classList.add('unavailable');
           button.disabled = true;
         }
-        
+          
         // Restore selected state if previously selected
         if (selectedOptions.includes(value)) {
           button.classList.add('selected');
@@ -3100,7 +3128,7 @@
       const typeFilterMode = typeFilter.dataset.mode;
       const settingFilterMode = settingFilter.dataset.mode;
       
-      // Create sets to store all options that would produce results
+      // Create sets to store all options that would produce results 
       // if added to the current selection
       const availableGames = new Set();
       const availableTypes = new Set();
@@ -3130,7 +3158,7 @@
       tablesData.forEach(table => {
         // Create copies of the current filter selections for testing
         const currentGameFilters = [...selectedGames];
-        const currentTypeFilters = [...selectedTypes]; 
+        const currentTypeFilters = [...selectedTypes];
         const currentSettingFilters = [...selectedSettings];
         
         // Test each potential Game option
@@ -3227,7 +3255,7 @@
           }
         });
       }
-      
+            
       if (settingFilterMode === 'choice') {
         allSettings.forEach(setting => {
           if (selectedSettings.length > 0) {
@@ -3355,7 +3383,7 @@
         
         // Store row count as data attribute
         container.dataset.rowCount = rowCount;
-        
+          
         // If rows > 2, mark as has-overflow
         if (rowCount > 2) {
           container.classList.add('has-overflow');
@@ -3369,7 +3397,7 @@
         const container = document.getElementById(filterId);
         return parseInt(container.dataset.rowCount || '0') >= 3;
       });
-      
+            
       // Update the container class
       const filtersContainer = document.getElementById('filtersContainer');
       if (hasSignificantOverflow) {
@@ -3378,7 +3406,7 @@
         filtersContainer.classList.remove('has-significant-overflow');
         filtersContainer.classList.remove('filters-expanded');
       }
-      
+       
       // Update the expand button text
       const expandBtn = document.getElementById('filterExpandBtn');
       expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';

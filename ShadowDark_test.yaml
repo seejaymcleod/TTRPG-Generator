@@ -1,9 +1,0 @@
-game: ShadowDark
-setting: Fantasy
-type: Adventure
-tablename: Test
-tables:
-  - results:
-      - "An execution is about to happen; it's a PC's family member"
-      - "Normal"
-      - "\"Some Text.\" {ShadowDark_test} {Test}"
