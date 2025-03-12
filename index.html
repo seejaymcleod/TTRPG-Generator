@@ -7,12 +7,12 @@
   <!-- Add extractContext polyfill script first - IMPORTANT! -->
   <script src="/js/extractContext.js"></script>
   <!-- REMOVE Choices.js dependency since we're using buttons instead -->
+  <link rel="stylesheet" href="/css/styles.css">
   <style>
     /* Theme variables - Light and Dark mode */
     :root {
       /* Default light theme variables */
       --bg-primary: #ffffff;
-      --bg-secondary: #f0f0f0;
       --bg-tertiary: #e0e0e0;
       --bg-card: #e8e8e8;
       --bg-content: #f9f9f9;
@@ -433,7 +433,6 @@
       right: -3px; /* Less padding */
       bottom: -3px; /* Less padding */
       left: -3px; /* Less padding */
-      background-color: rgba(255,255,255,0.2);
       z-index: -1;
       border-radius: 50%;
     }
@@ -542,8 +541,7 @@
     .reroll-btn img {
       width: 18px; /* Smaller icon */
       height: 18px; /* Smaller icon */
-      border-radius: 3px; /* Smaller radius */
-      filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.2));
+      border-radius: 3px; /* Smaller radius */      
     }
     
     /* Toast notification */
@@ -1093,13 +1091,58 @@
       padding: 8px 12px;
       background-color: var(--description-bg);
       border-left: 3px solid var(--description-border);
-      color: var(--description-text);
+      color: var (--description-text);
       font-style: italic;
       border-radius: 0 4px 4px 0;
       line-height: 1.4;
       position: relative;
       font-size: 0.9em;
       text-align: left;
+    }
+
+    /* Add styles for lock button */
+    .lock-btn {
+      margin-left: auto !important;
+      flex-shrink: 0 !important;
+      position: relative !important;
+      background-color: var(--content-cell-bg) !important;
+      border-radius: 50% !important;
+      z-index: 2 !important;
+      width: 22px !important;
+      height: 22px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    
+    .lock-btn::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      bottom: -3px;
+      left: -3px;
+      z-index: -1;
+      border-radius: 50%;
+    }
+    
+    .lock-btn:hover {
+      transform: scale(1.15);
+    }
+    
+    .lock-btn img {
+      width: 18px;
+      height: 18px;
+      border-radius: 3px;
+    }
+    
+    /* Style for locked row */
+    .result-row.locked .reroll-btn {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -1806,6 +1849,12 @@
         console.error('Could not find parent result row');
         return;
       }
+      
+      // Check if the row is locked
+      if (resultRow.classList.contains('locked')) {
+        console.log('This row is locked and cannot be rerolled');
+        return;
+      }
   
       // Get the header text to know what to reroll
       const header = resultRow.querySelector('.result-header').textContent;
@@ -2122,78 +2171,149 @@
       // Store the collapsed state
       const wasCollapsed = generationContainer.classList.contains('collapsed');
       
-      // Clear and rebuild the card content (keeping the header)
+      // Find all unlocked rows that need to be rerolled
+      const unlockedRows = generationContainer.querySelectorAll('.result-row:not(.locked)');
+      if (unlockedRows.length === 0) {
+        console.log('No unlocked rows to reroll');
+        showToast('No unlocked rows to reroll');
+        return;
+      }
+      
+      // Pre-process and cache all locked rows BEFORE starting any rerolls
+      const lockedRowsCache = {};
+      const lockedRows = generationContainer.querySelectorAll('.result-row.locked');
+      lockedRows.forEach(row => {
+        const header = row.querySelector('.result-header').textContent;
+        const contentElements = row.querySelectorAll('.result-content');
+        
+        // Store content based on row format
+        const format = row.getAttribute('data-format');
+        if (format === 'career' && contentElements.length >= 2) {
+          lockedRowsCache[header] = [
+            contentElements[0].textContent,
+            contentElements[1].textContent
+          ];
+        } else if (format === 'multi-array') {
+          lockedRowsCache[header] = Array.from(contentElements).map(el => el.textContent);
+        } else {
+          lockedRowsCache[header] = contentElements.length > 0 ? contentElements[0].textContent : '';
+        }
+        
+        // Also capture the DOM elements to help with restoration
+        lockedRowsCache[header + '_elements'] = {
+          row: row,
+          format: format,
+          contentElements: contentElements
+        };
+        
+        console.log(`Cached locked row "${header}" with format ${format}`);
+      });
+      
+      // Check if the first row is locked (to prevent title updates)
+      const firstRow = generationContainer.querySelector('.result-row:first-child');
+      const isFirstRowLocked = firstRow && firstRow.classList.contains('locked');
+      
+      console.log(`Rerolling ${unlockedRows.length} unlocked rows in card (${lockedRows.length} locked rows will be preserved)`);
+      
+      // Get the generation index for context access
       const generationIndex = generationContainer.dataset.index;
-      const context = {}; // Create a fresh context for full rerolls
-      console.log(`Rerolling entire card ${generationIndex}`);
+      
+      // Track progress for sequential rerolling
+      let currentIndex = 0;
+      let rerollFailed = false;
       
       // Show loading indicator
       generationContainer.style.opacity = '0.6';
       
-      // Call the API to generate a single new result
-      fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          table: currentSelectedTable, 
-          number: 1 
-        })
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(`Server responded with an error: ${err.error}`);
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data.results && data.results.length > 0) {
-          // Store the new result's context
-          generationContexts[generationIndex] = {};    
-          extractContext(data.results[0], generationContexts[generationIndex]);
+      // Process rows sequentially to maintain context between them
+      function processNextRow() {
+        if (currentIndex >= unlockedRows.length || rerollFailed) {
+          // All rows processed or an error occurred
+          generationContainer.style.opacity = '1';
           
-          // Clear and rebuild the card content (keeping the header)
-          const cardHeader = generationContainer.querySelector('.card-title');
-          const collapseButton = generationContainer.querySelector('.collapse-btn');
-          generationContainer.innerHTML = '';
-          generationContainer.appendChild(collapseButton);
-          generationContainer.appendChild(cardHeader);
-          
-          // Add the new content
-          const contentWrapper = document.createElement('div');
-          contentWrapper.className = 'card-content';
-          contentWrapper.innerHTML = renderResultItem(data.results[0], true, generationIndex);
-          generationContainer.appendChild(contentWrapper);
-          
-          // Extract first meaningful value for the title
-          let firstValue = extractDisplayValueForTitle(data.results[0]);
-          firstValue = firstValue.trim();
-          
-          // Update the title text without truncation
-          const titleText = cardHeader.querySelector('.card-title-text');
-          if (titleText) {
-            titleText.textContent = firstValue ? 
-              `${currentSelectedTable.tablename || 'Result'} - ${firstValue}` :
-              currentSelectedTable.tablename || 'Result';
-          }
-          
-          // Restore the collapsed state if it was collapsed
+          // Restore collapsed state if needed
           if (wasCollapsed) {
             generationContainer.classList.add('collapsed');
           }
           
-          // Reset opacity
-          generationContainer.style.opacity = '1';
-        } else {
-          throw new Error('No results returned');
+          // Update the card title based on the first row's content
+          // ONLY if the first row isn't locked
+          if (!isFirstRowLocked) {
+            updateCardTitleFromFirstRow(generationContainer);
+          }
+          
+          return;
         }
-      })
-      .catch(error => {
-        console.error('Error rerolling all content:', error);
-        generationContainer.style.opacity = '1';
-        alert('Failed to reroll content. Please try again.');
-      });
+        
+        const row = unlockedRows[currentIndex];
+        const rerollButton = row.querySelector('.reroll-btn');
+        
+        if (rerollButton) {
+          // Use the existing reroll function to maintain context properly
+          try {
+            // Set up a one-time event listener to know when this reroll finishes
+            const observer = new MutationObserver((mutations, obs) => {
+              // Check if the row's opacity has been reset, signaling the reroll is complete
+              if (row.style.opacity === '1') {
+                obs.disconnect();
+                currentIndex++;
+                setTimeout(processNextRow, 50); // Small delay between rerolls for stability
+              }
+            });
+            
+            observer.observe(row, { 
+              attributes: true, 
+              attributeFilter: ['style']
+            });
+            
+            // Trigger the reroll
+            rerollContent(rerollButton);
+          } catch (error) {
+            console.error('Error rerolling row:', error);
+            rerollFailed = true;
+            currentIndex++;
+            setTimeout(processNextRow, 50);
+          }
+        } else {
+          // Skip this row if it doesn't have a reroll button
+          currentIndex++;
+          setTimeout(processNextRow, 50);
+        }
+      }
+      
+      // Start the sequential rerolling process
+      processNextRow();
+    }
+
+    // Helper function to update card title from first row after rerolling
+    function updateCardTitleFromFirstRow(generationContainer) {
+      const firstRow = generationContainer.querySelector('.result-row:first-child');
+      if (!firstRow) return;
+      
+      // Skip title update if the first row is locked
+      if (firstRow.classList.contains('locked')) {
+        return;
+      }
+      
+      // Get content from the first row
+      let titleValue = '';
+      
+      // Handle different row formats
+      const format = firstRow.getAttribute('data-format');
+      const contentElements = firstRow.querySelectorAll('.result-content');
+      
+      if (format === 'career' && contentElements.length >= 1) {
+        // For career format, use the career name (first content cell)
+        titleValue = contentElements[0].textContent;
+      } else if (contentElements.length > 0) {
+        // For other formats, use the first content cell
+        titleValue = contentElements[0].textContent;
+      }
+      
+      // Update the title if we found content
+      if (titleValue && titleValue.trim()) {
+        updateCardTitle(generationContainer, titleValue);
+      }
     }
 
     // Improved function to correctly detect root tables even with spaces in names
@@ -2503,19 +2623,20 @@
           descriptionHTML = `<div class="table-description">${item._description}</div>`;
         }
       }
-      
-      // Special handling for career format flagged by the server
-      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
+
+      // Special handling for career format from Knave or similar tables
+      // Check if this is a two-element string array like [career, items]
+      if (item && typeof item === 'object' && Array.isArray(item.result) && 
+          item.result.length === 2 && 
+          typeof item.result[0] === 'string' && 
+          typeof item.result[1] === 'string') {
+        
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        // Store both tableName and originalSource - originalSource takes priority
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
-        // Include the subtable name if different from table name
-        const isSubtable = item._tableName && item.header && item._tableName !== item.header;
-        const subtableName = isSubtable ? ` data-subtable-name="${item.header}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
         
-        // Get the career and items values
         const career = item.result[0] || '';
         const items = item.result[1] || '';
         
@@ -2523,12 +2644,17 @@
         const careerEscaped = career.replace(/"/g, '&quot;');
         const itemsEscaped = items.replace(/"/g, '&quot;');
         
-        // Create a single row with both elements
+        // Create a row with both elements, adding lock and reroll buttons
+        const lockButton = !isNestedContent ? `
+          <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+            <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+          </button>` : '';
+          
         const rerollButton = !isNestedContent ? `
           <button class="reroll-btn" onclick="rerollContent(this)">
             <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
           </button>` : '';
-        
+          
         // Add row description if present
         const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
         
@@ -2539,524 +2665,38 @@
             <div class="result-header" title="${headerTitle}">${item.header}</div>
             <div class="result-content" title="${careerEscaped}">${career}</div>
             <div class="result-content" title="${itemsEscaped}">${items}</div>
+            ${lockButton}
             ${rerollButton}
           </div>
           ${rowDescription}
         `;
       }
       
-      // New case: Handle multi-element array format flagged by the server
+      // Continue with existing special handling for career format flagged by the server
+      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
+        // ... existing code for _isCareer ...
+      }
+      
+      // Continue with existing case for multi-element array format
       if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        // Store both tableName and originalSource - originalSource takes priority
-        const originalSource = item._originalSource || item._tableName || '';
-        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
-        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
-        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
-        
-        // Create content cells for each element in the array (max 4 elements)
-        const contentCells = item.result.map(element => {
-          const valueStr = String(element || '');
-          const escapedValue = valueStr.replace(/"/g, '&quot;');
-          return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
-        }).join('');
-        
-        const rerollButton = !isNestedContent ? `
-          <button class="reroll-btn" onclick="rerollContent(this)">
-            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-          </button>` : '';
-        
-        // Add row description if present
-        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-        
-        return `
-          ${isTopLevel ? titleDescriptionHTML : ''}
-          ${isTopLevel ? descriptionHTML : ''}
-          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="multi-array">
-            <div class="result-header" title="${headerTitle}">${item.header}</div>
-            ${contentCells}
-            ${rerollButton}
-          </div>
-          ${rowDescription}
-        `;
+        // ... existing code for _isMultiElementArray ...
       }
 
-      // Handle arrays with better weight detection
+      // Continue with existing array handling
       if (Array.isArray(item.result)) {
-        // Check if the last element is numeric (a weight)
-        const lastIndex = item.result.length - 1;
-        const lastElement = item.result[lastIndex];
-        const isLastElementNumeric = 
-          typeof lastElement === 'number' || 
-          (typeof lastElement === 'string' && !isNaN(parseFloat(lastElement)) && 
-           lastElement.trim() !== '' && !isNaN(lastElement));
-        
-        // If this is a weighted array, show only the value elements (exclude weight)
-        if (isLastElementNumeric && item.result.length >= 2) {
-          const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-          const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
-          
-          // Display each value element (excluding the weight)
-          const contentCells = item.result.slice(0, lastIndex).map(element => {
-            const valueStr = String(element || '');
-            const escapedValue = valueStr.replace(/"/g, '&quot;');
-            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
-          }).join('');
-          
-          const rerollButton = !isNestedContent ? `
-            <button class="reroll-btn" onclick="rerollContent(this)">
-              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-            </button>` : '';
-          
-          // Add row description if present
-          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-          
-          return `
-            ${isTopLevel ? titleDescriptionHTML : ''}
-            ${isTopLevel ? descriptionHTML : ''}
-            <div class="result-row"${sourceTable} data-format="weighted">
-              <div class="result-header" title="${headerTitle}">${item.header}</div>
-              ${contentCells}
-              ${rerollButton}
-            </div>
-            ${rowDescription}
-          `;
-        }
+        // ... existing code for general arrays ...
       }
 
-      // Standard single value
+      // Continue with existing standard value handling
       if (item && typeof item === 'object' && "header" in item && "result" in item) {
-        const originalSource = item._originalSource || item._tableName || '';
-        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
-        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
-        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        
-        // Handle different result types, starting with standard string/number
-        if (typeof item.result === 'string' || typeof item.result === 'number') {
-          const resultStr = String(item.result);
-          const escapedResult = resultStr.replace(/"/g, '&quot;');
-          
-          const rerollButton = !isNestedContent ? `
-            <button class="reroll-btn" onclick="rerollContent(this)">
-              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-            </button>` : '';
-          
-          // Add row description if present
-          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-          
-          return `
-            ${isTopLevel ? titleDescriptionHTML : ''}
-            ${isTopLevel ? descriptionHTML : ''}
-            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
-              <div class="result-header" title="${headerTitle}">${item.header}</div>
-              <div class="result-content" title="${escapedResult}">${resultStr}</div>
-              ${rerollButton}
-            </div>
-            ${rowDescription}
-          `;
-        }
-        
-        // For arrays of objects (nested results)
-        if (Array.isArray(item.result) && 
-            item.result.some(el => typeof el === 'object' && el !== null)) {
-             
-          // Add the parent description if we're at the top level
-          let output = isTopLevel ? titleDescriptionHTML + descriptionHTML : '';
-          
-          // Process each nested result item
-          item.result.forEach(subItem => {
-            output += renderResultItem(subItem, false, generationIndex);
-          });
-          
-          return output;
-        }
-        
-        // Handle other result types
-        // ...existing handling cases...
+        // ... existing code for standard objects ...
       }
       
-      // For primitive values and fallback
+      // Existing fallback handling
       return item !== undefined && item !== null ? String(item) : '';
     }
-    
-    // Update the showTableContent function to include descriptions and title descriptions
-    function showTableContent() {
-      // Use the same table selection logic as generateContent
-      const tableHeader = document.querySelector('#tableHeaders h2');
-      
-      if (!tableHeader) {
-        console.error('No table header found');
-        displayErrorMessage('Error: No table selected.');
-        return;
-      }
-      
-      const selectedTableName = tableHeader.textContent;
-      const selectedFileName = tableHeader.dataset.filename;
-      const selectedGameName = tableHeader.dataset.game;
-      
-      console.log('Looking for table with:', {
-        tablename: selectedTableName,
-        filename: selectedFileName,
-        game: selectedGameName
-      });
-      
-      const selectedTable = tablesData.find(t => {
-        // First try exact filename match
-        if (selectedFileName && t.filename === selectedFileName) {
-          return true;
-        }
-        // Then try name + game
-        if (t.tablename === selectedTableName && t.game === selectedGameName) {
-          return true;
-        }
-        return false;
-      });
-            
-      if (!selectedTable) {
-        console.error(`No table found for "${selectedTableName}"`);
-        displayErrorMessage(`Error: Table "${selectedTableName}" not found.`);
-        return;
-      }
-      
-      console.log('Selected table for showing contents:', {
-        tablename: selectedTable.tablename,
-        filename: selectedTable.filename,
-        game: selectedTable.game
-      });
 
-      currentSelectedTable = selectedTable;
-
-      // Show loading indicator
-      const resultsContainer = document.getElementById('results');
-      resultsContainer.innerHTML = '';
-      const loadingDiv = document.createElement('div');
-      loadingDiv.className = 'generation-object';
-      loadingDiv.textContent = 'Loading table contents...';
-      resultsContainer.appendChild(loadingDiv);
-
-      fetch('/api/table-contents', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table: selectedTable })
-      })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(err => {
-            throw new Error(err.error || 'Failed to retrieve table contents');
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        resultsContainer.innerHTML = '';
-        if (!data.tableData || !data.tableData.subtables || data.tableData.subtables.length === 0) {
-          const noContentDiv = document.createElement('div');
-          noContentDiv.className = 'generation-object';
-          noContentDiv.textContent = 'No table entries found.';
-          resultsContainer.appendChild(noContentDiv);
-          return;
-        }
-
-        // Create a container for the table display
-        const tableContainer = document.createElement('div');
-        tableContainer.className = 'table-display generation-container';
-        tableContainer.dataset.index = `table-${Date.now()}`;
-        
-        // Make it draggable like other cards
-        tableContainer.draggable = true;
-        tableContainer.addEventListener('dragstart', handleCardDragStart);
-        tableContainer.addEventListener('dragend', handleCardDragEnd);
-
-        // Add the collapse button
-        const collapseBtn = document.createElement('button');
-        collapseBtn.className = 'collapse-btn';
-        collapseBtn.onclick = (e) => {
-          e.stopPropagation(); // Prevent card drag
-          toggleCardCollapse(collapseBtn);
-        };
-        collapseBtn.innerHTML = `
-          <span class="down-arrow">▼</span>
-          <span class="up-arrow">▲</span>
-        `;
-        tableContainer.appendChild(collapseBtn);
-        
-        // Add table header with title and action buttons
-        const tableHeader = document.createElement('div');
-        tableHeader.className = 'card-title';
-        
-        // Title text
-        const titleText = document.createElement('span');
-        titleText.className = 'card-title-text';
-        titleText.textContent = data.tableData.name;
-        tableHeader.appendChild(titleText);
-        
-        // Action buttons
-        const cardActions = document.createElement('div');
-        cardActions.className = 'card-actions';
-        
-        // Copy button
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.title = "Copy to Markdown"; // Add title attribute for hover text
-        copyBtn.onclick = (e) => {
-          e.stopPropagation();
-          copyTableToMarkdown(tableContainer, data.tableData);
-        };
-        copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
-        cardActions.appendChild(copyBtn);
-                
-        // Delete button
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-card-btn';
-        deleteBtn.title = "Delete Card"; // Add title attribute for hover text
-        deleteBtn.onclick = (e) => {
-          e.stopPropagation();
-          deleteCard(tableContainer);
-        };
-        deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">`;
-        cardActions.appendChild(deleteBtn);
-        
-        tableHeader.appendChild(cardActions);
-        tableContainer.appendChild(tableHeader);
-
-        // Create the content wrapper
-        const contentWrapper = document.createElement('div');
-        contentWrapper.className = 'card-content';
-        
-        // Add root table description if present
-        if (data.tableData.description) {
-          const tableDescription = document.createElement('div');
-          tableDescription.className = 'table-description';
-          tableDescription.textContent = data.tableData.description;
-          contentWrapper.appendChild(tableDescription);
-        }
-        
-        // Process each subtable
-        data.tableData.subtables.forEach(subtable => {
-          const subtableContainer = document.createElement('div');
-          subtableContainer.className = 'subtable-container';
-          
-          // Add subtable header
-          const subtableHeader = document.createElement('div');
-          subtableHeader.className = 'subtable-header';
-          subtableHeader.textContent = subtable.name;
-          subtableContainer.appendChild(subtableHeader);
-          
-          // Add subtable description if present
-          if (subtable.description) {
-            const subtableDesc = document.createElement('div');
-            subtableDesc.className = 'subtable-description';
-            subtableDesc.textContent = subtable.description;
-            subtableContainer.appendChild(subtableDesc);
-          }
-          
-          // Add customDisplay if present
-          if (subtable.customDisplay) {
-            const customDisplay = document.createElement('div');
-            customDisplay.className = 'subtable-custom-display';
-            customDisplay.textContent = subtable.customDisplay;
-            subtableContainer.appendChild(customDisplay);
-          }
-          
-          // Add results
-          if (subtable.results && subtable.results.length > 0) {
-            subtable.results.forEach((entry, index) => {
-              const entryDiv = document.createElement('div');
-              entryDiv.className = 'table-entry';
-              
-              // Add entry number
-              const entryNumber = document.createElement('div');
-              entryNumber.className = 'entry-number';
-              entryNumber.textContent = `${index + 1}.`;
-              entryDiv.appendChild(entryNumber);
-              
-              // Add content based on type
-              const entryContent = document.createElement('div');
-              entryContent.className = 'entry-content';
-              
-              // Handle different entry types
-              if (entry.isWeighted) {
-                // It's a weighted entry
-                if (typeof entry.value === 'object' && !Array.isArray(entry.value)) {
-                  entryContent.textContent = JSON.stringify(entry.value);
-                } else if (Array.isArray(entry.value)) {
-                  entryContent.textContent = entry.value.join(', ');
-                } else {
-                  entryContent.textContent = entry.value;
-                }
-                
-                // Add weight display
-                const entryWeight = document.createElement('div');
-                entryWeight.className = 'entry-weight';
-                entryWeight.textContent = `Weight: ${entry.weight}`;
-                entryDiv.appendChild(entryWeight);
-              } 
-              else if (entry.isCareer) {
-                // It's a career entry format
-                const careerEntry = document.createElement('div');
-                careerEntry.className = 'career-entry';
-                
-                const careerName = document.createElement('span');
-                careerName.className = 'career-name';
-                careerName.textContent = entry.career;
-                careerEntry.appendChild(careerName);
-                
-                const careerItems = document.createElement('span');
-                careerItems.className = 'career-items';
-                careerItems.textContent = entry.items;
-                careerEntry.appendChild(careerItems);
-                 
-                entryContent.appendChild(careerEntry);
-              }
-              else if (typeof entry.value !== 'undefined') {
-                // It's a simple value
-                if (typeof entry.value === 'object') {
-                  entryContent.textContent = JSON.stringify(entry.value);
-                } else {
-                  entryContent.textContent = entry.value;
-                }
-              }
-              else {
-                // It's a generic object
-                entryContent.textContent = JSON.stringify(entry);
-              }
-              
-              entryDiv.appendChild(entryContent);
-              subtableContainer.appendChild(entryDiv);
-            });
-          } else {
-            const noResults = document.createElement('div');
-            noResults.className = 'table-entry';
-            noResults.textContent = '(No results found)';
-            subtableContainer.appendChild(noResults);
-          }
-          
-          // Add nested subtables if present
-          if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
-            const nestedContainer = document.createElement('div');
-            nestedContainer.className = 'nested-subtables';
-            
-            subtable.nestedSubtables.forEach(nestedTable => {
-              const nestedHeader = document.createElement('div');
-              nestedHeader.className = 'subtable-header';
-              nestedHeader.textContent = `${nestedTable.name} (nested)`;
-              nestedContainer.appendChild(nestedHeader);
-              
-              // Add nested table description if present
-              if (nestedTable.description) {
-                const nestedDesc = document.createElement('div');
-                nestedDesc.className = 'subtable-description';
-                nestedDesc.textContent = nestedTable.description;
-                nestedContainer.appendChild(nestedDesc);
-              }
-              
-              if (nestedTable.results && nestedTable.results.length > 0) {
-                nestedTable.results.forEach((entry, index) => {
-                  const entryDiv = document.createElement('div');
-                  entryDiv.className = 'table-entry';
-                  
-                  // Add entry number
-                  const entryNumber = document.createElement('div');
-                  entryNumber.className = 'entry-number';
-                  entryNumber.textContent = `${index + 1}.`;
-                  entryDiv.appendChild(entryNumber);
-                     
-                  // Add content
-                  const entryContent = document.createElement('div');
-                  entryContent.className = 'entry-content';
-                         
-                  if (typeof entry.value !== 'undefined') {
-                    entryContent.textContent = entry.value;
-                  } else {
-                    entryContent.textContent = JSON.stringify(entry);
-                  }
-                  
-                  entryDiv.appendChild(entryContent);
-                  nestedContainer.appendChild(entryDiv);
-                });
-              }
-            });
-            
-            subtableContainer.appendChild(nestedContainer);
-          }
-               
-          contentWrapper.appendChild(subtableContainer);
-        });
-        
-        tableContainer.appendChild(contentWrapper);
-        resultsContainer.appendChild(tableContainer);
-      })
-      .catch(error => {
-        resultsContainer.innerHTML = '';
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'generation-object error';
-        errorDiv.textContent = `Error: ${error.message}`;
-        resultsContainer.appendChild(errorDiv);
-      });
-    }
-    
-    // Add function to copy table contents to markdown
-    function copyTableToMarkdown(tableContainer, tableData) {
-      if (!tableData) {
-        // Simple fallback when structured data isn't available
-        let markdown = '';
-        
-        // Get all table entries
-        const entries = tableContainer.querySelectorAll('.table-entry');
-        entries.forEach(entry => {
-          const entryNumber = entry.querySelector('.entry-number')?.textContent || '';
-          const entryContent = entry.querySelector('.entry-content')?.textContent || '';
-          markdown += `${entryNumber} ${entryContent}\n`;
-        });
-        
-        copyToClipboardWithToast(markdown);
-        return;
-      }
-      
-      // For structured table data
-      let markdown = `*${tableData.name}*\n\n`;
-      
-      // Process each subtable
-      tableData.subtables.forEach(subtable => {
-        markdown += `## ${subtable.name}\n\n`;
-        
-        if (subtable.results && subtable.results.length > 0) {
-          subtable.results.forEach((entry, index) => {
-            let entryText = '';
-            
-            if (entry.isWeighted) {
-              const valueText = typeof entry.value === 'object' ? JSON.stringify(entry.value) : entry.value;
-              entryText = `${valueText} (${entry.weight})`;
-            } else if (entry.isCareer) {
-              entryText = `${entry.career} - ${entry.items}`;
-            } else if (typeof entry.value !== 'undefined') {
-              entryText = typeof entry.value === 'object' ? JSON.stringify(entry.value) : entry.value;
-            } else {
-              entryText = JSON.stringify(entry);
-            }
-              
-            markdown += `${index + 1}. ${entryText}\n`;
-          });
-          markdown += '\n';
-        }
-      });
-            
-      copyToClipboardWithToast(markdown);
-    }
-    
-    function copyToClipboardWithToast(text) {
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          showToast('Copied to clipboard!');
-        })
-        .catch(err => {
-          console.error('Failed to copy text: ', err);
-          showToast('Failed to copy to clipboard');
-        });
-    }
-
-    // New function to update available options in other filters based on current selection
+    // Add new function to update available options in other filters based on current selection
     function updateAvailableOptions(filteredTables) {
       const gameFilter = document.getElementById('gameFilter');
       const typeFilter = document.getElementById('typeFilter');
@@ -3465,6 +3105,221 @@
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(context, args), wait);
       };
+    }
+
+    // Replace with the original renderResultItem function (without array parsing)
+    function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
+      // Add support for table-level descriptions and title descriptions
+      let descriptionHTML = '';
+      let titleDescriptionHTML = '';
+      
+      if (isTopLevel) {
+        // Add title description if present
+        if (item && item._titleDescription) {
+          titleDescriptionHTML = `<div class="title-description">${item._titleDescription}</div>`;
+        }
+        
+        // Standard description
+        if (item && item._description) {
+          descriptionHTML = `<div class="table-description">${item._description}</div>`;
+        }
+      }
+      
+      // Special handling for career format flagged by the server
+      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        // Store both tableName and originalSource - originalSource takes priority
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        // Include the subtable name if different from table name
+        const isSubtable = item._tableName && item.header && item._tableName !== item.header;
+        const subtableName = isSubtable ? ` data-subtable-name="${item.header}"` : '';
+        
+        // Get the career and items values
+        const career = item.result[0] || '';
+        const items = item.result[1] || '';
+        
+        // Escape values for HTML attributes
+        const careerEscaped = career.replace(/"/g, '&quot;');
+        const itemsEscaped = items.replace(/"/g, '&quot;');
+        
+        // Create a single row with both elements
+        const lockButton = !isNestedContent ? `
+          <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+            <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+          </button>` : '';
+        
+        const rerollButton = !isNestedContent ? `
+          <button class="reroll-btn" onclick="rerollContent(this)">
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+          </button>` : '';
+        
+        // Add row description if present
+        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+        
+        return `
+          ${isTopLevel ? titleDescriptionHTML : ''}
+          ${isTopLevel ? descriptionHTML : ''}
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            <div class="result-content" title="${careerEscaped}">${career}</div>
+            <div class="result-content" title="${itemsEscaped}">${items}</div>
+            ${lockButton}
+            ${rerollButton}
+          </div>
+          ${rowDescription}
+        `;
+      }
+      
+      // New case: Handle multi-element array format flagged by the server
+      if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        // Store both tableName and originalSource - originalSource takes priority
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+        
+        // Create content cells for each element in the array (max 4 elements)
+        const contentCells = item.result.map(element => {
+          const valueStr = String(element || '');
+          const escapedValue = valueStr.replace(/"/g, '&quot;');
+          return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+        }).join('');
+        
+        const lockButton = !isNestedContent ? `
+          <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+            <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+          </button>` : '';
+        
+        const rerollButton = !isNestedContent ? `
+          <button class="reroll-btn" onclick="rerollContent(this)">
+            <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+          </button>` : '';
+        
+        // Add row description if present
+        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+        
+        return `
+          ${isTopLevel ? titleDescriptionHTML : ''}
+          ${isTopLevel ? descriptionHTML : ''}
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="multi-array">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            ${contentCells}
+            ${lockButton}
+            ${rerollButton}
+          </div>
+          ${rowDescription}
+        `;
+      }
+
+      // Handle arrays with better weight detection
+      if (Array.isArray(item.result)) {
+        // Check if the last element is numeric (a weight)
+        const lastIndex = item.result.length - 1;
+        const lastElement = item.result[lastIndex];
+        const isLastElementNumeric = 
+          typeof lastElement === 'number' || 
+          (typeof lastElement === 'string' && !isNaN(parseFloat(lastElement)) && 
+           lastElement.trim() !== '' && !isNaN(lastElement));
+        
+        // If this is a weighted array, show only the value elements (exclude weight)
+        if (isLastElementNumeric && item.result.length >= 2) {
+          const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+          const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
+          
+          // Display each value element (excluding the weight)
+          const contentCells = item.result.slice(0, lastIndex).map(element => {
+            const valueStr = String(element || '');
+            const escapedValue = valueStr.replace(/"/g, '&quot;');
+            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+          }).join('');
+          
+          const lockButton = !isNestedContent ? `
+            <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+              <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+            </button>` : '';
+          
+          const rerollButton = !isNestedContent ? `
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>` : '';
+          
+          // Add row description if present
+          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+          
+          return `
+            ${isTopLevel ? titleDescriptionHTML : ''}
+            ${isTopLevel ? descriptionHTML : ''}
+            <div class="result-row"${sourceTable} data-format="weighted">
+              <div class="result-header" title="${headerTitle}">${item.header}</div>
+              ${contentCells}
+              ${lockButton}
+              ${rerollButton}
+            </div>
+            ${rowDescription}
+          `;
+        }
+      }
+
+      // Standard single value
+      if (item && typeof item === 'object' && "header" in item && "result" in item) {
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        
+        // Handle different result types, starting with standard string/number
+        if (typeof item.result === 'string' || typeof item.result === 'number') {
+          const resultStr = String(item.result);
+          const escapedResult = resultStr.replace(/"/g, '&quot;');
+          
+          const lockButton = !isNestedContent ? `
+            <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+              <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+            </button>` : '';
+          
+          const rerollButton = !isNestedContent ? `
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>` : '';
+          
+          // Add row description if present
+          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+          
+          return `
+            ${isTopLevel ? titleDescriptionHTML : ''}
+            ${isTopLevel ? descriptionHTML : ''}
+            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
+              <div class="result-header" title="${headerTitle}">${item.header}</div>
+              <div class="result-content" title="${escapedResult}">${resultStr}</div>
+              ${lockButton}
+              ${rerollButton}
+            </div>
+            ${rowDescription}
+          `;
+        }
+        
+        // For arrays of objects (nested results)
+        if (Array.isArray(item.result) && 
+            item.result.some(el => typeof el === 'object' && el !== null)) {
+            
+          // Add the parent description if we're at the top level
+          let output = isTopLevel ? titleDescriptionHTML + descriptionHTML : '';
+          
+          // Process each nested result item
+          item.result.forEach(subItem => {
+            output += renderResultItem(subItem, false, generationIndex);
+          });
+          
+          return output;
+        }
+      }
+      
+      // For primitive values and fallback
+      return item !== undefined && item !== null ? String(item) : '';
     }
   </script>
 </body>

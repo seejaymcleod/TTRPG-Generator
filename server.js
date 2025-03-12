@@ -218,7 +218,7 @@ app.post('/api/reroll', (req, res) => {
         for (const subTable of selectedTable.tables) {
           const subTableName = subTable.name || subTable.tablename || '';
           if (subTableName.toLowerCase() === headerLower) {
-            console.log(`Found subtable using case-insensitive match: ${subTableName}`);
+            console.log(`Found subtable "${subTableName}" with case-insensitive match`);
             targetSubTable = subTable;
             break;
           }
@@ -709,6 +709,9 @@ function processCustomDisplay(table, allTables, context) {
           const tableName = t.tablename;
           if (tableName && tableName.toLowerCase() === tableToLookup.toLowerCase()) {
             refTable = t;
+            if (DEBUG) {
+              console.log(`Found table "${tableToLookup}" in global table list`);
+            }
             break;
           }
         }
@@ -1171,7 +1174,7 @@ function loadAllTables() {
           
           tables.push(tableData);
           if (DEBUG) {
-            console.log(`Loaded table: ${tableData.tablename || file}`);
+            console.log(`Loaded table: ${file} (${tableData.tablename || 'Unnamed table'})`);
           }
         } catch (err) {
           console.error(`Error loading table ${file}:`, err);
@@ -1482,7 +1485,9 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
       const [min, max] = entry.key.split('-').map(Number);
       if (!isNaN(min) && !isNaN(max) && 
           processedLookupValue >= min && processedLookupValue <= max) {
-        if (DEBUG) console.log(`Found range match: ${min}-${max}, value=${entry.value}`);
+        if (DEBUG) {
+          console.log(`Found range match: key=${entry.key}, value=${entry.value}`);
+        }
         return entry.value;
       }
     }

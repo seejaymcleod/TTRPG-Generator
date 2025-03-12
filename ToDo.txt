@@ -1,0 +1,21 @@
+User Data
+	exportable JSON
+		
+	unique? username
+	
+	
+Row locks for rerolls
+
+Tables and Cards views
+	Tables
+		collections of tables
+		favourites
+		custom Tables 
+		modifying tables using addons ? 
+	Cards
+		collections of cards
+		custom cards using drag-and drop results
+		
+Refactor 
+	css 
+	scripts? 
