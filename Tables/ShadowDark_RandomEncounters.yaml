@@ -1,0 +1,27 @@
+filename: ShadowDark_RandomEncounters.yaml
+game: ShadowDark
+setting: Fantasy
+type: Adventure
+tablename: Random Encounters
+tables:
+  - tablename: Distance
+    results: 
+      - [Close, 1]
+      - [Near, 3]
+      - [Far, 2]
+  - tablename: Activity
+    results: 
+      - [Hunting, 3]
+      - [Eating, 3]
+      - [Building/nesting, 2]
+      - [Socializing/playing, 2]
+      - [Guarding, 1]
+      - [Sleeping, 1]
+  - tablename: Reaction
+    description: Should be improved by CHA mod. 
+    results: 
+      - [Hostile, 6]
+      - [Suspicious, 2]
+      - [Neutral, 1]
+      - [Curious, 2]
+      - [Friendly, 1]
