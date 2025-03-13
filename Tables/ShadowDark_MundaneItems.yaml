@@ -2,7 +2,7 @@ filename: ShadowDark_MundaneItems.yaml
 game: ShadowDark
 setting: Fantasy
 type: Stuff
-tablename: Mundane Items
+tablename: MundaneItems
 tables:
   - tablename: Gemstones
     results:
@@ -35,8 +35,9 @@ tables:
       - Carved with initials
       - Historic/famous
   - tablename: Luxury Items
+    customDisplay: "[{Features} {Item}]"
     subTables:
-      - tableName: Features
+      - tablename: Features
         results: 
           - Golden
           - Etched-copper
@@ -58,8 +59,26 @@ tables:
           - Masterwork
           - Silk-wrapped
           - Stained glass
-      - tableName: Item
-        subTables:
-            
-
-      
+      - tablename: Item
+        customDisplay: "{pickOneFromArrays}" 
+        results: 
+          - Life-sized humanoid figure
+          - "[tusk, horn, fang, skull]"
+          - "Altar [Memnon, Ord, [Madeera, 2]]"
+          - "Statuette [fox, cat, dog, owl]"
+          - "[chest, table, lockbox, chair]"
+          - "[Chaos, [Neutrality, 2], Law] Icon"
+          - "[god, ruler, hero, bard] Bust"
+          - "[dragon, [basilisk, 2], griffon] Egg"
+          - "[charm, amulet, locket, signet]"
+          - "[crow, jester, thief, god] Mask"
+          - "[mirror, vase, pottery, ewer]"
+          - "[chalice, plate, cutlery, mug]"
+          - "[circlet, ring, chain, torc]"
+          - "[wine, grog, mead, ale] Bottle"
+          - "[[scroll case, 2], ink pot, quill]"
+          - "[shield, helm, bracers, greaves]"
+          - "[lute, viol, harp, flute]"
+          - "[urn, coffin, bier, sarcophagus]"
+          - "[crown, scepter, orb, throne]"
+          - "[[beetle, 2], butterfly, spider]"
