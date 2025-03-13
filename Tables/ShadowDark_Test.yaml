@@ -13,7 +13,10 @@ tables:
   - tablename: SingleResult
     results: 
       - ThatOneResult
-  - tablename: Link To TableWithinThisTable
+  - tablename: LinkToTableWithinThisTable
     results: 
       - "{SingleResult}"
+  - tablename: LinkToThisSameTable
+    results:   
+      - "{LinkToThisSameTable}"
       
