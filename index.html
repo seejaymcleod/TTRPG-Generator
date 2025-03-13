@@ -3387,6 +3387,337 @@
         lockImage.title = 'Lock this result';
       }
     }
+
+    // Replace the existing showTableContent function with this fixed version
+    function showTableContent() {
+      if (!currentSelectedTable) {
+        console.error('No table currently selected');
+        displayErrorMessage('Error: No table selected to display.');
+        return;
+      }
+      
+      // Clear existing content
+      clearGeneratedList();
+      
+      // Show loading indicator
+      const resultsContainer = document.getElementById('results');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'generation-object';
+      loadingDiv.id = 'loading-indicator';
+      loadingDiv.textContent = 'Loading table structure...';
+      resultsContainer.appendChild(loadingDiv);
+      
+      // Fetch the table structure - FIXED: use table-contents instead of table-structure
+      fetch('/api/table-contents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: currentSelectedTable })
+      })
+      .then(response => {
+        // First remove the loading indicator
+        document.getElementById('loading-indicator')?.remove();
+        
+        // Check for content type to detect HTML error pages
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.indexOf('application/json') === -1) {
+          throw new Error(`Server returned non-JSON response (${contentType}). The API endpoint might be missing or unavailable.`);
+        }
+
+        if (!response.ok) {
+          return response.text().then(text => {
+            try {
+              const data = JSON.parse(text);
+              throw new Error(`Server error: ${data.error || 'Unknown server error'}`);
+            } catch (e) {
+              throw new Error(`Server error: Response code ${response.status}`);
+            }
+          });
+        }
+        
+        return response.json();
+      })
+      .then(data => {
+        // FIXED: Change data.structure to data.tableData to match the server response format
+        if (!data.tableData) {
+          throw new Error('No table structure returned from server');
+        }
+        
+        // Create a container for the table display
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'generation-container table-display';
+        
+        // Add title
+        const cardTitle = document.createElement('div');
+        cardTitle.className = 'card-title';
+        
+        // Add title text
+        const titleText = document.createElement('span');
+        titleText.className = 'card-title-text';
+        titleText.textContent = `Table: ${currentSelectedTable.tablename || 'Unnamed Table'}`;
+        cardTitle.appendChild(titleText);
+        
+        // Add buttons
+        const cardActions = document.createElement('div');
+        cardActions.className = 'card-actions';
+        
+        // Add the Copy button
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.title = "Copy to Markdown";
+        copyBtn.onclick = (e) => {
+          e.stopPropagation();
+          copyTableToMarkdown(tableContainer);
+        };
+        copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
+        cardActions.appendChild(copyBtn);
+        
+        // Add the delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-card-btn';
+        deleteBtn.title = "Close Table View";
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          tableContainer.remove();
+        };
+        deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Close" title="Close Table View">`;
+        cardActions.appendChild(deleteBtn);
+        
+        cardTitle.appendChild(cardActions);
+        tableContainer.appendChild(cardTitle);
+        
+        // Add collapse button
+        const collapseBtn = document.createElement('button');
+        collapseBtn.className = 'collapse-btn';
+        collapseBtn.onclick = (e) => {
+          e.stopPropagation();
+          toggleCardCollapse(collapseBtn);
+        };
+        collapseBtn.innerHTML = `
+          <span class="down-arrow">▼</span>
+          <span class="up-arrow">▲</span>
+        `;
+        tableContainer.appendChild(collapseBtn);
+        
+        // Add card content
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'card-content';
+        
+        // FIXED: Adapt to the server response format
+        const tableData = data.tableData;
+        
+        // Add table description if present
+        if (tableData.description) {
+          const descriptionDiv = document.createElement('div');
+          descriptionDiv.className = 'table-description';
+          descriptionDiv.textContent = tableData.description;
+          contentWrapper.appendChild(descriptionDiv);
+        }
+        
+        // Display table entries
+        const entriesDiv = document.createElement('div');
+        entriesDiv.className = 'table-entries';
+        
+        // Process main table entries
+        if (tableData.subtables && tableData.subtables.length > 0) {
+          // If the first subtable is called "Main Results", treat it as the main table
+          const mainTable = tableData.subtables.find(t => t.name === "Main Results") || tableData.subtables[0];
+          processTableEntries(entriesDiv, mainTable);
+          
+          // Add other subtables
+          tableData.subtables.forEach(subtable => {
+            // Skip the main table we already processed
+            if (subtable === mainTable) return;
+            
+            const subtableContainer = document.createElement('div');
+            subtableContainer.className = 'subtable-container';
+            
+            // Add subtable header
+            const subtableHeader = document.createElement('div');
+            subtableHeader.className = 'subtable-header';
+            subtableHeader.textContent = subtable.name;
+            subtableContainer.appendChild(subtableHeader);
+            
+            // Add subtable description if present
+            if (subtable.description) {
+              const subtableDesc = document.createElement('div');
+              subtableDesc.className = 'subtable-description';
+              subtableDesc.textContent = subtable.description;
+              subtableContainer.appendChild(subtableDesc);
+            }
+            
+            // Process subtable entries
+            processTableEntries(subtableContainer, subtable);
+            
+            // Handle nested subtables if present
+            if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
+              const nestedSubtables = document.createElement('div');
+              nestedSubtables.className = 'nested-subtables';
+              
+              subtable.nestedSubtables.forEach(nestedTable => {
+                const nestedContainer = document.createElement('div');
+                nestedContainer.className = 'subtable-container';
+                
+                // Add nested subtable header
+                const nestedHeader = document.createElement('div');
+                nestedHeader.className = 'subtable-header';
+                nestedHeader.textContent = nestedTable.name;
+                nestedContainer.appendChild(nestedHeader);
+                
+                // Add nested subtable description if present
+                if (nestedTable.description) {
+                  const nestedDesc = document.createElement('div');
+                  nestedDesc.className = 'subtable-description';
+                  nestedDesc.textContent = nestedTable.description;
+                  nestedContainer.appendChild(nestedDesc);
+                }
+                
+                // Process nested subtable entries
+                processTableEntries(nestedContainer, nestedTable);
+                
+                nestedSubtables.appendChild(nestedContainer);
+              });
+              
+              subtableContainer.appendChild(nestedSubtables);
+            }
+            
+            entriesDiv.appendChild(subtableContainer);
+          });
+        } else {
+          // No subtables, just process the main table
+          processTableEntries(entriesDiv, tableData);
+        }
+        
+        contentWrapper.appendChild(entriesDiv);
+        tableContainer.appendChild(contentWrapper);
+        
+        // Add the table display to the results container
+        resultsContainer.appendChild(tableContainer);
+      })
+      .catch(error => {
+        console.error('Error displaying table structure:', error);
+        
+        // Show a helpful message if the API might not exist
+        if (error.message && error.message.includes('non-JSON response')) {
+          displayErrorMessage('The table structure API endpoint (/api/table-contents) appears to be missing. Make sure the server supports this feature.');
+        } else {
+          displayErrorMessage(`Error: ${error.message || 'Unable to display table structure.'}`);
+        }
+      });
+    }
+
+    // Helper function to process table entries
+    function processTableEntries(container, tableData) {
+      // FIXED: Use either results or entries depending on what's available
+      const entries = tableData.results || tableData.entries || [];
+      
+      if (entries && entries.length > 0) {
+        entries.forEach((entry, index) => {
+          const entryDiv = document.createElement('div');
+          entryDiv.className = 'table-entry';
+          
+          // Add entry number/index
+          const entryNumDiv = document.createElement('div');
+          entryNumDiv.className = 'entry-number';
+          entryNumDiv.textContent = (index + 1) + '.';
+          entryDiv.appendChild(entryNumDiv);
+          
+          // Add content based on type
+          const entryContentDiv = document.createElement('div');
+          entryContentDiv.className = 'entry-content';
+          
+          // FIXED: Handle entries from the server's format
+          let displayValue, weight;
+
+          if (entry && typeof entry === 'object') {
+            // Handle different object formats
+            if (entry.isCareer) {
+              // Career format from server
+              const careerDiv = document.createElement('div');
+              careerDiv.className = 'career-entry';
+              
+              const careerName = document.createElement('span');
+              careerName.className = 'career-name';
+              careerName.textContent = entry.career || '';
+              
+              const careerItems = document.createElement('span');
+              careerItems.className = 'career-items';
+              careerItems.textContent = ' - ' + (entry.items || '');
+              
+              careerDiv.appendChild(careerName);
+              careerDiv.appendChild(careerItems);
+              entryContentDiv.appendChild(careerDiv);
+            } else if (entry.isWeighted) {
+              // Weighted entry from server
+              displayValue = entry.value;
+              weight = entry.weight;
+              entryContentDiv.textContent = typeof displayValue === 'object' ? 
+                JSON.stringify(displayValue) : String(displayValue || '');
+            } else if (entry.value !== undefined) {
+              // Simple value object
+              displayValue = entry.value;
+              entryContentDiv.textContent = typeof displayValue === 'object' ? 
+                JSON.stringify(displayValue) : String(displayValue || '');
+            } else {
+              // Unknown object format
+              entryContentDiv.textContent = JSON.stringify(entry);
+            }
+          } else if (Array.isArray(entry)) {
+            // Handle arrays - career or weighted format
+            if (entry.length === 2 && typeof entry[0] === 'string' && typeof entry[1] === 'string') {
+              // Career format [career, items]
+              const careerDiv = document.createElement('div');
+              careerDiv.className = 'career-entry';
+              
+              const careerName = document.createElement('span');
+              careerName.className = 'career-name';
+              careerName.textContent = entry[0];
+              
+              const careerItems = document.createElement('span');
+              careerItems.className = 'career-items';
+              careerItems.textContent = ' - ' + entry[1];
+              
+              careerDiv.appendChild(careerName);
+              careerDiv.appendChild(careerItems);
+              entryContentDiv.appendChild(careerDiv);
+            } else if (entry.length === 2 && typeof entry[0] === 'string' && typeof entry[1] === 'number') {
+              // Weighted entry [value, weight]
+              displayValue = entry[0];
+              weight = entry[1];
+              entryContentDiv.textContent = displayValue;
+            } else {
+              // Regular array
+              entryContentDiv.textContent = entry.join(', ');
+            }
+          } else {
+            // Simple string or number
+            entryContentDiv.textContent = String(entry || '');
+          }
+          
+          entryDiv.appendChild(entryContentDiv);
+          
+          // Add weight if present
+          if (weight !== undefined) {
+            const weightDiv = document.createElement('div');
+            weightDiv.className = 'entry-weight';
+            weightDiv.textContent = `(${weight})`;
+            entryDiv.appendChild(weightDiv);
+          }
+          
+          container.appendChild(entryDiv);
+        });
+      } else if (tableData.table) {
+        // Some tables use 'table' property instead of 'entries'
+        processTableEntries(container, { entries: tableData.table });
+      }
+      
+      // Display the display format if present
+      if (tableData.displayFormat || tableData.customDisplay) {
+        const formatDiv = document.createElement('div');
+        formatDiv.className = 'subtable-custom-display';
+        formatDiv.textContent = `Format: ${tableData.displayFormat || tableData.customDisplay}`;
+        container.appendChild(formatDiv);
+      }
+    }
   </script>
 </body>
 </html>

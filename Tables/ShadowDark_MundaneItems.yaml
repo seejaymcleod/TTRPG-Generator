@@ -1,0 +1,65 @@
+filename: ShadowDark_MundaneItems.yaml
+game: ShadowDark
+setting: Fantasy
+type: Stuff
+tablename: Mundane Items
+tables:
+  - tablename: Gemstones
+    results:
+      - Pearl 40 gp
+      - Emerald 120 gp
+      - Ruby 200 gp
+      - Sapphire 280 gp
+      - Diamond 360 gp
+      - Giant gem 2x {Gemstones}
+  - tablename: Unique Feature
+    results: 
+      - Forgery
+      - Misshapen
+      - Poorly constructed
+      - Blemished
+      - Worn smooth
+      - Sparkling clean
+      - Bite marks
+      - Burned
+      - Dusty
+      - Caked with dry mud
+      - Rare artist mark
+      - Repaired
+      - Chipped
+      - Specks of dried blood
+      - Unusual material
+      - Fragile
+      - Rusted/rotted
+      - Painted upon
+      - Carved with initials
+      - Historic/famous
+  - tablename: Luxury Items
+    subTables:
+      - tableName: Features
+        results: 
+          - Golden
+          - Etched-copper
+          - Dragonscaled
+          - Gilded
+          - Bone-carved
+          - Amber-encased
+          - Painting of
+          - Silver
+          - Jade
+          - Tapestry of
+          - White marble
+          - Ivory
+          - Crystal
+          - Mithral
+          - Dragonbone
+          - Holy relic
+          - Meteorite
+          - Masterwork
+          - Silk-wrapped
+          - Stained glass
+      - tableName: Item
+        subTables:
+            
+
+      
