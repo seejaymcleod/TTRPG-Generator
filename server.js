@@ -1233,12 +1233,17 @@ function processTableReferences(input, allTables, context = {}) {
             console.log('Subtable structure:', JSON.stringify(subtable, null, 2).substring(0, 200) + '...');
           }
           
-          // Generate from the subtable
-          if (subtable.results && Array.isArray(subtable.results) && subtable.results.length > 0) {
+          // FIXED: Check for customDisplay first, before looking for results array
+          if (subtable.customDisplay) {
+            if (DEBUG) console.log(`Subtable "${subtableName}" has customDisplay, processing it directly`);
+            result = processCustomDisplay(subtable, allTables, context);
+          }
+          // Only check for results if there's no customDisplay
+          else if (subtable.results && Array.isArray(subtable.results) && subtable.results.length > 0) {
             result = getWeightedRandomResult({ results: subtable.results });
           } else {
-            console.error(`Subtable "${subtableName}" has no valid results array or is empty`);
-            return `[No results in ${content}|${subtableName}]`;
+            console.error(`Subtable "${subtableName}" has no valid results array or customDisplay`);
+            return `[No valid content in ${content}|${subtableName}]`;
           }
         }
         // Check if the referenced table has customDisplay
