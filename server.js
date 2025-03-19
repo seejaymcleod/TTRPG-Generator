@@ -1072,6 +1072,20 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
         }
       }
       
+      // NEW: Check if the token is an inputField variable in the context before looking for a table
+      if (context && content in context) {
+        if (DEBUG) console.log(`Found "${content}" in context with value: ${context[content]}`);
+        
+        // IMPORTANT: Store the value in thisResult so it can be used by subsequent reference table lookups
+        // This is the key fix - store the context value in thisResult just like we do for dice rolls
+        if (context) {
+          context.thisResult = context[content];
+          if (DEBUG) console.log(`Stored context value "${content}" in thisResult: ${context.thisResult}`);
+        }
+        
+        return context[content];
+      }
+      
       // Process as a table reference
       if (DEBUG) console.log(`Processing table reference: ${match} (Table: ${content}, Index: ${arrayIndex || 'none'}, Subtable: ${subtableName || 'none'})`);
       

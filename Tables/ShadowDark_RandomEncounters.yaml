@@ -21,7 +21,7 @@ tables:
   - tablename: Reactions
     description: Should be improved by CHA mod. 
     results:
-      - "{useReferenceTable{ReactionReference}{{2d6}+{CharismaModifier}}}"      
+      - "[{CharismaModifier}, {useReferenceTable{ReactionReference}{thisResult[0]}}]"      
 referenceTables:
   - tablename: ReactionReference
     entries: 
