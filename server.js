@@ -1830,6 +1830,50 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
         return entry.value;
       }
     }
+    
+    // NEW: Check for "less than or equal to" format (<=N)
+    if (typeof entry.key === 'string' && entry.key.startsWith('<=')) {
+      const threshold = Number(entry.key.substring(2));
+      if (!isNaN(threshold) && processedLookupValue <= threshold) {
+        if (DEBUG) {
+          console.log(`Found <= match: key=${entry.key}, value=${entry.value}, threshold=${threshold}`);
+        }
+        return entry.value;
+      }
+    }
+    
+    // NEW: Check for "less than" format (<N)
+    if (typeof entry.key === 'string' && entry.key.startsWith('<') && !entry.key.startsWith('<=')) {
+      const threshold = Number(entry.key.substring(1));
+      if (!isNaN(threshold) && processedLookupValue < threshold) {
+        if (DEBUG) {
+          console.log(`Found < match: key=${entry.key}, value=${entry.value}, threshold=${threshold}`);
+        }
+        return entry.value;
+      }
+    }
+    
+    // NEW: Check for "greater than or equal to" format (N<=)
+    if (typeof entry.key === 'string' && entry.key.endsWith('<=')) {
+      const threshold = Number(entry.key.substring(0, entry.key.length - 2));
+      if (!isNaN(threshold) && processedLookupValue >= threshold) {
+        if (DEBUG) {
+          console.log(`Found >= match: key=${entry.key}, value=${entry.value}, threshold=${threshold}`);
+        }
+        return entry.value;
+      }
+    }
+    
+    // NEW: Check for "greater than" format (N<)
+    if (typeof entry.key === 'string' && entry.key.endsWith('<') && !entry.key.endsWith('<=')) {
+      const threshold = Number(entry.key.substring(0, entry.key.length - 1));
+      if (!isNaN(threshold) && processedLookupValue > threshold) {
+        if (DEBUG) {
+          console.log(`Found > match: key=${entry.key}, value=${entry.value}, threshold=${threshold}`);
+        }
+        return entry.value;
+      }
+    }
   }
   
   if (DEBUG) console.log(`No matching entry found for lookup value ${processedLookupValue}`);

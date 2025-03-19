@@ -33,5 +33,5 @@ referenceTables:
         value: "Neutral"    
       - key: "10-11"
         value: "Curious"    
-      - key: ">=12"
+      - key: "12<="
         value: "Friendly"
