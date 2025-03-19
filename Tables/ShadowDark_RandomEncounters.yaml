@@ -19,9 +19,9 @@ tables:
       - [Guarding, 2]
       - [Sleeping, 1]
   - tablename: Reactions
-    description: Should be improved by CHA mod. 
+    description: Affected by CHA mod. 
     results:
-      - "[{CharismaModifier}, {useReferenceTable{ReactionReference}{thisResult[0]}}]"      
+      - "[{{2d6} + CharismaModifier}, {useReferenceTable{ReactionReference}{thisResult[0]}}]"      
 referenceTables:
   - tablename: ReactionReference
     entries: 

@@ -985,6 +985,66 @@ function loadAllTables() {
   }
 }
 
+// New function to evaluate mathematical expressions with context variable substitution
+function evaluateExpression(expression, context) {
+  if (DEBUG) console.log(`Evaluating expression: ${expression}`);
+  
+  // Step 1: Replace any context variables with their values
+  let processedExpression = expression;
+  
+  // Look for variable names in the expression
+  const variableRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+  let match;
+  
+  while ((match = variableRegex.exec(expression)) !== null) {
+    const varName = match[1];
+    
+    // Skip JavaScript keywords that might appear in expressions
+    if (['true', 'false', 'null', 'undefined'].includes(varName)) continue;
+    
+    // Replace variable with its value from context if it exists
+    if (context && varName in context) {
+      const varValue = context[varName];
+      // Convert to number if possible, otherwise use string with quotes
+      const replacementValue = !isNaN(varValue) ? Number(varValue) : 
+                              `"${String(varValue).replace(/"/g, '\\"')}"`;
+      
+      processedExpression = processedExpression.replace(
+        new RegExp(`\\b${varName}\\b`, 'g'), 
+        replacementValue
+      );
+      
+      if (DEBUG) console.log(`Replaced variable ${varName} with value ${replacementValue}`);
+    }
+  }
+  
+  // Step 2: Process any dice notation in the expression
+  const diceRegex = /(\d+)d(\d+)(?:[+-]\d+)?/g;
+  processedExpression = processedExpression.replace(diceRegex, (match) => {
+    const diceResult = parseDiceNotation(match);
+    if (diceResult !== null) {
+      if (DEBUG) console.log(`Evaluated dice notation ${match} to ${diceResult}`);
+      // Store result in context for potential later use
+      if (context) context.thisResult = diceResult;
+      return diceResult;
+    }
+    return match;
+  });
+  
+  // Step 3: Evaluate the processed expression
+  try {
+    if (DEBUG) console.log(`Evaluating processed expression: ${processedExpression}`);
+    // Use Function constructor to create a safe evaluation environment
+    const result = new Function('return ' + processedExpression)();
+    
+    if (DEBUG) console.log(`Expression result: ${result}`);
+    return result;
+  } catch (error) {
+    console.error(`Error evaluating expression "${expression}": ${error.message}`);
+    return `[Error in expression: ${error.message}]`;
+  }
+}
+
 // New function to process references to other tables in result strings
 function processTableReferences(input, allTables, context = {}, recursionTracker = null) {
   // Initialize recursion tracking if not provided
@@ -1041,7 +1101,28 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       return match; // Return unchanged if not valid dice notation
     });
 
-    // Second, process useReferenceTable calls now that dice results are in context
+    // Next, process mathematical expressions containing operators
+    const mathExprRegex = /\{([^{}]+(?:[+\-*/][^{}]+)+)\}/g;
+    processedInput = processedInput.replace(mathExprRegex, (match, expression) => {
+      // Skip if this looks like a table reference with a pipe
+      if (expression.includes('|')) return match;
+      
+      // If this is a useReferenceTable call, skip it
+      if (expression.startsWith('useReferenceTable')) return match;
+      
+      // Skip if this is a selectedResult token
+      if (expression.startsWith('selectedResult')) return match;
+      
+      if (DEBUG) console.log(`Found math expression: ${expression}`);
+      const result = evaluateExpression(expression, context);
+      
+      // Store the result in context.thisResult for potential reference table lookups
+      if (context) context.thisResult = result;
+      
+      return result;
+    });
+
+    // Process useReferenceTable calls (after math expressions to allow math in lookupValue)
     const useRefRegex = /\{useReferenceTable\{([^}]+)\}\{([^}]+)\}\}/g;
     processedInput = processedInput.replace(useRefRegex, (match, tableName, lookupValue) => {
       if (DEBUG) console.log(`Detected useReferenceTable function call: Table=${tableName}, Value=${lookupValue}`);
@@ -1049,7 +1130,7 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
     });
 
     // Finally, handle standard table references
-    const tableRefRegex = /\{([^}\[\]|]+)(?:\[(\d+)\])?(?:\|([^}]+))?\}/g;
+    const tableRefRegex = /\{([^}\[\]|+\-*/]+)(?:\[(\d+)\])?(?:\|([^}]+))?\}/g;
     
     return processedInput.replace(tableRefRegex, (match, content, arrayIndex, subtableName) => {
       // Skip dice notation as we've already processed it
