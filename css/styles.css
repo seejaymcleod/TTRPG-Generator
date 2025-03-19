@@ -1184,3 +1184,35 @@
     background-color: var(--border-color);
     opacity: 0.3;
   }
+
+  /* Add styles for input fields */
+  .input-field-container {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  .input-field-container label {
+    margin-right: 8px;
+    font-weight: bold;
+  }
+
+  .table-input-field {
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background-color: var(--bg-content);
+    color: var(--text-primary);
+    font-size: 0.9em;
+    width: 80px;
+  }
+
+  .table-input-field[type="text"] {
+    width: 150px;
+  }
+
+  .table-input-field:focus {
+    outline: none;
+    border-color: var(--filter-btn-border);
+    box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
+  }

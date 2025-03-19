@@ -292,7 +292,8 @@ app.get('/api/tables', (req, res) => {
       tablename: table.tablename || 'Unknown',
       game: table.game || 'Unknown',
       type: typeValue,  // This can now be a string or an array
-      setting: table.setting || 'Unknown'
+      setting: table.setting || 'Unknown',
+      inputField: table.inputField || null // Ensure inputField property is included
     };
   }));
 });
@@ -306,7 +307,7 @@ function ExtractContext(context, key, defaultValue = null) {
 
 // Add enhanced error handling to the generate endpoint
 app.post('/api/generate', (req, res) => {
-  const { table, number } = req.body;
+  const { table, number, inputValues } = req.body;
   if (!table || typeof number !== 'number') {
     console.error('Invalid request data:', req.body);
     return res.status(400).json({ error: 'Invalid request data.' });
@@ -373,7 +374,27 @@ app.post('/api/generate', (req, res) => {
       return res.status(500).json({ error: 'Invalid table structure - missing tables array.' });
     }
     
-    const results = generateResultsFromTables(selectedTable, number, tables);
+    // Modified to include inputValues in the context for each generation
+    let results = [];
+    for (let i = 0; i < number; i++) {
+      // Create a fresh context for each generation, initialized with input values
+      let context = { 
+        thisResult: null // Initialize thisResult to null
+      };
+      
+      // Add any input values to the context
+      if (inputValues) {
+        Object.keys(inputValues).forEach(key => {
+          context[key] = inputValues[key];
+        });
+        if (DEBUG) console.log('Added input values to context:', inputValues);
+      }
+      
+      const result = processTable(selectedTable, "", tables, context);
+      if (result) {
+        results.push(result);
+      }
+    }
     
     if (!results || results.length === 0) {
       console.error('Generated empty results');
@@ -390,7 +411,7 @@ app.post('/api/generate', (req, res) => {
 
 // Replace the special case NPC handling with a more flexible, structure-based approach
 app.post('/api/reroll', (req, res) => {
-  const { table, header, context: clientContext } = req.body;
+  const { table, header, context: clientContext, inputValues } = req.body;
   if (!table) {
     return res.status(400).json({ error: 'Invalid request data: table is required' });
   }
@@ -408,6 +429,14 @@ app.post('/api/reroll', (req, res) => {
     const context = clientContext || {};
     if (!('thisResult' in context)) {
       context.thisResult = null;
+    }
+    
+    // Add any input values to the context
+    if (inputValues) {
+      Object.keys(inputValues).forEach(key => {
+        context[key] = inputValues[key];
+      });
+      if (DEBUG) console.log('Added input values to context for reroll:', inputValues);
     }
     
     // Find the specific subtable for this header with improved fallback logic

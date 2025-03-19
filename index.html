@@ -446,7 +446,8 @@
       console.log('Selected table details:', {
         tablename: table.tablename,
         filename: table.filename,
-        game: table.game
+        game: table.game,
+        inputField: table.inputField // Add this to debug
       });
 
       const tableHeadersContainer = document.getElementById('tableHeaders');
@@ -474,6 +475,41 @@
           tableHeadersContainer.appendChild(detailDiv);
         }
       });
+
+      // Add input field if the table has inputField property
+      if (table.inputField && Array.isArray(table.inputField) && table.inputField.length >= 2) {
+        console.log('Creating input field for:', table.inputField); // Add debug log
+        
+        const inputFieldName = table.inputField[0];
+        const inputFieldType = table.inputField[1];
+        
+        const inputContainer = document.createElement('div');
+        inputContainer.className = 'header input-field-container';
+        
+        const inputLabel = document.createElement('label');
+        inputLabel.textContent = `${inputFieldName}: `;
+        inputLabel.htmlFor = `input-${inputFieldName}`;
+        
+        const inputElement = document.createElement('input');
+        inputElement.id = `input-${inputFieldName}`;
+        inputElement.name = inputFieldName;
+        inputElement.className = 'table-input-field';
+        
+        // Set input type and default value based on specified type
+        if (inputFieldType === 'number') {
+          inputElement.type = 'number';
+          inputElement.value = '0';
+        } else {
+          inputElement.type = 'text';
+          inputElement.value = '';
+        }
+        
+        inputContainer.appendChild(inputLabel);
+        inputContainer.appendChild(inputElement);
+        tableHeadersContainer.appendChild(inputContainer);
+      } else {
+        console.log('No input field found for this table', table); // Add debug log
+      }
 
       document.getElementById('generationControls').style.display = 'block';
       document.getElementById('generationSlider').value = 1;
@@ -567,19 +603,39 @@
       loadingDiv.textContent = 'Loading...';
       resultsContainer.appendChild(loadingDiv);
 
+      // Collect input field values if present
+      const inputValues = {};
+      if (selectedTable.inputField && Array.isArray(selectedTable.inputField)) {
+        const inputFieldName = selectedTable.inputField[0];
+        const inputField = document.getElementById(`input-${inputFieldName}`);
+        if (inputField) {
+          // Convert to number if type is number, otherwise keep as string
+          if (selectedTable.inputField[1] === 'number') {
+            inputValues[inputFieldName] = parseFloat(inputField.value) || 0; // Default to 0 if parsing fails
+          } else {
+            inputValues[inputFieldName] = inputField.value;
+          }
+          console.log(`Added input field ${inputFieldName} with value:`, inputValues[inputFieldName]);
+        } else {
+          console.error(`Input field element not found for ${inputFieldName}`);
+        }
+      } else {
+        console.log('No input field configured for this table', selectedTable);
+      }
+
       // Send the complete table object to ensure proper identification
       fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           table: selectedTable, 
-          number: parseInt(numberOfGenerations) 
+          number: parseInt(numberOfGenerations),
+          inputValues: inputValues
         })
       })
       .then(response => {
         // First remove the loading indicator
         document.getElementById('loading-indicator')?.remove();
-        
         if (!response.ok) {
           return response.json().then(err => {
             throw new Error(`Server error: ${err.error || 'Unknown server error'}`);
@@ -589,22 +645,19 @@
       })
       .then(data => {
         console.log("Received generation data:", data.results);
-        
         if (!data.results || data.results.length === 0) {
           throw new Error('Server returned empty results');
         }
-        
+
         const resultsContainer = document.getElementById('results');
-        
+
         // For each generation, create a separate container
         data.results.forEach((result, index) => {
           // Initialize context for this generation
           generationContexts[index] = {};
-          
           const generationContainer = document.createElement('div');
           generationContainer.className = 'generation-container';
           generationContainer.dataset.index = index;
-          
           // Make it draggable
           generationContainer.draggable = true;
           generationContainer.addEventListener('dragstart', handleCardDragStart);
@@ -625,7 +678,7 @@
             <span class="down-arrow">▼</span>
             <span class="up-arrow">▲</span>
           `;
-          generationContainer.appendChild(collapseBtn);
+          cardTitle.appendChild(collapseBtn);
           
           // Add the title text
           const titleText = document.createElement('span');
@@ -633,9 +686,7 @@
           // Extract first meaningful value for the title
           let firstValue = extractDisplayValueForTitle(result);
           firstValue = firstValue.trim();
-          
           // Remove the truncation - let CSS handle it
-          // Add the title text with both table name and first value
           titleText.textContent = firstValue ? 
             `${selectedTable.tablename || 'Result'} - ${firstValue}` :
             selectedTable.tablename || 'Result';
@@ -680,7 +731,6 @@
           
           // Add the actions to the card title
           cardTitle.appendChild(cardActions);
-          
           generationContainer.appendChild(cardTitle);
           
           // Extract initial context from result
@@ -706,20 +756,20 @@
         console.error('No table currently selected');
         return;
       }
-  
+
       // Get the row containing this button
       const resultRow = button.closest('.result-row');
       if (!resultRow) {
         console.error('Could not find parent result row');
         return;
       }
-      
+
       // Check if the row is locked
       if (resultRow.classList.contains('locked')) {
         console.log('This row is locked and cannot be rerolled');
         return;
       }
-  
+
       // Get the header text to know what to reroll
       const header = resultRow.querySelector('.result-header').textContent;
       
@@ -733,6 +783,23 @@
       const generationIndex = generationContainer.dataset.index;
       const context = generationContexts[generationIndex] || {};
       
+      // Collect input field values if present
+      const inputValues = {};
+      if (currentSelectedTable.inputField && Array.isArray(currentSelectedTable.inputField)) {
+        const inputFieldName = currentSelectedTable.inputField[0];
+        const inputField = document.getElementById(`input-${inputFieldName}`);
+        if (inputField) {
+          // Convert to number if type is number, otherwise keep as string
+          if (currentSelectedTable.inputField[1] === 'number') {
+            inputValues[inputFieldName] = parseFloat(inputField.value) || 0;
+          } else {
+            inputValues[inputFieldName] = inputField.value;
+          }
+          // Add the input value directly to the context
+          context[inputFieldName] = inputValues[inputFieldName];
+        }
+      }
+
       // Get the format of the existing row to help with re-rendering
       const rowFormat = resultRow.getAttribute('data-format') || '';
       console.log(`Rerolling ${header} in table ${currentSelectedTable.filename} (format: ${rowFormat})`);
@@ -748,18 +815,17 @@
         body: JSON.stringify({ 
           table: currentSelectedTable,
           header: header,
-          context: context
+          context: context,
+          inputValues: inputValues
         })
       })
       .then(response => response.json())
       .then(data => {
         console.log(`Received reroll response for ${header}:`, data);
-        
         // Update the context if provided
         if (data.context) {
           Object.assign(context, data.context);
         }
-        
         // Make sure we have data.result
         if (!data.result) {
           throw new Error('No result data returned from server');
@@ -779,15 +845,14 @@
           
           // First, check if this was a career-style row (from original format or from array structure)
           const isCareerRow = rowFormat === 'career' || 
-                             (Array.isArray(data.result.result) && 
+                              (Array.isArray(data.result.result) && 
                               data.result.result.length === 2 && 
                               typeof data.result.result[0] === 'string' && 
                               typeof data.result.result[1] === 'string');
-
+          
           // Career-style array handling (array with exactly two string elements)
           if (isCareerRow) {
             console.log('Processing career-style array:', data.result.result);
-            
             let career, items;
             // Extract the two string values from the result
             if (Array.isArray(data.result.result) && data.result.result.length === 2) {
@@ -838,7 +903,6 @@
           else if (typeof data.result.result === 'string' || typeof data.result.result === 'number') {
             // This handles most simple cases
             console.log('Processing simple string value:', data.result.result);
-            
             const stringValue = String(data.result.result);
             const contentDiv = document.createElement('div');
             contentDiv.className = 'result-content';
@@ -846,7 +910,7 @@
             contentDiv.title = stringValue;
             headerDiv.insertAdjacentElement('afterend', contentDiv);
             
-            // Update context
+            // Update context with the string value
             context[header] = stringValue;
             
             // Only update title if this is the first row
@@ -863,7 +927,6 @@
             if (data.result.result.length === 2 && 
                 typeof data.result.result[0] === 'string' && 
                 typeof data.result.result[1] === 'number') {
-              
               const value = data.result.result[0];
               const contentDiv = document.createElement('div');
               contentDiv.className = 'result-content';
@@ -887,7 +950,7 @@
               let lastInsertedDiv = headerDiv;
               
               // Loop through array items (limit to max 4)
-              const maxItems = Math.min(data.result.result.length, 4); 
+              const maxItems = Math.min(data.result.result.length, 4);
               for (let i = 0; i < maxItems; i++) {
                 let arrayValue;
                 // Handle nested weighted arrays
@@ -901,12 +964,10 @@
                 }
                 
                 resultValues.push(arrayValue);
-                
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'result-content';
                 contentDiv.textContent = arrayValue;
                 contentDiv.title = arrayValue;
-                
                 lastInsertedDiv.insertAdjacentElement('afterend', contentDiv);
                 lastInsertedDiv = contentDiv;
               }
@@ -926,12 +987,11 @@
             console.log('Processing object result:', data.result);
             
             let extractedValue = "";
-            
             // Try to extract a usable string value from the object
             // First, look for a 'result' property in the nested result
             if (typeof data.result.result.result === 'string') {
               extractedValue = data.result.result.result;
-            } 
+            }
             // Otherwise look for any string property that's not special (starts with _)
             else {
               for (const key in data.result.result) {
@@ -941,7 +1001,6 @@
                 }
               }
             }
-            
             // If nothing found in nested result, check top level
             if (!extractedValue && typeof data.result === 'object') {
               for (const key in data.result) {
@@ -951,7 +1010,6 @@
                 }
               }
             }
-            
             // If still no value found, use a generic message
             if (!extractedValue) {
               extractedValue = "No string value found";
@@ -977,7 +1035,6 @@
           // Fallback for any other type
           else {
             console.log('Using fallback handling for result:', data.result);
-            
             const resultStr = JSON.stringify(data.result.result);
             const contentDiv = document.createElement('div');
             contentDiv.className = 'result-content';
@@ -985,7 +1042,10 @@
             contentDiv.title = resultStr;
             headerDiv.insertAdjacentElement('afterend', contentDiv);
             
-            // Only update title if this is the first row
+            // Update context with the string value
+            context[header] = resultStr;
+            
+            // Use extracted value for title update if this is the first row
             if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
               newTitleValue = resultStr;
               shouldUpdateTitle = true;
@@ -1012,26 +1072,13 @@
         alert('Failed to reroll content. Please try again.');
       });
     }
-    
-    // Helper function to update card title
-    function updateCardTitle(container, newValue) {
-      newValue = newValue.trim();
-      // Remove the hardcoded truncation - let CSS handle it
-      
-      const titleText = container.querySelector('.card-title-text');
-      if (titleText) {
-        titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newValue}`;
-        // Using the full text and letting CSS truncate
-      }
-    }
-    
-    // New function to reroll an entire generation/card
+
     function rerollAllContent(generationContainer) {
       if (!currentSelectedTable) {
         console.error('No table currently selected');
         return;
       }
-      
+
       // Store the collapsed state
       const wasCollapsed = generationContainer.classList.contains('collapsed');
       
@@ -1054,7 +1101,7 @@
         const format = row.getAttribute('data-format');
         if (format === 'career' && contentElements.length >= 2) {
           lockedRowsCache[header] = [
-            contentElements[0].textContent,
+            contentElements[0].textContent, 
             contentElements[1].textContent
           ];
         } else if (format === 'multi-array') {
@@ -1081,6 +1128,7 @@
       
       // Get the generation index for context access
       const generationIndex = generationContainer.dataset.index;
+      const context = generationContexts[generationIndex] || {};
       
       // Track progress for sequential rerolling
       let currentIndex = 0;
@@ -1094,7 +1142,6 @@
         if (currentIndex >= unlockedRows.length || rerollFailed) {
           // All rows processed or an error occurred
           generationContainer.style.opacity = '1';
-          
           // Restore collapsed state if needed
           if (wasCollapsed) {
             generationContainer.classList.add('collapsed');
@@ -1124,9 +1171,8 @@
                 setTimeout(processNextRow, 50); // Small delay between rerolls for stability
               }
             });
-            
-            observer.observe(row, { 
-              attributes: true, 
+            observer.observe(row, {
+              attributes: true,
               attributeFilter: ['style']
             });
             
@@ -1149,11 +1195,19 @@
       processNextRow();
     }
 
-    // Helper function to update card title from first row after rerolling
+    function updateCardTitle(container, newValue) {
+      newValue = newValue.trim();
+      // Remove the hardcoded truncation - let CSS handle it
+      const titleText = container.querySelector('.card-title-text');
+      if (titleText) {
+        titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newValue}`;
+        // Using the full text and letting CSS truncate
+      }
+    }
+
     function updateCardTitleFromFirstRow(generationContainer) {
       const firstRow = generationContainer.querySelector('.result-row:first-child');
       if (!firstRow) return;
-      
       // Skip title update if the first row is locked
       if (firstRow.classList.contains('locked')) {
         return;
@@ -1165,7 +1219,6 @@
       // Handle different row formats
       const format = firstRow.getAttribute('data-format');
       const contentElements = firstRow.querySelectorAll('.result-content');
-      
       if (format === 'career' && contentElements.length >= 1) {
         // For career format, use the career name (first content cell)
         titleValue = contentElements[0].textContent;
@@ -1180,26 +1233,24 @@
       }
     }
 
-    // Improved function to correctly detect root tables even with spaces in names
     function copyToMarkdown(generationContainer) {
       let markdown = '';
       
       // Get the main table information
       let mainTableName = '';
       let mainTableDisplayName = '';
-      
       if (currentSelectedTable) {
         // Get table name from filename (without extension) for references
         if (currentSelectedTable.filename) {
           mainTableName = currentSelectedTable.filename.replace(/\.(yaml|yml)$/, '');
         }
-        
         // Get the display name from the tablename property
         mainTableDisplayName = currentSelectedTable.tablename || '';
       }
       
       // Extract all the rows
       const rows = generationContainer.querySelectorAll('.result-row');
+      const rowFormat = rows.length > 0 ? rows[0].getAttribute('data-format') : '';
       
       // Helper function to normalize strings for comparison
       const normalize = str => str.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/gi, '');
@@ -1213,8 +1264,6 @@
         let rowMd = `*${header}*: `;
         
         // Handle career format - detect by format attribute
-        const rowFormat = row.getAttribute('data-format');
-        
         if (rowFormat === 'career' && contentCells.length >= 2) {
           // Career format - first cell is career, second cell is items
           const career = contentCells[0].textContent.trim();
@@ -1226,7 +1275,7 @@
           const cellTexts = Array.from(contentCells).map(cell => cell.textContent.trim());
           // Join all cells with commas
           rowMd += cellTexts.join(', ');
-        } 
+        }
         else if (contentCells.length === 1) {
           // Normal case - single content cell
           rowMd += contentCells[0].textContent.trim();
@@ -1263,7 +1312,6 @@
         });
     }
 
-    // Function to show a toast notification
     function showToast(message, duration = 2000) {
       // Check if a toast already exists
       let toast = document.querySelector('.toast-message');
@@ -1285,7 +1333,6 @@
       }, duration);
     }
 
-    // Improved drag and drop handlers for cards
     function handleCardDragStart(e) {
       // Only allow dragging from the title area, not the buttons
       if (e.target.closest('.reroll-all-btn, .copy-btn, .delete-card-btn')) {
@@ -1316,107 +1363,6 @@
       });
     }
 
-    // Add event listeners to the saved cards area
-    document.addEventListener('DOMContentLoaded', function() {
-      const savedArea = document.getElementById('savedGenerations');
-      
-      // Update handlers
-      savedArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('drop-target-highlight');
-        e.dataTransfer.dropEffect = 'copy';
-      });
-      savedArea.addEventListener('dragleave', function(e) {
-        this.classList.remove('drop-target-highlight');
-      });
-      
-      savedArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('drop-target-highlight');
-        const cardIndex = e.dataTransfer.getData('text/plain');
-        const originalCard = document.querySelector(`.generation-container[data-index="${cardIndex}"]`);
-        
-        if (!originalCard) return;
-        
-        // Check if this card already exists in the saved area by comparing content
-        const cardTitle = originalCard.querySelector('.card-title-text').textContent;
-        
-        // Get all headers and contents from the original card to create a unique signature
-        const originalHeaders = Array.from(originalCard.querySelectorAll('.result-header')).map(h => h.textContent);
-        const originalContents = Array.from(originalCard.querySelectorAll('.result-content')).map(c => c.textContent);
-        const cardSignature = JSON.stringify({ title: cardTitle, headers: originalHeaders, contents: originalContents });
-        
-        // Check if a card with the same signature already exists
-        let isDuplicate = false;
-        const savedCards = savedArea.querySelectorAll('.generation-container');
-        savedCards.forEach(savedCard => {
-          const savedHeaders = Array.from(savedCard.querySelectorAll('.result-header')).map(h => h.textContent);
-          const savedContents = Array.from(savedCard.querySelectorAll('.result-content')).map(c => c.textContent);
-          const savedSignature = JSON.stringify({ 
-            title: savedCard.querySelector('.card-title-text').textContent, 
-            headers: savedHeaders, 
-            contents: savedContents });
-          
-          if (savedSignature === cardSignature) {
-            isDuplicate = true;
-          }
-        });
-        
-        if (isDuplicate) {
-          showToast('Card already exists in Saved Cards');
-          return;
-        }
-        
-        // Clone the card and add to saved area
-        const cardClone = originalCard.cloneNode(true);
-        const newIndex = `saved-${Date.now()}`;
-        cardClone.dataset.index = newIndex;
-        
-        // Reattach event handlers for all buttons in the cloned card
-        cardClone.querySelector('.copy-btn')?.addEventListener('click', (e) => {
-          e.stopPropagation();
-          copyToMarkdown(cardClone);
-        });
-        
-        cardClone.querySelector('.reroll-all-btn')?.addEventListener('click', (e) => {
-          e.stopPropagation();
-          rerollAllContent(cardClone);
-        });
-        
-        cardClone.querySelector('.delete-card-btn')?.addEventListener('click', (e) => {
-          e.stopPropagation();
-          deleteCard(cardClone);
-        });
-        
-        // Make the clone draggable too, but it won't actually be draggable due to our check in handleCardDragStart
-        cardClone.addEventListener('dragstart', handleCardDragStart);
-        cardClone.addEventListener('dragend', handleCardDragEnd);
-        
-        // Update collapse button handlers
-        cardClone.querySelector('.collapse-btn')?.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleCardCollapse(e.currentTarget);
-        });
-        
-        // Add the card to the saved area
-        this.appendChild(cardClone);
-        
-        // Show confirmation
-        showToast('Card saved!');
-      });
-      
-      // Initialize expand buttons with proper text
-      document.querySelectorAll('.expand-btn').forEach(btn => {
-        btn.textContent = '▼ Show More';
-      });
-      
-      // Check initial overflow for all filter containers
-      ['gameFilter', 'typeFilter', 'settingFilter'].forEach(filterId => {
-        checkFilterOverflow(filterId);
-      });
-    });
-
-    // Function to delete a card
     function deleteCard(card) {
       if (confirm('Are you sure you want to delete this card?')) {
         card.remove();
@@ -1424,7 +1370,6 @@
       }
     }
 
-    // Function to toggle card collapse state
     function toggleCardCollapse(button) {
       const card = button.closest('.generation-container');
       card.classList.toggle('collapsed');
@@ -1438,7 +1383,6 @@
       }
     }
 
-    // Add this new helper function to extract a displayable value from a result object
     function extractDisplayValueForTitle(resultObj) {
       // Handle arrays by looking at first item
       if (Array.isArray(resultObj)) {
@@ -1470,12 +1414,10 @@
       return resultObj ? String(resultObj) : '';
     }
 
-    // Updated renderResultItem function to display descriptions and titleDescription
     function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
       // Add support for table-level descriptions and title descriptions
       let descriptionHTML = '';
       let titleDescriptionHTML = '';
-      
       if (isTopLevel) {
         // Add title description if present
         if (item && item._titleDescription) {
@@ -1488,526 +1430,21 @@
         }
       }
 
-      // Special handling for career format from Knave or similar tables
-      // Check if this is a two-element string array like [career, items]
-      if (item && typeof item === 'object' && Array.isArray(item.result) && 
-          item.result.length === 2 && 
-          typeof item.result[0] === 'string' && 
-          typeof item.result[1] === 'string') {
-        
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        const originalSource = item._originalSource || item._tableName || '';
-        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
-        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
-        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
-        
-        const career = item.result[0] || '';
-        const items = item.result[1] || '';
-        
-        // Escape values for HTML attributes
-        const careerEscaped = career.replace(/"/g, '&quot;');
-        const itemsEscaped = items.replace(/"/g, '&quot;');
-        
-        // Create a row with both elements, adding lock and reroll buttons
-        const buttonGroup = !isNestedContent ? `
-          <div class="button-group">
-            <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
-              <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
-            </button>
-            <button class="reroll-btn" onclick="rerollContent(this)">
-              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-            </button>
-          </div>` : '';
-          
-        // Add row description if present
-        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-        
-        return `
-          ${isTopLevel ? titleDescriptionHTML : ''}
-          ${isTopLevel ? descriptionHTML : ''}
-          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
-            <div class="result-header" title="${headerTitle}">${item.header}</div>
-            <div class="result-content" title="${careerEscaped}">${career}</div>
-            <div class="result-content" title="${itemsEscaped}">${items}</div>
-            ${buttonGroup}
-          </div>
-          ${rowDescription}
-        `;
-      }
-      
-      // Continue with existing special handling for career format flagged by the server
-      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
-        // ... existing code for _isCareer ...
-      }
-      
-      // Continue with existing case for multi-element array format
-      if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
-        // ... existing code for _isMultiElementArray ...
-      }
-
-      // Continue with existing array handling
-      if (Array.isArray(item.result)) {
-        // ... existing code for general arrays ...
-      }
-
-      // Continue with existing standard value handling
-      if (item && typeof item === 'object' && "header" in item && "result" in item) {
-        // ... existing code for standard objects ...
-      }
-      
-      // Existing fallback handling
-      return item !== undefined && item !== null ? String(item) : '';
-    }
-
-    // Add new function to update available options in other filters based on current selection
-    function updateAvailableOptions(filteredTables) {
-      const gameFilter = document.getElementById('gameFilter');
-      const typeFilter = document.getElementById('typeFilter');
-      const settingFilter = document.getElementById('settingFilter');
-      
-      // Get selected values
-      const selectedGames = getSelectedValues('gameFilter');
-      const selectedTypes = getSelectedValues('typeFilter');
-      const selectedSettings = getSelectedValues('settingFilter');
-      
-      // Create sets to store available options
-      const availableGames = new Set();
-      const availableTypes = new Set();
-      const availableSettings = new Set();
-      
-      // Populate available options based on filtered tables
-      filteredTables.forEach(table => {
-        if (table.game) availableGames.add(table.game);
-        
-        if (Array.isArray(table.type)) {
-          table.type.forEach(t => {
-            if (t) availableTypes.add(t);
-          });
-        } else if (table.type) {
-          availableTypes.add(table.type);
-        }
-        
-        if (table.setting) availableSettings.add(table.setting);
-      });
-      
-      // Update filter buttons to reflect available options
-      updateFilterButtons(gameFilter, availableGames, selectedGames);
-      updateFilterButtons(typeFilter, availableTypes, selectedTypes);
-      updateFilterButtons(settingFilter, availableSettings, selectedSettings);
-    }
-    
-    // Helper function to update filter buttons
-    function updateFilterButtons(filterContainer, availableOptions, selectedOptions) {
-      const buttons = filterContainer.querySelectorAll('.filter-btn');
-      buttons.forEach(button => {
-        const value = button.dataset.value;
-        if (availableOptions.has(value)) {
-          button.classList.remove('unavailable');
-          button.disabled = false;
-        } else {
-          button.classList.add('unavailable');
-          button.disabled = true;
-        }
-          
-        // Restore selected state if previously selected
-        if (selectedOptions.includes(value)) {
-          button.classList.add('selected');
-          button.classList.remove('unselected');
-        }
-      });
-    }
-
-    // Replace the updateAvailableOptions function with this improved version
-    function updateAvailableOptions(filteredTables) {
-      const gameFilter = document.getElementById('gameFilter');
-      const typeFilter = document.getElementById('typeFilter');
-      const settingFilter = document.getElementById('settingFilter');
-      
-      // Get currently selected values
-      const selectedGames = getSelectedValues('gameFilter');
-      const selectedTypes = getSelectedValues('typeFilter');
-      const selectedSettings = getSelectedValues('settingFilter');
-      
-      // Get current filter mode (all-selected vs. choice mode)
-      const gameFilterMode = gameFilter.dataset.mode;
-      const typeFilterMode = typeFilter.dataset.mode;
-      const settingFilterMode = settingFilter.dataset.mode;
-      
-      // Create sets to store all options that would produce results 
-      // if added to the current selection
-      const availableGames = new Set();
-      const availableTypes = new Set();
-      const availableSettings = new Set();
-      
-      // Important: First collect all possible values from all tables
-      // These are used to determine what options should be enabled in each category
-      const allGames = new Set();
-      const allTypes = new Set();
-      const allSettings = new Set();
-      
-      tablesData.forEach(table => {
-        if (table.game) allGames.add(table.game);
-        
-        if (Array.isArray(table.type)) {
-          table.type.forEach(t => {
-            if (t) allTypes.add(t);
-          });
-        } else if (table.type) {
-          allTypes.add(table.type);
-        }
-        
-        if (table.setting) allSettings.add(table.setting);
-      });
-      
-      // Now determine which options would produce results with current filters
-      tablesData.forEach(table => {
-        // Create copies of the current filter selections for testing
-        const currentGameFilters = [...selectedGames];
-        const currentTypeFilters = [...selectedTypes];
-        const currentSettingFilters = [...selectedSettings];
-        
-        // Test each potential Game option
-        if (gameFilterMode === 'choice') {
-          // Only test for games not already selected
-          if (table.game && !currentGameFilters.includes(table.game)) {
-            // Would adding this game to the current selection produce results?
-            const testGameFilters = [...currentGameFilters, table.game];
-            
-            // Check if this table would pass filters with this game added
-            if (wouldTablePassFilters(table, testGameFilters, currentTypeFilters, currentSettingFilters)) {
-              availableGames.add(table.game);
-            }
-          }
-        } else {
-          // In all-selected mode, all games that would pass other filters are available
-          if (wouldTablePassFilters(table, [], currentTypeFilters, currentSettingFilters)) {
-            if (table.game) availableGames.add(table.game);
-          }
-        }
-        
-        // Test each potential Type option
-        if (typeFilterMode === 'choice') {
-          if (Array.isArray(table.type)) {
-            table.type.forEach(t => {
-              if (t && !currentTypeFilters.includes(t)) {
-                // Would adding this type to the current selection produce results?
-                const testTypeFilters = [...currentTypeFilters, t];
-                
-                if (wouldTablePassFilters(table, currentGameFilters, testTypeFilters, currentSettingFilters)) {
-                  availableTypes.add(t);
-                }
-              }
-            });
-          } else if (table.type && !currentTypeFilters.includes(table.type)) {
-            // Would adding this type to the current selection produce results?
-            const testTypeFilters = [...currentTypeFilters, table.type];
-            
-            if (wouldTablePassFilters(table, currentGameFilters, testTypeFilters, currentSettingFilters)) {
-              availableTypes.add(table.type);
-            }
-          }
-        } else {
-          // In all-selected mode, all types that would pass other filters are available
-          if (wouldTablePassFilters(table, currentGameFilters, [], currentSettingFilters)) {
-            if (Array.isArray(table.type)) {
-              table.type.forEach(t => {
-                if (t) availableTypes.add(t);
-              });
-            } else if (table.type) {
-              availableTypes.add(table.type);
-            }
-          }
-        }
-        
-        // Test each potential Setting option
-        if (settingFilterMode === 'choice') {
-          if (table.setting && !currentSettingFilters.includes(table.setting)) {
-            // Would adding this setting to the current selection produce results?
-            const testSettingFilters = [...currentSettingFilters, table.setting];
-            
-            if (wouldTablePassFilters(table, currentGameFilters, currentTypeFilters, testSettingFilters)) {
-              availableSettings.add(table.setting);
-            }
-          }
-        } else {
-          // In all-selected mode, all settings that would pass other filters are available
-          if (wouldTablePassFilters(table, currentGameFilters, currentTypeFilters, [])) {
-            if (table.setting) availableSettings.add(table.setting);
-          }
-        }
-      });
-      
-      // For buttons in each category that are already selected, always mark them as available
-      selectedGames.forEach(game => availableGames.add(game));
-      selectedTypes.forEach(type => availableTypes.add(type));
-      selectedSettings.forEach(setting => availableSettings.add(setting));
-      
-      // Next, in choice mode, we should keep options within the same category available for additional selection
-      if (gameFilterMode === 'choice') {
-        allGames.forEach(game => {
-          // We never disable items in their own category in choice mode
-          // If at least one item is selected, this option should be selectable too
-          if (selectedGames.length > 0) {
-            availableGames.add(game);
-          }
-        });
-      }
-      
-      if (typeFilterMode === 'choice') {
-        allTypes.forEach(type => {
-          if (selectedTypes.length > 0) {
-            availableTypes.add(type);
-          }
-        });
-      }
-            
-      if (settingFilterMode === 'choice') {
-        allSettings.forEach(setting => {
-          if (selectedSettings.length > 0) {
-            availableSettings.add(setting);
-          }
-        });
-      }
-      
-      // Update UI for each filter
-      updateFilterUI(gameFilter, availableGames, selectedGames, allGames);
-      updateFilterUI(typeFilter, availableTypes, selectedTypes, allTypes);
-      updateFilterUI(settingFilter, availableSettings, selectedSettings, allSettings);
-    }
-
-    // New helper function to determine if a table would pass the given filters
-    function wouldTablePassFilters(table, gameFilters, typeFilters, settingFilters) {
-      // Filter by game
-      const passesGame = gameFilters.length === 0 || 
-                        (table.game && gameFilters.includes(table.game));
-      
-      // Handle type filter when type is an array
-      let passesType = false;
-      if (typeFilters.length === 0) {
-        passesType = true;
-      } else if (Array.isArray(table.type)) {
-        // Check if any type in the array matches any selected type filter
-        passesType = table.type.some(t => typeFilters.includes(t));
-      } else {
-        // Handle single type as before
-        passesType = table.type && typeFilters.includes(table.type);
-      }
-      
-      // Filter by setting
-      const passesSetting = settingFilters.length === 0 || 
-                           (table.setting && settingFilters.includes(table.setting));
-      
-      return passesGame && passesType && passesSetting;
-    }
-
-    // Updated helper function to update filter UI
-    function updateFilterUI(filterContainer, availableOptions, selectedOptions, allOptions) {
-      const mode = filterContainer.dataset.mode;
-      const buttons = filterContainer.querySelectorAll('.filter-btn');
-      
-      buttons.forEach(button => {
-        const value = button.dataset.value;
-        const isAvailable = availableOptions.has(value);
-        const isSelected = selectedOptions.includes(value);
-        
-        // Reset all button states first
-        button.classList.remove('selected', 'unselected', 'unavailable');
-        button.disabled = false;
-        
-        if (mode === 'all-selected') {
-          // In all-selected mode (no explicit filters in this category)
-          if (!isAvailable) {
-            // Option not available with current filters
-            button.classList.add('unavailable');
-            button.disabled = true;
-          }
-          // Otherwise leave in default state (no classes)
-        } 
-        else {
-          // In choice mode (specific filters selected in this category)
-          if (isSelected) {
-            // This option is selected
-            button.classList.add('selected');
-          } else {
-            // This option is not selected
-            button.classList.add('unselected');
-            
-            // If it's also not available, mark as unavailable
-            if (!isAvailable) {
-              button.classList.add('unavailable');
-              button.disabled = true;
-            }
-          }
-        }
-      });
-    }
-
-    // Add the theme toggle function
-    function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', newTheme);
-    }
-
-    // Check if the entire filter bar has significant overflow (3+ rows)
-    function checkFilterBarOverflow() {
-      const filterContainers = ['gameFilter', 'typeFilter', 'settingFilter'];
-      let totalHeight = 0;
-      let maxButtonHeight = 0;
-      
-      // Calculate total height of all buttons if not wrapped
-      filterContainers.forEach(filterId => {
-        const container = document.getElementById(filterId);
-        const buttons = container.querySelectorAll('.filter-btn');
-        
-        // Find the height of the tallest button
-        buttons.forEach(button => {
-          const buttonHeight = button.offsetHeight;
-          if (buttonHeight > maxButtonHeight) {
-            maxButtonHeight = buttonHeight;
-          }
-        });
-        
-        // Calculate unwrapped width
-        let rowWidth = 0;
-        const containerWidth = container.clientWidth;
-        const buttonGap = 4; // Gap between buttons
-        let rowCount = 1;
-        
-        buttons.forEach(button => {
-          const buttonWidth = button.offsetWidth + buttonGap;
-          
-          // If this button would overflow the current row, start a new row
-          if (rowWidth + buttonWidth > containerWidth && rowWidth > 0) {
-            rowCount++;
-            rowWidth = buttonWidth;
-          } else {
-            rowWidth += buttonWidth;
-          }
-        });
-        
-        // Store row count as data attribute
-        container.dataset.rowCount = rowCount;
-          
-        // If rows > 2, mark as has-overflow
-        if (rowCount > 2) {
-          container.classList.add('has-overflow');
-        } else {
-          container.classList.remove('has-overflow');
-        }
-      });
-      
-      // Calculate if any container needs 3+ rows
-      const hasSignificantOverflow = filterContainers.some(filterId => {
-        const container = document.getElementById(filterId);
-        return parseInt(container.dataset.rowCount || '0') >= 3;
-      });
-            
-      // Update the container class
-      const filtersContainer = document.getElementById('filtersContainer');
-      if (hasSignificantOverflow) {
-        filtersContainer.classList.add('has-significant-overflow');
-      } else {
-        filtersContainer.classList.remove('has-significant-overflow');
-        filtersContainer.classList.remove('filters-expanded');
-      }
-       
-      // Update the expand button text
-      const expandBtn = document.getElementById('filterExpandBtn');
-      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
-    }
-
-    // Toggle all filters expansion state
-    function toggleAllFilters() {
-      const filtersContainer = document.getElementById('filtersContainer');
-      filtersContainer.classList.toggle('filters-expanded');
-      
-      // Update button text
-      const expandBtn = document.getElementById('filterExpandBtn');
-      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
-    }
-
-    // Replace the createFilterButtons function
-    function createFilterButtons(filterId, options) {
-      const filterContainer = document.getElementById(filterId);
-      filterContainer.innerHTML = '';
-      
-      options.sort().forEach(option => {
-        const button = document.createElement('button');
-        button.className = 'filter-btn';
-        button.textContent = option;
-        button.dataset.value = option;
-        button.onclick = function() {
-          toggleFilterButton(this, filterId);
-        };
-        filterContainer.appendChild(button);
-      });
-      
-      // After adding all buttons, check filter overflow
-      setTimeout(() => {
-        checkFilterBarOverflow();
-      }, 0);
-    }
-
-    // Add this to the document ready event
-    document.addEventListener('DOMContentLoaded', function() {
-      // ... existing code ...
-      
-      // Check filter overflow on window resize
-      window.addEventListener('resize', debounce(() => {
-        checkFilterBarOverflow();
-      }, 250));
-    });
-
-    // Debounce function to limit how often a function runs
-    function debounce(func, wait) {
-      let timeout;
-      return function() {
-        const context = this;
-        const args = arguments;
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(context, args), wait);
-      };
-    }
-
-    // Replace with the original renderResultItem function (without array parsing)
-    function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
-      // Add support for table-level descriptions and title descriptions
-      let descriptionHTML = '';
-      let titleDescriptionHTML = '';
-      
-      if (isTopLevel) {
-        // Add title description if present
-        if (item && item._titleDescription) {
-          titleDescriptionHTML = `<div class="title-description">${item._titleDescription}</div>`;
-        }
-        
-        // Standard description
-        if (item && item._description) {
-          descriptionHTML = `<div class="table-description">${item._description}</div>`;
-        }
-      }
-      
       // Special handling for career format flagged by the server
       if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        // Store both tableName and originalSource - originalSource takes priority
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
-        // Include the subtable name if different from table name
-        const isSubtable = item._tableName && item.header && item._tableName !== item.header;
-        const subtableName = isSubtable ? ` data-subtable-name="${item.header}"` : '';
-        
-        // Get the career and items values
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+
         const career = item.result[0] || '';
         const items = item.result[1] || '';
-        
+
         // Escape values for HTML attributes
         const careerEscaped = career.replace(/"/g, '&quot;');
         const itemsEscaped = items.replace(/"/g, '&quot;');
         
-        // Create a single row with both elements
         const buttonGroup = !isNestedContent ? `
           <div class="button-group">
             <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
@@ -2018,9 +1455,8 @@
             </button>
           </div>` : '';
         
-        // Add row description if present
         const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-        
+
         return `
           ${isTopLevel ? titleDescriptionHTML : ''}
           ${isTopLevel ? descriptionHTML : ''}
@@ -2033,17 +1469,15 @@
           ${rowDescription}
         `;
       }
-      
-      // New case: Handle multi-element array format flagged by the server
+
+      // Continue with existing case for multi-element array format
       if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
         const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-        // Store both tableName and originalSource - originalSource takes priority
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
         const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
         
-        // Create content cells for each element in the array (max 4 elements)
         const contentCells = item.result.map(element => {
           const valueStr = String(element || '');
           const escapedValue = valueStr.replace(/"/g, '&quot;');
@@ -2060,9 +1494,8 @@
             </button>
           </div>` : '';
         
-        // Add row description if present
         const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-        
+
         return `
           ${isTopLevel ? titleDescriptionHTML : ''}
           ${isTopLevel ? descriptionHTML : ''}
@@ -2075,55 +1508,7 @@
         `;
       }
 
-      // Handle arrays with better weight detection
-      if (Array.isArray(item.result)) {
-        // Check if the last element is numeric (a weight)
-        const lastIndex = item.result.length - 1;
-        const lastElement = item.result[lastIndex];
-        const isLastElementNumeric = 
-          typeof lastElement === 'number' || 
-          (typeof lastElement === 'string' && !isNaN(parseFloat(lastElement)) && 
-           lastElement.trim() !== '' && !isNaN(lastElement));
-        
-        // If this is a weighted array, show only the value elements (exclude weight)
-        if (isLastElementNumeric && item.result.length >= 2) {
-          const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
-          const sourceTable = item._tableName ? ` data-source-table="${item._tableName}"` : '';
-          
-          // Display each value element (excluding the weight)
-          const contentCells = item.result.slice(0, lastIndex).map(element => {
-            const valueStr = String(element || '');
-            const escapedValue = valueStr.replace(/"/g, '&quot;');
-            return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
-          }).join('');
-          
-          const buttonGroup = !isNestedContent ? `
-            <div class="button-group">
-              <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
-                <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
-              </button>
-              <button class="reroll-btn" onclick="rerollContent(this)">
-                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
-              </button>
-            </div>` : '';
-          
-          // Add row description if present
-          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-          
-          return `
-            ${isTopLevel ? titleDescriptionHTML : ''}
-            ${isTopLevel ? descriptionHTML : ''}
-            <div class="result-row"${sourceTable} data-format="weighted">
-              <div class="result-header" title="${headerTitle}">${item.header}</div>
-              ${contentCells}
-              ${buttonGroup}
-            </div>
-            ${rowDescription}
-          `;
-        }
-      }
-
-      // Standard single value
+      // Continue with existing standard value handling
       if (item && typeof item === 'object' && "header" in item && "result" in item) {
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
@@ -2146,9 +1531,8 @@
               </button>
             </div>` : '';
           
-          // Add row description if present
           const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
-          
+
           return `
             ${isTopLevel ? titleDescriptionHTML : ''}
             ${isTopLevel ? descriptionHTML : ''}
@@ -2160,19 +1544,17 @@
             ${rowDescription}
           `;
         }
-        
+
         // For arrays of objects (nested results)
         if (Array.isArray(item.result) && 
             item.result.some(el => typeof el === 'object' && el !== null)) {
-            
           // Add the parent description if we're at the top level
           let output = isTopLevel ? titleDescriptionHTML + descriptionHTML : '';
-          
           // Process each nested result item
           item.result.forEach(subItem => {
             output += renderResultItem(subItem, false, generationIndex);
           });
-          
+
           return output;
         }
       }
@@ -2180,14 +1562,13 @@
       // For primitive values and fallback
       return item !== undefined && item !== null ? String(item) : '';
     }
-    
-    // Add this after your other functions
+
     function toggleRowLock(button) {
       const row = button.closest('.result-row');
       if (!row) return;
-      
+
       row.classList.toggle('locked');
-      
+
       // Update the lock icon
       const lockImage = button.querySelector('img');
       if (row.classList.contains('locked')) {
@@ -2201,17 +1582,16 @@
       }
     }
 
-    // Replace the existing showTableContent function with this fixed version
     function showTableContent() {
       if (!currentSelectedTable) {
         console.error('No table currently selected');
         displayErrorMessage('Error: No table selected to display.');
         return;
       }
-      
+
       // Clear existing content
       clearGeneratedList();
-      
+
       // Show loading indicator
       const resultsContainer = document.getElementById('results');
       const loadingDiv = document.createElement('div');
@@ -2235,7 +1615,6 @@
         if (contentType && contentType.indexOf('application/json') === -1) {
           throw new Error(`Server returned non-JSON response (${contentType}). The API endpoint might be missing or unavailable.`);
         }
-
         if (!response.ok) {
           return response.text().then(text => {
             try {
@@ -2258,21 +1637,21 @@
         // Create a container for the table display
         const tableContainer = document.createElement('div');
         tableContainer.className = 'generation-container table-display';
-        
+
         // Add title
         const cardTitle = document.createElement('div');
         cardTitle.className = 'card-title';
-        
+
         // Add title text
         const titleText = document.createElement('span');
         titleText.className = 'card-title-text';
         titleText.textContent = `Table: ${currentSelectedTable.tablename || 'Unnamed Table'}`;
         cardTitle.appendChild(titleText);
-        
+
         // Add buttons
         const cardActions = document.createElement('div');
         cardActions.className = 'card-actions';
-        
+
         // Add the Copy button
         const copyBtn = document.createElement('button');
         copyBtn.className = 'copy-btn';
@@ -2283,7 +1662,7 @@
         };
         copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
         cardActions.appendChild(copyBtn);
-        
+
         // Add the delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-card-btn';
@@ -2294,10 +1673,10 @@
         };
         deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Close" title="Close Table View">`;
         cardActions.appendChild(deleteBtn);
-        
+
         cardTitle.appendChild(cardActions);
         tableContainer.appendChild(cardTitle);
-        
+
         // Add collapse button
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn';
@@ -2310,14 +1689,14 @@
           <span class="up-arrow">▲</span>
         `;
         tableContainer.appendChild(collapseBtn);
-        
+
         // Add card content
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'card-content';
         
         // FIXED: Adapt to the server response format
         const tableData = data.tableData;
-        
+
         // Add table description if present
         if (tableData.description) {
           const descriptionDiv = document.createElement('div');
@@ -2325,17 +1704,16 @@
           descriptionDiv.textContent = tableData.description;
           contentWrapper.appendChild(descriptionDiv);
         }
-        
+
         // Display table entries
         const entriesDiv = document.createElement('div');
         entriesDiv.className = 'table-entries';
-        
+
         // Process main table entries
         if (tableData.subtables && tableData.subtables.length > 0) {
           // If the first subtable is called "Main Results", treat it as the main table
           const mainTable = tableData.subtables.find(t => t.name === "Main Results") || tableData.subtables[0];
           processTableEntries(entriesDiv, mainTable);
-          
           // Add other subtables
           tableData.subtables.forEach(subtable => {
             // Skip the main table we already processed
@@ -2343,13 +1721,13 @@
             
             const subtableContainer = document.createElement('div');
             subtableContainer.className = 'subtable-container';
-            
+
             // Add subtable header
             const subtableHeader = document.createElement('div');
             subtableHeader.className = 'subtable-header';
             subtableHeader.textContent = subtable.name;
             subtableContainer.appendChild(subtableHeader);
-            
+
             // Add subtable description if present
             if (subtable.description) {
               const subtableDesc = document.createElement('div');
@@ -2357,25 +1735,23 @@
               subtableDesc.textContent = subtable.description;
               subtableContainer.appendChild(subtableDesc);
             }
-            
+
             // Process subtable entries
             processTableEntries(subtableContainer, subtable);
-            
             // Handle nested subtables if present
             if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
               const nestedSubtables = document.createElement('div');
               nestedSubtables.className = 'nested-subtables';
-              
               subtable.nestedSubtables.forEach(nestedTable => {
                 const nestedContainer = document.createElement('div');
                 nestedContainer.className = 'subtable-container';
-                
+
                 // Add nested subtable header
                 const nestedHeader = document.createElement('div');
                 nestedHeader.className = 'subtable-header';
                 nestedHeader.textContent = nestedTable.name;
                 nestedContainer.appendChild(nestedHeader);
-                
+
                 // Add nested subtable description if present
                 if (nestedTable.description) {
                   const nestedDesc = document.createElement('div');
@@ -2383,13 +1759,12 @@
                   nestedDesc.textContent = nestedTable.description;
                   nestedContainer.appendChild(nestedDesc);
                 }
-                
+
                 // Process nested subtable entries
                 processTableEntries(nestedContainer, nestedTable);
                 
                 nestedSubtables.appendChild(nestedContainer);
               });
-              
               subtableContainer.appendChild(nestedSubtables);
             }
             
@@ -2399,16 +1774,16 @@
           // No subtables, just process the main table
           processTableEntries(entriesDiv, tableData);
         }
-        
+
         contentWrapper.appendChild(entriesDiv);
         tableContainer.appendChild(contentWrapper);
-        
+
         // Add the table display to the results container
         resultsContainer.appendChild(tableContainer);
       })
       .catch(error => {
         console.error('Error displaying table structure:', error);
-        
+
         // Show a helpful message if the API might not exist
         if (error.message && error.message.includes('non-JSON response')) {
           displayErrorMessage('The table structure API endpoint (/api/table-contents) appears to be missing. Make sure the server supports this feature.');
@@ -2418,40 +1793,37 @@
       });
     }
 
-    // Helper function to process table entries
     function processTableEntries(container, tableData) {
       // FIXED: Use either results or entries depending on what's available
       const entries = tableData.results || tableData.entries || [];
-      
       if (entries && entries.length > 0) {
         entries.forEach((entry, index) => {
           const entryDiv = document.createElement('div');
           entryDiv.className = 'table-entry';
-          
+
           // Add entry number/index
           const entryNumDiv = document.createElement('div');
           entryNumDiv.className = 'entry-number';
           entryNumDiv.textContent = (index + 1) + '.';
           entryDiv.appendChild(entryNumDiv);
-          
+
           // Add content based on type
           const entryContentDiv = document.createElement('div');
           entryContentDiv.className = 'entry-content';
           
           // FIXED: Handle entries from the server's format
           let displayValue, weight;
-
           if (entry && typeof entry === 'object') {
             // Handle different object formats
             if (entry.isCareer) {
               // Career format from server
               const careerDiv = document.createElement('div');
               careerDiv.className = 'career-entry';
-              
+
               const careerName = document.createElement('span');
               careerName.className = 'career-name';
               careerName.textContent = entry.career || '';
-              
+
               const careerItems = document.createElement('span');
               careerItems.className = 'career-items';
               careerItems.textContent = ' - ' + (entry.items || '');
@@ -2480,11 +1852,11 @@
               // Career format [career, items]
               const careerDiv = document.createElement('div');
               careerDiv.className = 'career-entry';
-              
+
               const careerName = document.createElement('span');
               careerName.className = 'career-name';
               careerName.textContent = entry[0];
-              
+
               const careerItems = document.createElement('span');
               careerItems.className = 'career-items';
               careerItems.textContent = ' - ' + entry[1];
@@ -2530,6 +1902,156 @@
         formatDiv.textContent = `Format: ${tableData.displayFormat || tableData.customDisplay}`;
         container.appendChild(formatDiv);
       }
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+    }
+
+    function checkFilterBarOverflow() {
+      const filterContainers = ['gameFilter', 'typeFilter', 'settingFilter'];
+      let totalHeight = 0;
+      let maxButtonHeight = 0;
+      // Calculate total height of all buttons if not wrapped
+      filterContainers.forEach(filterId => {
+        const container = document.getElementById(filterId);
+        const buttons = container.querySelectorAll('.filter-btn');
+        
+        // Find the height of the tallest button
+        buttons.forEach(button => {
+          const buttonHeight = button.offsetHeight;
+          if (buttonHeight > maxButtonHeight) {
+            maxButtonHeight = buttonHeight;
+          }
+        });
+        
+        // Calculate unwrapped width
+        let rowWidth = 0;
+        const containerWidth = container.clientWidth;
+        const buttonGap = 4; // Gap between buttons
+        let rowCount = 1;
+
+        buttons.forEach(button => {
+          const buttonWidth = button.offsetWidth + buttonGap;
+          // If this button would overflow the current row, start a new row
+          if (rowWidth + buttonWidth > containerWidth && rowWidth > 0) {
+            rowCount++;
+            rowWidth = buttonWidth;
+          } else {
+            rowWidth += buttonWidth;
+          }
+        });
+        
+        // Store row count as data attribute
+        container.dataset.rowCount = rowCount;
+          
+        // If rows > 2, mark as has-overflow
+        if (rowCount > 2) {
+          container.classList.add('has-overflow');
+        } else {
+          container.classList.remove('has-overflow');
+        }
+      });
+      
+      // Calculate if any container needs 3+ rows
+      const hasSignificantOverflow = filterContainers.some(filterId => {
+        const container = document.getElementById(filterId);
+        return parseInt(container.dataset.rowCount || '0') >= 3;
+      });
+      
+      // Update the container class
+      const filtersContainer = document.getElementById('filtersContainer');
+      if (hasSignificantOverflow) {
+        filtersContainer.classList.add('has-significant-overflow');
+      } else {
+        filtersContainer.classList.remove('has-significant-overflow');
+        filtersContainer.classList.remove('filters-expanded');
+      }
+      
+      // Update the expand button text
+      const expandBtn = document.getElementById('filterExpandBtn');
+      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
+    }
+
+    function toggleAllFilters() {
+      const filtersContainer = document.getElementById('filtersContainer');
+      filtersContainer.classList.toggle('filters-expanded');
+      // Update button text
+      const expandBtn = document.getElementById('filterExpandBtn');
+      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
+    }
+
+    function updateAvailableOptions(filteredTables) {
+      const gameFilter = document.getElementById('gameFilter');
+      const typeFilter = document.getElementById('typeFilter');
+      const settingFilter = document.getElementById('settingFilter');
+      // Get currently selected values
+      const selectedGames = getSelectedValues('gameFilter');
+      const selectedTypes = getSelectedValues('typeFilter');
+      const selectedSettings = getSelectedValues('settingFilter');
+      // Create sets to store available options
+      const availableGames = new Set();
+      const availableTypes = new Set();
+      const availableSettings = new Set();
+      
+      // Populate available options based on filtered tables
+      filteredTables.forEach(table => {
+        if (table.game) availableGames.add(table.game);
+        
+        if (Array.isArray(table.type)) {
+          table.type.forEach(t => {
+            if (t) availableTypes.add(t);
+          });
+        } else if (table.type) {
+          availableTypes.add(table.type);
+        }
+        
+        if (table.setting) availableSettings.add(table.setting);
+      });
+      
+      // Update filter buttons to reflect available options
+      updateFilterButtons(gameFilter, availableGames, selectedGames);
+      updateFilterButtons(typeFilter, availableTypes, selectedTypes);
+      updateFilterButtons(settingFilter, availableSettings, selectedSettings);
+    }
+
+    function updateFilterButtons(filterContainer, availableOptions, selectedOptions) {
+      const buttons = filterContainer.querySelectorAll('.filter-btn');
+      buttons.forEach(button => {
+        const value = button.dataset.value;
+        if (availableOptions.has(value)) {
+          button.classList.remove('unavailable');
+          button.disabled = false;
+        } else {
+          button.classList.add('unavailable');
+          button.disabled = true;
+        }
+        
+        // Restore selected state if previously selected
+        if (selectedOptions.includes(value)) {
+          button.classList.add('selected');
+          button.classList.remove('unselected');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check filter overflow on window resize
+      window.addEventListener('resize', debounce(() => {
+        checkFilterBarOverflow();
+      }, 250));
+    });
+
+    function debounce(func, wait) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
     }
   </script>
 </body>

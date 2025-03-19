@@ -3,7 +3,7 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure
 tablename: Random Encounters
-inputField: [Charisma Modifier, number]
+inputField: [CharismaModifier, number]
 tables:
   - tablename: Distance
     results: 
@@ -21,7 +21,7 @@ tables:
   - tablename: Reactions
     description: Should be improved by CHA mod. 
     results:
-      - "{useReferenceTable{ReactionReference}{2d6+{Charisma Modifier}}}"      
+      - "{useReferenceTable{ReactionReference}{{2d6}+{CharismaModifier}}}"      
 referenceTables:
   - tablename: ReactionReference
     entries: 
