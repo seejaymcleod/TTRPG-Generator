@@ -19,6 +19,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 // Add a route to serve images from the Images directory
 app.use('/Images', express.static(path.join(__dirname, 'Images')));
+// Add explicit route for CSS files with correct MIME type
+app.use('/css', express.static(path.join(__dirname, 'css')));
 
 // Add a route to serve the extractContext function directly
 app.get('/js/extractContext.js', (req, res) => {

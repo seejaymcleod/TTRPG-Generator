@@ -1,0 +1,1186 @@
+/* Theme variables - Light and Dark mode */
+:root {
+    /* Default light theme variables */
+    --bg-primary: #ffffff;
+    --bg-tertiary: #e0e0e0;
+    --bg-card: #e8e8e8;
+    --bg-content: #f9f9f9;
+    --border-color: #ccc;
+    --border-dark: #bbb;
+    --shadow-color: rgba(0,0,0,0.1);
+    --title-bg: #390249;
+    --text-primary: #333;
+    --text-secondary: #555;
+    --text-muted: #666;
+    --text-title: #fff;
+    --filter-btn-default: #ccc;
+    --filter-btn-unselected: #f0f0f0;
+    --filter-btn-selected: #888;
+    --filter-btn-border: #390249;
+    --btn-hover-bg: #e0e0e0;
+    --link-color: #007bff;
+    --content-cell-bg: #ffffff;
+    --description-bg: #f5f5f5;
+    --description-border: #ddd;
+    --description-text: #555;
+  }
+
+  /* Dark theme variables */
+  [data-theme="dark"] {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2d2d2d;
+    --bg-card: #2a2a2a;
+    --bg-content: #333333;
+    --border-color: #444;
+    --border-dark: #555;
+    --shadow-color: rgba(0,0,0,0.3);
+    --title-bg: #4a0263;
+    --text-primary: #e0e0e0;
+    --text-secondary: #bbbbbb;
+    --text-muted: #999;
+    --text-title: #fff;
+    --filter-btn-default: #444;
+    --filter-btn-unselected: #2a2a2a;
+    --filter-btn-selected: #6a467c;
+    --filter-btn-border: #8a2be2;
+    --btn-hover-bg: #3a3a3a;
+    --link-color: #90caf9;
+    --content-cell-bg: #2c2c2c;
+    --description-bg: #2d2d2d;
+    --description-border: #444;
+    --description-text: #aaa;
+  }
+  
+  /* Base styles */
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 14px; /* Reduced base font size */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  /* Theme toggle button */
+  #themeToggle {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: var(--text-title);
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 100;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #themeToggle:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Header containers - REDUCED SIZE */
+  #titleContainer {
+    text-align: center;
+    padding: 5px; /* Reduced from 10px */
+    background-color: var(--title-bg);
+    color: var(--text-title);
+    position: relative; /* For positioning theme toggle */
+  }
+  #titleContainer h1 {
+    margin: 5px 0; /* Smaller margin for h1 */
+    font-size: 1.4em; /* Smaller title */
+  }
+  #searchContainer {
+    display: flex;
+    padding: 8px; /* Reduced from 15px */
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color); /* Thinner border */
+  }
+  #searchInput {
+    flex: 1;
+    padding: 5px 8px; /* Reduced padding */
+    font-size: 0.9em; /* Smaller font */
+    border: 1px solid var(--border-color);
+    border-radius: 3px; /* Smaller radius */
+    height: 22px; /* Explicit height */
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+  
+  /* Filter styles - MODIFIED for horizontal layout */
+  #filtersContainer {
+    display: flex;
+    padding: 4px; /* Reduced from 6px */
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color); /* Thinner border */
+    gap: 8px; /* Reduced gap from 15px */
+    margin-bottom: 20px; /* Increased to accommodate expand buttons */
+    position: relative;
+  }
+  .filter-container {
+    display: flex;
+    flex-direction: row; /* Changed from column to row for horizontal layout */
+    position: relative;
+    flex: 1;
+    align-items: flex-start; /* Changed to allow proper expansion */
+    gap: 8px; /* Gap between header and buttons */
+  }
+  .filter-header {
+    display: flex;
+    flex-shrink: 0; /* Don't shrink header */
+    width: 75px; /* Fixed width for header */
+    justify-content: space-between;
+    align-items: center;
+  }
+  .filter-title {
+    font-weight: bold;
+    color: var(--text-primary);
+    font-size: 0.9em; /* Smaller title */
+    white-space: nowrap; /* Prevent wrapping */
+  }
+  .filter-clear {
+    background: none;
+    border: none;
+    color: var(--link-color);
+    cursor: pointer;
+    font-size: 1em; /* Slightly smaller */
+    padding: 0;
+    width: 20px; /* Smaller button */
+    height: 20px; /* Smaller button */
+    line-height: 18px; /* Adjusted line height */
+    text-align: center;
+    margin-left: 4px; /* Add a small space between title and clear button */
+  }
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1; /* Take remaining space */
+    gap: 4px; /* Reduced from 6px */
+    max-height: 28px; /* Reduced from 56px for single row */
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.3s ease-out;
+    align-content: flex-start;
+  }
+  .filter-buttons::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px; /* Thinner gradient */
+    background: linear-gradient(to bottom, transparent, var(--bg-tertiary));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .filter-buttons.has-overflow::after {
+    opacity: 1;
+  }
+  .filter-buttons.expanded {
+    max-height: 200px; /* Reduced from 200px */
+    overflow-y: auto;
+    padding-bottom: 10px; /* Better spacing at bottom */
+  }
+  .filter-buttons.expanded::after {
+    opacity: 0;
+  }
+  .filter-btn {
+    background-color: var(--filter-btn-default); /* DefaultState */
+    border: 1px solid transparent; /* Thinner border */
+    border-radius: 3px; /* Smaller radius */
+    padding: 2px 6px; /* Less padding */
+    cursor: pointer;
+    font-size: 0.85em; /* Smaller text */
+    white-space: nowrap;
+    transition: all 0.2s;
+    color: var(--text-primary);
+  }
+  .filter-btn.unselected {
+    background-color: var(--filter-btn-unselected); /* UnSelectedState */
+  }
+  .filter-btn.selected {
+    background-color: var(--filter-btn-selected); /* SelectedState */
+    border-color: var(--filter-btn-border); /* Highlighted border */
+    color: white;
+  }
+
+  /* Add styles for unavailable filter options */
+  .filter-btn.unavailable {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    pointer-events: none;  /* Disable interaction */
+  }
+  .expand-btn {
+    position: absolute; /* Position absolute to place it below */
+    bottom: -18px; /* Position below the filter */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%);
+    width: 24px; /* Fixed width */
+    height: 18px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    background-color: var(--bg-tertiary);
+    cursor: pointer;
+    padding: 0;
+    text-align: center;
+    font-size: 0.85em; /* Smaller text */
+    color: var(--text-secondary);
+    font-weight: bold;
+    display: none; /* Hide by default */
+    z-index: 15; /* Ensure it appears above content */
+    border-radius: 0 0 3px 3px; /* Rounded bottom corners */
+  }
+  .filter-container.has-significant-overflow .expand-btn,
+  .filter-container .filter-buttons.expanded + .expand-btn {
+    display: block;
+  }
+  .expand-btn:hover {
+    background-color: var(--btn-hover-bg);
+  }
+  #resetButton {
+    margin-left: 10px; /* Reduced from 20px */
+    font-size: 0.85em; /* Smaller text */
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    border-radius: 3px; /* Smaller radius */
+    height: 24px; /* Reduced height */
+    align-self: center;
+    padding: 0 8px; /* Added horizontal padding */
+    color: var(--text-primary);
+  }
+  
+  /* Add extra space below filters for expand buttons */
+  #filtersContainer {
+    margin-bottom: 26px; /* Space for expand buttons */
+    position: relative; /* For absolute positioning of children */
+  }
+  
+  /* Content layout */
+  #contentWrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  #leftColumn {
+    width: 20%; /* Reduced from 25% */
+    padding: 3px; /* Reduced padding */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color); /* Thinner border */
+    overflow-y: auto;
+    background-color: var(--bg-secondary);
+  }
+  .matching-table-button {
+    width: 100%;
+    padding: 4px; /* Reduced padding */
+    margin-bottom: 3px; /* Reduced margin */
+    font-size: 0.85em; /* Smaller font */
+    background-color: var(--bg-secondary);
+    border: none;
+    border-radius: 3px; /* Smaller radius */
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-primary);
+  }
+  .matching-table-button:hover {
+    background-color: var(--btn-hover-bg);
+  }
+  #mainContent {
+    flex: 1;
+    padding: 10px; /* Reduced padding */
+    box-sizing: border-box;
+    overflow-y: auto;
+    background-color: var(--bg-primary);
+  }
+  
+  /* Card styles */
+  .generation-container,
+  #savedGenerations .generation-container {
+    margin: 10px 0; /* Reduced from 15px */
+    padding: 8px; /* Reduced padding */
+    border-radius: 6px; /* Smaller radius */
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px var(--shadow-color); /* Lighter shadow */
+    position: relative;
+  }
+  .generation-object {
+    margin: 8px; /* Reduced margin */
+    padding: 8px; /* Reduced padding */
+    border: 1px solid var(--border-color);
+    border-radius: 3px; /* Smaller radius */
+    background-color: var(--bg-content);
+    cursor: grab;
+    color: var(--text-primary);
+  }
+  
+  /* Fixed style for result rows to prevent stacking */
+  .result-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    position: relative !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    background-color: transparent !important;
+    padding: 1px 0 !important; /* Reduced padding */
+    margin-bottom: 3px !important; /* Reduced margin */
+    min-height: 24px !important; /* Smaller height */
+    max-height: 30px !important; /* Smaller max height */
+    border: none !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Hide WebKit scrollbars */
+  .result-row::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Make content cells more compact */
+  .result-row .result-content {
+    flex: 0 0 auto !important;
+    min-width: 180px !important; /* Smaller min-width */
+    max-width: 400px !important; /* Smaller max-width */
+    height: 22px !important; /* Shorter height */
+    line-height: 22px !important; /* Adjusted line height */
+    margin-right: 6px !important; /* Less margin */
+    padding: 0 6px !important; /* Less padding */
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--content-cell-bg) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    border-radius: 2px !important; /* Smaller radius */
+    position: relative !important;
+    z-index: 1 !important;
+    font-size: 0.9em !important; /* Smaller text */
+    color: var(--text-primary) !important;
+  }
+  
+  /* Keep header at single line height */
+  .result-row .result-header {
+    flex: 0 0 180px !important; /* Reduced from 240px */
+    min-width: 180px !important;
+    max-width: 180px !important;
+    height: 22px !important; /* Shorter height */
+    line-height: 22px !important; /* Adjusted line height */
+    margin-right: 6px !important; /* Less margin */
+    padding: 0 4px !important; /* Less padding */
+    border: 1px solid var(--border-color) !important;
+    font-weight: bold !important;
+    background-color: var(--content-cell-bg) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    border-radius: 2px !important; /* Smaller radius */
+    position: relative !important;
+    z-index: 1 !important;
+    font-size: 0.9em !important; /* Smaller text */
+    color: var(--text-primary) !important;
+  }
+  
+  /* Ensure reroll button stays at end */
+  .result-row .reroll-btn {
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    right: 0 !important;
+    background-color: var(--content-cell-bg) !important;
+    border-radius: 50% !important;
+    z-index: 2 !important;
+    width: 22px !important; /* Smaller button */
+    height: 22px !important; /* Smaller button */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Make sure the reroll button has a white background when content scrolls under it */
+  .result-row .reroll-btn::before {
+    content: '';
+    position: absolute;
+    top: -3px; /* Less padding */
+    right: -3px; /* Less padding */
+    bottom: -3px; /* Less padding */
+    left: -3px; /* Less padding */
+    z-index: -1;
+    border-radius: 50%;
+  }
+  
+  /* Remove tooltip hover effect */
+  .result-content:hover::after {
+    display: none !important;
+  }
+  
+  /* Button hover effect */
+  .reroll-btn:hover {
+    transform: scale(1.15); /* Slightly reduced scale */
+  }
+  
+  /* Card title and button styles */
+  .card-title {
+    margin-top: 0;
+    margin-bottom: 4px;
+    font-size: 1em;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: grab;
+  }
+  .card-title:active {
+    cursor: grabbing;
+  }
+  .card-title-text {
+    flex: 1 1 auto; /* Allow the title to grow and shrink as needed */
+    min-width: 0; /* Critical for text-overflow to work properly */
+    color: var(--text-primary) !important;
+    font-weight: bold;
+    font-size: 0.95em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 8px;
+  }
+  .card-actions {
+    flex: 0 0 auto; /* Don't grow or shrink, use natural width */
+    display: flex;
+    gap: 4px; /* Reduced from 8px to save space */
+    align-items: center;
+  }
+  
+  /* Make buttons more compact by removing text */
+  .copy-btn, .reroll-all-btn, .delete-card-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 24px;
+    height: 24px; /* Preserving original button height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+  }
+  
+  .reroll-all-btn:hover, .copy-btn:hover {
+    transform: scale(1.05);
+    color: var(--text-primary);
+  }
+  .delete-card-btn:hover {
+    transform: scale(1.05);
+    color: #ff3333;
+  }
+  .reroll-all-btn img, .copy-btn img, .delete-card-btn img {
+    width: 18px; /* Slightly larger icons since we removed text */
+    height: 18px;
+    border-radius: 2px;
+    filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.15));
+  }
+  
+  /* Toast notification */
+  .toast-message {
+    position: fixed;
+    bottom: 15px; /* Moved up slightly */
+    left: 50%;
+    font-size: 0.7em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    transition: transform 0.2s, color 0.2s;
+  }
+  .reroll-all-btn:hover, .copy-btn:hover {
+    transform: scale(1.05);
+    color: var(--text-primary);
+  }
+  .delete-card-btn:hover {
+    transform: scale(1.05);
+    color: #ff3333;
+  }
+  .reroll-all-btn img, .copy-btn img, .delete-card-btn img {
+    width: 16px; /* Smaller icons */
+    height: 16px; /* Smaller icons */
+    margin-left: 4px; /* Reduced margin */
+    border-radius: 2px; /* Smaller radius */
+    filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.15));
+  }
+  .reroll-btn img {
+    width: 18px; /* Smaller icon */
+    height: 18px; /* Smaller icon */
+    border-radius: 3px; /* Smaller radius */      
+  }
+  
+  /* Toast notification */
+  .toast-message {
+    position: fixed;
+    bottom: 15px; /* Moved up slightly */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 6px 15px; /* Less padding */
+    border-radius: 3px; /* Smaller radius */
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.9em; /* Smaller text */
+  }
+  .toast-visible {
+    opacity: 1;
+  }
+  
+  /* Saved cards section */
+  .saved-cards {
+    width: 20%; /* Reduced from 25% */
+    padding: 8px; /* Reduced padding */
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border-color); /* Thinner border */
+    overflow-y: auto;
+  }
+  #savedGenerations h2 {
+    margin-top: 0;
+    margin-bottom: 8px; /* Added specific bottom margin */
+    padding-bottom: 6px; /* Reduced padding */
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary) !important;
+    font-weight: bold;
+    font-size: 1.1em; /* Smaller heading */
+  }
+  #savedGenerations .generation-container {
+    margin-bottom: 12px; /* Reduced margin */
+    box-shadow: 0 2px 3px var(--shadow-color); /* Lighter shadow */
+  }
+  
+  /* Drag and drop styles */
+  .card-being-dragged {
+    opacity: 0.6;
+    transform: scale(0.98);
+    box-shadow: 0 3px 6px var(--shadow-color); /* Lighter shadow */
+  }
+  .drop-target-highlight {
+    background-color: var(--bg-tertiary);
+    border: 1px dashed var(--link-color); /* Thinner border */
+  }
+  .dragging {
+    opacity: 0.5;
+  }
+  .delete-btn {
+    display: none;
+  }
+  
+  /* Force consistent styling for all cards */
+  .generation-container {
+    margin: 10px 0; /* Reduced margin */
+    padding: 10px; /* Reduced padding */
+    border-radius: 6px; /* Smaller radius */
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px var(--shadow-color); /* Lighter shadow */
+    position: relative;
+  }
+  .result-header, .result-content {
+    background-color: var(--content-cell-bg) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+  }
+  
+  /* Saved cards special styling */
+  .saved-cards .generation-container {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+  }
+  
+  /* IMPORTANT: Reset any potential filters that could cause graying out */
+  .saved-cards,
+  .saved-cards *,
+  #savedGenerations,
+  #savedGenerations * {
+    filter: none !important;
+    -webkit-filter: none !important;
+    opacity: 1 !important;
+    color-filter: none !important;
+    -webkit-font-smoothing: antialiased !important;
+    font-smooth: always !important;
+    color-interpolation-filters: auto !important;
+    color-adjust: exact !important;
+  }
+  
+  /* Force all text to be proper color for maximum contrast in saved cards */
+  .saved-cards .result-header, 
+  .saved-cards .result-content,
+  .saved-cards .card-title-text {
+    color: var(--text-primary) !important;
+  }
+  
+  /* Ensure images are displayed at full brightness and contrast */
+  .saved-cards img,
+  .saved-cards .reroll-btn img,
+  .saved-cards .reroll-all-btn img,
+  .saved-cards .copy-btn img,
+  .saved-cards .delete-card-btn img {
+    filter: contrast(1.1) brightness(1.1) !important;
+    -webkit-filter: contrast(1.1) brightness(1.1) !important;
+    opacity: 1 !important;
+    background: transparent !important;
+  }
+  
+  /* Set a crisp border on all elements to ensure they're distinct */
+  .saved-cards .result-row,
+  .saved-cards .result-header,
+  .saved-cards .result-content {
+    border: 1px solid var(--border-dark) !important;
+    background-color: var(--content-cell-bg) !important;
+  }
+  
+  /* Additional fix for card container background */
+  .saved-cards .generation-container {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-dark) !important;
+  }
+  
+  /* Force fix for result row borders - override all other styles */
+  .result-row,
+  #savedGenerations .result-row,
+  .saved-cards .result-row,
+  div.result-row {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  
+  /* Collapse/expand functionality - UPDATED FOR BOTTOM POSITIONING */
+  .collapse-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; /* Smaller button */
+    height: 18px; /* Smaller button */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 12px; /* Smaller text */
+    color: var(--text-secondary);
+    transition: transform 0.2s, color 0.2s;
+    position: absolute;
+    bottom: 3px; /* Position at bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    border-radius: 50%;
+    background-color: var(--content-cell-bg) !important;
+    box-shadow: 0 1px 2px var(--shadow-color); /* Lighter shadow */
+  }
+  .collapse-btn:hover {
+    color: var (--text-primary);
+    background-color: var(--btn-hover-bg);
+  }
+  .card-title {
+    padding-top: 3px; /* Reduced padding */
+    position: relative;
+  }
+  .generation-container.collapsed .card-content {
+    display: none;
+  }
+  .generation-container.collapsed {
+    padding-bottom: 16px; /* Space for collapse button at bottom */
+  }
+  .generation-container:not(.collapsed) {
+    padding-bottom: 16px; /* Space for collapse button at bottom */
+  }
+  
+  /* FIX: Reverse the arrow logic - previously was backward */
+  .generation-container.collapsed .collapse-btn .up-arrow {
+    display: none;
+  }
+  .generation-container:not(.collapsed) .collapse-btn .down-arrow {
+    display: none;
+  }
+  
+  .card-content {
+    transition: max-height 0.3s ease-out;
+    overflow: hidden;
+    margin-bottom: 10px; /* Space above collapse button */
+  }
+  
+  /* Add to your existing styles */
+  #clearBtn {
+    margin-top: 5px; /* Reduced margin */
+    margin-left: 5px; /* Reduced margin */
+    padding: 1px 6px;
+    font-size: 0.9em; /* Smaller text */
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var (--border-color);
+  }
+  
+  /* Fix the layout - ensure contentWrapper properly contains 3 columns */
+  #contentWrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  #mainContent {
+    flex: 1;
+    padding: 10px; /* Reduced padding */
+    box-sizing: border-box;
+    overflow-y: auto;
+    background-color: var(--bg-primary);
+  }
+  
+  /* Ensure saved cards appears as a right column */
+  #savedGenerations {
+    width: 20%; /* Reduced from 25% */
+    padding: 8px; /* Reduced padding */
+    background-color: var(--bg-secondary);
+    border-left: 1px solid var(--border-color); /* Thinner border */
+    overflow-y: auto;
+  }
+  
+  /* Style for table display entries */
+  .table-entries {
+    padding: 8px; /* Reduced padding */
+  }
+  
+  .table-entry {
+    margin: 3px 0; /* Reduced margin */
+    padding: 4px; /* Reduced padding */
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  /* Table display styles - MORE COMPACT */
+  .table-display {
+    margin: 10px 0; /* Reduced margin */
+  }
+  
+  .subtable-container {
+    margin: 10px 0; /* Reduced margin */
+    border-top: 1px dashed var(--border-color);
+    padding-top: 6px; /* Reduced padding */
+  }
+  
+  .subtable-header {
+    font-weight: bold;
+    font-size: 1em; /* Smaller text */
+    margin-bottom: 3px; /* Reduced margin */
+    color: var (--title-bg);
+  }
+  
+  .subtable-custom-display {
+    font-family: monospace;
+    background-color: var(--bg-primary);
+    padding: 3px; /* Reduced padding */
+    border: 1px solid var(--border-color);
+    border-radius: 2px; /* Smaller radius */
+    margin-bottom: 6px; /* Reduced margin */
+    font-style: italic;
+    font-size: 0.9em; /* Smaller text */
+  }
+  
+  .table-entry {
+    margin: 2px 0; /* Reduced margin */
+    padding: 2px 6px; /* Reduced padding */
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 2px; /* Smaller radius */
+    display: flex;
+    align-items: center;
+  }
+  
+  .entry-number {
+    flex: 0 0 22px; /* Smaller width */
+    font-weight: bold;
+    color: var(--text-muted);
+  }
+  
+  .entry-content {
+    flex: 1;
+    font-size: 0.9em; /* Smaller text */
+    color: var(--text-primary);
+  }
+  
+  .entry-weight {
+    flex: 0 0 42px; /* Reduced from 50px */
+    text-align: right;
+    font-style: italic;
+    color: var(--text-secondary);
+    padding-right: 3px; /* Less padding */
+    border-left: 1px solid var(--border-color);
+    margin-left: 6px; /* Less margin */
+    padding-left: 6px; /* Less padding */
+    font-size: 0.85em; /* Smaller text */
+  }
+  
+  .nested-subtables {
+    margin-left: 15px; /* Reduced margin */
+    margin-top: 6px; /* Reduced margin */
+    margin-bottom: 6px; /* Reduced margin */
+    padding-left: 6px; /* Less padding */
+    border-left: 2px solid var(--border-color); /* Thinner border */
+  }
+  
+  /* Career format styling */
+  .career-entry {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .career-name {
+    font-weight: bold;
+    margin-right: 6px; /* Reduced margin */
+    font-size: 0.9em; /* Smaller text */
+    color: var(--text-primary);
+  }
+  
+  .career-items {
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 0.9em; /* Smaller text */
+  }
+
+  /* Fix spacing in table cards to match regular cards */
+  .subtable-container:first-child {
+    margin-top: 0;
+  }
+  
+  .table-display .card-content {
+    padding-top: 4px; /* Reduced padding */
+  }
+  
+  .subtable-container {
+    margin: 6px 0; /* Reduced margin */
+    padding-top: 6px; /* Reduced padding */
+    border-top: 1px dashed var(--border-color);
+  }
+  
+  /* First subtable shouldn't have a border */
+  .subtable-container:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+  
+  /* Make table card content align better with regular cards */
+  .table-display {
+    margin: 10px 0; /* Reduced margin */
+  }
+  
+  /* Fix alignment of entry numbers */
+  .entry-number {
+    flex: 0 0 22px; /* Smaller width */
+    font-weight: bold;
+    color: var(--text-muted);
+    text-align: right;
+    margin-right: 4px; /* Less margin */
+  }
+  
+  /* Improve spacing within table entries */
+  .table-entry {
+    margin: 2px 0; /* Reduced margin */
+    padding: 2px 6px; /* Less padding */
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 2px; /* Smaller radius */
+    display: flex;
+    align-items: center;
+    min-height: 20px; /* Set minimum height */
+  }
+
+  /* Controls area - more compact */
+  #generationControls {
+    margin: 5px 0; /* Reduced margin */
+    padding: 6px; /* Added padding */
+    background-color: var(--bg-secondary);
+    border-radius: 3px; /* Smaller radius */
+    border: 1px solid var(--border-color);
+  }
+
+  #generationControls label {
+    font-size: 0.9em; /* Smaller text */
+    color: var(--text-primary);
+  }
+
+  #generationSlider {
+    margin: 5px 0; /* Less margin */
+    width: 100%;
+    height: 5px; /* Thinner slider */
+  }
+
+  #generateBtn, #showTableBtn, #clearBtn {
+    padding: 3px 8px; /* Less padding */
+    font-size: 0.85em; /* Smaller text */
+    border-radius: 2px; /* Smaller radius */
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    cursor: pointer;
+    margin-right: 5px; /* Consistent margins */
+    color: var(--text-primary);
+  }
+
+  /* Table headers area */
+  #tableHeaders {
+    margin-bottom: 10px; /* Added specific margin */
+  }
+
+  #tableHeaders h2 {
+    margin: 0 0 5px 0; /* Reduced margins */
+    font-size: 1.2em; /* Smaller heading */
+    color: var(--text-primary);
+  }
+
+  #tableHeaders .header {
+    margin: 2px 0; /* Less margin */
+    font-size: 0.9em; /* Smaller text */
+    color: var (--text-primary);
+  }
+
+  /* Updated filter container styles */
+  #filtersContainer {
+    display: flex;
+    padding: 4px;
+    background-color: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    gap: 8px;
+    margin-bottom: 20px; /* Space for expand button */
+    position: relative;
+  }
+  
+  /* Filter section styling */
+  .filter-container {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    flex: 1;
+    align-items: flex-start; /* Better alignment for multi-row */
+    gap: 8px;
+  }
+  
+  /* Filter buttons container with default 2-row height */
+  .filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 4px;
+    max-height: 56px; /* Height for 2 rows by default */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    align-content: flex-start;
+  }
+  
+  /* Expanded state shows up to 4 rows */
+  .filters-expanded .filter-buttons {
+    max-height: 112px; /* Height for 4 rows when expanded */
+  }
+  
+  /* Add scroll when content exceeds 4 rows */
+  .filters-expanded .filter-buttons.has-overflow {
+    overflow-y: auto;
+    padding-right: 4px; /* Space for scrollbar */
+  }
+  
+  /* Single expand button for entire filter bar */
+  #filterExpandBtn {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 18px;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    background-color: var(--bg-tertiary);
+    cursor: pointer;
+    padding: 0;
+    text-align: center;
+    font-size: 0.85em;
+    color: var(--text-secondary);
+    display: none; /* Hidden by default */
+    z-index: 10;
+    border-radius: 0 0 3px 3px;
+  }
+  
+  /* Show expand button when filters have significant overflow */
+  #filtersContainer.has-significant-overflow #filterExpandBtn {
+    display: block;
+  }
+  
+  /* Hover effect */
+  #filterExpandBtn:hover {
+    background-color: var(--btn-hover-bg);
+  }
+
+  /* Description styles */
+  .table-description {
+    margin: 8px 0 12px 0;
+    padding: 8px 12px;
+    background-color: var(--description-bg);
+    border-left: 3px solid var(--description-border);
+    color: var(--description-text);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.4;
+    position: relative;
+    font-size: 0.9em;
+  }
+  
+  /* Updated row description styling for better alignment and full width */
+  .row-description {
+    margin: 2px 0 6px 0;
+    padding: 6px 10px;
+    background-color: var(--description-bg);
+    border-left: 3px solid var(--description-border);
+    color: var(--description-text);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.85em;
+    line-height: 1.3;
+    width: calc(100% - 30px); /* Account for reroll button width */
+    box-sizing: border-box;
+    display: block;
+    clear: both;
+  }
+
+  /* Add styling for subtable descriptions */
+  .subtable-description {
+    border-left: 3px solid var(--description-border);
+    color: var(--description-text);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.85em;
+    line-height: 1.3;
+  }
+
+  /* Title description styles - updated to match other descriptions */
+  .title-description {
+    margin: 8px 0 12px 0;
+    padding: 8px 12px;
+    background-color: var(--description-bg);
+    border-left: 3px solid var(--description-border);
+    color: var (--description-text);
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+    line-height: 1.4;
+    position: relative;
+    font-size: 0.9em;
+    text-align: left;
+  }
+
+  /* Add styles for button group that contains lock and reroll buttons */
+  .button-group {
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    right: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    z-index: 2 !important;
+    background-color: var(--content-cell-bg) !important;
+    border-radius: 2px !important;
+    padding: 0 2px !important;
+    /* Fix width issues by setting a max-width */
+    max-width: 50px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Update lock button style to fix size issues */
+  .lock-btn {
+    flex: 0 0 22px !important; /* Fixed width */
+    width: 22px !important;
+    height: 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    margin-right: 2px !important;
+    background-color: transparent !important;
+    position: relative !important;
+    border-radius: 50% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+  
+  /* Ensure lock button image is properly sized */
+  .lock-btn img {
+    width: 18px !important; 
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    object-fit: contain !important;
+    border-radius: 3px !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Update reroll button style to match lock button */
+  .result-row .reroll-btn {
+    flex: 0 0 22px !important; /* Fixed width */
+    width: 22px !important;
+    height: 22px !important;
+    margin-left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    border-radius: 50% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ensure reroll button image is properly sized */
+  .reroll-btn img {
+    width: 18px !important;
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    object-fit: contain !important;
+    border-radius: 3px !important;
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Style for the button group background on hover */
+  .button-group:hover {
+    background-color: var(--btn-hover-bg) !important;
+  }
+  
+  /* Add a subtle separator between the buttons */
+  .button-group .lock-btn::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background-color: var(--border-color);
+    opacity: 0.3;
+  }

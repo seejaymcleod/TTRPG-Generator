@@ -7,6 +7,12 @@ tables:
   - tablename: Name
     results: 
       - "{ShadowDark_NPC|NameBySyllable}"
+  - tablename: NameByAncestry
+    results:
+      - "{ShadowDark_NPC|NPC Names by Ancestry}" 
+  - tablename: Ancestry
+    results:
+      - "{ShadowDark_NPC|Ancestry}"
   - tablename: Strength
     results:
       - "[{3d6},{useReferenceTable{AbilityModifiers}{thisResult[0]}}]"
@@ -28,7 +34,7 @@ tables:
 referenceTables:
   - tablename: AbilityModifiers
     entries:
-      - key: "3"
+      - key: "2-3"
         value: "-4"
       - key: "4-5"
         value: "-3"

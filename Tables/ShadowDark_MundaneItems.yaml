@@ -11,7 +11,7 @@ tables:
       - Ruby 200 gp
       - Sapphire 280 gp
       - Diamond 360 gp
-      - Giant gem 2x {Gemstones}
+      - Giant gem - {Gemstones} - 2x
   - tablename: Unique Feature
     results: 
       - Forgery
