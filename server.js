@@ -436,14 +436,28 @@ app.post('/api/reroll', (req, res) => {
       Object.keys(inputValues).forEach(key => {
         context[key] = inputValues[key];
       });
-      if (DEBUG) console.log('Added input values to context for reroll:', inputValues);
+      if (DEBUG) {
+        console.log('Added input values to context for reroll:', inputValues);
+        console.log('Complete context after adding inputs:', context);
+      }
     }
+    
+    // CRITICAL FIX: Ensure input values are properly accessible from the context BEFORE processing
+    // This specifically helps with CharismaModifier and similar variables that need to be in context
+    Object.assign(context, inputValues || {});
     
     // Find the specific subtable for this header with improved fallback logic
     let targetSubTable = null;
     
+    // First check if the header contains a math expression (may not exactly match a table name)
+    let hasMathExpression = false;
+    if (/[+\-*/]/.test(header)) {
+      if (DEBUG) console.log(`Header "${header}" appears to contain math operators - will process as an expression`);
+      hasMathExpression = true;
+    }
+    
     // Search through the tables array for the matching header name
-    if (selectedTable.tables && Array.isArray(selectedTable.tables)) {
+    if (!hasMathExpression && selectedTable.tables && Array.isArray(selectedTable.tables)) {
       // First attempt: Look for exact name match
       for (const subTable of selectedTable.tables) {
         if (subTable.name === header || subTable.tablename === header) {
@@ -479,41 +493,63 @@ app.post('/api/reroll', (req, res) => {
     }
     
     // If not found in tables array, check if the top-level table itself has results
-    if (!targetSubTable && selectedTable.results && Array.isArray(selectedTable.results)) {
+    if (!targetSubTable && !hasMathExpression && selectedTable.results && Array.isArray(selectedTable.results)) {
       console.log(`Using top-level table results for header "${header}"`);
       targetSubTable = selectedTable;
     }
     
-    if (!targetSubTable) {
-      console.error(`Could not find subtable for header: ${header}`);
-      return res.status(404).json({ error: `Could not find subtable for header: ${header}` });
-    }
-    
-    // Process the subtable based on its structure
     let result;
     
-    // Case 1: Table uses customDisplay
-    if (targetSubTable.customDisplay) {
-      console.log(`Processing table with customDisplay: ${targetSubTable.name || header}`);
-      result = processCustomDisplay(targetSubTable, tables, context);
+    // Special case for math expressions - evaluate directly
+    if (hasMathExpression) {
+      console.log(`Processing header "${header}" as a math expression`);
+      // Create a mock expression string with curly braces to match our evaluation format
+      const exprString = `{${header}}`;
+      // Use the existing table references processing to evaluate the expression
+      result = processTableReferences(exprString, tables, context);
+      console.log(`Evaluated math expression "${header}" to: ${result}`);
     }
-    // Case 2: Table has simple array results
-    else if (targetSubTable.results && Array.isArray(targetSubTable.results)) {
-      if (targetSubTable.results.length === 0) {
-        console.error(`Empty results array for subtable: ${header}`);
-        return res.status(500).json({ error: `Empty results array for: ${header}` });
+    // Standard processing for regular tables
+    else if (targetSubTable) {
+      // Process the subtable based on its structure
+      
+      // Case 1: Table uses customDisplay
+      if (targetSubTable.customDisplay) {
+        console.log(`Processing table with customDisplay: ${targetSubTable.name || header}`);
+        result = processCustomDisplay(targetSubTable, tables, context);
       }
-      
-      // Choose a random result
-      const randomResult = getWeightedRandomResult(targetSubTable);
-      result = randomResult;
-      
-      console.log(`Selected value for ${header}: ${JSON.stringify(result)}`);
-    }
-    // Case 3: No valid results structure
-    else {
-      console.error(`Invalid structure for subtable: ${header}`);
-      return res.status(500).json({ error: `Invalid structure for subtable: ${header}` });
+      // Case 2: Table has simple array results
+      else if (targetSubTable.results && Array.isArray(targetSubTable.results)) {
+        if (targetSubTable.results.length === 0) {
+          console.error(`Empty results array for subtable: ${header}`);
+          return res.status(500).json({ error: `Empty results array for: ${header}` });
+        }
+        
+        // Choose a random result
+        const randomResult = getWeightedRandomResult(targetSubTable);
+        
+        // Special handling for array results to ensure each element is processed independently
+        if (Array.isArray(randomResult)) {
+          console.log(`Processing array result for ${header}:`, randomResult);
+          result = processArrayWithExpressions(randomResult, tables, context);
+        }
+        // Process table references in the result if it's a string
+        else if (typeof randomResult === 'string') {
+          result = processTableReferences(randomResult, tables, context);
+        } else {
+          result = randomResult;
+        }
+        
+        console.log(`Selected and processed value for ${header}:`, result);
+      }
+      // Case 3: No valid results structure
+      else {
+        console.error(`Invalid structure for subtable: ${header}`);
+        return res.status(500).json({ error: `Invalid structure for subtable: ${header}` });
+      }
+    } else {
+      console.error(`Could not find subtable for header: ${header}`);
+      return res.status(404).json({ error: `Could not find subtable for header: ${header}` });
     }
     
     // Update the context
@@ -526,7 +562,7 @@ app.post('/api/reroll', (req, res) => {
       result: {
         header: header,
         result: result,
-        _tableName: targetSubTable.name || targetSubTable.tablename || header
+        _tableName: targetSubTable ? (targetSubTable.name || targetSubTable.tablename || header) : header
       },
       context
     });
@@ -985,9 +1021,13 @@ function loadAllTables() {
   }
 }
 
-// New function to evaluate mathematical expressions with context variable substitution
+// Fixed function to evaluate mathematical expressions with context variable substitution
 function evaluateExpression(expression, context) {
   if (DEBUG) console.log(`Evaluating expression: ${expression}`);
+  if (DEBUG) console.log(`Context for evaluation:`, context);
+  
+  // Make a local copy of the context to avoid modifying the original
+  const localContext = {...context};
   
   // Step 1: Replace any context variables with their values
   let processedExpression = expression;
@@ -995,28 +1035,17 @@ function evaluateExpression(expression, context) {
   // Look for variable names in the expression
   const variableRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
   let match;
+  let matches = [];
+  let missingVariables = [];
   
+  // First collect all variable matches to avoid regex iteration issues
   while ((match = variableRegex.exec(expression)) !== null) {
-    const varName = match[1];
-    
-    // Skip JavaScript keywords that might appear in expressions
-    if (['true', 'false', 'null', 'undefined'].includes(varName)) continue;
-    
-    // Replace variable with its value from context if it exists
-    if (context && varName in context) {
-      const varValue = context[varName];
-      // Convert to number if possible, otherwise use string with quotes
-      const replacementValue = !isNaN(varValue) ? Number(varValue) : 
-                              `"${String(varValue).replace(/"/g, '\\"')}"`;
-      
-      processedExpression = processedExpression.replace(
-        new RegExp(`\\b${varName}\\b`, 'g'), 
-        replacementValue
-      );
-      
-      if (DEBUG) console.log(`Replaced variable ${varName} with value ${replacementValue}`);
-    }
+    matches.push(match[1]);
   }
+  
+  // Track dice roll result for display purposes
+  let diceValue = null;
+  let diceNotation = null;
   
   // Step 2: Process any dice notation in the expression
   const diceRegex = /(\d+)d(\d+)(?:[+-]\d+)?/g;
@@ -1024,24 +1053,90 @@ function evaluateExpression(expression, context) {
     const diceResult = parseDiceNotation(match);
     if (diceResult !== null) {
       if (DEBUG) console.log(`Evaluated dice notation ${match} to ${diceResult}`);
+      // Store dice details for display formatting
+      diceValue = diceResult;
+      diceNotation = match;
       // Store result in context for potential later use
-      if (context) context.thisResult = diceResult;
+      localContext.thisResult = diceResult;
+      localContext._lastDiceRoll = {
+        notation: match,
+        result: diceResult
+      };
       return diceResult;
     }
     return match;
   });
   
+  // Then process each variable
+  for (const varName of matches) {
+    // Skip JavaScript keywords that might appear in expressions
+    if (['true', 'false', 'null', 'undefined'].includes(varName)) continue;
+    
+    // Replace variable with its value from context if it exists
+    if (varName in localContext) {
+      const varValue = localContext[varName];
+      if (DEBUG) console.log(`Found variable ${varName} in context with value: ${varValue}`);
+      
+      // Convert to number if possible, otherwise use string with quotes
+      const replacementValue = !isNaN(varValue) ? Number(varValue) : 
+                              `"${String(varValue).replace(/"/g, '\\"')}"`;
+      
+      // Use a safer replacement strategy by creating a new RegExp for each replacement
+      const varRegex = new RegExp(`\\b${varName}\\b`, 'g');
+      processedExpression = processedExpression.replace(varRegex, replacementValue);
+      
+      if (DEBUG) console.log(`Replaced variable ${varName} with value ${replacementValue}`);
+    } else {
+      if (DEBUG) console.log(`Variable ${varName} not found in context`);
+      // Track missing variables instead of immediately failing
+      missingVariables.push(varName);
+      
+      // Replace with 0 to allow evaluation to continue
+      const varRegex = new RegExp(`\\b${varName}\\b`, 'g');
+      processedExpression = processedExpression.replace(varRegex, "0");
+      
+      if (DEBUG) console.log(`Replaced missing variable ${varName} with 0 for evaluation`);
+    }
+  }
+  
+  // Log missing variables for debugging
+  if (missingVariables.length > 0) {
+    console.error(`Variables not found in context: ${missingVariables.join(', ')}`, localContext);
+  }
+  
   // Step 3: Evaluate the processed expression
   try {
     if (DEBUG) console.log(`Evaluating processed expression: ${processedExpression}`);
+    // Check if the expression is valid before evaluating
+    if (processedExpression.includes('undefined') || processedExpression.includes('NaN')) {
+      throw new Error(`Invalid expression after variable substitution: ${processedExpression}`);
+    }
+    
     // Use Function constructor to create a safe evaluation environment
     const result = new Function('return ' + processedExpression)();
+    
+    // Store the expression details for better display
+    localContext._lastExpression = {
+      original: expression,
+      processed: processedExpression,
+      diceNotation: diceNotation,
+      diceValue: diceValue,
+      result: result,
+      missingVariables: missingVariables
+    };
+    
+    // Copy back the relevant expression data to the original context
+    if (context) {
+      context._lastExpression = localContext._lastExpression;
+    }
     
     if (DEBUG) console.log(`Expression result: ${result}`);
     return result;
   } catch (error) {
     console.error(`Error evaluating expression "${expression}": ${error.message}`);
-    return `[Error in expression: ${error.message}]`;
+    console.error(`Processed expression was: ${processedExpression}`);
+    // Return a numeric default value rather than an error string
+    return diceValue || 0; // Return the dice value if we have it, otherwise 0
   }
 }
 
@@ -1101,7 +1196,7 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       return match; // Return unchanged if not valid dice notation
     });
 
-    // Next, process mathematical expressions containing operators
+    // Improved regex for mathematical expressions to better capture operations
     const mathExprRegex = /\{([^{}]+(?:[+\-*/][^{}]+)+)\}/g;
     processedInput = processedInput.replace(mathExprRegex, (match, expression) => {
       // Skip if this looks like a table reference with a pipe
@@ -1114,12 +1209,67 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       if (expression.startsWith('selectedResult')) return match;
       
       if (DEBUG) console.log(`Found math expression: ${expression}`);
-      const result = evaluateExpression(expression, context);
+      
+      // Create a safe local copy of the context to prevent modification
+      const localContext = {...context};
+
+      // DEBUG: Print the entire context before evaluation 
+      if (DEBUG) console.log(`Full context before math evaluation:`, localContext);
+      
+      // If we get here, evaluate with the complete context
+      const result = evaluateExpression(expression, localContext);
+      
+      // Check if we got an error - convert to a safe value if so
+      if (typeof result === 'string' && result.startsWith('[Error')) {
+        console.error(`Math expression evaluation failed: ${result}`);
+        // Use 0 as a safe default for failed math expressions
+        if (context) context.thisResult = 0;
+        return 0;
+      }
+      
+      // Format the result to display the expression details (for UI display purposes)
+      let formattedResult = result;
+      
+      // Find variable names in the expression
+      const variables = [];
+      const varRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
+      let varMatch;
+      while ((varMatch = varRegex.exec(expression)) !== null) {
+        const varName = varMatch[1];
+        if (!['true', 'false', 'null', 'undefined'].includes(varName)) {
+          variables.push(varName);
+        }
+      }
+      
+      // Only format if we have a dice roll and a modifier
+      if (localContext._lastExpression && 
+          localContext._lastExpression.diceNotation && 
+          variables.length > 0 && 
+          typeof result === 'number') {
+        
+        // Extract modifier name and value
+        const modName = variables[0];
+        const modValue = localContext[modName];
+        const diceValue = localContext._lastExpression.diceValue;
+        
+        // Format as "dice + modifier = total"
+        formattedResult = `${diceValue} + ${modValue} = ${result}`;
+        
+        if (DEBUG) console.log(`Formatted result for display: ${formattedResult}`);
+      }
       
       // Store the result in context.thisResult for potential reference table lookups
-      if (context) context.thisResult = result;
+      if (context) {
+        context.thisResult = result;
+        // Also store the formatted display value if different
+        if (formattedResult !== result) {
+          context._displayResult = formattedResult;
+        }
+        if (DEBUG) console.log(`Stored math result in thisResult: ${result}`);
+      }
       
-      return result;
+      // For reroll UI display, return the formatted result if available
+      return context._displayResult || result;
     });
 
     // Process useReferenceTable calls (after math expressions to allow math in lookupValue)
@@ -1346,9 +1496,8 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
   }
   // Handle arrays by processing each string element
   else if (Array.isArray(input)) {
-    return input.map(item => 
-      typeof item === 'string' ? processTableReferences(item, allTables, context, recursionTracker) : item
-    );
+    // Use the special array processing function to prevent cross-contamination
+    return processArrayWithExpressions(input, allTables, context);
   }
   // Return non-string inputs unchanged
   return input;
@@ -1710,7 +1859,7 @@ function findRootTable(subTable, allTables) {
   return null;
 }
 
-// Function to find a table by name in the hierarchy of a given table
+// Function to find a table in the hierarchy of a given table
 function findTableInHierarchy(rootTable, tableName) {
   if (!rootTable) return null;
   
@@ -1828,10 +1977,22 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
   // Process the lookup value if it contains special variables
   let processedLookupValue = lookupValue;
   
+  // If the lookup value is an error string, convert to a numeric value
+  if (typeof processedLookupValue === 'string' && processedLookupValue.startsWith('[Error')) {
+    console.error(`Error value passed to reference table lookup: ${processedLookupValue}`);
+    processedLookupValue = 0; // Use 0 as a safe default
+  }
+  
   // Direct handling for thisResult
   if (lookupValue === "thisResult" && context && 'thisResult' in context) {
     processedLookupValue = context.thisResult;
     if (DEBUG) console.log(`Using thisResult from context: ${processedLookupValue}`);
+    
+    // If thisResult is an error string, convert to a numeric value
+    if (typeof processedLookupValue === 'string' && processedLookupValue.startsWith('[Error')) {
+      console.error(`Error value in thisResult: ${processedLookupValue}`);
+      processedLookupValue = 0; // Use 0 as a safe default
+    }
   } 
   // Handle array indexing with thisResult (e.g., thisResult[0])
   else if (/^thisResult\[\d+\]$/.test(lookupValue) && context && 'thisResult' in context) {
@@ -1841,9 +2002,21 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) {
       if (Array.isArray(context.thisResult) && index < context.thisResult.length) {
         processedLookupValue = context.thisResult[index];
         if (DEBUG) console.log(`Using thisResult[${index}] from context: ${processedLookupValue}`);
+        
+        // Check for error in the extracted array element
+        if (typeof processedLookupValue === 'string' && processedLookupValue.startsWith('[Error')) {
+          console.error(`Error value in thisResult[${index}]: ${processedLookupValue}`);
+          processedLookupValue = 0; // Use 0 as a safe default
+        }
       } else if (index === 0 && !Array.isArray(context.thisResult)) {
         processedLookupValue = context.thisResult;
         if (DEBUG) console.log(`Using thisResult as scalar value: ${processedLookupValue}`);
+        
+        // Check for error in the extracted value
+        if (typeof processedLookupValue === 'string' && processedLookupValue.startsWith('[Error')) {
+          console.error(`Error value in thisResult: ${processedLookupValue}`);
+          processedLookupValue = 0; // Use 0 as a safe default
+        }
       } else {
         console.error(`Invalid thisResult index: ${index} (thisResult=${JSON.stringify(context.thisResult)})`);
         return `[Invalid thisResult index]`;
@@ -2456,18 +2629,18 @@ function processSelectedResultToken(tokenStr, table, allTables, context, recursi
     if (DEBUG) console.log(`Generated new value for ${lookupTableName}: "${selectedValue}"`);
   }
   
+  // 2. Find the corresponding subtable with the name matching the selected value
   if (!selectedValue) {
     console.error(`No value for ${lookupTableName} could be determined`);
-    return `[No value for ${lookupTableName}]`;
+    return `[Error: No value for ${lookupTableName}]`;
   }
   
-  // 2. Find the corresponding subtable with the selected name
-  const subtableName = String(selectedValue);
-  let subtable = findSubtableByName(table, subtableName);
+  // Now look for a subtable with the name matching selectedValue
+  let subtable = findSubtableByName(table, selectedValue);
   
   // Try case-insensitive search if not found
-  if (!subtable && typeof subtableName === 'string') {
-    const lowerName = subtableName.toLowerCase();
+  if (!subtable && typeof selectedValue === 'string') {
+    const lowerName = selectedValue.toLowerCase();
     
     // Check in subTables array
     const subTables = getPropertyCaseInsensitive(table, 'subTables');
@@ -2494,14 +2667,14 @@ function processSelectedResultToken(tokenStr, table, allTables, context, recursi
   if (subtable) {
     if (subtable.customDisplay) {
       // Recursively process if it has its own customDisplay
-      if (DEBUG) console.log(`Subtable "${subtableName}" has customDisplay, processing recursively`);
+      if (DEBUG) console.log(`Subtable "${selectedValue}" has customDisplay, processing recursively`);
       const result = processCustomDisplay(subtable, allTables, context, recursionTracker);
       if (DEBUG) console.log(`Result from recursive customDisplay: "${result}"`);
       return result;
     } else if (subtable.results && Array.isArray(subtable.results) && subtable.results.length > 0) {
       // Choose a random result
       const result = randomChoice(subtable.results);
-      if (DEBUG) console.log(`Selected "${result}" from subtable "${subtableName}"`);
+      if (DEBUG) console.log(`Selected "${result}" from subtable "${selectedValue}"`);
       
       // Process any table references in the result
       if (typeof result === 'string' && result.includes('{')) {
@@ -2510,12 +2683,12 @@ function processSelectedResultToken(tokenStr, table, allTables, context, recursi
       
       return result;
     } else {
-      console.error(`Subtable "${subtableName}" has no valid results`);
-      return `[No results in ${subtableName}]`;
+      console.error(`Subtable "${selectedValue}" has no valid results`);
+      return `[No results in ${selectedValue}]`;
     }
   } else {
-    console.error(`Subtable "${subtableName}" not found`);
-    return `[Subtable ${subtableName} not found]`;
+    console.error(`Subtable "${selectedValue}" not found`);
+    return `[Subtable ${selectedValue} not found]`;
   }
 }
 
@@ -2732,4 +2905,54 @@ function findReferencedTable(tableRef, allTables, currentTable = null) {
   }
   
   return table;
+}
+
+// Add this improved function to handle processing of array elements with expressions
+function processArrayWithExpressions(array, allTables, context) {
+  // Return immediately if not an array
+  if (!Array.isArray(array)) return array;
+  
+  // Create a new array for results
+  const resultArray = [];
+  
+  // Store the original thisResult to restore later
+  const originalThisResult = context.thisResult;
+  
+  // Special handling for dice roll + lookup pattern
+  if (array.length === 2 && 
+      typeof array[0] === 'string' && 
+      typeof array[1] === 'string' &&
+      array[0].includes('{') && 
+      array[1].includes('useReferenceTable')) {
+    
+    // Process first element (dice roll)
+    const result1 = processTableReferences(array[0], allTables, context);
+    resultArray.push(result1);
+    
+    // Ensure thisResult is an array for thisResult[0] reference
+    if (context.thisResult !== undefined && !Array.isArray(context.thisResult)) {
+      context.thisResult = [context.thisResult];
+    }
+    
+    // Process second element (reference table lookup)
+    const result2 = processTableReferences(array[1], allTables, context);
+    resultArray.push(result2);
+    
+    return resultArray;
+  }
+  
+  // Standard processing for other array types
+  for (let i = 0; i < array.length; i++) {
+    const element = array[i];
+    if (typeof element === 'string') {
+      resultArray.push(processTableReferences(element, allTables, context));
+    } else {
+      resultArray.push(element);
+    }
+  }
+  
+  // Restore original thisResult
+  context.thisResult = originalThisResult;
+  
+  return resultArray;
 }
