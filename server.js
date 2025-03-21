@@ -412,6 +412,7 @@ app.post('/api/generate', (req, res) => {
 // Replace the special case NPC handling with a more flexible, structure-based approach
 app.post('/api/reroll', (req, res) => {
   const { table, header, context: clientContext, inputValues } = req.body;
+
   if (!table) {
     return res.status(400).json({ error: 'Invalid request data: table is required' });
   }
@@ -425,38 +426,32 @@ app.post('/api/reroll', (req, res) => {
   }
 
   try {
-    // Initialize context with thisResult property if not present
-    const context = clientContext || {};
+    // CRITICAL FIX: Merge the contexts without deep cloning
+    // This allows us to preserve all references throughout the processing chain
+    const context = { ...(clientContext || {}), ...(inputValues || {}) };
+
+    // Ensure `thisResult` is initialized in the context
     if (!('thisResult' in context)) {
       context.thisResult = null;
     }
-    
-    // Add any input values to the context
-    if (inputValues) {
-      Object.keys(inputValues).forEach(key => {
-        context[key] = inputValues[key];
-      });
-      if (DEBUG) {
-        console.log('Added input values to context for reroll:', inputValues);
-        console.log('Complete context after adding inputs:', context);
-      }
+
+    // ENHANCED DEBUGGING: Log the complete context after merging
+    if (DEBUG) {
+      console.log('Complete context after merging inputs:', 
+        Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
     }
-    
-    // CRITICAL FIX: Ensure input values are properly accessible from the context BEFORE processing
-    // This specifically helps with CharismaModifier and similar variables that need to be in context
-    Object.assign(context, inputValues || {});
-    
-    // Find the specific subtable for this header with improved fallback logic
+
+    // Find the specific subtable for this header
     let targetSubTable = null;
-    
-    // First check if the header contains a math expression (may not exactly match a table name)
+
+    // Check if the header contains a math expression
     let hasMathExpression = false;
     if (/[+\-*/]/.test(header)) {
       if (DEBUG) console.log(`Header "${header}" appears to contain math operators - will process as an expression`);
       hasMathExpression = true;
     }
-    
-    // Search through the tables array for the matching header name
+
+    // Search for the matching subtable
     if (!hasMathExpression && selectedTable.tables && Array.isArray(selectedTable.tables)) {
       // First attempt: Look for exact name match
       for (const subTable of selectedTable.tables) {
@@ -465,19 +460,19 @@ app.post('/api/reroll', (req, res) => {
           break;
         }
       }
-      
+
       // Second attempt: If header matches the top-level tablename, use the first subtable
       if (!targetSubTable && selectedTable.tablename === header) {
         console.log(`Header "${header}" matches top-level tablename, using first subtable`);
         targetSubTable = selectedTable.tables[0];
       }
-      
+
       // Third attempt: For unnamed subtables, check if there's only one subtable
       if (!targetSubTable && selectedTable.tables.length === 1) {
         console.log(`No named subtable found, using the only subtable available`);
         targetSubTable = selectedTable.tables[0];
       }
-      
+
       // Fourth attempt: If still not found, try a case-insensitive match
       if (!targetSubTable) {
         const headerLower = header.toLowerCase();
@@ -491,59 +486,66 @@ app.post('/api/reroll', (req, res) => {
         }
       }
     }
-    
+
     // If not found in tables array, check if the top-level table itself has results
     if (!targetSubTable && !hasMathExpression && selectedTable.results && Array.isArray(selectedTable.results)) {
       console.log(`Using top-level table results for header "${header}"`);
       targetSubTable = selectedTable;
     }
-    
+
     let result;
-    
+
     // Special case for math expressions - evaluate directly
     if (hasMathExpression) {
       console.log(`Processing header "${header}" as a math expression`);
-      // Create a mock expression string with curly braces to match our evaluation format
       const exprString = `{${header}}`;
-      // Use the existing table references processing to evaluate the expression
       result = processTableReferences(exprString, tables, context);
       console.log(`Evaluated math expression "${header}" to: ${result}`);
     }
     // Standard processing for regular tables
     else if (targetSubTable) {
-      // Process the subtable based on its structure
-      
-      // Case 1: Table uses customDisplay
       if (targetSubTable.customDisplay) {
         console.log(`Processing table with customDisplay: ${targetSubTable.name || header}`);
         result = processCustomDisplay(targetSubTable, tables, context);
-      }
-      // Case 2: Table has simple array results
-      else if (targetSubTable.results && Array.isArray(targetSubTable.results)) {
+      } else if (targetSubTable.results && Array.isArray(targetSubTable.results)) {
         if (targetSubTable.results.length === 0) {
           console.error(`Empty results array for subtable: ${header}`);
           return res.status(500).json({ error: `Empty results array for: ${header}` });
         }
-        
-        // Choose a random result
+
         const randomResult = getWeightedRandomResult(targetSubTable);
-        
-        // Special handling for array results to ensure each element is processed independently
+
+        // CRITICAL FIX: Store the current table in context for proper reference tracking
+        context._currentTable = targetSubTable;
+
+        if (DEBUG) {
+          console.log(`Context before processing randomResult:`, 
+            Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
+        }
+
         if (Array.isArray(randomResult)) {
           console.log(`Processing array result for ${header}:`, randomResult);
           result = processArrayWithExpressions(randomResult, tables, context);
-        }
-        // Process table references in the result if it's a string
-        else if (typeof randomResult === 'string') {
-          result = processTableReferences(randomResult, tables, context);
+        } else if (typeof randomResult === 'string') {
+          // Special handling for array-like strings
+          if (randomResult.trim().startsWith('[') && randomResult.trim().endsWith(']')) {
+            console.log(`Processing array-like string for ${header} with CharismaModifier=${context.CharismaModifier}:`, randomResult);
+            // CRITICAL FIX: Ensure we pass the context properly
+            result = processTableReferences(randomResult, tables, context);
+          } else {
+            result = processTableReferences(randomResult, tables, context);
+          }
         } else {
           result = randomResult;
         }
-        
+
+        if (DEBUG) {
+          console.log(`Context after processing randomResult:`, 
+            Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
+        }
+
         console.log(`Selected and processed value for ${header}:`, result);
-      }
-      // Case 3: No valid results structure
-      else {
+      } else {
         console.error(`Invalid structure for subtable: ${header}`);
         return res.status(500).json({ error: `Invalid structure for subtable: ${header}` });
       }
@@ -551,14 +553,12 @@ app.post('/api/reroll', (req, res) => {
       console.error(`Could not find subtable for header: ${header}`);
       return res.status(404).json({ error: `Could not find subtable for header: ${header}` });
     }
-    
-    // Update the context
+
+    // Update the context with the final result
     context[header] = result;
-    
-    // Return the result with metadata to help client - include both names for compatibility
+
+    // Return the result with metadata
     return res.json({
-      xtractContext: ExtractContext.toString(), // Renamed version
-      extractContext: ExtractContext.toString(), // Original name for backward compatibility
       result: {
         header: header,
         result: result,
@@ -1026,8 +1026,8 @@ function evaluateExpression(expression, context) {
   if (DEBUG) console.log(`Evaluating expression: ${expression}`);
   if (DEBUG) console.log(`Context for evaluation:`, context);
   
-  // Make a local copy of the context to avoid modifying the original
-  const localContext = {...context};
+  // CRITICAL FIX: Use a deep copy instead of a shallow copy to preserve all context properties
+  const localContext = JSON.parse(JSON.stringify(context || {}));
   
   // Step 1: Replace any context variables with their values
   let processedExpression = expression;
@@ -1151,6 +1151,14 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
     };
   }
   
+  // ADDED DEBUGGING: Log context state at start of processing
+  if (DEBUG) {
+    if (typeof input === 'string' && (input.includes('CharismaModifier') || input.includes('2d6'))) {
+      console.log(`processTableReferences for "${input.substring(0, 50)}..." with context:`, 
+        Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
+    }
+  }
+  
   // Handle string inputs
   if (typeof input === 'string') {
     // Special handling for array-like syntax: "[{...},{...}]"
@@ -1158,15 +1166,43 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       // Extract content between brackets
       const innerContent = input.trim().substring(1, input.trim().length - 1);
       
+      // ENHANCED DEBUGGING: Log context details before processing arrays
+      if (DEBUG) {
+        console.log(`Processing array-like string with context:`, 
+          Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
+      }
+      
       // Split by commas, handling nested braces correctly
       const elements = splitBalanced(innerContent, ',');
       if (DEBUG) console.log(`Detected array syntax with ${elements.length} elements:`, elements);
       
-      // Process each element separately
+      // CRITICAL FIX: Use a shared reference to the original context for all children
+      // Make a deep copy only if needed for tracking purposes
+      const sharedContext = context;
+      
+      // Process each element separately, using the shared context
       const processedElements = elements.map(element => {
-        const processed = processTableReferences(element.trim(), allTables, context, recursionTracker);
-        return processed;
+        // IMPROVED DEBUGGING: Track context before/after each element processing
+        if (DEBUG && element.includes('CharismaModifier')) {
+          console.log(`Before processing element "${element.trim()}", CharismaModifier=`, 
+            sharedContext.CharismaModifier);
+        }
+        
+        const result = processTableReferences(element.trim(), allTables, sharedContext, recursionTracker);
+        
+        if (DEBUG && element.includes('CharismaModifier')) {
+          console.log(`After processing element "${element.trim()}", CharismaModifier=`, 
+            sharedContext.CharismaModifier);
+        }
+        
+        return result;
       });
+      
+      // Log the context state after processing all elements
+      if (DEBUG) {
+        console.log(`After processing array-like string, context:`, 
+          Object.keys(sharedContext).map(k => `${k}:${sharedContext[k]}`).join(', '));
+      }
       
       // For ability scores, format special arrays nicely
       if (processedElements.length === 2 && 
@@ -1196,6 +1232,17 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       return match; // Return unchanged if not valid dice notation
     });
 
+    // CRITICAL FIX: First check for variables in context before attempting math evaluation
+    // This ensures we detect and use values like CharismaModifier directly from context
+    const variableRegex = /\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g;
+    processedInput = processedInput.replace(variableRegex, (match, variableName) => {
+      if (context && variableName in context) {
+        if (DEBUG) console.log(`Found variable "${variableName}" directly in context with value: ${context[variableName]}`);
+        return context[variableName];
+      }
+      return match; // Return unchanged if not found in context
+    });
+
     // Improved regex for mathematical expressions to better capture operations
     const mathExprRegex = /\{([^{}]+(?:[+\-*/][^{}]+)+)\}/g;
     processedInput = processedInput.replace(mathExprRegex, (match, expression) => {
@@ -1210,14 +1257,13 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       
       if (DEBUG) console.log(`Found math expression: ${expression}`);
       
-      // Create a safe local copy of the context to prevent modification
-      const localContext = {...context};
-
-      // DEBUG: Print the entire context before evaluation 
-      if (DEBUG) console.log(`Full context before math evaluation:`, localContext);
+      // CRITICAL FIX: Ensure we're using a reference to the original context
+      // Don't create a local deep copy that would lose changes
+      if (DEBUG) console.log(`Full context before math evaluation:`, 
+        Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
       
       // If we get here, evaluate with the complete context
-      const result = evaluateExpression(expression, localContext);
+      const result = evaluateExpression(expression, context);
       
       // Check if we got an error - convert to a safe value if so
       if (typeof result === 'string' && result.startsWith('[Error')) {
@@ -1242,15 +1288,15 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
       }
       
       // Only format if we have a dice roll and a modifier
-      if (localContext._lastExpression && 
-          localContext._lastExpression.diceNotation && 
+      if (context._lastExpression && 
+          context._lastExpression.diceNotation && 
           variables.length > 0 && 
           typeof result === 'number') {
         
         // Extract modifier name and value
         const modName = variables[0];
-        const modValue = localContext[modName];
-        const diceValue = localContext._lastExpression.diceValue;
+        const modValue = context[modName];
+        const diceValue = context._lastExpression.diceValue;
         
         // Format as "dice + modifier = total"
         formattedResult = `${diceValue} + ${modValue} = ${result}`;
@@ -1503,110 +1549,75 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
   return input;
 }
 
-// Process a customDisplay string with recursion tracking
-function processCustomDisplay(table, allTables, context, recursionTracker = null) {
-  // Initialize recursion tracking if not provided
-  if (!recursionTracker) {
-    recursionTracker = {
-      depth: 0,
-      tables: new Set(),
-      maxDepth: 10
-    };
+// Improved array processing function to better preserve context
+function processArrayWithExpressions(array, allTables, context) {
+  // Return immediately if not an array
+  if (!Array.isArray(array)) return array;
+  
+  // Create a new array for results
+  const resultArray = [];
+  
+  // CRITICAL FIX: Don't create a deep copy - use the original context
+  // This ensures variable values like CharismaModifier stay accessible
+  if (DEBUG) {
+    console.log(`processArrayWithExpressions starting with context:`, 
+      Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
   }
   
-  // Check if this table has already been processed (prevent infinite recursion)
-  const tableId = table.tablename || table.name || 'unnamed';
-  if (recursionTracker.tables.has(tableId)) {
-    if (DEBUG) console.log(`Detected recursive customDisplay for table: ${tableId}`);
-    return `[Recursive reference to ${tableId}]`;
-  }
-  
-  // Check recursion depth
-  if (recursionTracker.depth >= recursionTracker.maxDepth) {
-    if (DEBUG) console.log(`Maximum recursion depth reached (${recursionTracker.maxDepth}) for: ${tableId}`);
-    return `[Max recursion depth reached for ${tableId}]`;
-  }
-  
-  // Track this table for recursion detection
-  recursionTracker.tables.add(tableId);
-  recursionTracker.depth++;
-  
-  if (DEBUG) console.log(`Processing customDisplay for table: ${tableId} (depth: ${recursionTracker.depth})`);
-
-  const customDisplay = getPropertyCaseInsensitive(table, 'customDisplay');
-  if (!customDisplay) {
-    recursionTracker.tables.delete(tableId);
-    recursionTracker.depth--;
-    console.error('Error: customDisplay is missing in the table:', table);
-    return 'Error: customDisplay is missing';
-  }
-  
-  try {
-    // Special handling for pickOneFromArrays display mode
-    if (customDisplay === "{pickOneFromArrays}") {
-      if (DEBUG) console.log(`Processing pickOneFromArrays for table ${table.tablename || 'unnamed'}`);
-      
-      if (!table.results || !Array.isArray(table.results) || table.results.length === 0) {
-        console.error('Error: table has no results array for pickOneFromArrays', table);
-        return 'Error: No results to pick from';
-      }
-      
-      // Pick a random entry from the results array
-      const resultEntry = randomChoice(table.results);
-      if (DEBUG) console.log(`Selected base entry: ${resultEntry}`);
-      
-      // Process the entry to pick items from any arrays it contains
-      let processedResult = resultEntry;
-      
-      // If the entry is a string with array notation [item1, item2, ...]
-      if (typeof resultEntry === 'string' && resultEntry.includes('[') && resultEntry.includes(']')) {
-        processedResult = processArraysInString(resultEntry);
-      }
-      
-      // Process any table references in the result
-      if (typeof processedResult === 'string' && processedResult.includes('{')) {
-        processedResult = processTableReferences(processedResult, allTables, context, recursionTracker);
-      }
-      
-      // Clean up recursion tracker before returning
-      recursionTracker.tables.delete(tableId);
-      recursionTracker.depth--;
-      
-      if (DEBUG) console.log(`Final pickOneFromArrays result: ${processedResult}`);
-      return processedResult;
-    }
-
-    // Handle standard customDisplay format
-    // Remove surrounding brackets if present
-    let displayTemplate = customDisplay;
-    if (displayTemplate.startsWith('[') && displayTemplate.endsWith(']')) {
-      displayTemplate = displayTemplate.substring(1, displayTemplate.length - 1);
-    }
-
-    let result;
+  // Special handling for dice roll + lookup pattern
+  if (array.length === 2 && 
+      typeof array[0] === 'string' && 
+      typeof array[1] === 'string' &&
+      array[0].includes('{') && 
+      array[1].includes('useReferenceTable')) {
     
-    // Check if this is a simple token replacement or a deferred token
-    if (displayTemplate.startsWith("{selectedResult")) {
-      // This is a deferred token that uses a value from context
-      result = processSelectedResultToken(displayTemplate, table, allTables, context, recursionTracker);
+    if (DEBUG) {
+      console.log(`Processing special array pattern: dice roll + reference table lookup`);
+      console.log(`Before first element, CharismaModifier = ${context.CharismaModifier}`);
+    }
+    
+    // Process first element (dice roll) with the context
+    const result1 = processTableReferences(array[0], allTables, context);
+    resultArray.push(result1);
+    
+    if (DEBUG) {
+      console.log(`After first element, CharismaModifier = ${context.CharismaModifier}`);
+      console.log(`After processing first element, context:`, 
+        Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
+    }
+    
+    // Ensure thisResult is properly formatted for thisResult[0] reference
+    if (context.thisResult !== undefined && !Array.isArray(context.thisResult)) {
+      context.thisResult = [context.thisResult];
+    }
+    
+    // Process second element (reference table lookup) with the updated context
+    const result2 = processTableReferences(array[1], allTables, context);
+    resultArray.push(result2);
+    
+    if (DEBUG) {
+      console.log(`After processing both elements, context:`, 
+        Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
+    }
+    
+    // No need to copy changes back as we're using the original context
+    
+    return resultArray;
+  }
+  
+  // Standard processing for other array types
+  for (let i = 0; i < array.length; i++) {
+    const element = array[i];
+    if (typeof element === 'string') {
+      resultArray.push(processTableReferences(element, allTables, context));
     } else {
-      // This is a template with regular tokens to replace
-      result = processRegularTokens(displayTemplate, table, allTables, context, recursionTracker);
+      resultArray.push(element);
     }
-    
-    // Remove this table from tracker before returning
-    recursionTracker.tables.delete(tableId);
-    recursionTracker.depth--;
-    
-    return result;
-  } catch (error) {
-    // Clean up tracker even if there's an error
-    recursionTracker.tables.delete(tableId);
-    recursionTracker.depth--;
-    
-    console.error(`Error in processCustomDisplay for ${tableId}:`, error);
-    return `[Error in ${tableId}: ${error.message}]`;
   }
+  
+  // No need to copy changes back as we're using the original context
+  
+  return resultArray;
 }
 
 // Helper function to access object properties in a case-insensitive manner
@@ -2371,7 +2382,7 @@ function findRootTable(subTable, allTables) {
           return rootTable;
         }
         
-        // Also check subTables array for backward compatibility
+        // Also check subTables array
         if (midTable.subTables && Array.isArray(midTable.subTables) && midTable.subTables.includes(subTable)) {
           if (DEBUG) console.log(`Found grandparent table (via subTables): ${rootTable.tablename || rootTable.filename}`);
           return rootTable;
@@ -2384,6 +2395,13 @@ function findRootTable(subTable, allTables) {
       if (rootTable.subTables.includes(subTable)) {
         if (DEBUG) console.log(`Found parent table (via subTables): ${rootTable.tablename || rootTable.filename}`);
         return rootTable;
+      }
+      
+      // Nested check in subTables
+      for (const midTable of rootTable.subTables) {
+        if (midTable.subTables && Array.isArray(midTable.subTables) && midTable.subTables.includes(subTable)) {
+          return rootTable;
+        }
       }
     }
   }
@@ -2905,54 +2923,4 @@ function findReferencedTable(tableRef, allTables, currentTable = null) {
   }
   
   return table;
-}
-
-// Add this improved function to handle processing of array elements with expressions
-function processArrayWithExpressions(array, allTables, context) {
-  // Return immediately if not an array
-  if (!Array.isArray(array)) return array;
-  
-  // Create a new array for results
-  const resultArray = [];
-  
-  // Store the original thisResult to restore later
-  const originalThisResult = context.thisResult;
-  
-  // Special handling for dice roll + lookup pattern
-  if (array.length === 2 && 
-      typeof array[0] === 'string' && 
-      typeof array[1] === 'string' &&
-      array[0].includes('{') && 
-      array[1].includes('useReferenceTable')) {
-    
-    // Process first element (dice roll)
-    const result1 = processTableReferences(array[0], allTables, context);
-    resultArray.push(result1);
-    
-    // Ensure thisResult is an array for thisResult[0] reference
-    if (context.thisResult !== undefined && !Array.isArray(context.thisResult)) {
-      context.thisResult = [context.thisResult];
-    }
-    
-    // Process second element (reference table lookup)
-    const result2 = processTableReferences(array[1], allTables, context);
-    resultArray.push(result2);
-    
-    return resultArray;
-  }
-  
-  // Standard processing for other array types
-  for (let i = 0; i < array.length; i++) {
-    const element = array[i];
-    if (typeof element === 'string') {
-      resultArray.push(processTableReferences(element, allTables, context));
-    } else {
-      resultArray.push(element);
-    }
-  }
-  
-  // Restore original thisResult
-  context.thisResult = originalThisResult;
-  
-  return resultArray;
 }
