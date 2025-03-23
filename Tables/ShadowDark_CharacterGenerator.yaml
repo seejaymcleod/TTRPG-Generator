@@ -1,7 +1,7 @@
 filename: ShadowDark_CharacterGenerator.yaml
 game: ShadowDark
 setting: Fantasy
-type: Adventure
+type: People
 tablename: CharacterGenerator
 tables:
   - tablename: Name

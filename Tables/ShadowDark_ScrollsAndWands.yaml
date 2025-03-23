@@ -1,7 +1,7 @@
 filename: ShadowDark_ScrollsAndWands.yaml
 game: ShadowDark
 setting: Fantasy
-type: Stuff
+type: Stuff, Powers
 tablename: ScrollsAndWands
 tables:
   - tablename: ItemTypes

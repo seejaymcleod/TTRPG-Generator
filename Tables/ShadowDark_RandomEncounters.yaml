@@ -19,7 +19,7 @@ tables:
       - [Guarding, 2]
       - [Sleeping, 1]
   - tablename: Reactions
-    description: Affected by CHA mod. 
+    description: Affected by CHA mod. BUG - Generate new cards, Reroll fails. 
     results:
       - "[{{2d6} + CharismaModifier}, {useReferenceTable{ReactionReference}{thisResult[0]}}]"      
 referenceTables:

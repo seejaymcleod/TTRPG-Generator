@@ -25,10 +25,10 @@ tables:
       
   - tablename: Weapon Bonuses
     results:
-      - [+0, 3]
-      - [+1, 27]
-      - [+2, 5]
-      - [+3, 1]
+      - ["+0", 3]
+      - ["+1", 27]
+      - ["+2", 5]
+      - ["+3", 1]
       
   - tablename: Weapon Features
     results:

@@ -1,0 +1,64 @@
+filename: DrawSteel_Negotiations.yaml
+game: DrawSteel
+setting: Fantasy
+type: Adventure
+tablename: Negotiations
+inputField: [CharismaModifier, number]
+tables:
+  - tablename: Reactions
+    description: Affected by CHA mod. BUG - Generate new cards, Reroll fails. 
+    results:
+      - "[{{2d6} + CharismaModifier}, {useReferenceTable{ReactionReference}{thisResult[0]}}]"
+  - tablename: MotivationsAndPitfalls
+    results:
+      - ["BENEVOLENCE", "Kindness and generosity, acting for the good of others."]
+      - ["DISCOVERY", "Seeking knowledge, exploring the unknown, and finding new things."]
+      - ["FREEDOM", "Liberty and autonomy, the state of being unrestricted."]
+      - ["GREED", "Intense selfish desire, often for wealth or possessions."]
+      - ["HIGHER AUTHORITY", "Submission to leadership, respect for a greater power or principle."]
+      - ["JUSTICE", "Fairness and righteousness, upholding moral and legal principles."]
+      - ["LEGACY", "Lasting impact, something handed down to future generations."]
+      - ["PEACE", "Tranquility and harmony, absence of conflict and violence."]
+      - ["POWER", "Control and influence, the ability to direct or command."]
+      - ["PROTECTION", "Safety and security, defense from harm or danger."]
+      - ["REVELRY", "Lively celebration, boisterous enjoyment and festivity."]
+      - ["VENGEANCE", "Retribution and revenge, inflicting harm in return for a wrong."]
+referenceTables:
+  - tablename: ReactionReference
+    entries: 
+      - key: "<=6"
+        value: 
+          - "Hostile"
+          - "Openly opposed to the heroes. Barely willing to listen."
+          - "1"
+          - "2"
+      - key: "7-8"
+        value: 
+          - "Suspicious"
+          - "Doubts the heroes' motives but is willing to listen."
+          - "2"
+          - "2"
+      - key: "9"
+        value: 
+          - "Neutral"
+          - "Doesn't feel one way or the other. Would probably rather be somewhere else but doesn't want to be rude."
+          - "2"
+          - "3"
+      - key: "10-11"
+        value: 
+          - "Curious or Open"
+          - "Willing to listen or help as long as the heroes aren't asking too much."
+          - "3"
+          - "3"
+      - key: "12-15"
+        value: 
+          - "Friendly"
+          - "The heroes seem like the NPC's people. The NPC is willing to give them the benefit of the doubt."
+          - "3"
+          - "4"
+      - key: "15<="
+        value: 
+          - "Trusting"
+          - "The NPC has reason to take the heroes at their word and will help if the characters don't screw this up."
+          - "3"
+          - "5"

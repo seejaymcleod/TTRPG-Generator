@@ -1,7 +1,7 @@
 filename: ShadowDark_MagicItemAttributes.yaml
 game: ShadowDark
 setting: Fantasy
-type: Stuff
+type: Stuff, Powers
 tablename: MagicItemAttributes
 tables:
   - tablename: Random Magic Items

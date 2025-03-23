@@ -1,0 +1,72 @@
+filename: ShadowDark_SpellsWitch.yaml
+game: ShadowDark
+setting: Fantasy
+type: Powers
+tablename: SpellsWitch
+tables:
+  - tablename: RandomSpellAnyTier
+    results: 
+      - "[{selectedResult, RandomTier}]"
+  - tablename: RandomTier
+    results: 
+      - Tier1
+      - Tier2
+      - Tier3
+      - Tier4
+      - Tier5  
+  - tablename: Tier1
+    results: 
+      - Cauldron
+      - Charm Person
+      - Eyebite
+      - Fog
+      - Hypnotize
+      - Oak, Ash, Thorn
+      - Puppet
+      - Shadowdance
+      - Willowman
+      - Witchlight   
+  - tablename: Tier2
+    results: 
+      - Alter Self
+      - Augury
+      - Bogboil
+      - Cacklerot
+      - Cat's Eye
+      - Frog Rain
+      - Invisibility
+      - Poison
+      - Spidersilk
+      - Toadstool    
+  - tablename: Tier3
+    results: 
+      - Broomstick
+      - Coven
+      - Divination
+      - Howl
+      - Mistletoe
+      - Pin Doll
+      - Speak With Dead
+      - Swarm
+      - Void Stare
+      - Whisper    
+  - tablename: Tier4
+    results: 
+      - Beguile
+      - Cloak of Night
+      - Curse
+      - Dimension Door
+      - Glassbones
+      - Moonbeam
+      - Nightmare
+      - Polymorph    
+  - tablename: Tier5
+    results: 
+      - Anathema
+      - Dreamwalk
+      - Enfeeble
+      - Finger of Death
+      - Mother of Night
+      - Scrying
+      - Shapechange
+      - Soul Jar

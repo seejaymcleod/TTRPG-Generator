@@ -1,7 +1,7 @@
 filename: TomeOfAdventure_Missions.yaml
 game: TomeOfAdventure
 setting: Fantasy
-type: Places
+type: Places, Adventure
 tablename: Missions
 tables:
   - tablename: MissionsByType

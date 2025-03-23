@@ -1,7 +1,7 @@
 filename: ShadowDark_Encounter_Artisan_District.yaml
 game: ShadowDark
 setting: Fantasy
-type: Adventure
+type: Adventure, Places
 tablename: Artisan District Encounters
 tables:
   - results:

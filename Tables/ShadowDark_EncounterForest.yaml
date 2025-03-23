@@ -1,7 +1,7 @@
 filename: ShadowDark_EncounterForest.yaml
 game: ShadowDark
 setting: Fantasy
-type: Adventure
+type: Adventure, Places
 tablename: Forest Encounters
 tables:
   - results:

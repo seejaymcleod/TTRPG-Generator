@@ -1,7 +1,7 @@
 filename: ShadowDark_EncounterArctic.yaml
 game: ShadowDark
 setting: Fantasy
-type: Adventure
+type: Adventure, Places
 tablename: Arctic Encounters
 tables:
   - results:
