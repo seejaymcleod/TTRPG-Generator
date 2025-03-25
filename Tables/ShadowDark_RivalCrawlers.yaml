@@ -53,7 +53,7 @@ tables:
           - Hunters
   - tablename: Number Of Crawlers
     results:
-      - {1d4+1}
+      - "{1d4+1}"
   - tablename: Ancestry
     results:
       - [Humans, 8]
