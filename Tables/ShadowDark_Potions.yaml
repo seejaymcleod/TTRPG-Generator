@@ -5,7 +5,7 @@ type: Stuff
 tablename: Potions
 tables:
   - tablename: Potions Features
-    customDisplay: "[{Feature1}, {Feature2}, {Feature3}]
+    customDisplay: "[{Feature1}, {Feature2}, {Feature3}]"
     subTables:
       - tablename: Feature1
         results:
@@ -38,7 +38,7 @@ tables:
           - Large molar inside
           - Pink starbursts
   - tablename: Mixing Potions
-    customDisplay: "[{Effect1}, {Effect2}"
+    customDisplay: "[{Effect1}, {Effect2}]"
     subTables:
       - tablename: Effect1
         results:

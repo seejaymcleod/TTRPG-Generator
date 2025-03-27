@@ -6,12 +6,12 @@ tablename: MagicItemAttributes
 tables:
   - tablename: Random Magic Items
     results:
-      - {ShadowDark_Armors}
-      - {ShadowDark_Potions}
+      - "{ShadowDark_Armors}"
+      - "{ShadowDark_Potions}"
       - "{ShadowDark_ScrollsAndWands} Scroll"
-      - {ShadowDark_Utilities}
+      - "{ShadowDark_Utilities}"
       - "{ShadowDark_ScrollsAndWands} Wand"
-      - {ShadowDark_Weapons}
+      - "{ShadowDark_Weapons}"
       
   - tablename: Magic Item Qualities
     results:
@@ -27,7 +27,7 @@ tables:
       - [Virtue and Flaw, 5]
       - [Virtue, 1]
   - tablename: Magic Item Idea Generator
-    customDisplay: [{Name1} {Name2} {Name3}]
+    customDisplay: "[{Name1} {Name2} {Name3}]"
     subTables:
       - tablename: Name1
         results:

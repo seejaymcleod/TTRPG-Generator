@@ -47,22 +47,22 @@ tables:
       - Insists on being meticulously cleaned every day
       - Loves the color purple and despises all other colors
       - "Objects to 1d4: 1. negotiating, 2-3. fighting, 4. planning"
-      - Pretends to know information it doesn't know'
-    - tablename: Personality Traits
-      results:
-        - Imperious 
-        - Polite 
-        - Puritanical 
-        - Charming
-        - Anxious 
-        - Righteous 
-        - Critical 
-        - Theatrical
-        - Bossy 
-        - Noble 
-        - Greedy 
-        - Protective
-        - Impulsive 
-        - Brave 
-        - Vicious 
-        - Loyal  
+      - Pretends to know information it doesn't know
+  - tablename: Personality Traits
+    results:
+      - Imperious 
+      - Polite 
+      - Puritanical 
+      - Charming
+      - Anxious 
+      - Righteous 
+      - Critical 
+      - Theatrical
+      - Bossy 
+      - Noble 
+      - Greedy 
+      - Protective
+      - Impulsive 
+      - Brave 
+      - Vicious 
+      - Loyal  
