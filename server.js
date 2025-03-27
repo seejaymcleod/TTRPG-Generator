@@ -412,6 +412,8 @@ app.post('/api/generate', (req, res) => {
 // Replace the special case NPC handling with a more flexible, structure-based approach
 app.post('/api/reroll', (req, res) => {
   const { table, header, context: clientContext, inputValues } = req.body;
+  console.log("DEBUG /api/reroll BEFORE MERGE - clientContext:", JSON.stringify(clientContext, null, 2));
+  console.log("DEBUG /api/reroll BEFORE MERGE - inputValues:", JSON.stringify(inputValues, null, 2));
 
   if (!table) {
     return res.status(400).json({ error: 'Invalid request data: table is required' });
@@ -513,7 +515,8 @@ app.post('/api/reroll', (req, res) => {
           return res.status(500).json({ error: `Empty results array for: ${header}` });
         }
 
-        const randomResult = getWeightedRandomResult(targetSubTable);
+        // Pass context to getWeightedRandomResult
+        const randomResult = getWeightedRandomResult(targetSubTable, context); 
 
         // CRITICAL FIX: Store the current table in context for proper reference tracking
         context._currentTable = targetSubTable;
@@ -785,7 +788,8 @@ function weightedRandom(results) {
 }
 
 // Updated getWeightedRandomResult function to handle arrays with up to 4 elements
-function getWeightedRandomResult(table) {
+// Added context parameter
+function getWeightedRandomResult(table, context = {}) { 
   const results = getPropertyCaseInsensitive(table, 'results');
   
   if (!results || !Array.isArray(results) || results.length === 0) {
@@ -875,7 +879,8 @@ function getWeightedRandomResult(table) {
   
   // Process table references if the result is a string
   if (typeof result === 'string') {
-    result = processTableReferences(result, tables);
+    // Pass context along
+    result = processTableReferences(result, tables, context); 
   }
   
   return result;
@@ -1153,10 +1158,8 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
   
   // ADDED DEBUGGING: Log context state at start of processing
   if (DEBUG) {
-    if (typeof input === 'string' && (input.includes('CharismaModifier') || input.includes('2d6'))) {
-      console.log(`processTableReferences for "${input.substring(0, 50)}..." with context:`, 
-        Object.keys(context).map(k => `${k}:${context[k]}`).join(', '));
-    }
+    console.log("DEBUG processTableReferences ENTRY. Input:", input);
+    console.log("DEBUG processTableReferences CONTEXT:", JSON.stringify(context, null, 2));
   }
   
   // Handle string inputs
