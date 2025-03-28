@@ -95,6 +95,7 @@ function processTable(table, parentHeader, allTables, context) {
     const processedResult = typeof result === 'string' ? 
                            processTableReferences(result, allTables, context) : 
                            result;
+    console.log("DEBUG: Simple string result after table references processing:", processedResult); // Added Debugging
     // Store processed result in context
     if (context && header) {
       context[header] = processedResult;
@@ -149,6 +150,11 @@ function processTable(table, parentHeader, allTables, context) {
   // 1) If the table has customDisplay => parse it
   if (customDisplay) {
     const result = processCustomDisplay(table, allTables, context);
+    // Store custom display result in context
+    if (context && header) {
+        context[header] = result;
+        if (DEBUG) console.log(`Stored custom display result for table "${header}" in context:`, result);
+    }
     return { 
       header, 
       result, 
@@ -165,58 +171,69 @@ function processTable(table, parentHeader, allTables, context) {
     let processedResult = result;
     // Process string values in arrays
     if (Array.isArray(result)) {
+      // IMPORTANT: Pass context to processTableReferences when mapping array items
       processedResult = result.map(item => 
         typeof item === 'string' ? processTableReferences(item, allTables, context) : item
       );
+     } else if (typeof result === 'string') {
+        // Also process if the result itself is a string
+        processedResult = processTableReferences(result, allTables, context);
      }
      
      // --- START: New Feature Handling ---
     // Check for multi-roll directive: ["Text", { roll: N, exclude: boolean }]
     if (Array.isArray(processedResult) && processedResult.some(item => typeof item === 'object' && item !== null && 'roll' in item)) {
+      // Let handleMultiRoll return the final structure, context update happens inside if needed
       return handleMultiRoll(processedResult, table, allTables, context, sourceInfo);
     }
 
     // Check for separateRows directive: { separateRows: [...] }
     if (typeof processedResult === 'object' && processedResult !== null && !Array.isArray(processedResult) && 'separateRows' in processedResult) {
+      // Let handleSeparateRows return the array of results directly, context update happens inside if needed
       return handleSeparateRows(processedResult, table, allTables, context, sourceInfo);
     }
      // --- END: New Feature Handling ---
  
      // Store final processed result in context (AFTER handling special directives)
+     // This block now correctly runs *after* directives are handled.
      if (context && header) {
        // Check if processedResult was handled by a directive (which return specific structures)
        // We only want to store simple results or arrays directly in context for now.
-       const isDirectiveResult = (Array.isArray(processedResult) && processedResult.some(item => typeof item === 'object' && item !== null && ('roll' in item || 'separateRows' in item))) ||
-                                 (typeof processedResult === 'object' && processedResult !== null && !Array.isArray(processedResult) && 'separateRows' in processedResult);
+       const isDirectiveResult = (Array.isArray(processedResult) && processedResult.some(item => typeof item === 'object' && item !== null && ('roll' in item))) || // Multi-roll returns an object with result array
+                                 (typeof processedResult === 'object' && processedResult !== null && !Array.isArray(processedResult) && 'separateRows' in processedResult); // separateRows directive itself
 
-       if (!isDirectiveResult) {
-            context[header] = processedResult; // Store the potentially processed array/string
+       // Also check if the *return value* from a directive handler is being processed here (it shouldn't be)
+       // handleSeparateRows returns an array of objects, handleMultiRoll returns a single object.
+       const isHandlerReturnValue = Array.isArray(processedResult) && processedResult.length > 0 && typeof processedResult[0] === 'object' && 'header' in processedResult[0]; // Likely from handleSeparateRows
+
+       if (!isDirectiveResult && !isHandlerReturnValue) {
+            context[header] = processedResult; // Store the potentially processed array/string/number
             if (DEBUG) console.log(`Stored final result for table "${header}" in context:`, processedResult);
        } else {
-            if (DEBUG) console.log(`Skipping context storage for directive result for table "${header}"`);
+            if (DEBUG) console.log(`Skipping context storage for directive result/handler return value for table "${header}"`);
        }
      }
  
      // Handle special cases (existing logic)
-     if (Array.isArray(result) && result.length === 2 &&
-        typeof result[0] === 'string' && typeof result[1] === 'string') {
+     if (Array.isArray(processedResult) && processedResult.length === 2 && // Use processedResult here
+        typeof processedResult[0] === 'string' && typeof processedResult[1] === 'string') {
       // Mark this as a Knave careers result with a special type marker
       return {
         header,
-        result,
+        result: processedResult, // Use processedResult
         _isCareer: true,  // Add this marker to identify it as a career format
         _originalSource: sourceInfo._originalSource, // Track origin
         ...sourceInfo 
       };
     }
     
-    // Handle special case for object results with career/items
-    if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
-      if (result.career && result.items) {
+    // Handle special case for object results with career/items (use processedResult)
+    if (typeof processedResult === 'object' && processedResult !== null && !Array.isArray(processedResult)) {
+      if (processedResult.career && processedResult.items) {
         // Preserve as a two-element array
         return {
           header,
-          result: [result.career, result.items],
+          result: [processedResult.career, processedResult.items],
           _isCareer: true,
           _originalSource: sourceInfo._originalSource, // Track origin
           ...sourceInfo 
@@ -224,23 +241,26 @@ function processTable(table, parentHeader, allTables, context) {
       }
     }
     
-    // Additional handling for multi-element arrays
-    if (Array.isArray(result)) {
-      if (result.length >= 3) {
+    // Additional handling for multi-element arrays (use processedResult)
+    if (Array.isArray(processedResult)) {
+      if (processedResult.length >= 3) {
         return {
           header,
-          result,
+          result: processedResult,
           _isMultiElementArray: true,  // Add flag for multi-element arrays
           _originalSource: sourceInfo._originalSource, // Track origin 
           ...sourceInfo 
         };
       } 
-      else if (result.length === 2 && 
-               typeof result[0] === 'string' && 
-               typeof result[1] === 'string') {
+      // This else-if might conflict with career check above, ensure processedResult is used
+      else if (processedResult.length === 2 && 
+               typeof processedResult[0] === 'string' && 
+               typeof processedResult[1] === 'string') {
+        // Re-check if it's actually a career after processing
+        // This might be redundant if the earlier career check handles it
         return {
           header,
-          result,
+          result: processedResult,
           _isCareer: true,  // Add career marker
           _originalSource: sourceInfo._originalSource, // Track origin 
           ...sourceInfo 
@@ -248,6 +268,7 @@ function processTable(table, parentHeader, allTables, context) {
       }
     }
     
+    // Default return uses processedResult
     return { header, result: processedResult, ...sourceInfo };
   }
   // 3) If the table has subTables => gather from each subTable
@@ -260,10 +281,20 @@ function processTable(table, parentHeader, allTables, context) {
       }
       const subResult = processTable(subTable, header, allTables, context);
       if (subResult) {
-        subResults.push(subResult);
+        // If subResult is an array (from separateRows), flatten it into subResults
+        if (Array.isArray(subResult)) {
+            subResults.push(...subResult);
+        } else {
+            subResults.push(subResult);
+        }
       }
     });
-    return { header, result: subResults, ...sourceInfo };
+    // Store the array of sub-results in context if needed
+    if (context && header) {
+        context[header] = subResults; // Store the collected results
+        if (DEBUG) console.log(`Stored sub-results for table "${header}" in context:`, subResults);
+    }
+    return { header, result: subResults, ...sourceInfo }; // Return collected results
   }
   // 4) Fallback
   else {
@@ -389,10 +420,10 @@ app.post('/api/generate', (req, res) => {
   try {
     console.log('Generating from table:', selectedTable.tablename || selectedTable.filename);
     
-    // Check that the table structure is valid
-    if (!selectedTable.tables || !Array.isArray(selectedTable.tables)) {
-      console.error('Invalid table structure - missing tables array:', selectedTable);
-      return res.status(500).json({ error: 'Invalid table structure - missing tables array.' });
+    // Check that the table structure is valid (allow tables without a 'tables' array if they have 'results')
+    if (!selectedTable.results && (!selectedTable.tables || !Array.isArray(selectedTable.tables))) {
+      console.error('Invalid table structure - missing results or tables array:', selectedTable);
+      return res.status(500).json({ error: 'Invalid table structure - missing results or tables array.' });
     }
     
     // Modified to include inputValues in the context for each generation
@@ -413,26 +444,26 @@ app.post('/api/generate', (req, res) => {
       
       const result = processTable(selectedTable, "", tables, context);
       if (result) {
-        results.push(result);
+        // If processTable returns an array (e.g., from separateRows or nested tables), flatten it
+        if (Array.isArray(result)) {
+            results.push(...result);
+        } else {
+            results.push(result);
+        }
       }
     }
     
-    if (!results || results.length === 0) {
+    // No need to flatten here anymore as processTable handles it for subTables,
+    // and separateRows returns a flat array of results already.
+    const finalResults = results; 
+
+    if (!finalResults || finalResults.length === 0) {
       console.error('Generated empty results');
       return res.status(500).json({ error: 'Generated empty results.' });
     }
-    
-    console.log('Successfully generated results');
-    // Flatten results if processTable returned an array (for separateRows)
-    const finalResults = results.flat();
-
-    if (!finalResults || finalResults.length === 0) {
-      console.error('Generated empty results after potential flattening');
-      return res.status(500).json({ error: 'Generated empty results.' });
-    }
 
     console.log('Successfully generated results');
-    res.json({ results: finalResults }); // Send flattened results
+    res.json({ results: finalResults }); // Send potentially mixed array of results
   } catch (error) {
     console.error('Error generating results:', error);
     res.status(500).json({ error: 'Failed to generate results: ' + error.message });
@@ -443,7 +474,7 @@ app.post('/api/generate', (req, res) => {
 
 // Handles the { roll: N, exclude: boolean } directive
 function handleMultiRoll(resultArray, currentTable, allTables, context, sourceInfo) {
-  if (DEBUG) console.log("Handling multi-roll directive:", resultArray);
+  console.log("DEBUG: Entering handleMultiRoll. sourceInfo:", sourceInfo, "resultArray:", resultArray); // Added Debugging
   const rollDirective = resultArray.find(item => typeof item === 'object' && item !== null && 'roll' in item);
   const textParts = resultArray.filter(item => typeof item === 'string');
 
@@ -491,11 +522,12 @@ function handleMultiRoll(resultArray, currentTable, allTables, context, sourceIn
   // Combine text parts and additional results into a flat array
   const finalResultArray = [...textParts, ...additionalResults.flat()]; // Flatten in case sub-results were arrays
 
-  if (DEBUG) console.log("Multi-roll final result:", finalResultArray);
+  console.log("DEBUG: Multi-roll final result array:", finalResultArray); // Added Debugging
 
-  // Store the final array in context
+  // Store the final array in context (using the original header)
   if (context && sourceInfo._tableName) {
       context[sourceInfo._tableName] = finalResultArray;
+      console.log("DEBUG: Stored multi-roll result in context under", sourceInfo._tableName); // Added Debugging
   }
 
   return {
@@ -508,16 +540,18 @@ function handleMultiRoll(resultArray, currentTable, allTables, context, sourceIn
 
 // Handles the { separateRows: [...] } directive
 function handleSeparateRows(resultObject, currentTable, allTables, context, sourceInfo) {
+  console.log("DEBUG: Entering handleSeparateRows. sourceInfo:", sourceInfo, "resultObject:", resultObject); // Added Debugging
   const itemsToProcess = resultObject.separateRows;
   if (!Array.isArray(itemsToProcess)) {
     console.error("separateRows directive requires an array value.", resultObject);
     return { header: sourceInfo._tableName || 'Error', result: "[separateRows Error: Invalid format]", ...sourceInfo };
   }
 
-  if (DEBUG) console.log("Handling separateRows directive:", itemsToProcess);
+  if (DEBUG) console.log("Handling separateRows directive items:", itemsToProcess); // Modified Debugging
 
   const separateResults = [];
   itemsToProcess.forEach(item => {
+    console.log("DEBUG: Processing item in separateRows:", item); // Added Debugging
     // Create a *copy* of the context for each separate row generation
     const rowContext = { ...context };
     let processedItemResult;
@@ -535,6 +569,24 @@ function handleSeparateRows(resultObject, currentTable, allTables, context, sour
       processedItemResult = item; // Use as is if it's a simple value
     }
 
+    // Ensure the processedItemResult is a string for display purposes
+    if (typeof processedItemResult !== 'string') {
+        if (Array.isArray(processedItemResult)) {
+            // If it's an array, join elements (could happen with nested references)
+            processedItemResult = processedItemResult.map(el => typeof el === 'string' ? el : JSON.stringify(el)).join(', ');
+        } else if (typeof processedItemResult === 'object' && processedItemResult !== null) {
+            // If it's still an object, stringify it
+            processedItemResult = JSON.stringify(processedItemResult);
+        } else {
+            // Convert other types (like numbers) to string
+            processedItemResult = String(processedItemResult);
+        }
+        console.log("DEBUG: Converted processedItemResult to string:", processedItemResult); // Added Debugging
+    }
+
+
+    if (DEBUG) console.log(`SeparateRow item "${item}" processed to:`, processedItemResult, `(Type: ${typeof processedItemResult})`);
+
     // Try to determine a reasonable header for the separate row.
     // If the item was a table reference like {TableA|SubtableB}, extract "SubtableB" or "TableA".
     let rowHeader = sourceInfo._tableName || 'Result'; // Default header
@@ -544,8 +596,6 @@ function handleSeparateRows(resultObject, currentTable, allTables, context, sour
             rowHeader = match[2] || match[1]; // Use subtable name or table name
         }
     }
-
-    if (DEBUG) console.log(`SeparateRow item "${item}" processed to:`, processedItemResult, `(Type: ${typeof processedItemResult})`);
 
      // Construct a result object similar to what processTable normally returns
     const finalRowResult = {
@@ -558,14 +608,14 @@ function handleSeparateRows(resultObject, currentTable, allTables, context, sour
       _titleDescription: sourceInfo._titleDescription,
       // Add flags if needed (e.g., _isCareer, _isMultiElementArray) based on processedItemResult type
       // Check the type of processedItemResult *before* adding flags
-      ...(Array.isArray(processedItemResult) && processedItemResult.length === 2 && typeof processedItemResult[0] === 'string' && typeof processedItemResult[1] === 'string' ? { _isCareer: true } : {}),
-      ...(Array.isArray(processedItemResult) && processedItemResult.length > 2 ? { _isMultiElementArray: true } : {})
+      ...(Array.isArray(processedItemResult) && processedItemResult.length === 2 && typeof processedItemResult[0] === 'string' && typeof processedItemResult[1] === 'string' ? { _isCareer: true } : {}), // This check might be less relevant now
+      ...(Array.isArray(processedItemResult) && processedItemResult.length > 2 ? { _isMultiElementArray: true } : {}) // This check might be less relevant now
     };
-     if (DEBUG) console.log("Adding to separateResults:", finalRowResult);
+     console.log("DEBUG: Final row result constructed:", finalRowResult); // Modified Debugging
     separateResults.push(finalRowResult);
   });
 
-  if (DEBUG) console.log("SeparateRows generated results:", separateResults);
+  console.log("DEBUG: SeparateRows generated results:", separateResults); // Modified Debugging
 
   // Return the array of result objects directly
   return separateResults;

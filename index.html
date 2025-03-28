@@ -1462,7 +1462,7 @@
 
       // Special handling for career format flagged by the server
       if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
@@ -1472,8 +1472,8 @@
         const items = item.result[1] || '';
 
         // Escape values for HTML attributes
-        const careerEscaped = career.replace(/"/g, '&quot;');
-        const itemsEscaped = items.replace(/"/g, '&quot;');
+        const careerEscaped = career.replace(/"/g, '"');
+        const itemsEscaped = items.replace(/"/g, '"');
         
         const buttonGroup = !isNestedContent ? `
           <div class="button-group">
@@ -1502,7 +1502,7 @@
 
       // Continue with existing case for multi-element array format
       if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
         const originalSource = item._originalSource || item._tableName || '';
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
@@ -1510,7 +1510,7 @@
         
         const contentCells = item.result.map(element => {
           const valueStr = String(element || '');
-          const escapedValue = valueStr.replace(/"/g, '&quot;');
+          const escapedValue = valueStr.replace(/"/g, '"');
           return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
         }).join('');
         
@@ -1544,12 +1544,12 @@
         const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
         const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
         const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
-        const headerTitle = item.header ? item.header.replace(/"/g, '&quot;') : '';
+        const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
         
         // Handle different result types, starting with standard string/number
         if (typeof item.result === 'string' || typeof item.result === 'number') {
           const resultStr = String(item.result);
-          const escapedResult = resultStr.replace(/"/g, '&quot;');
+          const escapedResult = resultStr.replace(/"/g, '"');
           
           const buttonGroup = !isNestedContent ? `
             <div class="button-group">
