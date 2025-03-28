@@ -5,7 +5,7 @@ type: Powers
 tablename: SpellsPriest
 tables:
   - tablename: RandomSpellAnyTier
-    results: 
+    results:
       - "[{selectedResult, RandomTier}]"
   - tablename: RandomTier
     results: 
@@ -53,4 +53,4 @@ tables:
       - Heal
       - Judgment
       - Plane Shift
-      - Prophecy    
+      - Prophecy

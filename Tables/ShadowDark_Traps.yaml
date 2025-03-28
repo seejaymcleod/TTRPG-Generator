@@ -6,18 +6,18 @@ tablename: Traps
 tables:
   - tablename: TrapType
     results:
-      - Crossbow"
-      - Hail of needles"
-      - Toxic gas"
-      - Barbed net"
-      - Rolling boulder"
-      - Slicing blade"
-      - Spiked pit"
-      - Javelin"
-      - Magical glyph"
-      - Blast of fire"
-      - Falling block"
-      - Cursed statue"
+      - "Crossbow"
+      - "Hail of needles"
+      - "Toxic gas"
+      - "Barbed net"
+      - "Rolling boulder"
+      - "Slicing blade"
+      - "Spiked pit"
+      - "Javelin"
+      - "Magical glyph"
+      - "Blast of fire"
+      - "Falling block"
+      - "Cursed statue"
   - tablename: Triggers
     results:
       - "Tripwire"

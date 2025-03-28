@@ -16,8 +16,3 @@ tables:
   - tablename: LinkToTableWithinThisTable
     results: 
       - "{SingleResult}"
-  - tablename: LinkToThisSameTable
-    results:   
-      - "{LinkToThisSameTable}"
-      - different result
-      

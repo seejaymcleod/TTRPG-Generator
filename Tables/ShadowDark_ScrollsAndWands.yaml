@@ -8,7 +8,7 @@ tables:
     results: 
       - Scroll
       - Wand
-  - tablenames: ItemFeatures
+  - tablename: ItemFeatures # Corrected typo from 'tablenames'
     customDisplay: "[{selectedResult, ItemTypes}]"
     subTables:
       - tablename: Scroll
