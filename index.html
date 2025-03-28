@@ -736,12 +736,42 @@
           // Extract initial context from result
           extractContext(result, generationContexts[index]);
           
-          // Render the result content
+          // --- START: Modified Result Rendering for separateRows ---
           const contentWrapper = document.createElement('div');
           contentWrapper.className = 'card-content';
-          contentWrapper.innerHTML = renderResultItem(result, true, index);
+
+          // Check if the result itself is an array (from separateRows)
+          if (Array.isArray(result)) {
+            // If it's an array of results, render each one as a row
+            result.forEach(subResult => {
+              // Extract context from each sub-result
+              extractContext(subResult, generationContexts[index]);
+              // Render item, ensuring isTopLevel is false for subsequent items
+              // Pass isNestedContent = true to prevent buttons on these inner rows
+              contentWrapper.innerHTML += renderResultItem(subResult, false, index, true);
+            });
+            // Update the main card title based on the first sub-result
+            if (result.length > 0) {
+                let firstValue = extractDisplayValueForTitle(result[0]);
+                firstValue = firstValue.trim();
+                titleText.textContent = firstValue ?
+                    `${selectedTable.tablename || 'Result'} - ${firstValue}` :
+                    selectedTable.tablename || 'Result';
+            }
+          } else {
+            // Original behavior: render the single result object
+            extractContext(result, generationContexts[index]);
+            contentWrapper.innerHTML = renderResultItem(result, true, index);
+             // Update title based on this single result
+            let firstValue = extractDisplayValueForTitle(result);
+            firstValue = firstValue.trim();
+            titleText.textContent = firstValue ?
+                `${selectedTable.tablename || 'Result'} - ${firstValue}` :
+                selectedTable.tablename || 'Result';
+          }
+          // --- END: Modified Result Rendering ---
+
           generationContainer.appendChild(contentWrapper);
-          
           resultsContainer.appendChild(generationContainer);
         });
       })

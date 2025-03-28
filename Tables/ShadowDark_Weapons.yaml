@@ -4,7 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Weapons
 tables:
-  - tablename: Weapon Types
+  - tablename: Types
     results:
       - Arrows ("2d6")
       - [Bastard sword, 2]
@@ -23,14 +23,14 @@ tables:
       - Staff
       - Warhammer
       
-  - tablename: Weapon Bonuses
+  - tablename: Bonuses
     results:
       - ["+0", 3]
       - ["+1", 27]
       - ["+2", 5]
       - ["+3", 1]
       
-  - tablename: Weapon Features
+  - tablename: Features
     results:
       - Trails sparkles
       - Starmetal
@@ -52,7 +52,7 @@ tables:
       - Whispers in a language
       - Drips ocean water
       - Turns blood to rose petals
-  - tablename: Weapon Benefits
+  - tablename: Benefits
     results:
       - Cut or smash through any material
       - Once per day, ignites for 5 rounds, deals 1d4 extra damage
@@ -66,7 +66,7 @@ tables:
       - Has thrown property (pg. 37), near distance, returns to you
       - "Double damage to [[undead, 2], demons, dragons]"
       - Reroll natural 1s once each when attacking with this weapon
-  - tablename: Weapon Curses
+  - tablename: Curses
     results:
       - "You can't see [undead, demons, snakes, spiders]"
       - You are compelled to swallow all gemstones at first sight

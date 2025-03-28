@@ -168,16 +168,37 @@ function processTable(table, parentHeader, allTables, context) {
       processedResult = result.map(item => 
         typeof item === 'string' ? processTableReferences(item, allTables, context) : item
       );
+     }
+     
+     // --- START: New Feature Handling ---
+    // Check for multi-roll directive: ["Text", { roll: N, exclude: boolean }]
+    if (Array.isArray(processedResult) && processedResult.some(item => typeof item === 'object' && item !== null && 'roll' in item)) {
+      return handleMultiRoll(processedResult, table, allTables, context, sourceInfo);
     }
-    
-    // Store processed result in context
-    if (context && header) {
-      context[header] = processedResult;
-      if (DEBUG) console.log(`Stored result "${processedResult}" for table "${header}" in context`);
+
+    // Check for separateRows directive: { separateRows: [...] }
+    if (typeof processedResult === 'object' && processedResult !== null && !Array.isArray(processedResult) && 'separateRows' in processedResult) {
+      return handleSeparateRows(processedResult, table, allTables, context, sourceInfo);
     }
-    
-    // Handle special cases
-    if (Array.isArray(result) && result.length === 2 && 
+     // --- END: New Feature Handling ---
+ 
+     // Store final processed result in context (AFTER handling special directives)
+     if (context && header) {
+       // Check if processedResult was handled by a directive (which return specific structures)
+       // We only want to store simple results or arrays directly in context for now.
+       const isDirectiveResult = (Array.isArray(processedResult) && processedResult.some(item => typeof item === 'object' && item !== null && ('roll' in item || 'separateRows' in item))) ||
+                                 (typeof processedResult === 'object' && processedResult !== null && !Array.isArray(processedResult) && 'separateRows' in processedResult);
+
+       if (!isDirectiveResult) {
+            context[header] = processedResult; // Store the potentially processed array/string
+            if (DEBUG) console.log(`Stored final result for table "${header}" in context:`, processedResult);
+       } else {
+            if (DEBUG) console.log(`Skipping context storage for directive result for table "${header}"`);
+       }
+     }
+ 
+     // Handle special cases (existing logic)
+     if (Array.isArray(result) && result.length === 2 &&
         typeof result[0] === 'string' && typeof result[1] === 'string') {
       // Mark this as a Knave careers result with a special type marker
       return {
@@ -402,12 +423,156 @@ app.post('/api/generate', (req, res) => {
     }
     
     console.log('Successfully generated results');
-    res.json({ results });
+    // Flatten results if processTable returned an array (for separateRows)
+    const finalResults = results.flat();
+
+    if (!finalResults || finalResults.length === 0) {
+      console.error('Generated empty results after potential flattening');
+      return res.status(500).json({ error: 'Generated empty results.' });
+    }
+
+    console.log('Successfully generated results');
+    res.json({ results: finalResults }); // Send flattened results
   } catch (error) {
     console.error('Error generating results:', error);
     res.status(500).json({ error: 'Failed to generate results: ' + error.message });
   }
 });
+
+// --- START: New Helper Functions ---
+
+// Handles the { roll: N, exclude: boolean } directive
+function handleMultiRoll(resultArray, currentTable, allTables, context, sourceInfo) {
+  if (DEBUG) console.log("Handling multi-roll directive:", resultArray);
+  const rollDirective = resultArray.find(item => typeof item === 'object' && item !== null && 'roll' in item);
+  const textParts = resultArray.filter(item => typeof item === 'string');
+
+  const numRolls = rollDirective.roll || 1;
+  const excludeSelf = rollDirective.exclude || false;
+
+  let possibleResults = getPropertyCaseInsensitive(currentTable, 'results');
+  if (!possibleResults || !Array.isArray(possibleResults)) {
+    console.error("Multi-roll error: Current table has no results array.", currentTable);
+    return { header: sourceInfo._tableName || 'Error', result: "[Multi-roll Error: No results]", ...sourceInfo };
+  }
+
+  // Filter out the current result if excludeSelf is true
+  if (excludeSelf) {
+    // Need a way to reliably compare the original selected array with entries in possibleResults
+    // This is tricky because the selected array might have already been partially processed.
+    // For now, we'll assume simple comparison works, but this might need refinement.
+    // A safer approach might involve adding a unique ID to results during loading.
+    const originalResultString = JSON.stringify(resultArray); // Simple comparison basis
+    possibleResults = possibleResults.filter(entry => JSON.stringify(entry) !== originalResultString);
+    if (DEBUG) console.log(`Excluding self, ${possibleResults.length} results remaining.`);
+  }
+
+  const additionalResults = [];
+  for (let i = 0; i < numRolls; i++) {
+    // Create a *copy* of the context for each sub-roll to avoid interference
+    const subContext = { ...context };
+    // Roll on the (potentially filtered) results
+    const rollResult = getWeightedRandomResult({ results: possibleResults }, subContext);
+
+    // Fully process the result of the sub-roll
+    let processedSubResult = rollResult;
+    if (typeof rollResult === 'string') {
+      processedSubResult = processTableReferences(rollResult, allTables, subContext);
+    } else if (Array.isArray(rollResult)) {
+      // If the sub-roll itself results in an array, process it
+      processedSubResult = processArrayWithExpressions(rollResult, allTables, subContext);
+    }
+    // Note: We might need to handle nested multi-rolls or separateRows here if required,
+    // but keeping it simple for now.
+
+    additionalResults.push(processedSubResult);
+  }
+
+  // Combine text parts and additional results into a flat array
+  const finalResultArray = [...textParts, ...additionalResults.flat()]; // Flatten in case sub-results were arrays
+
+  if (DEBUG) console.log("Multi-roll final result:", finalResultArray);
+
+  // Store the final array in context
+  if (context && sourceInfo._tableName) {
+      context[sourceInfo._tableName] = finalResultArray;
+  }
+
+  return {
+    header: sourceInfo._tableName || 'Multi-Roll',
+    result: finalResultArray,
+    _isMultiElementArray: true, // Mark for UI handling
+    ...sourceInfo
+  };
+}
+
+// Handles the { separateRows: [...] } directive
+function handleSeparateRows(resultObject, currentTable, allTables, context, sourceInfo) {
+  const itemsToProcess = resultObject.separateRows;
+  if (!Array.isArray(itemsToProcess)) {
+    console.error("separateRows directive requires an array value.", resultObject);
+    return { header: sourceInfo._tableName || 'Error', result: "[separateRows Error: Invalid format]", ...sourceInfo };
+  }
+
+  if (DEBUG) console.log("Handling separateRows directive:", itemsToProcess);
+
+  const separateResults = [];
+  itemsToProcess.forEach(item => {
+    // Create a *copy* of the context for each separate row generation
+    const rowContext = { ...context };
+    let processedItemResult;
+
+    // Process the item (it's likely a string table reference like "{TableA}")
+    if (typeof item === 'string') {
+      processedItemResult = processTableReferences(item, allTables, rowContext);
+    } else if (typeof item === 'object' && item !== null) {
+      // If the item itself is complex (e.g., another directive), process it.
+      // This might require more robust handling or calling processTable recursively.
+      // For now, assume items are simple references or values.
+      console.warn("Handling complex objects within separateRows is not fully implemented.", item);
+      processedItemResult = JSON.stringify(item); // Placeholder
+    } else {
+      processedItemResult = item; // Use as is if it's a simple value
+    }
+
+    // Try to determine a reasonable header for the separate row.
+    // If the item was a table reference like {TableA|SubtableB}, extract "SubtableB" or "TableA".
+    let rowHeader = sourceInfo._tableName || 'Result'; // Default header
+    if (typeof item === 'string') {
+        const match = item.match(/\{([^}|]+)(?:\|([^}]+))?\}/);
+        if (match) {
+            rowHeader = match[2] || match[1]; // Use subtable name or table name
+        }
+    }
+
+    if (DEBUG) console.log(`SeparateRow item "${item}" processed to:`, processedItemResult, `(Type: ${typeof processedItemResult})`);
+
+     // Construct a result object similar to what processTable normally returns
+    const finalRowResult = {
+      header: rowHeader,
+      result: processedItemResult, // This should now be the resolved string
+      // Include relevant source info, potentially adjusting _tableName
+      _tableName: rowHeader, // Use the derived header as the tableName for this row
+      _fileName: sourceInfo._fileName,
+      _originalSource: sourceInfo._originalSource, // Keep original source tracking
+      _titleDescription: sourceInfo._titleDescription,
+      // Add flags if needed (e.g., _isCareer, _isMultiElementArray) based on processedItemResult type
+      // Check the type of processedItemResult *before* adding flags
+      ...(Array.isArray(processedItemResult) && processedItemResult.length === 2 && typeof processedItemResult[0] === 'string' && typeof processedItemResult[1] === 'string' ? { _isCareer: true } : {}),
+      ...(Array.isArray(processedItemResult) && processedItemResult.length > 2 ? { _isMultiElementArray: true } : {})
+    };
+     if (DEBUG) console.log("Adding to separateResults:", finalRowResult);
+    separateResults.push(finalRowResult);
+  });
+
+  if (DEBUG) console.log("SeparateRows generated results:", separateResults);
+
+  // Return the array of result objects directly
+  return separateResults;
+}
+
+// --- END: New Helper Functions ---
+
 
 // Replace the special case NPC handling with a more flexible, structure-based approach
 app.post('/api/reroll', (req, res) => {
@@ -1489,50 +1654,64 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
           return `[No results in ${content}]`;
         }
         
-        // Now handle array indexing if specified
+        // --- START: Refined Result Handling ---
+        // Handle array indexing first
         if (arrayIndex !== undefined && Array.isArray(result)) {
-          const index = parseInt(arrayIndex, 10);
-          if (index >= 0 && index < result.length) {
-            if (DEBUG) console.log(`Extracting index [${index}] from array result: ${JSON.stringify(result)}`);
-            return result[index];
-          } else {
-            console.error(`Array index ${index} out of bounds for result: ${JSON.stringify(result)}`);
-            return `[Index ${index} out of bounds]`;
-          }
+            const index = parseInt(arrayIndex, 10);
+            if (index >= 0 && index < result.length) {
+                if (DEBUG) console.log(`Extracting index [${index}] from array result: ${JSON.stringify(result)}`);
+                const extractedElement = result[index];
+                // Ensure the extracted element is returned as a string if it's not already
+                return typeof extractedElement === 'string' ? extractedElement : JSON.stringify(extractedElement);
+            } else {
+                console.error(`Array index ${index} out of bounds for result: ${JSON.stringify(result)}`);
+                recursionTracker.tables.delete(refId); // Clean up tracker
+                recursionTracker.depth--;
+                return `[Index ${index} out of bounds]`;
+            }
         }
-        
-        // NEW: Check for object with career/items format first (common for spells)
-        if (result && typeof result === 'object' && !Array.isArray(result) && result.career) {
-          if (DEBUG) console.log(`Found object with career property: ${result.career}`);
-          return result.career; // Return just the career (spell name)
-        }
-        
-        // Also handle automatic extraction of first element for arrays in string contexts
+
+        // Handle array results when no index is specified (convert to string)
         if (Array.isArray(result)) {
-          if (DEBUG) console.log(`Using first element of array result: ${result[0]} (from ${JSON.stringify(result)})`);
-          return result[0]; // Return just the first element
+            if (DEBUG) console.log(`Table reference resulted in array, joining elements: ${JSON.stringify(result)}`);
+            // Join array elements into a single string, processing each element first
+            const processedArrayElements = result.map(el =>
+                typeof el === 'string' ? el : JSON.stringify(el) // Stringify non-string elements
+            );
+            recursionTracker.tables.delete(refId); // Clean up tracker
+            recursionTracker.depth--;
+            return processedArrayElements.join(', '); // Join with comma and space
         }
-        
-        // Handle other object results by converting to string
-        if (result && typeof result === 'object' && !Array.isArray(result)) {
-          try {
-            // Try to extract a meaningful string property if one exists
-            if (result.name) return result.name;
-            if (result.title) return result.title;
-            if (result.value) return String(result.value);
-            // Convert to JSON string as last resort
-            return JSON.stringify(result);
-          } catch (e) {
-            console.error(`Error converting object result to string: ${e.message}`);
-            return "[Object]";
-          }
+
+        // Handle object results (convert to string)
+        if (result && typeof result === 'object') {
+            if (DEBUG) console.log(`Table reference resulted in object: ${JSON.stringify(result)}`);
+            let stringRepresentation = "[Object]"; // Default
+            // Prioritize known properties for string conversion
+            if (result.career && result.items) stringRepresentation = `${result.career} - ${result.items}`;
+            else if (result.career) stringRepresentation = String(result.career);
+            else if (result.name) stringRepresentation = String(result.name);
+            else if (result.title) stringRepresentation = String(result.title);
+            else if (result.value) stringRepresentation = String(result.value);
+            else {
+                // Fallback: stringify the object
+                try {
+                    stringRepresentation = JSON.stringify(result);
+                } catch (e) {
+                    console.error(`Error stringifying object result: ${e.message}`);
+                    stringRepresentation = "[Object Conversion Error]";
+                }
+            }
+            recursionTracker.tables.delete(refId); // Clean up tracker
+            recursionTracker.depth--;
+            return stringRepresentation;
         }
-        
-        // Remove this reference from tracker before returning
-        recursionTracker.tables.delete(refId);
+
+        // If result is already a primitive (string, number, boolean), return as string
+        recursionTracker.tables.delete(refId); // Clean up tracker
         recursionTracker.depth--;
-        
-        return result ? String(result) : '';
+        return result !== null && result !== undefined ? String(result) : '';
+        // --- END: Refined Result Handling ---
       } catch (error) {
         // Clean up tracker even if there's an error
         recursionTracker.tables.delete(refId);
@@ -1546,9 +1725,13 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
   // Handle arrays by processing each string element
   else if (Array.isArray(input)) {
     // Use the special array processing function to prevent cross-contamination
-    return processArrayWithExpressions(input, allTables, context);
+    // Ensure the result is an array of processed values (likely strings)
+    const processedArray = processArrayWithExpressions(input, allTables, context);
+    if (DEBUG) console.log("processTableReferences processed array:", processedArray);
+    return processedArray;
   }
-  // Return non-string inputs unchanged
+  // Return non-string/non-array inputs unchanged
+  if (DEBUG && typeof input !== 'string') console.log("processTableReferences returning non-string input unchanged:", input);
   return input;
 }
 
@@ -1611,11 +1794,30 @@ function processArrayWithExpressions(array, allTables, context) {
   // Standard processing for other array types
   for (let i = 0; i < array.length; i++) {
     const element = array[i];
+    let processedElement = element; // Default to original element
+
     if (typeof element === 'string') {
-      resultArray.push(processTableReferences(element, allTables, context));
-    } else {
-      resultArray.push(element);
+      // Recursively process strings within the array
+      processedElement = processTableReferences(element, allTables, context);
+    } else if (typeof element === 'object' && element !== null) {
+       // If an element is an object, try to stringify it or handle known structures
+       // This might be where [object Object] originates if not handled properly
+       console.warn("processArrayWithExpressions encountered an object in array:", element);
+       // Attempt to extract a meaningful value or stringify
+       if (element.result) {
+           processedElement = String(element.result);
+       } else if (element.name) {
+           processedElement = String(element.name);
+       } else {
+           try {
+               processedElement = JSON.stringify(element);
+           } catch (e) {
+               processedElement = "[Object]";
+           }
+       }
     }
+    // Add the processed element to the result array
+    resultArray.push(processedElement);
   }
   
   // No need to copy changes back as we're using the original context

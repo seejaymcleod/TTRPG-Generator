@@ -4,7 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Utilities
 tables:
-  - tablename: Utility Types
+  - tablename: Types
     results:
       - Brooch
       - Ring
@@ -27,7 +27,7 @@ tables:
       - Surcoat
       - Mask
       
-  - tablename: Utility Features
+  - tablename: Features
     results:
       - Shaped like a raven
       - Iridescent
@@ -50,7 +50,7 @@ tables:
       - Throbs like a heart
       - Trails faint mist
       
-  - tablename: Utility Benefits
+  - tablename: Benefits
     results:
       - You can't be magically scryed upon or detected
       - Connects to an interdimensional pocket with 5 gear slots
@@ -64,7 +64,7 @@ tables:
       - You can hold your breath for 1 hour
       - You do not need to eat or drink to survive
       - You can walk on non-solid surfaces for 2 rounds at a time
-  - tablename: Utility Curses
+  - tablename: Curses
     results:
       - Slowly rots all other non-magical items that touch it
       - Deals 1d4 damage and leaves blisters whenever used

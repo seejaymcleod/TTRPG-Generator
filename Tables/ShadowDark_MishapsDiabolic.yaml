@@ -6,7 +6,8 @@ tablename: MishapsDiabolic
 tables:
   - tablename: Tier1-3
     results:
-      - "Diablerie! Roll twice and combine both effects (reroll any further 1s)"
+      # Corrected: Multi-roll directive should be directly in the array
+      - ["Diablerie! ", { roll: 2, exclude: true }]
       - "Wither! You take 1d6 damage per spell tier"
       - "Newt! You turn into a tiny, 1 hit point newt for 3 rounds. You can't cast spells in this form"
       - "Shune's baleful gaze! You can't cast this spell and another random spell again for a week"
@@ -20,7 +21,8 @@ tables:
       - "Siphon! You have disadvantage on casting spells of the same tier or lower for the next 10 rounds"
   - tablename: Tier4-5
     results:
-      - "Maelstrom! Roll twice and combine both effects (reroll any further 1s)"
+      # Corrected: Multi-roll directive should be directly in the array
+      - ["Maelstrom! ", { roll: 2, exclude: false }]
       - "Ruin! You take 1d8 damage per spell tier"
       - "Mind rot! You permanently forget one random spell"
       - "The Willowman! You summon The Willowman (who is angry with you) in a space near to you. He stays for 1d6 rounds before disappearing from whence he came"

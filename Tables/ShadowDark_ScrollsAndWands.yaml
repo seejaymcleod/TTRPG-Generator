@@ -33,10 +33,12 @@ tables:
           - Made of tiny skulls
   - tablename: CursesAndBenefits
     results:
-      - [[{ShadowDark_Weapons|Benefits}, {ShadowDark_Weapons|Curses}], 1]
-      - [[{ShadowDark_Potions|Benefits}, {ShadowDark_Potions|Curses}], 2]
-      - [[{ShadowDark_Armors|Benefits}, {ShadowDark_Armors|Curses}], 5]
-      - [[{ShadowDark_Utilities|Benefits}, {ShadowDark_Utilities|Curses}], 3]    
+      # Example using separateRows to display Benefit and Curse on different lines
+      # IMPORTANT: Table references MUST be enclosed in quotes to be treated as strings
+      - [{separateRows: ["{ShadowDark_Armors|Benefits}", "{ShadowDark_Armors|Curses}"]}, 15]
+      - [{separateRows: ["{ShadowDark_Utilities|Benefits}", "{ShadowDark_Utilities|Curses}"]}, 11]
+      - [{separateRows: ["{ShadowDark_Potions|Benefits}", "{ShadowDark_Potions|Curses}"]}, 9]
+      - [{separateRows: ["{ShadowDark_Weapons|Benefits}", "{ShadowDark_Weapons|Curses}"]}, 1]
   - tablename: SpellTiers
     results:
       - [Tier1, 10]

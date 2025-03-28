@@ -4,7 +4,7 @@ setting: Fantasy
 type: Stuff
 tablename: Potions
 tables:
-  - tablename: Potions Features
+  - tablename: Features
     customDisplay: "[{Feature1}, {Feature2}, {Feature3}]"
     subTables:
       - tablename: Feature1
@@ -68,7 +68,7 @@ tables:
           - Drinker DC 12 CON or 1d8 dmg
           - Drinker -1 to random stat
           - 1 random effect is permanent
-  - tablename: Potion Benefits
+  - tablename: Benefits
     results:
       - "Immune 5 rounds, [fire, cold, electricity, poison]"
       - "Heals [1d4, 2d6, 3d8, 4d10]"
@@ -82,7 +82,7 @@ tables:
       - Cures any disease or affliction affecting drinker
       - Speak to and understand animals for 1 hour
       - You are immune to all damage for 5 rounds
-  - tablename: Potion Curses
+  - tablename: Curses
     results: 
       - DC 15 WIS check or attack nearest creature for 3 rounds
       - Turn into a 1 HP newt for 3 rounds
