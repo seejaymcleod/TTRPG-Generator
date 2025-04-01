@@ -1,0 +1,57 @@
+filename: ShadowDark_MountainEncounters.yaml
+game: ShadowDark
+setting: Fantasy
+type: Adventure, Places
+tablename: Mountain Encounters
+tables:
+  - results:
+      - A howling blizzard or thunderstorm bars travel for 1d4 days
+      - 2d20 goblins led by a goat giant swarm over the cliffs
+      - An airborne manticore and wyvern ferociously clash
+      - Braaqul, hobgoblin spy, gathers intelligence on the PCs
+      - 2d6 goblins fling rocks and flaming excrement at the PCs
+      - A group of 2d4 dwarf bandits hustle travelers for a toll
+      - A boulder breaks loose, causing an avalanche of rocks
+      - Skaldor the troll crunches on dwarf bones in his dank cave
+      - 1d6 salamanders slither out of a misty, hot spring pool
+      - An earthquake shakes the peaks and unleashes landslides
+      - A screaming swarm of bats careens out of a narrow ravine
+      - 3d6 hobgoblins march along a pass in tight formation
+      - 1d4 pyromancers (mages) meditate beside a lava pool
+      - 1d4 fire giants forge enormous weapons in a smoky cave
+      - 1d6 goblins sneak along a ridge line toward 2d4 peasants
+      - 3d6 orcs make camp in an empty, crumbling stone keep
+      - A frost giant trudges along a snowy ridge, singing loudly
+      - 2d4 harpies cling to the sharp edges of steep cliff faces
+      - A volcanic eruption rains down ash, hot gas, and lava flow
+      - A tawny mountain lion leaps from hiding at the rear PC
+      - A reaver and 2d6 bandits try to capture the characters
+      - A peasant lies with a leg trapped beneath a fallen boulder
+      - A luring will-o'-wisp floats over a hidden, old mine shaft
+      - 2d6 berserkers in mountain lion cloaks hunt for game
+      - An ettercap spins a funnel of webs over a narrow ravine
+      - 2d4 beastmen close in a circle around 1d4 dwarf soldiers
+      - A stack of logs breaks free and tumbles down the slopes
+      - A nightmare soars out of the caldera of a nearby volcano
+      - 2d4 apes hoot and roll rocks at creatures passing below
+      - A fire dragon sleeps on a hill of coins encircled by lava
+      - 2d6 dwarf soldiers guard the vaulted doors to their halls
+      - A cyclops rips a tree from the ground to use as a club
+      - A massive profile of a dwarven king is carved into the cliffs
+      - 2d6 salamanders bask on flat, sun-warmed rocks
+      - A bristling roc warily guards its nest of 1d4 gigantic eggs
+      - 2d4 goblins pluck a live cockatrice to prepare it for cooking
+      - A group of rival crawlers stares in puzzlement at a map
+      - A rusty, dwarven axe is stuck in a bleached minotaur skull
+      - 1d4 hobgoblins on griffons throw javelins at the PCs
+      - 1d6 snarling hell hounds lunge out of a glowing cave
+      - Hiraldo the Swordsman trains in a secluded box canyon
+      - A snorting minotaur emerges through a carved stone arch
+      - A hunting wyvern swoops down the face of the mountain
+      - 2d6 hobgoblins form a shield wall against a fat hill giant
+      - A praying knight sits in the cold crash of a narrow waterfall
+      - A shrine to Madeera grants +1 luck token for an offering
+      - A two-headed ogre argues with itself while cooking stew
+      - The Wandering Merchant looks for rare newts under rocks
+      - Roll two encounters and combine the results (reroll 98-99)
+      - Rathgamnon the Sphinx flies in to bestow a magic item

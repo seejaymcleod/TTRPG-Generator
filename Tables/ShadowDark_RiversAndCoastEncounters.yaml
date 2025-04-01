@@ -1,0 +1,57 @@
+filename: ShadowDark_RiverAndCoastEncounters.yaml
+game: ShadowDark
+setting: Fantasy
+type: Adventure, Places
+tablename: River And Coast Encounters
+tables:
+  - results:
+      - A tsunami overflows the shore, raising it 10' for 2d4 rounds
+      - A clutch of 1d4 basilisks sun themselves on flat rocks
+      - 3d6 peasants fearfully inspect a dying giant snake
+      - Mirell, a pearl and gold prospector, yells at "spot poachers"
+      - 3d8 kobolds skim under the surface with reed snorkels
+      - A troll lurks in a damp cave along the water's edge
+      - A 1d4 x 10' wide pit of quicksand or mud opens underfoot
+      - A jumping piranha swarm leaps from the shallows
+      - A sea hag gathers greasy weeds along the water's edge
+      - A poisonous bloom of red algae chokes the shoreline
+      - 1d4 holes full of black water turn out to be black puddings
+      - 3d8 orcs led by an orc chieftain camp near the water
+      - 3d6 river bandits lunge out of hiding on rickety rowboats
+      - A pack of 2d8 hunting lions prowl the shoreline
+      - A hippogriff desperately wrestles a locked-on crocodile
+      - 2d6 goblin gem divers operate out of a ramshackle hut
+      - 2d4 apes sift through the water for darting minnows
+      - 2d4 territorial centaurs spearfish in the shallows
+      - A tidal surge grabs at the PCs, threatening to pull them in
+      - 1d4 hippopotami travel with an equal number of calves
+      - A giant crab covered in weeds rears out of the water
+      - Falsted the halfling clings to a sinking, overturned dinghy
+      - Woven reeds or seaweed mask a 20' deep, spear-lined pit
+      - An elephant swims with only its trunk above the surface
+      - 1d4 faeries trapped in corked glass bottles float by
+      - 2d6 lizardfolk circle in around a flailing giant crab
+      - A weighted and barbed net launches out of the silt or sand
+      - A gladiator with a helm stuck on backwards gropes along
+      - A pride of 2d4 griffons roosts on high rocks or in trees
+      - 3d6 peasants live in colorful tents on lashed-together rafts
+      - Yggral the treant stands on the shore, staring at the sky
+      - A circle of 2d4 crooked statues turn out to be gargoyles
+      - 1d4 old rowboats are tied to a battered, rotting dock
+      - 2d6 giant leeches try to bite warm-blooded swimmers
+      - Thin tunnels in the mud or sand house a snake swarm
+      - 3d6 frenzied mastiffs won't let an exhausted elf ashore
+      - A group of rival crawlers portage an overladen canoe
+      - An unlit lighthouse stands on a narrow, sandy island
+      - 2d4 stingbats buzz along the surface of the water
+      - Silver Sea, a massive galleon, has run deeply aground
+      - Marga the Wise forages for curative crystals and plants
+      - A herd of 3d6 wild horses thunders up the shoreline
+      - The kobold sorcerer Mortimus preaches from atop a log
+      - 2d4 cultists fight 2d6 lizardfolk around a carved obelisk
+      - Quargot the fisherman welcomes peaceful folk to his hut
+      - 2d8 opaline shellfish cluster in tide pools; they have pearls
+      - 3d8 giant frogs croak one-word insults in Common
+      - The Wandering Merchant walks in the shallows on stilts
+      - Roll two encounters and combine the results (reroll 98-99)
+      - A half-buried treasure chest contains a magic item

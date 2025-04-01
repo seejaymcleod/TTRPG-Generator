@@ -1,8 +1,8 @@
-filename: ShadowDark_SomethingHappens.yaml
+filename: ShadowDark_SomethingHappensEncounters.yaml
 game: ShadowDark
 setting: Fantasy
 type: Adventure
-tablename: Something Happens
+tablename: Something Happens Encounters
 tables:
   - results:
       - ["The ground shakes violently and a massive fissure opens",0.5]
