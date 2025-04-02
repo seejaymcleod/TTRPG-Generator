@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Ruins Encounters
 tables:
   - results:
-      - A mutated cave brute explodes through a crumbling wall
+      - ["A mutated cave brute explodes through a crumbling wall", 0.5]
       - A silent gelatinous cube sweeps up a corridor
       - A roving owlbear scavenges for dead bodies to eat
       - Rival crawlers confront the PCs; they were "here first"
@@ -54,4 +54,4 @@ tables:
       - A recent campfire still burns with glowing cinders
       - A minotaur guides the Wandering Merchant on a path
       - Roll two encounters and combine the results (reroll 98-99)
-      - The body of a dead crawler holds a random magic item
+      - ["The body of a dead crawler holds a random magic item", 0.5]

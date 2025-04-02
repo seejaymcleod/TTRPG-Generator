@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Tomb Encounters
 tables:
   - results:
-      - A distracted, muttering lich teleports into the room
+      - ["A distracted, muttering lich teleports into the room", 0.5]
       - 2d4 wraiths emerge from walls, floors, and ceilings
       - 2d6 ghasts claw and thrash around inside a swarm of bats
       - Muggins Greenbottle, halfling tomb robber, was here first
@@ -54,4 +54,4 @@ tables:
       - The human archmage Rantarim (N) hunts for an old tome
       - The Wandering Merchant pops, gasping, out of a coffin
       - Roll two encounters and combine the results (reroll 98-99)
-      - A secret cache holds 1d4 items from the 7-9 treasure table
+      - ["A secret cache holds 1d4 items from the 7-9 treasure table", 0.5]

@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Desert Encounters
 tables:
   - results:
-      - A purple worm bursts from the sand and towers overhead
+      - ["A purple worm bursts from the sand and towers overhead", 0.5]
       - 3d6 raiding bandits from the Hidden City ride into view
       - 2d4 salamanders creep up on a sunning giant snake
       - An arrogant sphinx demands the answer to a riddle
@@ -54,4 +54,4 @@ tables:
       - A pair of bulettes burrow in a circle around a black pillar
       - The Wandering Merchant rides a heavily laden camel
       - Roll two encounters and combine the results (reroll 98-99)
-      - The legendary Alabaster Library of Gehemna materializes
+      - ["The legendary Alabaster Library of Gehemna materializes", 0.5]

@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Cave Encounters
 tables:
   - results:
-      - An enraged pair of manticores protect their 1d4 cubs
+      - ["An enraged pair of manticores protect their 1d4 cubs", 0.5]
       - 1d6 possessed mushroomfolk charge in a murderous rage
       - 2d4 deep gnomes are irritated at the unwanted intrusion
       - A band of 2d6 gnolls demands a toll of blood or gold
@@ -54,4 +54,4 @@ tables:
       - The floor shakes as a tunneling bulette roves through
       - The Wandering Merchant spelunks by on a truffle hunt
       - Roll two encounters and combine the results (reroll 98-99)
-      - An orc mystic (L) offers 2 random beneficial potions
+      - ["An orc mystic (L) offers 2 random beneficial potions", 0.5]

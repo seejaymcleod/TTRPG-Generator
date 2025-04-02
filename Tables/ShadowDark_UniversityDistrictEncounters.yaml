@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: University District Encounters
 tables:
   - results:
-      - "[A drunk apprentice wizard summons a furious marilith, 0.5]"
+      - ["A drunk apprentice wizard summons a furious marilith", 0.5]
       - Grabbing tentacles erupt through a sewer grate
       - Two professors' long feud boils over into spell-slinging
       - A woman furtively offers to pay for "recently dead bodies"
@@ -54,4 +54,4 @@ tables:
       - The PCs stumble into an occult ritual with 5 apprentices
       - The Wandering Merchant sells caustic alchemical reagents
       - Roll two encounters and combine the results (reroll 98-99)
-      - "[An archmage entrusts a random magic item to the PCs, 0.5]"
+      - ["An archmage entrusts a random magic item to the PCs", 0.5]

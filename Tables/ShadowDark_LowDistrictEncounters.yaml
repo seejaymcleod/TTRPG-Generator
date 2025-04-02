@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Low District Encounters
 tables:
   - results:
-      - 3d6 zombies lurch out of a smoke-belching charnel house
+      - ["3d6 zombies lurch out of a smoke-belching charnel house", 0.5]
       - A reaver and 4 bandits look for weaklings to shake down
       - 2d6 pirates and 2d4 merchants (guards) fight on the docks
       - A grizzled sailor spits at the PCs and sneers, "landlubbers"
@@ -54,4 +54,4 @@ tables:
       - A pox-marked beggar is actually the Duke in disguise
       - The Wandering Merchant sells the deed to an old shop
       - Roll two encounters and combine the results (reroll 98-99)
-      - A dropped magic item glitters inside a filthy gutter
+      - ["A dropped magic item glitters inside a filthy gutter", 0.5]

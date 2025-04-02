@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Deep Tunnel Encounters
 tables:
   - results:
-      - The Ten-Eyed Oracle drifts into sight, chattering of doom
+      - ["The Ten-Eyed Oracle drifts into sight, chattering of doom", 0.5]
       - 1d4 brain eaters walk surrounded by 3d6 duergar captives
       - An albino hydra stampedes in, lashed on by 2d4 drow
       - A duergar calls for help; 2d4 more prepare to ambush
@@ -54,4 +54,4 @@ tables:
       - A night hag rides by on the back of a clear giant scorpion
       - The Wandering Merchant squeezes out of a narrow fissure
       - Roll two encounters and combine the results (reroll 98-99)
-      - An ancient treasure chest holds a random magic item
+      - ["An ancient treasure chest holds a random magic item", 0.5]

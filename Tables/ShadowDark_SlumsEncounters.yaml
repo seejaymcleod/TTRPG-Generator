@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Slums Encounters
 tables:
   - results:
-      - 3d8 Bywater Barons (thugs) pour out of a dark tenement
+      - ["3d8 Bywater Barons (thugs) pour out of a dark tenement", 0.5]
       - A press gang of 2d4 bandits tries to kidnap the PCs
       - 2d6 thugs surround two greenhorn City Watch guards
       - A pox-ridden man clutches at the PCs, begging for food
@@ -25,7 +25,7 @@ tables:
       - A frantic, manacled man wriggles out of a cellar window
       - A mob of begging children grows the more the PCs give
       - Woeful Friar Hector rushes to the summons for last rites
-      - A towering thug bars the PCs' way: "Find another route"
+      - "A towering thug bars the PCs' way: 'Find another route'"
       - A rangy crone sells "love potions" (polymorph to newt)
       - A snapped clothesline falls, entangling a character
       - A body in an alley bears a note- "Pay in coin, or blood. -B.B.
@@ -54,4 +54,4 @@ tables:
       - 1d6 thugs throw bricks through a shop's windows
       - The Wandering Merchant pays 5 gp per giant dung beetle
       - Roll two encounters and combine the results (reroll 98-99)
-      - A soiled parchment flutters to the ground; it's a spell scroll
+      - ["A soiled parchment flutters to the ground; it's a spell scroll", 0.5]

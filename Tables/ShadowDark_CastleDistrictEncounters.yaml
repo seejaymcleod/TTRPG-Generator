@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Castle Districts Encounters
 tables:
   - results:
-      - "{2d20} guards surround the group, accusing a PC of murder"
+      - ["{2d20} guards surround the group, accusing a PC of murder", 0.5]
       - Piercing horns sound an alarm inside the royal palace
       - Prisoners on a chain revolt in unison against their escort
       - A drunk noble swings an axe, yelling, "Off with 'er head!"
@@ -54,4 +54,4 @@ tables:
       - The Overlord rides by with a heavily armed honor guard
       - The Wandering Merchant scalps premium coliseum seats
       - Roll two encounters and combine the results (reroll 98-99)
-      - A visiting Duchess invites the PCs to attend a royal ball
+      - ["A visiting Duchess invites the PCs to attend a royal ball", 0.5]

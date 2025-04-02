@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Ocean Encounters
 tables:
   - results:
-      - A massive whirlpool opens up, threatening all ships within
+      - ["A massive whirlpool opens up, threatening all ships within", 0.5]
       - An angry storm giant asks why the PCs are in her realm
       - A hydra and a kraken churn the seas in their epic struggle
       - Lyrellos, a merfolk prince, is displeased with the PCs' garb
@@ -54,4 +54,4 @@ tables:
       - 3d10 harpies flit around the mouth of a steaming volcano
       - The Wandering Merchant rows by in a bobbing dinghy
       - Roll two encounters and combine the results (reroll 98-99)
-      - A seagull flying overhead drops a random magic item
+      - ["A seagull flying overhead drops a random magic item", 0.5]

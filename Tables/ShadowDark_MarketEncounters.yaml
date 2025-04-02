@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Market Encounters
 tables:
   - results:
-      - Six chaos cultists throw burlap bags over the PCs' heads
+      - ["Six chaos cultists throw burlap bags over the PCs' heads", 0.5]
       - A drunk, wobbly knife-thrower hurls a blade toward a PC
       - A runaway cart of lettuce heads crashes down the street
       - A passing noble stumbles and blames it on a character
@@ -24,7 +24,7 @@ tables:
       - A famous sword master (gladiator) drinks alone in a tent
       - 2d4 bored caravan guards try to provoke trouble
       - A spooked horse rears up, threatening to throw its rider
-      - A dart with a note lands at a PC's feet: "meet at Liona's"
+      - "A dart with a note lands at a PC's feet: 'meet at Liona's"
       - Two shouting merchants brandish daggers at each other
       - A tattoo artist offers a character a tattoo at half price (5 gp)
       - A merchant under duress serves as bait for a cultist's trap
@@ -54,51 +54,4 @@ tables:
       - An antique mirror shatters, releasing the wraith inside it
       - The Wandering Merchant has a random scroll for sale
       - Roll two encounters and combine the results (reroll 98-99)
-      - The disguised Overlord pushes a diamond into a PC's hand
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      - ["The disguised Overlord pushes a diamond into a PC's hand", 0.5]

@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: High Disctrict Encounters
 tables:
   - results:
-      - The Overlord levies a 500 gp "filth tax" on the PCs
+      - ["The Overlord levies a 500 gp \"filth tax\" on the PCs", 0.5]
       - The Duke's son challenges a PC to a duel to the death
       - The Overlord's Assassins leap out and demand explanation
       - Crawlers with the Mercenaries' Guild confront the PCs
@@ -54,4 +54,4 @@ tables:
       - A real vampire stalks unnoticed among masqueraders
       - The Wandering Merchant is selling loaded dice (5 gp)
       - Roll two encounters and combine the results (reroll 98-99)
-      - The Overlord is dining and invites the PCs to the meal
+      - ["The Overlord is dining and invites the PCs to the meal", 0.5]

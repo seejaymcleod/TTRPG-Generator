@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Jungle Encounters
 tables:
   - results:
-      - Mossy, lifelike statues crop up; a medusa resides nearby
+      - ["Mossy, lifelike statues crop up; a medusa resides nearby", 0.5]
       - A T-Rex thunders over the ground, looking for fresh meat
       - 3d6 hissing viperians encircle 2d4 red-scaled lizardfolk
       - A kobold sorcerer riding a leashed crocodile demands gold
@@ -54,4 +54,4 @@ tables:
       - A sphinx draped in jade and gold lounges on a stone dais
       - The Wandering Merchant flees a group of 2d4 beastmen
       - Roll two encounters and combine the results (reroll 98-99)
-      - A radiant couatl snakes through the air; it offers a blessing
+      - ["A radiant couatl snakes through the air; it offers a blessing", 0.5]

@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: River And Coast Encounters
 tables:
   - results:
-      - A tsunami overflows the shore, raising it 10' for 2d4 rounds
+      - ["A tsunami overflows the shore, raising it 10' for 2d4 rounds", 0.5]
       - A clutch of 1d4 basilisks sun themselves on flat rocks
       - 3d6 peasants fearfully inspect a dying giant snake
       - Mirell, a pearl and gold prospector, yells at "spot poachers"
@@ -54,4 +54,4 @@ tables:
       - 3d8 giant frogs croak one-word insults in Common
       - The Wandering Merchant walks in the shallows on stilts
       - Roll two encounters and combine the results (reroll 98-99)
-      - A half-buried treasure chest contains a magic item
+      - ["A half-buried treasure chest contains a magic item", 0.5]

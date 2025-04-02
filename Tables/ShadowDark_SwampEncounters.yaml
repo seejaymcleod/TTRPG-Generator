@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Swamp Encounters
 tables:
   - results:
-      - A 3x mutated otyugh (see pg. 191) rises out of the muck
+      - ["A 3x mutated otyugh (see pg. 191) rises out of the muck", 0.5]
       - Thorash the swamp dragon (C) lurks in shallow water
       - 2d4 giant frogs leap and snap at a cloud of 3d6 stingbats
       - Grizella Mosspeat, a night hag, poles along on a rotting raft
@@ -54,4 +54,4 @@ tables:
       - 1d4 shambling mounds trudge through the slimy muck
       - The Wandering Merchant rides on an albino crocodile
       - Roll two encounters and combine the results (reroll 98-99)
-      - The Swamp Shambler (gorilla) offers a random magic item 
+      - ["The Swamp Shambler (gorilla) offers a random magic item", 0.5]

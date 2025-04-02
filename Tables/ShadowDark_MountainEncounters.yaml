@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Mountain Encounters
 tables:
   - results:
-      - A howling blizzard or thunderstorm bars travel for 1d4 days
+      - ["A howling blizzard or thunderstorm bars travel for 1d4 days", 0.5]
       - 2d20 goblins led by a goat giant swarm over the cliffs
       - An airborne manticore and wyvern ferociously clash
       - Braaqul, hobgoblin spy, gathers intelligence on the PCs
@@ -54,4 +54,4 @@ tables:
       - A two-headed ogre argues with itself while cooking stew
       - The Wandering Merchant looks for rare newts under rocks
       - Roll two encounters and combine the results (reroll 98-99)
-      - Rathgamnon the Sphinx flies in to bestow a magic item
+      - ["Rathgamnon the Sphinx flies in to bestow a magic item", 0.5]

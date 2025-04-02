@@ -5,7 +5,7 @@ type: Adventure, Places
 tablename: Temple District Encounters
 tables:
   - results:
-      - 2d6 chaos cultists begin a live sacrifice; it's a beloved NPC
+      - ["2d6 chaos cultists begin a live sacrifice; it's a beloved NPC", 0.5]
       - A routine exorcism expels a very non-routine erinyes
       - An old man dumps a stream of gems into an alms box
       - A stampede of religious pilgrims rushes down the street
@@ -54,4 +54,4 @@ tables:
       - The Overlord enters a temple surrounded by 3d6 knights
       - The Wandering Merchant sells lookalike priest's vestments
       - Roll two encounters and combine the results (reroll 98-99)
-      - A high priest selects a PC to receive a rare blessing
+      - ["A high priest selects a PC to receive a rare blessing", 0.5]
