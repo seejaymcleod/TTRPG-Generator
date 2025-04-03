@@ -1,6 +1,6 @@
 # Comprehensive test table for TTRPG Generator features
-filename: Test_AllFeatures.yaml
-game: TestSystem
+filename: ATest_AllFeatures.yaml
+game: ATestSystem
 setting: TestSetting
 type: [Test, Comprehensive] # Test array type
 tablename: AllFeaturesTest
