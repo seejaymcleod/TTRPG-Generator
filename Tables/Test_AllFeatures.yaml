@@ -1,0 +1,274 @@
+# Comprehensive test table for TTRPG Generator features
+filename: Test_AllFeatures.yaml
+game: TestSystem
+setting: TestSetting
+type: [Test, Comprehensive] # Test array type
+tablename: AllFeaturesTest
+description: # Test array description
+  - This table aims to test every parsing and display feature.
+  - It includes various structures, references, and directives.
+titleDescription: This is a special description shown above the main table content.
+
+# Define an input field for testing context
+inputField: [TestInput, number] # [name, type]
+
+tables:
+  # --- Basic Results ---
+  - tablename: SimpleStringResult
+    description: Tests a simple array of strings.
+    results:
+      - Result A
+      - Result B
+      - Result C
+
+  - tablename: SimpleNumberResult
+    description: Tests a simple array of numbers.
+    results:
+      - 100
+      - 200
+      - 300
+
+  - tablename: WeightedResults
+    description: Tests weighted results using [value, weight] format.
+    results:
+      - [Weighted A, 5] # Higher weight
+      - [Weighted B, 1] # Lower weight
+      - Weighted C # Default weight 1
+
+  - tablename: MixedResults
+    description: Tests mixing strings, numbers, and weighted entries.
+    results:
+      - Mixed String 1
+      - 999
+      - [Mixed Weighted, 3]
+      - Mixed String 2
+
+  # --- Array Formats ---
+  - tablename: CareerStyleResult
+    description: Tests the ["Career", "Items"] format.
+    results:
+      - ["Warrior", "Sword, Shield"]
+      - ["Mage", "Staff, Spellbook"]
+      - ["Rogue", "Dagger, Lockpicks"]
+
+  - tablename: MultiElementArrayResult
+    description: Tests arrays with 3+ elements.
+    results:
+      - ["Element1", "Element2", "Element3"]
+      - ["Alpha", "Beta", "Gamma", "Delta"]
+
+  - tablename: ArrayWithDiceAndRef
+    description: Tests array containing dice and reference table lookup.
+    results:
+      - "[{3d6}, {useReferenceTable{TestReferenceTable}{thisResult[0]}}]" # Should display score and lookup value
+
+  # --- Dice Notation ---
+  - tablename: BasicDice
+    description: Tests basic dice notation {XdY}.
+    results:
+      - "Roll 1d6: {1d6}"
+      - "Roll 2d10: {2d10}"
+
+  - tablename: DiceWithModifier
+    description: Tests dice notation with modifiers {XdY+Z}.
+    results:
+      - "Roll 3d8+5: {3d8+5}"
+      - "Roll 1d4-1: {1d4-1}"
+
+  # --- Mathematical Expressions ---
+  - tablename: SimpleMath
+    description: Tests simple math expressions.
+    results:
+      - "Calculation 10 + 5: {10 + 5}"
+      - "Calculation 100 / 4: {100 / 4}"
+
+  - tablename: MathWithDice
+    description: Tests math expressions involving dice rolls.
+    results:
+      - "Calculation {1d6} * 10: {{1d6} * 10}" # Note the double braces for evaluation
+      - "Calculation 50 + {2d10}: {50 + {2d10}}"
+
+  - tablename: MathWithContextVar
+    description: Tests math using context variables (requires TestInput).
+    results:
+      - "Input + 10: {TestInput + 10}"
+      - "Input * 2: {TestInput * 2}"
+      - "Dice + Input: {{1d10} + TestInput}" # Test dice and input var
+
+  - tablename: MathErrorHandling
+    description: Tests how math errors are handled (e.g., division by zero).
+    results:
+      - "Division by zero: {100 / 0}" # Should likely result in 0 or error string
+      - "Undefined variable: {NonExistentVar + 5}" # Should result in 0 or error string
+
+  # --- Table References ---
+  - tablename: InternalRef
+    description: Tests referencing another subtable within this file.
+    results:
+      - "Reference SimpleStringResult: {SimpleStringResult}"
+
+  - tablename: CrossFileRefTable
+    description: Tests referencing a table in another file.
+    results:
+      - "Reference ShadowDark Ancestry: {ShadowDark_NPC|Ancestry}"
+
+  - tablename: CrossFileRefSubtable
+    description: Tests referencing a specific subtable in another file.
+    results:
+      - "Reference ShadowDark Dwarf Name: {ShadowDark_NPC|Dwarf}" # Assumes 'Dwarf' is a subtable in ShadowDark_NPC
+
+  - tablename: ArrayIndexRef
+    description: Tests accessing an element from an array result via reference.
+    results:
+      - "Career Name: {CareerStyleResult[0]}" # Get first element (Career)
+      - "Career Items: {CareerStyleResult[1]}" # Get second element (Items)
+
+  - tablename: MissingTableRef
+    description: Tests referencing a non-existent table.
+    results:
+      - "This should fail: {NonExistentTable}" # Expecting "[NonExistentTable not found]"
+
+  # --- Reference Tables ---
+  - tablename: RefTableLookupExact
+    description: Tests exact key lookup in a reference table.
+    results:
+      - "Lookup 5: {useReferenceTable{TestReferenceTable}{5}}" # Should be 'Value C'
+
+  - tablename: RefTableLookupRange
+    description: Tests range key lookup (e.g., "10-12").
+    results:
+      - "Lookup 11: {useReferenceTable{TestReferenceTable}{11}}" # Should be 'Value D'
+
+  - tablename: RefTableLookupInequality
+    description: Tests inequality keys (e.g., "<=N", "N<").
+    results:
+      - "Lookup 2: {useReferenceTable{TestReferenceTable}{2}}" # Should be 'Value A' (<=3)
+      - "Lookup 15: {useReferenceTable{TestReferenceTable}{15}}" # Should be 'Value E' (13<=)
+
+  - tablename: RefTableLookupWithDice
+    description: Tests using a dice roll result for lookup.
+    results:
+      - "Roll {1d20} -> {useReferenceTable{TestReferenceTable}{thisResult}}" # Uses implicit thisResult
+
+  - tablename: RefTableLookupWithArrayIndex
+    description: Tests using an array index from a previous result for lookup.
+    results:
+      - "Score: {ArrayWithDiceAndRef[0]}, Modifier: {useReferenceTable{AbilityModifiers}{thisResult[0]}}" # Uses thisResult[0] explicitly
+
+  # --- Custom Display ---
+  - tablename: CustomDisplayConcat
+    description: Tests simple concatenation using customDisplay.
+    customDisplay: "[{SimpleStringResult} and {SimpleNumberResult}]" # Note: Needs subtables defined below
+
+  - tablename: CustomDisplayProbability
+    description: Tests probabilistic inclusion in customDisplay.
+    customDisplay: "[AlwaysPresent{SometimesPresent, 0.5}{RarelyPresent, 0.1}]"
+    subTables: # Define subtables used in the customDisplay
+      - tablename: AlwaysPresent
+        results: ["(Always)"]
+      - tablename: SometimesPresent
+        results: ["(Sometimes)"]
+      - tablename: RarelyPresent
+        results: ["(Rarely)"]
+
+  - tablename: CustomDisplaySelectedResult
+    description: Tests dynamic subtable lookup using {selectedResult, Key}.
+    customDisplay: "[{selectedResult, DynamicKey}]" # Will look up based on DynamicKey result
+    subTables:
+      - tablename: DynamicKey # The key provider
+        results: ["OptionX", "OptionY"]
+      - tablename: OptionX # Subtable matching a key
+        results: ["Result for X"]
+      - tablename: OptionY # Subtable matching another key
+        results: ["Result for Y"]
+
+  - tablename: CustomDisplayPickOne
+    description: Tests the {pickOneFromArrays} directive.
+    customDisplay: "{pickOneFromArrays}"
+    results:
+      - "Option 1 with choices [A, B, C]"
+      - "Option 2 with choices [X, Y, Z]"
+      - "Option 3 with weighted choices [[Fast, 3], [Slow, 1]]"
+
+  # --- Directives ---
+  - tablename: MultiRollDirective
+    description: Tests the multi-roll directive. # Simplified description
+    results:
+      - ["Base Result", { roll: 2 }] # Get Base Result + 2 more rolls from this table
+      - "Another Base"
+      - "Yet Another Base"
+
+  - tablename: MultiRollExcludeDirective
+    description: Tests the multi-roll exclude directive. # Simplified description
+    results:
+      - ["Roll 1, exclude self", { roll: 1, exclude: true }]
+      - "Possible Result A"
+      - "Possible Result B"
+
+  - tablename: SeparateRowsDirective
+    description: Tests the separateRows directive. # Simplified description
+    results:
+      - { separateRows: ["{SimpleStringResult}", "{SimpleNumberResult}", "Static Text"] }
+
+  # --- Inline Arrays ---
+  - tablename: InlineArrays
+    description: Tests inline array syntax like [A, B, C].
+    results:
+      - "Choose one: [Red, Green, Blue]"
+      - "Combine: [Small, Medium, Large] [Wooden, Metal] Box"
+
+  # --- Descriptions ---
+  - tablename: TableWithDescription
+    description: This subtable has a description.
+    results:
+      - "Description test result."
+
+  # --- Recursion Test ---
+  - tablename: RecursionA
+    description: Tests recursion limits. A calls B.
+    results:
+      - "A calls B: {RecursionB}"
+
+  - tablename: RecursionB
+    description: B calls A. Should hit recursion limit.
+    results:
+      - "B calls A: {RecursionA}" # Expecting "[Recursive reference...]" or "[Max depth...]"
+
+# --- Reference Table Definition ---
+referenceTables:
+  - tablename: TestReferenceTable
+    description: A reference table for testing lookups.
+    entries:
+      - key: "<=3" # Less than or equal to 3
+        value: "Value A"
+      - key: 4 # Exact match
+        value: "Value B"
+      - key: 5 # Exact match
+        value: "Value C"
+      - key: "6-12" # Range match
+        value: "Value D"
+      - key: "13<=" # Greater than or equal to 13
+        value: "Value E"
+
+  - tablename: AbilityModifiers # Copied from CharacterGenerator for self-containment
+    entries:
+      - key: "2-3"
+        value: "-4"
+      - key: "4-5"
+        value: "-3"
+      - key: "6-7"
+        value: "-2"
+      - key: "8-9"
+        value: "-1"
+      - key: "10-11"
+        value: "+0"
+      - key: "12-13"
+        value: "+1"
+      - key: "14-15"
+        value: "+2"
+      - key: "16-17"
+        value: "+3"
+      - key: "18-19"
+        value: "+4"
+      - key: "20"
+        value: "+5"

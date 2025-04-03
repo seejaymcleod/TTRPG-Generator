@@ -10,8 +10,7 @@
         "--inspect"
       ],
       "restart": true,
-      "console": "integratedTerminal",
-      "runtimeExecutable": "C:\\workspace\\NodeJS\\node.exe"
+      "console": "integratedTerminal"
     }
   ]
 }
