@@ -9,7 +9,7 @@ const { TableLoader, Renderer } = require('./dist/src/engine');
 const app = express();
 const PORT = process.env.PORT || 1337;
 
-app.use(express.static('.'));
+app.use(express.static(__dirname));
 app.use(express.json());
 
 // Add a route to serve the extractContext function directly (Legacy Compat)
@@ -38,13 +38,19 @@ app.get('/js/extractContext.js', (req, res) => {
   `);
 });
 
-// Initialize Engine
+// Initialize and load tables using the new Engine Loader
 const loader = new TableLoader();
-const tablesDir = path.join(__dirname, 'Tables');
+const tablesJsonPath = path.join(__dirname, 'dist', 'tables.json');
+console.log(`Loading tables from ${tablesJsonPath}...`);
 
-console.log(`Loading tables from ${tablesDir}...`);
-loader.loadFromDirectory(tablesDir);
-console.log(`Loaded ${loader.getAllTables().length} tables.`);
+// Ensure build exists
+if (!fs.existsSync(tablesJsonPath)) {
+  console.error("❌ dist/tables.json not found! Run 'npm run build:tables' first.");
+  process.exit(1);
+}
+
+loader.loadFromJSON(tablesJsonPath);
+console.log(`Engine loaded with ${loader.getAllTables().length} tables.`);
 
 // Helper to get renderer instance (fresh seed per request? Or per generation?)
 // For now, new renderer per request to ensure fresh RNG if no seed provided, 

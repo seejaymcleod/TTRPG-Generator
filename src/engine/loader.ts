@@ -10,51 +10,70 @@ export class TableLoader {
     private tablesByName: Map<string, Table> = new Map();
     private allTables: Table[] = [];
 
-    loadFromDirectory(dir: string): void {
-        const files = this.getFilesRecursively(dir);
-        for (const file of files) {
-            if (file.endsWith('.yaml') || file.endsWith('.yml')) {
-                try {
-                    const content = fs.readFileSync(file, 'utf8');
-                    let doc = yaml.load(content);
+    /**
+     * Loads tables from a pre-compiled JSON file.
+     * @param jsonPath Absolute path to the tables.json file.
+     */
+    loadFromJSON(jsonPath: string): void {
+        console.log(`Loading tables from JSON: ${jsonPath}`);
+        try {
+            const content = fs.readFileSync(jsonPath, 'utf8');
+            const tables = JSON.parse(content) as Table[];
+            if (Array.isArray(tables)) {
+                tables.forEach(t => this.processTable(t));
+                console.log(`Loaded ${tables.length} tables from JSON.`);
+            } else {
+                console.error("Invalid tables.json format: expected array.");
+            }
+        } catch (e: any) {
+            console.error(`Failed to load tables from JSON: ${e.message}`);
+        }
+    }
 
-                    if (doc) {
-                        const filename = path.basename(file);
+    /**
+     * Helper to process valid table objects into the index.
+     */
+    private processTable(t: Table) {
+        if (!t) return;
 
-                        // Handle array of tables (e.g. ATest_AllFeatures.yaml)
-                        if (Array.isArray(doc)) {
-                            // Index the file by the first table (best effort)
-                            if (doc.length > 0 && typeof doc[0] === 'object') {
-                                this.tablesByFilename.set(filename, doc[0]);
-                            }
-
-                            doc.forEach((t: any) => {
-                                if (t && typeof t === 'object') {
-                                    t.filename = filename;
-                                    this.allTables.push(t);
-                                    if (t.tablename) {
-                                        this.tablesByName.set(t.tablename, t);
-                                    }
-                                }
-                            });
-                        }
-                        // Handle single table
-                        else if (typeof doc === 'object') {
-                            const table = doc as Table;
-                            table.filename = filename;
-                            this.tablesByFilename.set(filename, table);
-                            this.allTables.push(table);
-
-                            if (table.tablename) {
-                                this.tablesByName.set(table.tablename, table);
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.error(`Failed to load ${file}:`, e);
-                }
+        // Ensure filename is indexed
+        if (t.filename) {
+            // Index root table by filename (e.g. for cross-file reference)
+            // Note: If multiple root tables share filename (rare/legacy), first wins or array?
+            // The compiler forces 1:1 if root is object. If root is array, multiple.
+            // But usually we just index by filename for the "Main" table of that file.
+            if (!this.tablesByFilename.has(t.filename)) {
+                this.tablesByFilename.set(t.filename, t);
+                // Also index without extension
+                const baseName = path.basename(t.filename, path.extname(t.filename));
+                this.tablesByFilename.set(baseName, t);
             }
         }
+
+        this.allTables.push(t);
+        if (t.tablename) {
+            this.tablesByName.set(t.tablename, t);
+        }
+
+        // Recursively index subtables? 
+        // Logic in findTable handles recursion, but maybe we want to flatten index if they have unique names?
+        // Legacy loader didn't flatten index, reliance was on findTable to recurse.
+        // However, if we normalized names (Parent_SubTable_1), maybe beneficial?
+        // For now, keep legacy behavior: Only index ROOT tables by name in the global map?
+        // Wait, legacy `loadFromDirectory` indexed subTables only if they were "Root" objects in the file logic.
+        // My Compiler flattened the structure?? No, it preserved recursion.
+        // So `this.processTable` matches `loadFromDirectory` inner loop.
+    }
+
+    /**
+     * DEPRECATED: Use loadFromJSON instead.
+     */
+    loadFromDirectory(dir: string): void {
+        console.warn("loadFromDirectory is DEPRECATED. Please use loadFromJSON.");
+        // ... helper to forward to old logic or just fail?
+        // For now, let's leave it empty or implemented just in case.
+        // Actually, let's keep the files scanning for dev fallback if JSON missing?
+        // No, we want strict pipeline.
     }
 
     private getFilesRecursively(dir: string): string[] {

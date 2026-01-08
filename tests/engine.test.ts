@@ -1,7 +1,10 @@
 // tests/engine.test.ts
-import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { TableLoader, Renderer } from '../src/engine';
+import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 import path from 'path';
+import fs from 'fs';
+// import { TableLoader, Renderer } from '../src/engine/index';
+import { TableLoader } from '../src/engine/loader';
+import { Renderer } from '../src/engine/renderer';
 
 // Assumes we run from root
 const TABLES_DIR = path.join(__dirname, '../Tables');
@@ -12,7 +15,15 @@ describe('TTRPG Engine V2', () => {
 
     beforeAll(() => {
         loader = new TableLoader();
-        loader.loadFromDirectory(TABLES_DIR);
+        // loader.loadFromDirectory(path.join(process.cwd(), 'Tables'));
+        const jsonPath = path.join(process.cwd(), 'dist', 'tables.json');
+        if (!fs.existsSync(jsonPath)) {
+            throw new Error("dist/tables.json missing. Run 'npm run build:tables' before testing.");
+        }
+        loader.loadFromJSON(jsonPath);
+        // Renderer is now initialized here, but beforeEach will re-initialize it with a seed.
+        // This line is effectively overridden by beforeEach, but kept as per instruction.
+        renderer = new Renderer(loader);
     });
 
     beforeEach(() => {
