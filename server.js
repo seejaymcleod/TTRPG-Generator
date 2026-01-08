@@ -1648,15 +1648,40 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
 
       // Process useReferenceTable calls FIRST
       const useRefRegex = /\{useReferenceTable\{([^}]+)\}\{([^}]+)\}\}/g;
-      processedInput = processedInput.replace(useRefRegex, (match, tableName, lookupValue) => {
-        if (DEBUG) console.log(`Detected useReferenceTable function call: Table=${tableName}, Value=${lookupValue}`);
-        // Resolve lookupValue if it's a reference like {thisResult[0]} or {SomeTable}
-        // Pass a copy of recursion tracker to avoid interference
-        const tempTracker = recursionTracker ? { ...recursionTracker, tables: new Set(recursionTracker.tables) } : null;
-        if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: useRef Lookup Value "${lookupValue}" | Tracker: TEMP COPY`); // Use processingId
-        const resolvedLookupValue = processTableReferences(lookupValue, allTables, context, tempTracker, `useRefLookup_${lookupValue}`); // Uses tempTracker intentionally and unique ID
-        if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: useRef Lookup Value "${lookupValue}" | Returned: ${JSON.stringify(resolvedLookupValue)}`); // Use processingId
-        return lookupInReferenceTable(tableName, resolvedLookupValue, allTables, context);
+      // Use a function with replace to handle nested processing correctly
+      processedInput = processedInput.replace(useRefRegex, (match, tableName, lookupValueExpr) => {
+          if (DEBUG) console.log(`Detected useReferenceTable function call: Table=${tableName}, ValueExpr=${lookupValueExpr}`);
+
+          // CRITICAL FIX: Resolve the lookupValue expression *first* using the current context and tracker
+          // We need to handle cases like {thisResult[0]} or even just {thisResult} or a direct number/string
+          let resolvedLookupValue;
+          // Check if lookupValueExpr itself needs resolving (contains {} or [])
+          // Ensure the expression is wrapped in braces if it's not already, for processTableReferences
+          const exprToProcess = (lookupValueExpr.includes('{') || lookupValueExpr.includes('['))
+                                ? (lookupValueExpr.startsWith('{') && lookupValueExpr.endsWith('}') ? lookupValueExpr : `{${lookupValueExpr}}`)
+                                : lookupValueExpr; // If no braces/brackets, treat as direct value or simple variable name
+
+          if (exprToProcess.startsWith('{') && exprToProcess.endsWith('}')) {
+              // Pass a copy of recursion tracker to avoid interference during lookup value resolution
+              const tempTracker = recursionTracker ? { ...recursionTracker, tables: new Set(recursionTracker.tables) } : null;
+              const lookupProcessingId = `useRefLookup_${tableName}_${lookupValueExpr.replace(/[^a-zA-Z0-9]/g, '_')}`; // Create a unique ID
+              if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: useRef Lookup Value "${lookupValueExpr}" | Target ID: ${lookupProcessingId} | Tracker: TEMP COPY`);
+              resolvedLookupValue = processTableReferences(exprToProcess, allTables, context, tempTracker, lookupProcessingId);
+              if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: useRef Lookup Value "${lookupValueExpr}" | Returned: ${JSON.stringify(resolvedLookupValue)}`);
+          } else {
+              // It's a direct value (number or string) or simple variable name not needing {}
+              resolvedLookupValue = lookupValueExpr;
+               // Attempt to resolve simple variable name from context if it wasn't wrapped in {}
+               if (context && resolvedLookupValue in context) {
+                   resolvedLookupValue = context[resolvedLookupValue];
+                   if (DEBUG) console.log(`   [Direct Value Resolved] | ID: ${processingId} | Resolved simple var "${lookupValueExpr}" to: ${resolvedLookupValue}`);
+               } else {
+                   if (DEBUG) console.log(`   [Direct Value] | ID: ${processingId} | useRef Lookup Value is direct or unknown var: ${resolvedLookupValue}`);
+               }
+          }
+
+          // Now perform the lookup with the *resolved* value
+          return lookupInReferenceTable(tableName, resolvedLookupValue, allTables, context);
       });
 
       // --- START: Manual Iteration for Table References ---
@@ -1680,58 +1705,56 @@ function processTableReferences(input, allTables, context = {}, recursionTracker
         let replacementValue = fullMatchStr; // Default to original match if not resolved
         let resolvedFromContext = false;
 
-        // Skip if it's just a number (likely from dice roll replacement)
+        // Skip if it's just a number (likely from dice roll or math replacement earlier)
         if (!isNaN(baseName)) {
-          replacementValue = baseName;
-          resolvedFromContext = true; // Treat as resolved
+            replacementValue = baseName;
+            resolvedFromContext = true; // Treat as resolved
         } else {
-          // --- START: Revised Context Variable Handling ---
-          // 1. Check for indexed access on a context variable (e.g., {CareerStyleResult[1]})
-          if (arrayIndexStr !== undefined && context && baseName in context) {
-            const baseVariable = context[baseName];
-            const index = parseInt(arrayIndexStr, 10);
-            if (DEBUG) console.log(`Attempting indexed access on context variable "${baseName}" with index ${index}. Base value:`, baseVariable);
+            // --- START: Revised Context Variable Handling ---
+            // 1. Check for context variable FIRST (simple or indexed)
+            if (context && baseName in context) {
+                const baseVariable = context[baseName];
+                if (arrayIndexStr !== undefined) { // Indexed access: {Var[Index]}
+                    const index = parseInt(arrayIndexStr, 10);
+                    if (DEBUG) console.log(`Attempting indexed access on context variable "${baseName}" with index ${index}. Base value:`, baseVariable);
 
-            if (Array.isArray(baseVariable) && index >= 0 && index < baseVariable.length) {
-              const valueAtIndex = baseVariable[index];
-              if (DEBUG) console.log(`Found indexed context variable "${baseName}[${index}]" with value: ${valueAtIndex}`);
-              if (context) context.thisResult = valueAtIndex; // Store the indexed value in thisResult
-              // IMPORTANT: Recursively process the value from context if it contains references
-              if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: Indexed Context Var "${baseName}[${index}]" | Input: ${JSON.stringify(valueAtIndex)} | Tracker: CURRENT`); // Use processingId
-              replacementValue = processTableReferences(valueAtIndex, allTables, context, recursionTracker, `${processingId}_ctxVarIdx[${index}]`); // Pass tracker and unique ID
-              if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: Indexed Context Var "${baseName}[${index}]" | Returned: ${JSON.stringify(replacementValue)}`); // Use processingId
-              resolvedFromContext = true;
-            } else if (index === 0 && !Array.isArray(baseVariable)) {
-               if (DEBUG) console.log(`Accessing index 0 of scalar context variable "${baseName}" with value: ${baseVariable}`);
-               if (context) context.thisResult = baseVariable;
-               // IMPORTANT: Recursively process the value from context if it contains references
-               if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: Scalar Context Var "${baseName}" | Input: ${JSON.stringify(baseVariable)} | Tracker: CURRENT`); // Use processingId
-               replacementValue = processTableReferences(baseVariable, allTables, context, recursionTracker, `${processingId}_ctxVarScalar`); // Pass tracker and unique ID
-               if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: Scalar Context Var "${baseName}" | Returned: ${JSON.stringify(replacementValue)}`); // Use processingId
-               resolvedFromContext = true;
-            } else {
-              console.error(`Invalid index ${index} for context variable "${baseName}":`, baseVariable);
-              replacementValue = `[Invalid index ${index} for ${baseName}]`;
-              resolvedFromContext = true; // Mark as resolved (with an error) to skip table lookup
+                    if (Array.isArray(baseVariable) && index >= 0 && index < baseVariable.length) {
+                        const valueAtIndex = baseVariable[index];
+                        if (DEBUG) console.log(`Found indexed context variable "${baseName}[${index}]" with value: ${valueAtIndex}`);
+                        if (context) context.thisResult = valueAtIndex; // Store the indexed value
+                        const ctxVarId = `${processingId}_ctxVarIdx_${baseName}_${index}`;
+                        if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: Indexed Context Var "${baseName}[${index}]" | Input: ${JSON.stringify(valueAtIndex)} | Target ID: ${ctxVarId} | Tracker: CURRENT`);
+                        replacementValue = processTableReferences(valueAtIndex, allTables, context, recursionTracker, ctxVarId);
+                        if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: Indexed Context Var "${baseName}[${index}]" | Returned: ${JSON.stringify(replacementValue)}`);
+                        resolvedFromContext = true;
+                    } else if (index === 0 && !Array.isArray(baseVariable)) { // Allow index 0 on scalar
+                        if (DEBUG) console.log(`Accessing index 0 of scalar context variable "${baseName}" with value: ${baseVariable}`);
+                        if (context) context.thisResult = baseVariable;
+                        const ctxVarId = `${processingId}_ctxVarScalar_${baseName}`;
+                        if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: Scalar Context Var "${baseName}" | Input: ${JSON.stringify(baseVariable)} | Target ID: ${ctxVarId} | Tracker: CURRENT`);
+                        replacementValue = processTableReferences(baseVariable, allTables, context, recursionTracker, ctxVarId);
+                        if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: Scalar Context Var "${baseName}" | Returned: ${JSON.stringify(replacementValue)}`);
+                        resolvedFromContext = true;
+                    } else {
+                        console.error(`Invalid index ${index} for context variable "${baseName}":`, baseVariable);
+                        replacementValue = `[Invalid index ${index} for ${baseName}]`;
+                        resolvedFromContext = true;
+                    }
+                } else if (subtableName === undefined) { // Simple variable access: {Var} (only if no subtable specified)
+                    if (DEBUG) console.log(`Found simple context variable "${baseName}" with value: ${baseVariable}`);
+                    if (context) context.thisResult = baseVariable; // Store the value
+                    const ctxVarId = `${processingId}_ctxVarSimple_${baseName}`;
+                    if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: Simple Context Var "${baseName}" | Input: ${JSON.stringify(baseVariable)} | Target ID: ${ctxVarId} | Tracker: CURRENT`);
+                    replacementValue = processTableReferences(baseVariable, allTables, context, recursionTracker, ctxVarId);
+                    if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: Simple Context Var "${baseName}" | Returned: ${JSON.stringify(replacementValue)}`);
+                    resolvedFromContext = true;
+                }
             }
-          }
+            // --- END: Revised Context Variable Handling ---
 
-          // 2. Check for simple context variable access (e.g., {SimpleStringResult})
-          if (!resolvedFromContext && arrayIndexStr === undefined && subtableName === undefined && context && baseName in context) {
-            const simpleValue = context[baseName];
-            if (DEBUG) console.log(`Found simple context variable "${baseName}" with value: ${simpleValue}`);
-            if (context) context.thisResult = simpleValue; // Store the value in thisResult
-             // IMPORTANT: Recursively process the value from context if it contains references
-            if (DEBUG) console.log(`   [Recurse Call] | ID: ${processingId} | For: Simple Context Var "${baseName}" | Input: ${JSON.stringify(simpleValue)} | Tracker: CURRENT`); // Use processingId
-            replacementValue = processTableReferences(simpleValue, allTables, context, recursionTracker, `${processingId}_ctxVarSimple`); // Pass tracker and unique ID
-            if (DEBUG) console.log(`   [Recurse Return] | ID: ${processingId} | From: Simple Context Var "${baseName}" | Returned: ${JSON.stringify(replacementValue)}`); // Use processingId
-            resolvedFromContext = true;
-          }
-          // --- END: Revised Context Variable Handling ---
-
-          // 3. If not resolved from context, perform table lookup via recursive call
-          if (!resolvedFromContext) {
-            if (DEBUG) console.log(`Processing table reference: ${fullMatchStr} (Table: ${baseName}, Index: ${arrayIndexStr || 'none'}, Subtable: ${subtableName || 'none'})`);
+            // 2. If not resolved from context, perform table lookup via recursive call
+            if (!resolvedFromContext) {
+                if (DEBUG) console.log(`Processing table reference: ${fullMatchStr} (Table: ${baseName}, Index: ${arrayIndexStr || 'none'}, Subtable: ${subtableName || 'none'})`);
 
             const recursionId = subtableName ? `${baseName}|${subtableName}` : baseName;
 
@@ -2360,27 +2383,35 @@ function lookupInReferenceTable(tableName, lookupValue, allTables, context) { //
   }
 
 
-  // Find the reference table - first look in ShadowDark_CharacterGenerator.yaml
+  // Find the reference table
   let refTable = null;
+  let sourceFilename = null;
 
-  // Look for the table in ShadowDark_CharacterGenerator.yaml first
-  const charGenTable = allTables.find(t => t.filename === 'ShadowDark_CharacterGenerator.yaml');
-  if (charGenTable && charGenTable.referenceTables) {
-    refTable = charGenTable.referenceTables.find(rt => rt.tablename === tableName);
-    if (refTable && DEBUG) console.log(`Found reference table "${tableName}" in CharacterGenerator`);
+  // 1. Check within the current table's file first (if context provides it)
+  const currentRootTable = context._currentTable ? findRootTableFromContext(context._currentTable, allTables) : null;
+  if (currentRootTable && currentRootTable.referenceTables) {
+      refTable = currentRootTable.referenceTables.find(rt => rt.tablename === tableName);
+      if (refTable) {
+          sourceFilename = currentRootTable.filename;
+          if (DEBUG) console.log(`Found reference table "${tableName}" in current file: ${sourceFilename}`);
+      }
   }
 
-  // If not found, search all tables for a matching reference table
+  // 2. If not found, search all tables for a matching reference table
   if (!refTable) {
-    for (const table of allTables) {
-      if (table.referenceTables && Array.isArray(table.referenceTables)) {
-        refTable = table.referenceTables.find(rt => rt.tablename === tableName);
-        if (refTable) {
-          if (DEBUG) console.log(`Found reference table "${tableName}" in ${table.filename}`);
-          break;
-        }
+      for (const table of allTables) {
+          // Skip the current root table if we already checked it
+          if (table === currentRootTable) continue;
+
+          if (table.referenceTables && Array.isArray(table.referenceTables)) {
+              refTable = table.referenceTables.find(rt => rt.tablename === tableName);
+              if (refTable) {
+                  sourceFilename = table.filename;
+                  if (DEBUG) console.log(`Found reference table "${tableName}" in global search: ${sourceFilename}`);
+                  break;
+              }
+          }
       }
-    }
   }
 
   if (!refTable) {
@@ -2844,26 +2875,13 @@ function processRegularTokens(template, table, allTables, context, recursionTrac
     if (Math.random() > probability) {
       if (DEBUG) console.log(`Token "${subtableName}" skipped due to probability roll (${probability})`);
     } else {
-      // First try to find the token as an internal subtable
-      let subtable = findSubtableByName(table, subtableName);
+      // CRITICAL FIX: Prioritize searching within the current table's subtables
+      let subtable = findSubtableByName(table, subtableName); // Search within current table's hierarchy
 
-      // If not found within table, try looking for it as a sibling table within the same file
-      if (!subtable && table.filename) {
-        const rootTable = findRootTableFromFilename(table.filename, allTables);
-        if (rootTable) {
-          const tables = getPropertyCaseInsensitive(rootTable, 'tables');
-          if (tables && Array.isArray(tables)) {
-            subtable = tables.find(t =>
-              (t.tablename && t.tablename.toLowerCase() === subtableName.toLowerCase()) ||
-              (t.name && t.name.toLowerCase() === subtableName.toLowerCase())
-            );
-          }
-        }
-      }
-
-      // If still not found, try looking through all tables
+      // If not found internally, then search globally across all tables.
       if (!subtable) {
-        subtable = findTableByName(subtableName, table, allTables);
+          if (DEBUG) console.log(`Subtable "${subtableName}" not found in current table "${table.tablename || table.name}", searching globally.`);
+          subtable = findTableByName(subtableName, null, allTables); // Pass null for currentTable to force global search
       }
 
       if (subtable) {
