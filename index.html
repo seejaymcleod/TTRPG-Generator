@@ -22,7 +22,7 @@
     <input type="text" id="searchInput" placeholder="Search for tables..." oninput="performSearch()">
   </div>
 
-  <!-- REPLACE the filter section with our new button-based UI in horizontal layout -->
+  <!-- REPLACE the filter section with our new button-based UI in vertical layout -->
   <div id="filtersContainer">
     <div class="filter-container">
       <div class="filter-header">
@@ -62,8 +62,7 @@
 
     <button id="resetButton" onclick="resetFilters()">Reset</button>
 
-    <!-- Single expand button for the entire filter bar -->
-    <button id="filterExpandBtn" onclick="toggleAllFilters()" aria-label="Show more filters">▼</button>
+    <!-- Single expand button for the entire filter bar REMOVED -->
   </div>
 
   <div id="contentWrapper">
@@ -204,6 +203,7 @@
 
     // New function to populate filter buttons
     function populateFilterButtons(tables) {
+      console.log('Populating filter buttons with', tables.length, 'tables');
       const gameSet = new Set();
       const typeSet = new Set();
       const settingSet = new Set();
@@ -223,6 +223,8 @@
         if (table.setting) settingSet.add(table.setting);
       });
 
+      console.log(`Found ${gameSet.size} Games, ${typeSet.size} Types, ${settingSet.size} Settings`);
+
       createFilterButtons('gameFilter', Array.from(gameSet));
       createFilterButtons('typeFilter', Array.from(typeSet));
       createFilterButtons('settingFilter', Array.from(settingSet));
@@ -231,7 +233,23 @@
     // Helper function to create filter buttons
     function createFilterButtons(filterId, options) {
       const filterContainer = document.getElementById(filterId);
+      if (!filterContainer) {
+        console.error(`Filter container not found: ${filterId}`);
+        return;
+      }
+
+      console.log(`Creating ${options.length} buttons for ${filterId}`);
       filterContainer.innerHTML = '';
+
+      if (options.length === 0) {
+        const noOptionsMsg = document.createElement('span');
+        noOptionsMsg.textContent = 'None available';
+        noOptionsMsg.style.color = 'var(--text-muted)';
+        noOptionsMsg.style.fontSize = '0.85em';
+        noOptionsMsg.style.fontStyle = 'italic';
+        filterContainer.appendChild(noOptionsMsg);
+        return;
+      }
 
       options.sort().forEach(option => {
         const button = document.createElement('button');
@@ -244,10 +262,7 @@
         filterContainer.appendChild(button);
       });
 
-      // Check if the container has overflow and add indicator class
-      setTimeout(() => {
-        checkFilterOverflow(filterId);
-      }, 0);
+      // No longer need overflow check for grid layout
     }
 
     // New function to check if filter container has significant overflow content
