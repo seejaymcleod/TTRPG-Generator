@@ -100,8 +100,11 @@ export class ExpressionEvaluator {
                     case '-': evalStack.push(a - b); break;
                     case '*': evalStack.push(a * b); break;
                     case '/':
-                        if (b === 0) throw new Error("Division by zero");
-                        evalStack.push(a / b);
+                        if (b === 0) {
+                            evalStack.push(0); // Safely handle division by zero
+                        } else {
+                            evalStack.push(a / b);
+                        }
                         break;
                 }
             }
