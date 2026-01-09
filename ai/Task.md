@@ -3,9 +3,10 @@ ai/00_SYSTEM_CONTRACT.md
 ai/REPO_MAP.md
 ai/STATE.md
 
-PLANNING TASK ONLY: 
-1) Reset button should also unselect Show Favorites button.
-2) Show Favorites button is a different height than reset for some reson.
+TASK: 
+1) Implement email addresses to account form
+2) add email password recovery system
+3) add reset password functionality 
 
 CONTEXT:
 <only the relevant code snippets or diff>

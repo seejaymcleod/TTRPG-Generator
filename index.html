@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTRPG Generator - Version 129</title>
+  <title>TTRPG Generator - Version 130</title>
   <!-- Add extractContext polyfill script first - IMPORTANT! -->
   <script src="/js/extractContext.js"></script>
   <!-- REMOVE Choices.js dependency since we're using buttons instead -->
@@ -162,7 +162,7 @@
 
 <body>
   <div id="titleContainer">
-    <h1>TTRPG Generator - Version 129</h1>
+    <h1>TTRPG Generator - Version 130</h1>
     <div id="userSection" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
       <span id="userDisplay"></span>
       <button id="loginBtn" class="auth-btn" onclick="openAuthModal('login')">Login</button>
@@ -180,12 +180,50 @@
       <div id="authError" style="color: red; margin-bottom: 10px; display: none;"></div>
       <form id="authForm" class="auth-form" onsubmit="handleAuth(event)">
         <input type="text" id="username" placeholder="Username" required autocomplete="username">
+        <input type="email" id="email" placeholder="Email" style="display:none;" autocomplete="email">
         <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
         <button type="submit" id="authSubmitBtn">Login</button>
       </form>
       <div class="auth-switch">
         <span id="authSwitchText">Don't have an account? <a onclick="toggleAuthMode()">Sign up</a></span>
+        <br><br>
+        <a id="forgotPasswordLink" onclick="openAuthModal('forgot-password')"
+          style="font-size: 0.9em; cursor: pointer;">Forgot Password?</a>
       </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('forgotPasswordModal')">&times;</span>
+      <h2>Forgot Password</h2>
+      <div id="forgotPasswordMessage" style="color: green; margin-bottom: 10px; display: none;"></div>
+      <div id="forgotPasswordError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form class="auth-form" onsubmit="handleForgotPassword(event)">
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Enter your email address to receive a password reset
+          token.</p>
+        <input type="email" id="forgotEmail" placeholder="Email Address" required>
+        <button type="submit">Send Reset Token</button>
+      </form>
+      <div class="auth-switch">
+        <a onclick="openAuthModal('reset-password')">I already have a token</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Modal -->
+  <div id="resetPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('resetPasswordModal')">&times;</span>
+      <h2>Reset Password</h2>
+      <div id="resetPasswordMessage" style="color: green; margin-bottom: 10px; display: none;"></div>
+      <div id="resetPasswordError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form class="auth-form" onsubmit="handleResetPassword(event)">
+        <input type="text" id="resetToken" placeholder="Reset Token" required>
+        <input type="password" id="newPassword" placeholder="New Password" required>
+        <button type="submit">Reset Password</button>
+      </form>
     </div>
   </div>
 
@@ -317,10 +355,24 @@
 
     // Modal Logic
     function openAuthModal(mode) {
+      // Close all other modals first
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+
+      if (mode === 'forgot-password') {
+        document.getElementById('forgotPasswordModal').style.display = 'block';
+        return;
+      }
+      if (mode === 'reset-password') {
+        document.getElementById('resetPasswordModal').style.display = 'block';
+        return;
+      }
+
       const modal = document.getElementById('authModal');
       const title = document.getElementById('authTitle');
       const submitBtn = document.getElementById('authSubmitBtn');
       const switchText = document.getElementById('authSwitchText');
+      const emailInput = document.getElementById('email');
+      const forgotLink = document.getElementById('forgotPasswordLink');
 
       modal.style.display = 'block';
       document.getElementById('authError').style.display = 'none';
@@ -330,17 +382,27 @@
         title.textContent = 'Login';
         submitBtn.textContent = 'Login';
         switchText.innerHTML = 'Don\'t have an account? <a onclick="toggleAuthMode()">Sign up</a>';
+        emailInput.style.display = 'none';
+        emailInput.required = false;
+        forgotLink.style.display = 'inline-block';
         modal.dataset.mode = 'login';
       } else {
         title.textContent = 'Sign Up';
         submitBtn.textContent = 'Sign Up';
         switchText.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Login</a>';
+        emailInput.style.display = 'block';
+        emailInput.required = true;
+        forgotLink.style.display = 'none';
         modal.dataset.mode = 'register';
       }
     }
 
     function closeAuthModal() {
       document.getElementById('authModal').style.display = 'none';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
     }
 
     function toggleAuthMode() {
@@ -350,9 +412,8 @@
 
     // Close modal if clicked outside
     window.onclick = function (event) {
-      const modal = document.getElementById('authModal');
-      if (event.target == modal) {
-        closeAuthModal();
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
       }
     }
 
@@ -361,6 +422,7 @@
       const mode = document.getElementById('authModal').dataset.mode; // 'login' or 'register'
       const username = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
+      const email = document.getElementById('email').value;
       const errorDiv = document.getElementById('authError');
 
       if (!username || !pass) {
@@ -371,10 +433,13 @@
 
       try {
         const endpoint = mode === 'login' ? '/api/login' : '/api/register';
+        const body = { username, password: pass };
+        if (mode === 'register') body.email = email;
+
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password: pass })
+          body: JSON.stringify(body)
         });
 
         const data = await response.json();
@@ -393,6 +458,70 @@
       } catch (e) {
         errorDiv.textContent = e.message;
         errorDiv.style.display = 'block';
+      }
+    }
+
+    async function handleForgotPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('forgotEmail').value;
+      const msgDiv = document.getElementById('forgotPasswordMessage');
+      const errDiv = document.getElementById('forgotPasswordError');
+
+      msgDiv.style.display = 'none';
+      errDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to request reset');
+
+        msgDiv.textContent = data.message;
+        msgDiv.style.display = 'block';
+
+      } catch (e) {
+        errDiv.textContent = e.message;
+        errDiv.style.display = 'block';
+      }
+    }
+
+    async function handleResetPassword(event) {
+      event.preventDefault();
+      const token = document.getElementById('resetToken').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const msgDiv = document.getElementById('resetPasswordMessage');
+      const errDiv = document.getElementById('resetPasswordError');
+
+      msgDiv.style.display = 'none';
+      errDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, newPassword })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to reset password');
+
+        msgDiv.textContent = data.message;
+        msgDiv.style.display = 'block';
+
+        // Auto close after 2s and show login
+        setTimeout(() => {
+          closeModal('resetPasswordModal');
+          openAuthModal('login');
+          showToast('Password reset! Please log in.');
+        }, 2000);
+
+      } catch (e) {
+        errDiv.textContent = e.message;
+        errDiv.style.display = 'block';
       }
     }
 

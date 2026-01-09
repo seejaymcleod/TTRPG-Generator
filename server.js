@@ -331,7 +331,7 @@ function hashPassword(password) {
 
 // POST /api/register
 app.post('/api/register', (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, email } = req.body;
   if (!username || !password) {
     return res.status(400).json({ error: 'Username and password required' });
   }
@@ -343,8 +343,11 @@ app.post('/api/register', (req, res) => {
 
   const newUser = {
     username,
+    email: email || '', // Optional for now to support old users, but UI should require it
     passwordHash: hashPassword(password),
-    favorites: []
+    favorites: [],
+    resetToken: null,
+    resetTokenExpiry: null
   };
 
   users.push(newUser);
@@ -403,3 +406,85 @@ app.post('/api/user/favorites/toggle', (req, res) => {
 
   res.json({ favorites: user.favorites, isFavorite });
 });
+
+// --- Password Recovery ---
+
+// Mock Email Sender (future SMTP hook)
+async function sendEmail(to, subject, body) {
+  console.log('=================================================');
+  console.log(`[MOCK EMAIL] To: ${to}`);
+  console.log(`[MOCK EMAIL] Subject: ${subject}`);
+  console.log(`[MOCK EMAIL] Body:`);
+  console.log(body);
+  console.log('=================================================');
+  // Return true to simulate success
+  return true;
+}
+
+// POST /api/forgot-password
+app.post('/api/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) return res.status(400).json({ error: 'Email is required' });
+
+  const users = loadUsers();
+  const user = users.find(u => u.email === email);
+
+  // Security: Don't reveal if user exists or not, but for dev/MVP we can be lenient or just standardized
+  // If user not found, we just pretend we sent it to avoid enumeration? 
+  // For this local generator, let's be helpfully explicitly.
+  if (!user) {
+    return res.status(404).json({ error: 'User with this email not found' });
+  }
+
+  // Generate Token
+  const token = crypto.randomBytes(20).toString('hex');
+  const expiry = Date.now() + 3600000; // 1 hour from now
+
+  user.resetToken = token;
+  user.resetTokenExpiry = expiry;
+
+  saveUsers(users);
+
+  // "Send" Email
+  const success = await sendEmail(
+    user.email,
+    'Password Reset Request',
+    `You requested a password reset. Your token is: ${token}\n\nUse this token in the app to reset your password.`
+  );
+
+  if (success) {
+    res.json({ message: 'Password reset email sent (check server console)' });
+  } else {
+    res.status(500).json({ error: 'Failed to send email' });
+  }
+});
+
+// POST /api/reset-password
+app.post('/api/reset-password', (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ error: 'Token and new password required' });
+  }
+
+  const users = loadUsers();
+  const user = users.find(u =>
+    u.resetToken === token &&
+    u.resetTokenExpiry > Date.now()
+  );
+
+  if (!user) {
+    return res.status(400).json({ error: 'Invalid or expired token' });
+  }
+
+  // Reset Password
+  user.passwordHash = hashPassword(newPassword);
+  user.resetToken = null;
+  user.resetTokenExpiry = null;
+
+  saveUsers(users);
+
+  res.json({ message: 'Password successfully reset' });
+});
+
