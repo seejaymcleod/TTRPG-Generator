@@ -6,11 +6,11 @@ A web-based Tabletop RPG generator using a "File System as CMS" architecture. Co
 ## Folder Structure
 - **src/**: TypeScript source code containing the core engine and compiler logic.
 - **Tables/**: The definitions of all generator tables in YAML format (Source of Truth).
-- **tests/**: Unit and integration tests.
+- **tests/**: Unit and integration tests, including regression tests for bugs.
 - **dist/**: Compiled JavaScript output and the generated `tables.json`.
 - **ai/**: Documentation and context files for AI agents.
-- **public/**: Static assets (implied, currently empty/default).
-- **utils/**: Utility scripts (content unclear from high-level scan).
+- **public/**: Static assets.
+- **utils/**: (Currently empty).
 
 ## Parser-Related Files
 The "Parser" logic is split between the **Compiler** (build-time validation) and the **Engine** (runtime generation).
@@ -25,23 +25,28 @@ The "Parser" logic is split between the **Compiler** (build-time validation) and
 - `index.ts`: Exports the engine modules.
 - `types.ts`: TypeScript interfaces shared by Compiler and Engine.
 - `rng.ts`: Seeded Random Number Generator implementation.
-- `dice.ts`: Dice rolling logic (likely).
-- `expr.ts`: Expression evaluator (likely).
-- `referenceTables.ts`: Handling of reference tables (e.g. `ShadowDark` lookup tables).
+- `dice.ts`: Dice rolling logic.
+- `expr.ts`: Expression evaluator (math logic).
+- `referenceTables.ts`: Handling of reference tables.
 
-## Tests
-- `tests/engine.test.ts`: Unit tests for the Engine's parsing and generation capabilities (e.g., nesting, weird syntax).
-- `tests/verify_content.test.ts`: Comprehensive integration test that iterates every table in `tables.json` to verify validity.
+## Tests (`tests/`)
+- `engine.test.ts`: core unit tests.
+- `verify_content.test.ts`: integration test for all tables.
+- `debug_circular.test.ts`: Circular dependency debug tests.
+- `repro_recursion.test.ts`: Regression test for renderer recursion loops.
+- `repro_math_error.test.ts`: Regression test for math evaluation errors.
+- `repro_knave.test.ts`, `debug_knave_content.test.ts`: Specific content debug tests.
+
+## Root Level Scripts
+- **Server**: `server.js` (Run via `npm start` or `npm run dev`).
+- **Debug Tools**:
+    - `debug_index.ts`: entry point for debug scripts.
+    - `debug_keys.ts`, `debug_subtable.ts`: specific debug utilities.
 
 ## Likely Entry Points
-- **Server API**: `server.js` (Run via `npm start` or `npm run dev`).
-  - Initializes `TableLoader` from `dist/tables.json`.
-  - Serves `index.html` and static files.
-  - API Endpoints (inferred): likely acts as a passthrough or serves the JSON.
+- **Server API**: `server.js`.
 - **Compiler CLI**: `src/compiler/build.ts` (Run via `npm run build:tables`).
-  - Converts `Tables/*.yaml` -> `dist/tables.json`.
-- **Frontend**: `index.html` (Main UI).
+- **Dev Server**: `npm run dev` (runs server with nodemon).
 
 ## Open Questions
-- `server.legacy.js` exists in the root; unclear if any legacy logic is still required or if migration is fully complete.
-- `utils/` folder content and purpose (not fully inspected).
+- `server.legacy.js` exists in root; unclear if active.
