@@ -1,30 +1,10 @@
 [
   {
-    "username": "testuser_1767987424044",
-    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
-    "favorites": []
-  },
-  {
     "username": "SeeJayMac",
     "passwordHash": "c6984fb99d3adf8b768509bfebaa493d4d8d38f7415c506050fe76adfcee3cc0",
+    "isAdmin": true,
     "favorites": [
       "ATest_AllFeatures.yaml"
     ]
-  },
-  {
-    "username": "test_email_user",
-    "email": "test@example.com",
-    "passwordHash": "eaaa4a79c43019473cc37be32ede6ea36c962bdf821fafbecc573c6931f63ea7",
-    "favorites": [],
-    "resetToken": null,
-    "resetTokenExpiry": null
-  },
-  {
-    "username": "SeeJayMactest",
-    "email": "seejaymcleod@gmail.com",
-    "passwordHash": "c6984fb99d3adf8b768509bfebaa493d4d8d38f7415c506050fe76adfcee3cc0",
-    "favorites": [],
-    "resetToken": null,
-    "resetTokenExpiry": null
   }
 ]

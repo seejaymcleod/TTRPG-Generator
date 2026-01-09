@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTRPG Generator - Version 130</title>
+  <title>TTRPG Generator - Version 131</title>
   <!-- Add extractContext polyfill script first - IMPORTANT! -->
   <script src="/js/extractContext.js"></script>
   <!-- REMOVE Choices.js dependency since we're using buttons instead -->
@@ -12,6 +12,21 @@
 
 </head>
 <style>
+  /* Title Container */
+  #titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+
+  #titleContainer h1 {
+    margin: 0;
+    /* Remove default margin for better alignment */
+    font-size: 1.5em;
+    /* Check font size if needed */
+  }
+
   /* Auth Modal Styles */
   .modal {
     display: none;
@@ -96,11 +111,13 @@
 
   /* Header User Section */
   #userSection {
-    float: right;
     display: flex;
     align-items: center;
     gap: 15px;
+    /* Increased gap for better spacing */
   }
+
+
 
   #userDisplay {
     font-weight: bold;
@@ -162,14 +179,17 @@
 
 <body>
   <div id="titleContainer">
-    <h1>TTRPG Generator - Version 130</h1>
-    <div id="userSection" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+    <h1>TTRPG Generator - Version 131</h1>
+    <div id="userSection">
       <span id="userDisplay"></span>
       <button id="loginBtn" class="auth-btn" onclick="openAuthModal('login')">Login</button>
       <button id="registerBtn" class="auth-btn" onclick="openAuthModal('register')">Sign Up</button>
       <button id="logoutBtn" class="auth-btn" onclick="logout()" style="display:none;">Logout</button>
+      <button id="adminBtn" class="auth-btn" onclick="openAdminDashboard()"
+        style="display:none; border-color: red; color: red;">Admin</button>
+      <button id="themeToggle" onclick="toggleTheme()" class="auth-btn" style="padding: 0 10px; min-width: 40px;"
+        title="Toggle Theme">🌓</button>
     </div>
-    <button id="themeToggle" onclick="toggleTheme()" style="margin-left: 10px;">Toggle Theme</button>
   </div>
 
   <!-- Auth Modal -->
@@ -223,6 +243,58 @@
         <input type="text" id="resetToken" placeholder="Reset Token" required>
         <input type="password" id="newPassword" placeholder="New Password" required>
         <button type="submit">Reset Password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Modal -->
+  <div id="adminDashboardModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <span class="close-modal" onclick="closeModal('adminDashboardModal')">&times;</span>
+      <h2>Admin Dashboard</h2>
+      <div id="adminError" style="color: red; margin-bottom: 10px; display: none;"></div>
+
+      <div style="overflow-x: auto;">
+        <table id="userTable" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+              <th style="padding: 10px;">Username</th>
+              <th style="padding: 10px;">Email</th>
+              <th style="padding: 10px;">Admin</th>
+              <th style="padding: 10px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Users populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('editUserModal')">&times;</span>
+      <h2>Edit User</h2>
+      <div id="editUserError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form class="auth-form" onsubmit="handleEditUser(event)">
+        <input type="hidden" id="editOriginalUsername">
+        <label>Username</label>
+        <input type="text" id="editUsername" required>
+        <label>Email</label>
+        <input type="email" id="editEmail">
+        <label>New Password (leave blank to keep current)</label>
+        <input type="password" id="editPassword" placeholder="New Password">
+
+        <div style="margin: 15px 0;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="editIsAdmin" style="width: auto; margin: 0;">
+            Is Admin
+          </label>
+        </div>
+
+        <button type="submit">Save Changes</button>
       </form>
     </div>
   </div>
@@ -335,6 +407,7 @@
       const loginBtn = document.getElementById('loginBtn');
       const registerBtn = document.getElementById('registerBtn');
       const logoutBtn = document.getElementById('logoutBtn');
+      const adminBtn = document.getElementById('adminBtn');
 
       if (window.currentUser) {
         userDisplay.textContent = `Hello, ${window.currentUser.username}`;
@@ -342,11 +415,19 @@
         loginBtn.style.display = 'none';
         registerBtn.style.display = 'none';
         logoutBtn.style.display = 'inline';
+
+        if (window.currentUser.isAdmin) {
+          adminBtn.style.display = 'inline';
+        } else {
+          adminBtn.style.display = 'none';
+        }
+
       } else {
         userDisplay.style.display = 'none';
         loginBtn.style.display = 'inline';
         registerBtn.style.display = 'inline';
         logoutBtn.style.display = 'none';
+        adminBtn.style.display = 'none';
       }
 
       // Re-apply filters in case favorites changed or login state changed
@@ -598,6 +679,193 @@
       applyFilters();
     }
 
+
+    // Admin Logic
+    async function openAdminDashboard() {
+      if (!window.currentUser || !window.currentUser.isAdmin) return;
+
+      document.getElementById('adminDashboardModal').style.display = 'block';
+      loadUsers();
+    }
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/admin/users', {
+          headers: { 'x-username': window.currentUser.username }
+        });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error);
+
+        renderUserTable(data.users);
+      } catch (e) {
+        document.getElementById('adminError').textContent = e.message;
+        document.getElementById('adminError').style.display = 'block';
+      }
+    }
+
+    function renderUserTable(users) {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border-color)';
+
+        tr.innerHTML = `
+                <td style="padding: 10px;">${escapeHtml(u.username)}</td>
+                <td style="padding: 10px;">${escapeHtml(u.email || '-')}</td>
+                <td style="padding: 10px;">${u.isAdmin ? '✅' : ''}</td>
+                <td style="padding: 10px;">
+                    <button onclick="openEditUser('${escapeHtml(u.username)}')" style="padding: 5px 10px; margin-right: 5px;">Edit</button>
+                    ${u.username !== window.currentUser.username ? `<button onclick="deleteUser('${escapeHtml(u.username)}', this)" style="padding: 5px 10px; background-color: #d32f2f;">Delete</button>` : ''}
+                </td>
+            `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Helper to prevent XSS
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    let currentEditingUser = null;
+
+    async function openEditUser(username) {
+      // Need to fetch user details first or pass them?
+      // We have the list, can simple find from cache if we stored it, or just use what we have in the row?
+      // Let's refetch or simplify. 
+      // We can just iterate the rows or fetch list again.
+      // Or cleaner: store users globally when loading.
+
+      // Quick hack: fetch fresh list to find user
+      try {
+        const response = await fetch('/api/admin/users', {
+          headers: { 'x-username': window.currentUser.username }
+        });
+        const data = await response.json();
+        const user = data.users.find(u => u.username === username);
+
+        if (!user) return;
+
+        currentEditingUser = user;
+        document.getElementById('editOriginalUsername').value = user.username;
+        document.getElementById('editUsername').value = user.username;
+        document.getElementById('editEmail').value = user.email || '';
+        document.getElementById('editPassword').value = ''; // Don't show hash
+        document.getElementById('editIsAdmin').checked = !!user.isAdmin;
+
+        document.getElementById('editUserModal').style.display = 'block';
+        document.getElementById('editUserError').style.display = 'none';
+
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function handleEditUser(event) {
+      event.preventDefault();
+      const originalUsername = document.getElementById('editOriginalUsername').value;
+      const newUsername = document.getElementById('editUsername').value;
+      const email = document.getElementById('editEmail').value;
+      const password = document.getElementById('editPassword').value;
+      const isAdmin = document.getElementById('editIsAdmin').checked;
+
+      try {
+        const body = {
+          newUsername,
+          email,
+          isAdmin
+        };
+        if (password) body.password = password;
+
+        const response = await fetch(`/api/admin/users/${originalUsername}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-username': window.currentUser.username
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+
+        closeModal('editUserModal');
+        showToast('User updated successfully');
+        loadUsers(); // Refresh list
+
+        // If we edited ourselves, update local session
+        if (originalUsername === window.currentUser.username) {
+          window.currentUser = { ...window.currentUser, ...data.user };
+          localStorage.setItem('ttrpg_user', JSON.stringify(window.currentUser));
+          updateUserUI();
+        }
+
+      } catch (e) {
+        document.getElementById('editUserError').textContent = e.message;
+        document.getElementById('editUserError').style.display = 'block';
+      }
+    }
+
+    async function deleteUser(username, btnElement) {
+      if (!btnElement) return; // Should not happen if called correctly
+
+      // Check if we are in confirmation state
+      if (btnElement.dataset.confirming === 'true') {
+        // Perform delete
+        console.log('Sending delete request for:', username);
+        // Disable button
+        btnElement.disabled = true;
+        btnElement.textContent = 'Deleting...';
+
+        try {
+          const response = await fetch(`/api/admin/users/${username}`, {
+            method: 'DELETE',
+            headers: { 'x-username': window.currentUser.username }
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error);
+
+          console.log('Delete success');
+          showToast('User deleted');
+          loadUsers(); // This will re-render the table, so button state handling is not needed after
+        } catch (e) {
+          console.error('Delete failed:', e);
+          alert("Error deleting user: " + e.message);
+          // Restore button
+          btnElement.disabled = false;
+          btnElement.textContent = 'Delete';
+          btnElement.style.backgroundColor = '#d32f2f';
+          delete btnElement.dataset.confirming;
+        }
+      } else {
+        // Switch to confirmation state
+        btnElement.dataset.confirming = 'true';
+        btnElement.textContent = 'Confirm?';
+        btnElement.style.backgroundColor = 'darkred'; // Darker red
+
+        // Auto-revert after 3 seconds
+        setTimeout(() => {
+          // Check if still in document and hasn't been clicked (which would remove or disable it)
+          if (document.body.contains(btnElement) && !btnElement.disabled && btnElement.dataset.confirming === 'true') {
+            btnElement.textContent = 'Delete';
+            btnElement.style.backgroundColor = '#d32f2f';
+            delete btnElement.dataset.confirming;
+          }
+        }, 3000);
+      }
+    }
+    // Explicitly attach to window
+    window.deleteUser = deleteUser;
 
     document.addEventListener('DOMContentLoaded', async function () {
       checkSession(); // Check for logged in user
@@ -2540,69 +2808,10 @@
     }
 
     function checkFilterBarOverflow() {
-      const filterContainers = ['gameFilter', 'typeFilter', 'settingFilter'];
-      let totalHeight = 0;
-      let maxButtonHeight = 0;
-      // Calculate total height of all buttons if not wrapped
-      filterContainers.forEach(filterId => {
-        const container = document.getElementById(filterId);
-        const buttons = container.querySelectorAll('.filter-btn');
-
-        // Find the height of the tallest button
-        buttons.forEach(button => {
-          const buttonHeight = button.offsetHeight;
-          if (buttonHeight > maxButtonHeight) {
-            maxButtonHeight = buttonHeight;
-          }
-        });
-
-        // Calculate unwrapped width
-        let rowWidth = 0;
-        const containerWidth = container.clientWidth;
-        const buttonGap = 4; // Gap between buttons
-        let rowCount = 1;
-
-        buttons.forEach(button => {
-          const buttonWidth = button.offsetWidth + buttonGap;
-          // If this button would overflow the current row, start a new row
-          if (rowWidth + buttonWidth > containerWidth && rowWidth > 0) {
-            rowCount++;
-            rowWidth = buttonWidth;
-          } else {
-            rowWidth += buttonWidth;
-          }
-        });
-
-        // Store row count as data attribute
-        container.dataset.rowCount = rowCount;
-
-        // If rows > 2, mark as has-overflow
-        if (rowCount > 2) {
-          container.classList.add('has-overflow');
-        } else {
-          container.classList.remove('has-overflow');
-        }
-      });
-
-      // Calculate if any container needs 3+ rows
-      const hasSignificantOverflow = filterContainers.some(filterId => {
-        const container = document.getElementById(filterId);
-        return parseInt(container.dataset.rowCount || '0') >= 3;
-      });
-
-      // Update the container class
-      const filtersContainer = document.getElementById('filtersContainer');
-      if (hasSignificantOverflow) {
-        filtersContainer.classList.add('has-significant-overflow');
-      } else {
-        filtersContainer.classList.remove('has-significant-overflow');
-        filtersContainer.classList.remove('filters-expanded');
-      }
-
-      // Update the expand button text
-      const expandBtn = document.getElementById('filterExpandBtn');
-      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
+      // Logic removed
     }
+
+
 
     function toggleAllFilters() {
       const filtersContainer = document.getElementById('filtersContainer');

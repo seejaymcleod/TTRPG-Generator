@@ -488,3 +488,93 @@ app.post('/api/reset-password', (req, res) => {
   res.json({ message: 'Password successfully reset' });
 });
 
+// --- Admin Endpoints ---
+
+// Middleware to check if user is admin
+// Trusts 'x-username' header for local tool context
+function requireAdmin(req, res, next) {
+  const username = req.headers['x-username'];
+  if (!username) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const users = loadUsers();
+  const user = users.find(u => u.username === username);
+
+  if (!user) {
+    return res.status(401).json({ error: 'User not found' });
+  }
+
+  if (!user.isAdmin) {
+    return res.status(403).json({ error: 'Access denied: Admins only' });
+  }
+
+  req.adminUser = user;
+  next();
+}
+
+// GET /api/admin/users
+app.get('/api/admin/users', requireAdmin, (req, res) => {
+  const users = loadUsers();
+  // Return safe user objects
+  const safeUsers = users.map(u => {
+    const { passwordHash, resetToken, resetTokenExpiry, ...safe } = u;
+    return safe;
+  });
+  res.json({ users: safeUsers });
+});
+
+// PUT /api/admin/users/:username
+app.put('/api/admin/users/:username', requireAdmin, (req, res) => {
+  const targetUsername = req.params.username;
+  const { newUsername, email, password, isAdmin } = req.body;
+
+  const users = loadUsers();
+  const userIndex = users.findIndex(u => u.username === targetUsername);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  // Update fields
+  const user = users[userIndex];
+
+  if (newUsername && newUsername !== user.username) {
+    // Check collision
+    if (users.find(u => u.username === newUsername)) {
+      return res.status(409).json({ error: 'New username already taken' });
+    }
+    user.username = newUsername;
+  }
+
+  if (email !== undefined) user.email = email;
+  if (password) user.passwordHash = hashPassword(password);
+  if (isAdmin !== undefined) user.isAdmin = !!isAdmin;
+
+  saveUsers(users);
+
+  const { passwordHash, resetToken, resetTokenExpiry, ...safeUser } = user;
+  res.json({ message: 'User updated', user: safeUser });
+});
+
+// DELETE /api/admin/users/:username
+app.delete('/api/admin/users/:username', requireAdmin, (req, res) => {
+  const targetUsername = req.params.username;
+
+  // Prevent self-deletion ? Maybe? Or just allowed.
+  // Generally good to prevent deleting yourself efficiently to avoid locking yourself out if you are the only admin.
+  if (targetUsername === req.adminUser.username) {
+    return res.status(400).json({ error: 'Cannot delete your own account while logged in.' });
+  }
+
+  const users = loadUsers();
+  const newUsers = users.filter(u => u.username !== targetUsername);
+
+  if (users.length === newUsers.length) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  saveUsers(newUsers);
+  res.json({ message: `User ${targetUsername} deleted` });
+});
+

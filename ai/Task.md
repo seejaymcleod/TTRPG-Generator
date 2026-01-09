@@ -4,10 +4,8 @@ ai/REPO_MAP.md
 ai/STATE.md
 
 TASK: 
-1) Implement email addresses to account form
-2) add email password recovery system
-3) add reset password functionality 
-
+ implememt a way for me, an admin to manage users (delete, change passwords\emails\names, etc.) 
+ 
 CONTEXT:
 <only the relevant code snippets or diff>
 

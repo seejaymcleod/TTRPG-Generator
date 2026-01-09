@@ -68,20 +68,23 @@ body {
 
 /* Theme toggle button */
 #themeToggle {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  background: none;
-  border: none;
-  color: var(--text-title);
-  font-size: 16px;
-  cursor: pointer;
-  z-index: 100;
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  #themeToggle {
+    background: none;
+    border: none;
+    color: var(--text-title);
+    font-size: 1.25em;
+    /* Slightly larger icon */
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    /* Rounded click area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background-color 0.2s;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 #themeToggle:hover {
@@ -91,12 +94,11 @@ body {
 /* Header containers - REDUCED SIZE */
 #titleContainer {
   text-align: center;
-  padding: 5px;
-  /* Reduced from 10px */
+  padding: 10px 20px;
+  /* Better padding */
   background-color: var(--title-bg);
   color: var(--text-title);
-  position: relative;
-  /* For positioning theme toggle */
+  /* Removed position:relative since toggle is no longer absolute */
 }
 
 #titleContainer h1 {
