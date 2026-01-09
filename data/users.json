@@ -7,6 +7,8 @@
   {
     "username": "SeeJayMac",
     "passwordHash": "c6984fb99d3adf8b768509bfebaa493d4d8d38f7415c506050fe76adfcee3cc0",
-    "favorites": []
+    "favorites": [
+      "ATest_AllFeatures.yaml"
+    ]
   }
 ]

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTRPG Generator - Version 128</title>
+  <title>TTRPG Generator - Version 129</title>
   <!-- Add extractContext polyfill script first - IMPORTANT! -->
   <script src="/js/extractContext.js"></script>
   <!-- REMOVE Choices.js dependency since we're using buttons instead -->
@@ -149,21 +149,7 @@
     transform: scale(1.2);
   }
 
-  /* Favorites Filter Button */
-  #favoritesFilterBtn {
-    margin-left: 10px;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-color);
-    /* Match Reset button style initially */
-    color: var(--text-primary);
-  }
-
-  #favoritesFilterBtn.active {
-    background-color: #FFD700;
-    color: #000;
-    border-color: #FFD700;
-    font-weight: bold;
-  }
+  /* Adjust reset button area */
 
   /* Adjust reset button area */
   .filter-actions {
@@ -176,7 +162,7 @@
 
 <body>
   <div id="titleContainer">
-    <h1>TTRPG Generator - Version 128</h1>
+    <h1>TTRPG Generator - Version 129</h1>
     <div id="userSection" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
       <span id="userDisplay"></span>
       <button id="loginBtn" class="auth-btn" onclick="openAuthModal('login')">Login</button>
@@ -749,6 +735,13 @@
       clearFilter('type');
       clearFilter('setting');
       document.getElementById('searchInput').value = '';
+
+      const favBtn = document.getElementById('favoritesFilterBtn');
+      if (favBtn && favBtn.classList.contains('active')) {
+        favBtn.classList.remove('active');
+        favBtn.textContent = '★ Show Favorites';
+      }
+
       applyFilters();
     }
 

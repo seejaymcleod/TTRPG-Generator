@@ -305,7 +305,8 @@ body {
   display: none;
 }
 
-#resetButton {
+#resetButton,
+#favoritesFilterBtn {
   align-self: flex-end;
   /* Move reset button to the right */
   margin-top: 10px;
@@ -317,13 +318,38 @@ body {
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  height: 36px;
+  line-height: 1.2;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#resetButton:hover {
+#resetButton:hover,
+#favoritesFilterBtn:hover {
   background-color: #ff5252;
   /* Red accent for Reset */
   color: white;
   border-color: #ff5252;
+}
+
+#favoritesFilterBtn {
+  margin-left: 10px;
+}
+
+#favoritesFilterBtn:hover {
+  /* Override red hover for favorites */
+  background-color: var(--bg-card);
+  border-color: #FFD700;
+  color: var(--text-primary);
+}
+
+#favoritesFilterBtn.active {
+  background-color: #FFD700;
+  color: #000;
+  border-color: #FFD700;
+  font-weight: bold;
 }
 
 /* Hide the old "Show more filters" toggle if present in HTML */

@@ -4,9 +4,8 @@ ai/REPO_MAP.md
 ai/STATE.md
 
 PLANNING TASK ONLY: 
-1) Implement simple users with usernames and passwords. Where\how are they stored? Onboarding? 
-2) Adding favorites button to a table page
-3) adding a favorites button to the category (in the same section as Reset)
+1) Reset button should also unselect Show Favorites button.
+2) Show Favorites button is a different height than reset for some reson.
 
 CONTEXT:
 <only the relevant code snippets or diff>
