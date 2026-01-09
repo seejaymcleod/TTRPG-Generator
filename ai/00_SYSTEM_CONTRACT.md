@@ -8,6 +8,11 @@ Hard rules:
 - When behavior changes, add/adjust tests.
 - No “nice to have” refactors unless explicitly requested.
 
+Repository authority:
+- ai/REPO_MAP.md is the authoritative description of the repository structure.
+- Do NOT invent files, folders, or entry points not listed there.
+- If a required file is missing from REPO_MAP.md, list it as an Open Question and STOP.
+
 Response format:
 1) PLAN: 3–6 bullets
 2) PATCH: unified diff only

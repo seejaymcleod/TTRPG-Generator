@@ -60,7 +60,9 @@ export class TableLoader {
      * Recursively indexes all subtables within a table.
      */
     private indexSubTables(table: Table | SubTable) {
-        const subtableLists = [table.tables, table.subTables];
+        const subList = table.subTables || (table as any).subtables;
+        const subtableLists = [table.tables, subList];
+
         for (const list of subtableLists) {
             if (Array.isArray(list)) {
                 for (const sub of list) {
@@ -146,18 +148,42 @@ export class TableLoader {
 
     findSubTable(table: SubTable, name: string): SubTable | undefined {
         if (table.tablename === name || table.name === name) return table;
-        if (table.subTables) {
-            for (const sub of table.subTables) {
+
+        // Handle subtables (lowercase or camelCase)
+        const subList = table.subTables || (table as any).subtables as SubTable[];
+
+        // 1. Strict Search first
+        if (subList) {
+            for (const sub of subList) {
                 const found = this.findSubTable(sub, name);
                 if (found) return found;
             }
         }
-        if (table.tables) { // Handle root 'tables' field
+        if (table.tables) {
             for (const sub of table.tables) {
                 const found = this.findSubTable(sub, name);
                 if (found) return found;
             }
         }
+
+        // 2. Fuzzy Search (if strict failed at this level)
+        // Only do shallow fuzzy check on direct children to avoid deep recursion weirdness?
+        // Or deep? The original recursive `findSubTable` was deep.
+        // Let's rely on the caller to call findSubTable.
+        // But here we are IN the recursive function.
+        // The previous recursion only returned if STRICT match found.
+
+        // Let's add partial match logic here:
+        // Check direct children for partial match
+        if (subList) {
+            const found = subList.find(s => s.tablename && s.tablename.toLowerCase().includes(name.toLowerCase()));
+            if (found) return found;
+        }
+        if (table.tables) {
+            const found = table.tables.find(s => s.tablename && s.tablename.toLowerCase().includes(name.toLowerCase()));
+            if (found) return found;
+        }
+
         return undefined;
     }
 }

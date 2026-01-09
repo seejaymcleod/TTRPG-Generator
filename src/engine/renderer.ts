@@ -442,8 +442,79 @@ export class Renderer {
     private evaluateToken(token: string, context: Context, tracker: RecursionTracker): string | number {
         try { return this.dice.roll(token); } catch (e) { }
 
+        // Check for Probability syntax: {Table, 0.5}
+        // Token comes in as "Table, 0.5" or "Table,0.5"
+        // Regex for "Something, Number"
+        const probMatch = token.match(/^(.+?),\s*((?:0\.)?\d+)$/);
+        if (probMatch) {
+            const tableName = probMatch[1].trim();
+            const prob = parseFloat(probMatch[2]);
+            if (!isNaN(prob)) {
+                // Start Roll
+                if (this.rng.nextFloat() <= prob) {
+                    return this.evaluateToken(tableName, context, tracker);
+                } else {
+                    return ""; // Excluded
+                }
+            }
+        }
+
         if (/[+\-*/]/.test(token) && !/\|/.test(token)) {
             return this.expr.evaluate(token, context);
+        }
+
+        // Handle {selectedResult, TableName} syntax manually if encountered in a token
+        if (token.startsWith('selectedResult,')) {
+            const keyTable = token.substring('selectedResult,'.length).trim();
+            let table = this.loader.findTable(keyTable);
+
+            // If not found global, check if it's a subtable of the current table context
+            if (!table && context._currentTable) {
+                const sub = this.loader.findSubTable(context._currentTable, keyTable);
+                if (sub) table = sub;
+            }
+
+            if (table) {
+                const keyRes = this.processTable(table, context, tracker).result;
+                // Target MUST be subtable of current table context (or sibling?)
+                // Spells logic: RandomTier -> Tier1. RandomTier is sibling of Tier1. Both under SpellsPriest.
+                // context._currentTable points to ... RandomSpellAnyTier?
+                // If RandomSpellAnyTier is a sibling of Tier1...
+                // Wait. In SpellsPriest.yaml:
+                // tables:
+                //   - RandomSpellAnyTier
+                //   - Tier1
+                //   - Tier2
+                // They are SIBLINGS.
+                // processCustomDisplay uses `table` (which is the current table passed in).
+                // `evaluateToken` receives `context`. `context._currentTable` is `RandomSpellAnyTier`.
+                // We need to look for `Tier1` which is a SIBLING of `context._currentTable`.
+                // BUT `RandomSpellAnyTier` doesn't know its parent.
+                // So we can only lookup Global (unlikely if same name exists elsewhere) or via Loader traversal?
+                // Actually, if they are root tables in the file (SpellsPriest has `tables:` list), they are indexed globally by name?
+                // Tier1, Tier2... are common names. They might be overwritten globally!
+                // This is a risk.
+                // BUT `loader.findSubTable` logic.
+                // If `context._currentTable` is a Root Table? No, it's in a list. 
+                // We don't have reference to "Parent Table".
+                const keyResStr = String(keyRes);
+
+                // 1. Try finding globally (Exact)
+                let targetSub = this.loader.findTable(keyResStr);
+
+                // 2. Try finding as subtable of current table (Fuzzy allowed via findSubTable)
+                if (!targetSub && context._currentTable) {
+                    targetSub = this.loader.findSubTable(context._currentTable, keyResStr);
+                }
+
+                // 3. Try finding globally (Fuzzy? - Loader.findTable doesn't do fuzzy, but maybe we should?)
+                // For now, relying on subtable fuzzy match which covers the Shops case (Types -> Standard Shops).
+
+                if (targetSub) {
+                    return String(this.processTable(targetSub, context, tracker).result);
+                }
+            }
+            return `[${token} target not found]`;
         }
 
         const match = token.match(/^(.+?)(\[(\d+)\])?(?:\|(.+))?$/);

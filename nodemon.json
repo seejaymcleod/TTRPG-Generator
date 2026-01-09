@@ -1,0 +1,15 @@
+{
+    "watch": [
+        "src",
+        "server.js"
+    ],
+    "ext": "ts,js,json,yaml",
+    "ignore": [
+        "dist/*",
+        "tests/*",
+        "*.test.ts",
+        "*.log",
+        "tables.json"
+    ],
+    "exec": "npm run build && node server.js"
+}
