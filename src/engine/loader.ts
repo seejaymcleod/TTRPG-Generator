@@ -39,9 +39,6 @@ export class TableLoader {
         // Ensure filename is indexed
         if (t.filename) {
             // Index root table by filename (e.g. for cross-file reference)
-            // Note: If multiple root tables share filename (rare/legacy), first wins or array?
-            // The compiler forces 1:1 if root is object. If root is array, multiple.
-            // But usually we just index by filename for the "Main" table of that file.
             if (!this.tablesByFilename.has(t.filename)) {
                 this.tablesByFilename.set(t.filename, t);
                 // Also index without extension
@@ -55,14 +52,29 @@ export class TableLoader {
             this.tablesByName.set(t.tablename, t);
         }
 
-        // Recursively index subtables? 
-        // Logic in findTable handles recursion, but maybe we want to flatten index if they have unique names?
-        // Legacy loader didn't flatten index, reliance was on findTable to recurse.
-        // However, if we normalized names (Parent_SubTable_1), maybe beneficial?
-        // For now, keep legacy behavior: Only index ROOT tables by name in the global map?
-        // Wait, legacy `loadFromDirectory` indexed subTables only if they were "Root" objects in the file logic.
-        // My Compiler flattened the structure?? No, it preserved recursion.
-        // So `this.processTable` matches `loadFromDirectory` inner loop.
+        // Recursively index all subtables for global lookup
+        this.indexSubTables(t);
+    }
+
+    /**
+     * Recursively indexes all subtables within a table.
+     */
+    private indexSubTables(table: Table | SubTable) {
+        const subtableLists = [table.tables, table.subTables];
+        for (const list of subtableLists) {
+            if (Array.isArray(list)) {
+                for (const sub of list) {
+                    if (sub && sub.tablename) {
+                        // Index subtable globally by its tablename
+                        if (!this.tablesByName.has(sub.tablename)) {
+                            this.tablesByName.set(sub.tablename, sub as any); // Cast to Table for storage
+                        }
+                    }
+                    // Recurse into deeper levels
+                    this.indexSubTables(sub);
+                }
+            }
+        }
     }
 
     /**

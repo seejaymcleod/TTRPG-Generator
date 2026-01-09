@@ -465,6 +465,13 @@ export class Renderer {
             }
 
             let table = this.loader.findTable(base);
+
+            // If not found global, check if it's a subtable of the current table context
+            if (!table && context._currentTable) {
+                const sub = this.loader.findSubTable(context._currentTable, base);
+                if (sub) table = sub;
+            }
+
             if (table) {
                 if (sub) {
                     const foundSub = this.loader.findSubTable(table, sub);
@@ -495,10 +502,15 @@ export class Renderer {
         const match = template.match(selResRegex);
         if (match) {
             const keyTable = match[1];
-            const keySub = this.loader.findSubTable(table, keyTable);
+            // Look for subtable, or fallback to global table (sibling)
+            let keySub = this.loader.findSubTable(table, keyTable);
+            if (!keySub) {
+                keySub = this.loader.findTable(keyTable);
+            }
+
             if (keySub) {
                 const keyRes = this.processTable(keySub, context, tracker).result;
-                const targetSub = this.loader.findSubTable(table, String(keyRes));
+                const targetSub = this.loader.findSubTable(table, String(keyRes)); // Target MUST be subtable of current
                 if (targetSub) {
                     return String(this.processTable(targetSub, context, tracker).result);
                 }
