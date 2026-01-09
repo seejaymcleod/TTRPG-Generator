@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTRPG Generator - Version 124</title>
+  <title>TTRPG Generator - Version 127</title>
   <!-- Add extractContext polyfill script first - IMPORTANT! -->
   <script src="/js/extractContext.js"></script>
   <!-- REMOVE Choices.js dependency since we're using buttons instead -->
@@ -14,7 +14,7 @@
 
 <body>
   <div id="titleContainer">
-    <h1>TTRPG Generator - Version 124</h1>
+    <h1>TTRPG Generator - Version 127</h1>
     <button id="themeToggle" onclick="toggleTheme()">Toggle Theme</button>
   </div>
 
@@ -1291,9 +1291,13 @@
       const normalize = str => str.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/gi, '');
 
       // Process each row
+
+      // Process each row
       rows.forEach(row => {
         const header = row.querySelector('.result-header').textContent;
         const contentCells = row.querySelectorAll('.result-content');
+        // Get format from THIS row, not just the first one
+        const rowFormat = row.getAttribute('data-format');
 
         // Start building the markdown line for this row
         let rowMd = `*${header}*: `;
@@ -1316,20 +1320,21 @@
           rowMd += contentCells[0].textContent.trim();
         }
 
-        // Check if this is a root table reference
-        // Compare the normalized header with the normalized tablename
-        const normalizedHeader = normalize(header);
-        const normalizedTableName = normalize(mainTableDisplayName);
-        const isRootTableReference = normalizedHeader === normalizedTableName;
+        // Add table reference using data attributes stored on the row
+        const sourceTable = row.getAttribute('data-source-table');
+        const tableName = row.getAttribute('data-table-name');
+        const subtableName = row.getAttribute('data-subtable-name');
 
-        // Add table reference
-        if (mainTableName) {
-          if (isRootTableReference) {
-            // Simplified format for root table references
-            rowMd += `.:{${mainTableName}}`;
+        if (sourceTable) {
+          // Clean up source table (remove extension)
+          const cleanSource = sourceTable.replace(/\.(yaml|yml)$/, '');
+
+          if (subtableName) {
+            // Subtable reference
+            rowMd += `.:{${cleanSource}|${subtableName}}`;
           } else {
-            // Full format for subtable references
-            rowMd += `.:{${mainTableName}|${header}}`;
+            // Root table reference
+            rowMd += `.:{${cleanSource}}`;
           }
         }
 

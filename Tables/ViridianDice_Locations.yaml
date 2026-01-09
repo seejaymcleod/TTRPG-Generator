@@ -3,25 +3,24 @@ game: ViridianDice
 setting: Fantasy
 type: Places
 tablename: Dungeon Locations
-tables:
-  - results:
-      - Armory
-      - Common Room
-      - Crypt
-      - Dining Room
-      - Forge
-      - Great Hall
-      - Lab
-      - Library
-      - Menagerie
-      - Natural Feature
-      - Prison
-      - Quarters
-      - Ritual Chamber
-      - Ruins
-      - Storage
-      - Temple
-      - Throne Room
-      - Treasury
-      - Wonder
-      - Workshop
+results:
+    - Armory
+    - Common Room
+    - Crypt
+    - Dining Room
+    - Forge
+    - Great Hall
+    - Lab
+    - Library
+    - Menagerie
+    - Natural Feature
+    - Prison
+    - Quarters
+    - Ritual Chamber
+    - Ruins
+    - Storage
+    - Temple
+    - Throne Room
+    - Treasury
+    - Wonder
+    - Workshop

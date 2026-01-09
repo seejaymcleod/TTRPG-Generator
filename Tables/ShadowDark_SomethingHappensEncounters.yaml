@@ -3,55 +3,54 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure
 tablename: Something Happens Encounters
-tables:
-  - results:
-      - ["The ground shakes violently and a massive fissure opens",0.5]
-      - An unseen foe leaps out of hiding at close range
-      - A horrible buzzing fills the air, growing louder and louder
-      - You catch the acrid smell of smoke and flame
-      - A bright star appears in the sky, visible even at midday
-      - You spot a half-open bag with gold coins glinting inside
-      - A man slips a note and an odd potion into your hand
-      - Someone observing you from afar steps out of sight
-      - A dwarf in a red hat hands you a rose, bows, and leaves
-      - A cowled stranger in a black cloak approaches you
-      - Someone tries to pick your pocket
-      - A strange ticking sound comes from inside your bag
-      - A frothing, frantic horse with a saddle but no rider appears
-      - A mound in the earth quickly burrows toward you
-      - You sense you are being magically scryed upon
-      - Someone tries to plant an object on your person
-      - You are filled with a strong sense of dread and danger
-      - A woman hands you a black cat and then runs away
-      - A small, woodland creature jumps out of a backpack
-      - You smell lilacs and hear faint, ghostly laughter
-      - A note wrapped around a thin dagger lands next to you
-      - A green-glowing meteor streaks through the sky
-      - Someone nearby is staring at you and mouthing words
-      - A pair of yellow eyes watches you from the darkness
-      - An orc with an arrow in her back crashes through a door
-      - You hear a beast cry out in pain just up ahead
-      - A huge swarm of bats crashes over you and swirls away
-      - A frail beggar whispers that he has a secret to tell you
-      - An object falls from above and barely misses your head
-      - A seagull lands on your head and coughs up an odd bottle
-      - The smell of ozone rises and electricity crackles in the air
-      - You spot a trail of tiny silver coins leading around a bend
-      - A wild-eyed man approaches with a holy book held high
-      - Every light source suddenly extinguishes
-      - A stampede of wild animals bursts into view
-      - An old woman points at you and yells, 'There they are!'
-      - A passing stranger presses an ancient coin into your hand
-      - A chorus of howls echo in the distance
-      - Two pinching and slapping goblins tumble into sight
-      - You realize you are not alone; something is behind you
-      - The sudden sound of rushing water crashes toward you
-      - You hear an ear-splitting scream that nobody else hears
-      - A man slaps you with a glove and throws it at your feet
-      - A violent, windy storm kicks up without warning
-      - Lightning strikes close and leaves a glowing object behind
-      - A multicolored orb drifts up to you and then zips away
-      - A runaway wagon crashes toward you
-      - An NPC throws off their disguise, revealing an enemy
-      - A demon appears to you and presents a tempting offer
-      - ["A radiant being appears to you with a message of warning",0.5]
+results:
+    - ["The ground shakes violently and a massive fissure opens",0.5]
+    - An unseen foe leaps out of hiding at close range
+    - A horrible buzzing fills the air, growing louder and louder
+    - You catch the acrid smell of smoke and flame
+    - A bright star appears in the sky, visible even at midday
+    - You spot a half-open bag with gold coins glinting inside
+    - A man slips a note and an odd potion into your hand
+    - Someone observing you from afar steps out of sight
+    - A dwarf in a red hat hands you a rose, bows, and leaves
+    - A cowled stranger in a black cloak approaches you
+    - Someone tries to pick your pocket
+    - A strange ticking sound comes from inside your bag
+    - A frothing, frantic horse with a saddle but no rider appears
+    - A mound in the earth quickly burrows toward you
+    - You sense you are being magically scryed upon
+    - Someone tries to plant an object on your person
+    - You are filled with a strong sense of dread and danger
+    - A woman hands you a black cat and then runs away
+    - A small, woodland creature jumps out of a backpack
+    - You smell lilacs and hear faint, ghostly laughter
+    - A note wrapped around a thin dagger lands next to you
+    - A green-glowing meteor streaks through the sky
+    - Someone nearby is staring at you and mouthing words
+    - A pair of yellow eyes watches you from the darkness
+    - An orc with an arrow in her back crashes through a door
+    - You hear a beast cry out in pain just up ahead
+    - A huge swarm of bats crashes over you and swirls away
+    - A frail beggar whispers that he has a secret to tell you
+    - An object falls from above and barely misses your head
+    - A seagull lands on your head and coughs up an odd bottle
+    - The smell of ozone rises and electricity crackles in the air
+    - You spot a trail of tiny silver coins leading around a bend
+    - A wild-eyed man approaches with a holy book held high
+    - Every light source suddenly extinguishes
+    - A stampede of wild animals bursts into view
+    - An old woman points at you and yells, 'There they are!'
+    - A passing stranger presses an ancient coin into your hand
+    - A chorus of howls echo in the distance
+    - Two pinching and slapping goblins tumble into sight
+    - You realize you are not alone; something is behind you
+    - The sudden sound of rushing water crashes toward you
+    - You hear an ear-splitting scream that nobody else hears
+    - A man slaps you with a glove and throws it at your feet
+    - A violent, windy storm kicks up without warning
+    - Lightning strikes close and leaves a glowing object behind
+    - A multicolored orb drifts up to you and then zips away
+    - A runaway wagon crashes toward you
+    - An NPC throws off their disguise, revealing an enemy
+    - A demon appears to you and presents a tempting offer
+    - ["A radiant being appears to you with a message of warning",0.5]

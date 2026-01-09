@@ -3,16 +3,15 @@ game: Knave
 setting: Fantasy
 type: Adventure
 tablename: NPC Reaction
-tables:
-  - results:
-      - ["Kill the PCs", 1]
-      - ["Injure or capture the PCs", 2]
-      - ["Harass or rob the PCs", 3]
-      - ["Insult, threaten, or command the PCs", 4]
-      - ["Avoid the PCs", 5]
-      - ["Ignore the PCs", 6]
-      - ["Follow or observe the PCs", 5]
-      - ["Greet or question the PCs", 4]
-      - ["Share information with the PCs", 3]
-      - ["Perform minor favors for the PCs", 2]
-      - ["Ask to join the PCs' party", 1]
+results:
+    - ["Kill the PCs", 1]
+    - ["Injure or capture the PCs", 2]
+    - ["Harass or rob the PCs", 3]
+    - ["Insult, threaten, or command the PCs", 4]
+    - ["Avoid the PCs", 5]
+    - ["Ignore the PCs", 6]
+    - ["Follow or observe the PCs", 5]
+    - ["Greet or question the PCs", 4]
+    - ["Share information with the PCs", 3]
+    - ["Perform minor favors for the PCs", 2]
+    - ["Ask to join the PCs' party", 1]

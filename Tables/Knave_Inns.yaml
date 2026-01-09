@@ -3,6 +3,5 @@ game: Knave
 setting: Fantasy
 type: Places
 tablename: Inns
-tables:
-  - results:
-      - "{Knave_InnNameAdjective} {Knave_InnNameNoun}"
+results:
+    - "{Knave_InnNameAdjective} {Knave_InnNameNoun}"

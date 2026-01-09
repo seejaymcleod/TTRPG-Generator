@@ -3,55 +3,54 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure, Places
 tablename: Swamp Encounters
-tables:
-  - results:
-      - ["A 3x mutated otyugh (see pg. 191) rises out of the muck", 0.5]
-      - Thorash the swamp dragon (C) lurks in shallow water
-      - 2d4 giant frogs leap and snap at a cloud of 3d6 stingbats
-      - Grizella Mosspeat, a night hag, poles along on a rotting raft
-      - An undead T-Rex stomps around, shaking the swamp
-      - 2d8 well-preserved zombies stand up out of a peat bog
-      - Dense mud gives way into a slushy field of quicksand
-      - 2d6 mottled lizardfolk approach the PCs in an ambush
-      - A gnoll tied to the trunk of a wide tree begs for release
-      - A cloud of mosquitoes whines, bites, and obscures vision
-      - 2d4 gnolls patrol through the swamp around their territory
-      - 2d6 filthy, long-haired apes hurl rocks from the mangroves
-      - 2d6 peasants with torches and pitchforks chase a werewolf
-      - 1d4 gargoyles watch from the tops of pitted, leaning pillars
-      - 2d6 lizardfolk leap from the mud to attack 2d4 elves
-      - A headless scarecrow stands on a rock holding a lit lantern
-      - A basilisk hisses from inside a pitch-dark, damp cave
-      - 1d8 giant leeches fall onto the PCs from wet tree branches
-      - Dense patches of stinging nettles and toxic thorns grow
-      - A fast-moving swarm of snakes slithers along the ground
-      - 2d6 giant rats leer from inside rotting logs and tree trunks
-      - Sir Augrim, a knight, is stuck up to his neck in quicksand
-      - A yellow haze of poisonous swamp gas drifts over the bog
-      - 3d6 mushroomfolk tend to trees bursting with dewy fungi
-      - The naga Coagulus Mortus sits atop a heap of rotten bones
-      - 1d4 ogres lumber by, arguing about what elves taste like
-      - 3d6 patches of burning oil float and drift on the water
-      - 1d6 giant spiders creep through the dense treetops
-      - 2d4 cockatrices sit on their eggs inside a vine-draped cave
-      - A shattered, leaning keep houses a muttering ghost
-      - Blugbort, goblin wizard (N), hunts for slugs and toadstools
-      - 1d4 ghasts lead a group of 2d6 zombies and 2d8 skeletons
-      - A cloud of crows darts around a crumbling, ancient well
-      - 3d10 goblins drag a rotund hill giant on a makeshift sled
-      - 3d6 elves watch the PCs from hiding, deciding if to attack
-      - A grick drags a riderless, kicking horse into a black pond
-      - A group of rival crawlers prods at a half-sunken menhir
-      - A giant snake plunges out of a muddy hole in the ground
-      - A fire-eyed wight rides by on a nightmare trailing flames
-      - What appears to be a filmy puddle is actually a gray ooze
-      - Ol' Greenguts the giant frog helps with the PCs' next task
-      - An orc chieftain leads 3d12 Snake Fang orcs on a rampage
-      - Gorgoth, a priest of Shune (C), whispers to a black obelisk
-      - 1d4 muddy hippos thrash and gore 1d6 hissing crocodiles
-      - The Yellow Snail kobolds (2d20) live peacefully in tree huts
-      - Bubbling swamp tar has healing and anti-toxin properties
-      - 1d4 shambling mounds trudge through the slimy muck
-      - The Wandering Merchant rides on an albino crocodile
-      - Roll two encounters and combine the results (reroll 98-99)
-      - ["The Swamp Shambler (gorilla) offers a random magic item", 0.5]
+results:
+    - ["A 3x mutated otyugh (see pg. 191) rises out of the muck", 0.5]
+    - Thorash the swamp dragon (C) lurks in shallow water
+    - 2d4 giant frogs leap and snap at a cloud of 3d6 stingbats
+    - Grizella Mosspeat, a night hag, poles along on a rotting raft
+    - An undead T-Rex stomps around, shaking the swamp
+    - 2d8 well-preserved zombies stand up out of a peat bog
+    - Dense mud gives way into a slushy field of quicksand
+    - 2d6 mottled lizardfolk approach the PCs in an ambush
+    - A gnoll tied to the trunk of a wide tree begs for release
+    - A cloud of mosquitoes whines, bites, and obscures vision
+    - 2d4 gnolls patrol through the swamp around their territory
+    - 2d6 filthy, long-haired apes hurl rocks from the mangroves
+    - 2d6 peasants with torches and pitchforks chase a werewolf
+    - 1d4 gargoyles watch from the tops of pitted, leaning pillars
+    - 2d6 lizardfolk leap from the mud to attack 2d4 elves
+    - A headless scarecrow stands on a rock holding a lit lantern
+    - A basilisk hisses from inside a pitch-dark, damp cave
+    - 1d8 giant leeches fall onto the PCs from wet tree branches
+    - Dense patches of stinging nettles and toxic thorns grow
+    - A fast-moving swarm of snakes slithers along the ground
+    - 2d6 giant rats leer from inside rotting logs and tree trunks
+    - Sir Augrim, a knight, is stuck up to his neck in quicksand
+    - A yellow haze of poisonous swamp gas drifts over the bog
+    - 3d6 mushroomfolk tend to trees bursting with dewy fungi
+    - The naga Coagulus Mortus sits atop a heap of rotten bones
+    - 1d4 ogres lumber by, arguing about what elves taste like
+    - 3d6 patches of burning oil float and drift on the water
+    - 1d6 giant spiders creep through the dense treetops
+    - 2d4 cockatrices sit on their eggs inside a vine-draped cave
+    - A shattered, leaning keep houses a muttering ghost
+    - Blugbort, goblin wizard (N), hunts for slugs and toadstools
+    - 1d4 ghasts lead a group of 2d6 zombies and 2d8 skeletons
+    - A cloud of crows darts around a crumbling, ancient well
+    - 3d10 goblins drag a rotund hill giant on a makeshift sled
+    - 3d6 elves watch the PCs from hiding, deciding if to attack
+    - A grick drags a riderless, kicking horse into a black pond
+    - A group of rival crawlers prods at a half-sunken menhir
+    - A giant snake plunges out of a muddy hole in the ground
+    - A fire-eyed wight rides by on a nightmare trailing flames
+    - What appears to be a filmy puddle is actually a gray ooze
+    - Ol' Greenguts the giant frog helps with the PCs' next task
+    - An orc chieftain leads 3d12 Snake Fang orcs on a rampage
+    - Gorgoth, a priest of Shune (C), whispers to a black obelisk
+    - 1d4 muddy hippos thrash and gore 1d6 hissing crocodiles
+    - The Yellow Snail kobolds (2d20) live peacefully in tree huts
+    - Bubbling swamp tar has healing and anti-toxin properties
+    - 1d4 shambling mounds trudge through the slimy muck
+    - The Wandering Merchant rides on an albino crocodile
+    - Roll two encounters and combine the results (reroll 98-99)
+    - ["The Swamp Shambler (gorilla) offers a random magic item", 0.5]

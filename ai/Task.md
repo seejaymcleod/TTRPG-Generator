@@ -3,8 +3,11 @@ ai/00_SYSTEM_CONTRACT.md
 ai/REPO_MAP.md
 ai/STATE.md
 
-TASK:
-I think the missingtableref is supposed to fail, but there are a couple other ones that are giving errors in this image, 
+TASK: 
+1) I asked for a timeout on the renderer to prevent infinite loops. Add that.
+2) Related. [Generate] Request for: AllFeaturesTest (ATest_AllFeatures.yaml). Count: 1 
+
+That hung for 30 seconds. WHY? 
 
 CONTEXT:
 <only the relevant code snippets or diff>

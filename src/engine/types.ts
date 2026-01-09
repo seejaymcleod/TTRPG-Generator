@@ -53,6 +53,7 @@ export interface RecursionTracker {
     depth: number;
     tables: Set<string>; // "filename:tablename"
     maxDepth: number;
+    counts: Map<string, number>; // "timestamp:count"
 }
 
 export interface GeneratedResult {

@@ -3,55 +3,54 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure, Places
 tablename: Market Encounters
-tables:
-  - results:
-      - ["Six chaos cultists throw burlap bags over the PCs' heads", 0.5]
-      - A drunk, wobbly knife-thrower hurls a blade toward a PC
-      - A runaway cart of lettuce heads crashes down the street
-      - A passing noble stumbles and blames it on a character
-      - Three scrawny children pluck at the PCs' gear and pockets
-      - A hooded hawk lashes out at a PC who passes too close
-      - An overladen dung pile collapses toward the group
-      - A glimpse into an alley reveals a few shadowy vendors
-      - The City Watch asks the PCs to "distract" a vendor's guards
-      - A firebreather gouts flames, 25% chance of misfire
-      - A woman stealthily sprinkles powder into a spice barrel
-      - A herd of goats clogs traffic; the goats chew on loose gear
-      - A red-faced fruit vendor accuses a woman of theft
-      - A vendor cuts open a fruit that smells like decaying flesh
-      - Two sorcerers having a psychic contest start to cause fires
-      - Smashing pottery and yells echo from a covered wagon
-      - A famous sword master (gladiator) drinks alone in a tent
-      - 2d4 bored caravan guards try to provoke trouble
-      - A spooked horse rears up, threatening to throw its rider
-      - "A dart with a note lands at a PC's feet: 'meet at Liona's"
-      - Two shouting merchants brandish daggers at each other
-      - A tattoo artist offers a character a tattoo at half price (5 gp)
-      - A merchant under duress serves as bait for a cultist's trap
-      - A sword-swallower tries to use a PC's weapon for his show
-      - A visiting noble swaggers through with 6 pushy guards
-      - A small monkey in a vest and red cap steals people's gear
-      - A team of jugglers secretly picks onlookers' pockets
-      - A hulking berserker flips a table and starts a fist fight
-      - A man with a red-stained mouth offers addictive bloodroot
-      - A goblin runs by hauling four flapping chickens by the legs
-      - Four robed monks insist the PCs submit to an exorcism
-      - Rival crawlers toast around a still-bleeding troll head
-      - A chained brown bear tears loose and goes on a rampage
-      - A beggar offers to exchange a stolen signet ring for gold
-      - A crone in a smoky tent offers to curse enemies for a fee
-      - A street urchin steals a loaf of bread from a baker's stall
-      - The City Watch tries to arrest an outraged snake charmer
-      - A shining, red apple appears in a statue of Gede's hand
-      - 1d6 "commoners" (guards) trail a lordling at a distance
-      - A hunched old woman whispers a portent while passing
-      - 2d4 kobolds pop out of barrels and snatch at merchandise
-      - Religious mendicants place beads around the PCs' necks
-      - A burglar tries to plant a stolen ivory statuette on a PC
-      - A mossy centaur clops along, eliciting gasps; he seeks a PC
-      - Three angry camels begin spitting at anyone nearby
-      - An apothecary offers the PCs a sample of teas or tinctures
-      - An antique mirror shatters, releasing the wraith inside it
-      - The Wandering Merchant has a random scroll for sale
-      - Roll two encounters and combine the results (reroll 98-99)
-      - ["The disguised Overlord pushes a diamond into a PC's hand", 0.5]
+results:
+    - ["Six chaos cultists throw burlap bags over the PCs' heads", 0.5]
+    - A drunk, wobbly knife-thrower hurls a blade toward a PC
+    - A runaway cart of lettuce heads crashes down the street
+    - A passing noble stumbles and blames it on a character
+    - Three scrawny children pluck at the PCs' gear and pockets
+    - A hooded hawk lashes out at a PC who passes too close
+    - An overladen dung pile collapses toward the group
+    - A glimpse into an alley reveals a few shadowy vendors
+    - The City Watch asks the PCs to "distract" a vendor's guards
+    - A firebreather gouts flames, 25% chance of misfire
+    - A woman stealthily sprinkles powder into a spice barrel
+    - A herd of goats clogs traffic; the goats chew on loose gear
+    - A red-faced fruit vendor accuses a woman of theft
+    - A vendor cuts open a fruit that smells like decaying flesh
+    - Two sorcerers having a psychic contest start to cause fires
+    - Smashing pottery and yells echo from a covered wagon
+    - A famous sword master (gladiator) drinks alone in a tent
+    - 2d4 bored caravan guards try to provoke trouble
+    - A spooked horse rears up, threatening to throw its rider
+    - "A dart with a note lands at a PC's feet: 'meet at Liona's"
+    - Two shouting merchants brandish daggers at each other
+    - A tattoo artist offers a character a tattoo at half price (5 gp)
+    - A merchant under duress serves as bait for a cultist's trap
+    - A sword-swallower tries to use a PC's weapon for his show
+    - A visiting noble swaggers through with 6 pushy guards
+    - A small monkey in a vest and red cap steals people's gear
+    - A team of jugglers secretly picks onlookers' pockets
+    - A hulking berserker flips a table and starts a fist fight
+    - A man with a red-stained mouth offers addictive bloodroot
+    - A goblin runs by hauling four flapping chickens by the legs
+    - Four robed monks insist the PCs submit to an exorcism
+    - Rival crawlers toast around a still-bleeding troll head
+    - A chained brown bear tears loose and goes on a rampage
+    - A beggar offers to exchange a stolen signet ring for gold
+    - A crone in a smoky tent offers to curse enemies for a fee
+    - A street urchin steals a loaf of bread from a baker's stall
+    - The City Watch tries to arrest an outraged snake charmer
+    - A shining, red apple appears in a statue of Gede's hand
+    - 1d6 "commoners" (guards) trail a lordling at a distance
+    - A hunched old woman whispers a portent while passing
+    - 2d4 kobolds pop out of barrels and snatch at merchandise
+    - Religious mendicants place beads around the PCs' necks
+    - A burglar tries to plant a stolen ivory statuette on a PC
+    - A mossy centaur clops along, eliciting gasps; he seeks a PC
+    - Three angry camels begin spitting at anyone nearby
+    - An apothecary offers the PCs a sample of teas or tinctures
+    - An antique mirror shatters, releasing the wraith inside it
+    - The Wandering Merchant has a random scroll for sale
+    - Roll two encounters and combine the results (reroll 98-99)
+    - ["The disguised Overlord pushes a diamond into a PC's hand", 0.5]

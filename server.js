@@ -110,6 +110,10 @@ app.post('/api/generate', (req, res) => {
   const results = [];
   const renderer = getRenderer(); // Random seed
 
+
+  // Log the incoming request details
+  console.log(`[Generate] Request for: ${targetTable.tablename} (${targetTable.filename}). Count: ${count}`);
+
   try {
     for (let i = 0; i < count; i++) {
       // Context includes input values
@@ -117,32 +121,13 @@ app.post('/api/generate', (req, res) => {
       // Ensure thisResult is null initially
       context.thisResult = null;
 
-      // Generate
-      // We pass the filename/tablename as identifier. 
-      // But renderer.generate takes a string identifier and looks it up.
-      // Since we already found the object, we might want to extend Renderer to accept an object?
-      // Actually, Renderer.generate calls loader.findTable.
-      // We can just pass the filename (preferred) or tablename.
       const identifier = targetTable.filename || targetTable.tablename;
       const result = renderer.generate(identifier, context);
 
-      // Normalize output for client
-      // Client expects: { header, result, ... }
-      // Our GeneratedResult matches this mostly.
-      // Legacy flattens arrays unless specific flags like _isSeparateRows.
-
-      // Check for _isSeparateRows
       if (result._isSeparateRows) {
-        // Push the object itself (client handles it)
         results.push(result);
       } else if (Array.isArray(result.result) && !result._isCareer && !result._isMultiElementArray) {
-        // Flatten if it's a generic array of results (like subtable collection)
-        // But wait, renderer.generate usually returns a SINGLE result structure which MIGHT contain an array.
-        // Legacy server: "Flatten only if it's an array NOT marked as separateRows"
-        // NEW ENGINE: renderer.generate returns ONE GeneratedResult. 
-        // If resulting val is array, it's usually [Res1, Res2] from multi-roll or inline array.
-        // We should push the single GeneratedResult object. The client iterates over results.
-        results.push(result); // CHANGED: Always push the object unless we specifically need flattening logic
+        results.push(result);
       } else {
         results.push(result);
       }
@@ -150,7 +135,9 @@ app.post('/api/generate', (req, res) => {
 
     res.json({ results });
   } catch (e) {
-    console.error("Error generating:", e);
+    console.error(`[Generate Error] Failed for table: ${targetTable.tablename}`);
+    console.error(`Params: count=${count}, inputs=${JSON.stringify(inputValues)}`);
+    console.error("Stack:", e.stack);
     res.status(500).json({ error: e.message });
   }
 });
