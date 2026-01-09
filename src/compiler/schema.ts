@@ -35,6 +35,7 @@ export const SubTableSchema: z.ZodType<SubTable> = z.lazy(() => z.object({
     results: z.array(EntrySchema).optional(),
     tables: z.array(SubTableSchema).optional(),
     subTables: z.array(SubTableSchema).optional(),
+    referenceTables: z.array(z.any()).optional(), // Define explicitly, though we use catchall
     customDisplay: z.string().optional(),
     description: z.union([z.string(), z.array(z.string())]).optional(),
     // Common optional fields

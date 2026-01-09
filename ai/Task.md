@@ -4,92 +4,36 @@ ai/REPO_MAP.md
 ai/STATE.md
 
 TASK:
-1) See error. It seems my nodemon keeps auto restarting the server due to changes. 
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-[nodemon] restarting due to changes...
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
-[nodemon] restarting due to changes...
-[nodemon] restarting due to changes...
-[nodemon] starting `node C:\Users\Seejay\source\repos\TTRPG-Generator\server.js`
-Loading tables from C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json...
-Loading tables from JSON: C:\Users\Seejay\source\repos\TTRPG-Generator\dist\tables.json
-Loaded 147 tables from JSON.
-Engine loaded with 147 tables.
-Server v2 running on port 1337
-Powered by TypeScript Engine
+1) I rerolled all for ATestSystem and on the third time I got an error on ArrayWithDiceAndRef, RefTableLookupWithDice, RefTableLookupWithArray.. 
+Console
+Math error in "100 / 0": Error: Division by zero
+    at ExpressionEvaluator.calculate (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\expr.js:106:35)
+    at ExpressionEvaluator.evaluate (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\expr.js:29:25)
+    at Renderer.evaluateToken (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:391:30)
+    at Renderer.processStringRecursive (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:345:42)
+    at Renderer.processString (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:253:21)
+    at Renderer.processResultEntry (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:246:53)
+    at Renderer.processTable (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:86:36)
+    at C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:62:61
+    at Array.map (<anonymous>)
+    at Renderer.processTable (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:62:45)
+Math error in "100 / 0": Error: Division by zero
+    at ExpressionEvaluator.calculate (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\expr.js:106:35)
+    at ExpressionEvaluator.evaluate (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\expr.js:29:25)
+    at Renderer.evaluateToken (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:391:30)
+    at Renderer.processStringRecursive (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:345:42)
+    at Renderer.processString (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:253:21)
+    at Renderer.processResultEntry (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:246:53)
+    at Renderer.processTable (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:86:36)
+    at Renderer.reroll (C:\Users\Seejay\source\repos\TTRPG-Generator\dist\src\engine\renderer.js:198:30)
+    at C:\Users\Seejay\source\repos\TTRPG-Generator\server.js:179:29
+    at Layer.handle [as handle_request] (C:\Users\Seejay\source\repos\TTRPG-Generator\node_modules\express\lib\router\layer.js:95:5)
 
-2) Shadowdark NPC seems to fail on the syllable test often. Maybe you should redo the reroll test and keep an eye out on the console and the main area for errors. 
+2) Draw Steel Negotiations 
+Reactions reference lookup failed. Not sure the console errors are doing anything anymore. 
+3) Custom.yaml, most of it fails, but you may want to look at its formatting. 
 
-3) I was either rerolling shadowdark npc or the ATest yaml, but one of them failed due to divide by zero error
-
+4) Tome of adventures, many of those mess up. Again, they might not be complete yet. 
 ENTRY POINT:
 <real file(s) from REPO_MAP.md>
 <or failing test name / error output>

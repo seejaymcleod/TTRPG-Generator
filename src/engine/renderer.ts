@@ -314,13 +314,44 @@ export class Renderer {
 
     private processString(template: string, context: Context, tracker: RecursionTracker): string | number {
         // Handle Inline Arrays first: [A, B, C] logic is inside processStringRecursive via bracket detection
-        // But we need to handle nested braces/brackets properly.
-        return this.processStringRecursive(template, context, tracker);
+        const res = this.processStringRecursive(template, context, tracker);
+        if (Array.isArray(res)) return JSON.stringify(res); // Fallback for string expectations
+        return res as string | number;
     }
 
-    private processStringRecursive(str: string, context: Context, tracker: RecursionTracker): string | number {
+    private processStringRecursive(str: string, context: Context, tracker: RecursionTracker): any {
         let index = 0;
-        let result = "";
+        let result: any = "";
+        let isBuildingString = true; // Track if we are building a simple string or returning a complex object
+
+        // If the string is EXACTLY a bracketed expression "[...]", we might return an array or object directly.
+        // But processStringRecursive handles mixed content "Value: {Table}".
+        // If we detect a complex block that SHOULD return an array, and it's surrounded by text, we must stringify it or pick one?
+        // Current logic concatenates strings.
+
+        // Helper to append to result
+        const append = (val: any) => {
+            if (isBuildingString) {
+                if (typeof val === 'object') {
+                    // If we are concatenating, stringify objects
+                    result += JSON.stringify(val);
+                } else {
+                    result += val;
+                }
+            } else {
+                // If we were existing in a non-string state, checking if we need to switch?
+                // Actually, let's keep simple string building for mixed content.
+                // Special Case: The ENTIRE string is a bracket group "[...]"
+                // We handle this by checking if index=0 and nextBracket covers the whole string?
+                // Complexity: "Text [A, B]" -> "Text A".
+                // "[A, B]" -> Array?
+                // For now, let's stick to returning string UNLESS we hit the specific array preservation logic.
+            }
+        };
+
+        if (str.trim().startsWith('[') && str.trim().endsWith(']')) {
+            // Potential full-array mode checks could go here, but let's rely on the bracket parser.
+        }
 
         while (index < str.length) {
             const nextBrace = str.indexOf('{', index);
@@ -330,7 +361,7 @@ export class Renderer {
             let type = ''; // 'brace' | 'bracket'
 
             if (nextBrace === -1 && nextBracket === -1) {
-                result += str.substring(index);
+                if (typeof result === 'string') result += str.substring(index);
                 break;
             }
 
@@ -343,7 +374,7 @@ export class Renderer {
             }
 
             // Add text before
-            result += str.substring(index, nextIndex);
+            if (typeof result === 'string') result += str.substring(index, nextIndex);
 
             // Find balancing closer
             const start = nextIndex;
@@ -361,7 +392,7 @@ export class Renderer {
             }
 
             if (end === -1) {
-                result += str[start];
+                if (typeof result === 'string') result += str[start];
                 index = start + 1;
                 continue;
             }
@@ -394,7 +425,16 @@ export class Renderer {
 
                     if (rawRef && rawKey) {
                         const refName = String(this.processStringRecursive(rawRef, context, tracker));
-                        const keyVal = String(this.processStringRecursive(rawKey, context, tracker));
+                        let keyVal = String(this.processStringRecursive(rawKey, context, tracker));
+
+                        // SPECIAL CASE: If keyVal looks like an expression (e.g. "thisResult[0]"), try to evaluate it.
+                        // Legacy tables using {useReferenceTable{...}{thisResult[0]}} rely on implicit evaluation.
+                        if (keyVal.includes('thisResult')) {
+                            const evaluated = this.evaluateToken(keyVal, context, tracker);
+                            if (typeof evaluated !== 'string' || !evaluated.startsWith('[')) {
+                                keyVal = String(evaluated);
+                            }
+                        }
 
                         let foundTable = null;
                         for (const t of this.loader.getAllTables()) {
@@ -405,31 +445,74 @@ export class Renderer {
                         }
 
                         if (foundTable) {
-                            result += this.refHandler.lookup(foundTable, keyVal);
+                            if (typeof result === 'string') result += this.refHandler.lookup(foundTable, keyVal);
                         } else {
-                            result += `[ReferenceTable ${refName} not found]`;
+                            if (typeof result === 'string') result += `[ReferenceTable ${refName} not found]`;
                         }
                     } else {
-                        result += `[Invalid useReferenceTable syntax]`;
+                        if (typeof result === 'string') result += `[Invalid useReferenceTable syntax]`;
                     }
                 } else {
                     const processedContent = this.processStringRecursive(content, context, tracker);
                     const evalRes = this.evaluateToken(String(processedContent), context, tracker);
-                    result += String(evalRes);
+                    if (typeof result === 'string') result += String(evalRes);
                 }
             } else {
                 // Bracket: [content]
                 const isInteger = /^\d+$/.test(content);
-                const prevChar = result.length > 0 ? result[result.length - 1] : '';
+                const prevChar = (typeof result === 'string' && result.length > 0) ? result[result.length - 1] : '';
                 const looksLikeIndex = isInteger && /[a-zA-Z0-9_]/.test(prevChar);
 
                 if (looksLikeIndex) {
-                    result += `[${content}]`;
+                    if (typeof result === 'string') result += `[${content}]`;
                 } else {
-                    const processedContent = String(this.processStringRecursive(content, context, tracker));
-                    const choices = processedContent.split(',').map(s => s.trim());
-                    const pick = this.rng.choice(choices);
-                    result += pick;
+                    // INLINE ARRAY vs SEQUENTIAL EVALUATION
+
+                    // HEURISTIC: If content contains "thisResult", we treat it as a sequential evaluation list
+                    // and return the ARRAY (if it's the only thing) or stringify it?
+                    // DrawSteel: "[{{2d6}...}, {use...thisResult...}]" -> Wrapped in quotes in YAML, so str is "[...]"
+                    // If str is EXACTLY "[...]", we can return the array.
+                    // Check if result is empty AND end == str.length-1 AND start == 0
+
+                    const isWholeString = (start === 0 && end === str.length - 1);
+                    const hasDependency = content.includes('thisResult');
+
+                    if (isWholeString && hasDependency) {
+                        // SEQUENTIAL ARRAY MODE
+                        const items = this.splitByCommaIgnoringGenerics(content);
+                        const seqResults: any[] = [];
+                        const seqContext = { ...context }; // Local context for sequence
+
+                        for (const item of items) {
+                            // Update thisResult in context to be the array-so-far
+                            // Or should it be the PREVIOUS item?
+                            // DrawSteel expectation: {use...thisResult[0]} -> Access index 0.
+                            // So thisResult must be the array of results calculated so far.
+                            seqContext['thisResult'] = seqResults;
+
+                            // Process item (it might have {} or other tokens)
+                            const processedItem = this.processStringRecursive(item.trim(), seqContext, tracker);
+                            // Evaluate if it looks like a token? 
+                            // processStringRecursive handles braces {}, so {{2d6}} -> {2d6} -> result.
+                            // The result of {{2d6}} string process is "7". 
+                            // Does it need evaluateToken? 
+                            // content was "{{2d6}...}, {use...}"
+                            // item 1: "{{2d6}...}" -> processStringRecursive -> "7"
+                            // item 2: "{use...}" -> processStringRecursive -> "Suspicious"
+
+                            // Check if processedItem is a string that needs evaluation?
+                            // processStringRecursive ALREADY recurses and evaluates braces.
+                            // So processedItem should be the final value.
+                            seqResults.push(processedItem);
+                        }
+                        return seqResults; // Return array directly
+                    } else {
+                        // Normal Choice Mode
+                        const processedContent = String(this.processStringRecursive(content, context, tracker));
+                        const choices = processedContent.split(',').map(s => s.trim());
+                        const pick = this.rng.choice(choices);
+                        if (typeof result === 'string') result += pick;
+                    }
                 }
             }
 
@@ -437,6 +520,29 @@ export class Renderer {
         }
 
         return result;
+    }
+
+    private splitByCommaIgnoringGenerics(str: string): string[] {
+        const parts: string[] = [];
+        let current = "";
+        let depth = 0; // {} depth
+        let bracketDepth = 0; // [] depth
+
+        for (let i = 0; i < str.length; i++) {
+            const c = str[i];
+            if (c === '{') depth++;
+            else if (c === '}') depth--;
+            else if (c === '[') bracketDepth++;
+            else if (c === ']') bracketDepth--;
+            else if (c === ',' && depth === 0 && bracketDepth === 0) {
+                parts.push(current);
+                current = "";
+                continue;
+            }
+            current += c;
+        }
+        parts.push(current);
+        return parts;
     }
 
     private evaluateToken(token: string, context: Context, tracker: RecursionTracker): string | number {
