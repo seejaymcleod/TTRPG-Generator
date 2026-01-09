@@ -1,13 +1,14 @@
 {
   "name": "ttrpg-generator",
-  "version": "0.1.25",
+  "version": "0.1.29",
   "description": "TTRPG-Generator",
   "main": "server.js",
   "scripts": {
+    "start": "node dist/server.js",
     "build": "npx tsc && npm run build:tables",
     "build:tables": "npx ts-node src/compiler/build.ts",
+    "cli": "npx ts-node scripts/cli.ts",
     "test": "vitest",
-    "start": "npm run build && node server.js",
     "dev": "npm run build && nodemon server.js"
   },
   "author": {
@@ -18,13 +19,13 @@
     "@types/node": "^25.0.3",
     "@types/seedrandom": "^3.0.8",
     "eslint": "^8.21.0",
+    "js-yaml": "^4.1.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },
   "eslintConfig": {},
   "dependencies": {
     "express": "^4.21.1",
-    "js-yaml": "^4.1.0",
     "zod": "^4.3.5"
   }
 }

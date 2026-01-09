@@ -19,19 +19,25 @@ export class Renderer {
     private dice: Dice;
     private expr: ExpressionEvaluator;
     private refHandler: ReferenceTableHandler;
+    public DEBUG = false;
+    private timeoutMs: number;
+    private startTime: number;
 
-    constructor(loader: TableLoader, seed?: string) {
+    constructor(loader: TableLoader, seed?: string, timeoutMs: number = 5000) {
         this.loader = loader;
         this.rng = new RNG(seed);
         this.dice = new Dice(this.rng);
         this.expr = new ExpressionEvaluator();
         this.refHandler = new ReferenceTableHandler();
+        this.timeoutMs = timeoutMs;
+        this.startTime = Date.now();
     }
 
     public generate(identifier: string, context: Context = {}): GeneratedResult {
         const tracker: RecursionTracker = {
             depth: 0,
             tables: new Set(),
+            counts: new Map(),
             maxDepth: 30
         };
         const rootTable = this.loader.findTable(identifier);
@@ -44,6 +50,7 @@ export class Renderer {
             };
         }
 
+        this.startTime = Date.now();
         return this.processTable(rootTable, context, tracker);
     }
 
@@ -53,14 +60,31 @@ export class Renderer {
         tracker: RecursionTracker,
         overrideResults?: ResultEntry[]
     ): GeneratedResult {
+        if (Date.now() - this.startTime > this.timeoutMs) {
+            throw new Error(`[Renderer Timeout] Execution exceeded ${this.timeoutMs}ms`);
+        }
+
         const trackerId = `${table.filename || ''}:${table.tablename}`;
+
+        // Loop Detection: Check if we are visiting this table too often in the current stack
+        const currentCount = tracker.counts.get(trackerId) || 0;
+        if (currentCount >= 2) {
+            // console.error(`[Loop Limit Hit] ${trackerId}`);
+            return { header: table.tablename, result: `[Loop Limit: ${table.tablename}]` };
+        }
+
         if (tracker.depth > tracker.maxDepth) {
             return { header: table.tablename, result: `[Max depth reached: ${table.tablename}]` };
         }
 
+        // Increment count for new tracker
+        const newCounts = new Map(tracker.counts);
+        newCounts.set(trackerId, currentCount + 1);
+
         const newTracker = {
             depth: tracker.depth + 1,
             tables: new Set(tracker.tables).add(trackerId),
+            counts: newCounts,
             maxDepth: tracker.maxDepth
         };
 
@@ -194,7 +218,12 @@ export class Renderer {
         // Merge context: Input context + Input values are already merged by caller usually, 
         // but we ensure we work with a fresh object inheriting from them.
         const currentContext = { ...context };
-        const tracker: RecursionTracker = { depth: 0, tables: new Set(), maxDepth: 30 };
+        const tracker: RecursionTracker = {
+            depth: 0,
+            tables: new Set(),
+            counts: new Map(),
+            maxDepth: 30
+        };
 
         // 1. Check for Math Expression in header
         if (/[+\-*/]/.test(header)) {
@@ -249,14 +278,6 @@ export class Renderer {
             currentContext._currentTable = targetSubTable;
             const res = this.processTable(targetSubTable, currentContext, tracker);
 
-            // Legacy reroll returns a specific structure wrapping the result
-            // But our generate returns GeneratedResult. We can return that directly, 
-            // ensuring header matches request if possible, or let the caller handle it.
-            // The legacy API expects: { result: { header, result, _tableName }, context }
-            // We will return GeneratedResult, and the API handler will wrap it.
-
-            // Override header to match request if it wasn't a perfect match? 
-            // Legacy renderer keeps the requested header.
             return {
                 ...res,
                 header: header
@@ -321,37 +342,29 @@ export class Renderer {
         let index = 0;
         let result: any = "";
         let isBuildingString = true; // Track if we are building a simple string or returning a complex object
+        let iterations = 0;
 
-        // If the string is EXACTLY a bracketed expression "[...]", we might return an array or object directly.
-        // But processStringRecursive handles mixed content "Value: {Table}".
-        // If we detect a complex block that SHOULD return an array, and it's surrounded by text, we must stringify it or pick one?
-        // Current logic concatenates strings.
-
-        // Helper to append to result
         const append = (val: any) => {
             if (isBuildingString) {
                 if (typeof val === 'object') {
-                    // If we are concatenating, stringify objects
                     result += JSON.stringify(val);
                 } else {
                     result += val;
                 }
-            } else {
-                // If we were existing in a non-string state, checking if we need to switch?
-                // Actually, let's keep simple string building for mixed content.
-                // Special Case: The ENTIRE string is a bracket group "[...]"
-                // We handle this by checking if index=0 and nextBracket covers the whole string?
-                // Complexity: "Text [A, B]" -> "Text A".
-                // "[A, B]" -> Array?
-                // For now, let's stick to returning string UNLESS we hit the specific array preservation logic.
             }
         };
 
-        if (str.trim().startsWith('[') && str.trim().endsWith(']')) {
-            // Potential full-array mode checks could go here, but let's rely on the bracket parser.
-        }
-
         while (index < str.length) {
+            // Log loop state
+            // console.log(`[PSR] Loop Idx=${index} Len=${str.length} ResLen=${String(result).length}`);
+            this.checkTimeout();
+
+            // Loop Prevention: Hard limit on iterations for a single string
+            if (++iterations > 1000) {
+                const msg = `[PSR] Infinite recursion protection hit for string: ${str.substring(0, 100)}... (Length: ${str.length})`;
+                console.error(msg);
+                throw new Error(msg);
+            }
             const nextBrace = str.indexOf('{', index);
             const nextBracket = str.indexOf('[', index);
 
@@ -380,6 +393,7 @@ export class Renderer {
             let depth = 1;
 
             for (let i = start + 1; i < str.length; i++) {
+                // this.checkTimeout();
                 if (str[i] === (type === 'brace' ? '{' : '[')) depth++;
                 else if (str[i] === (type === 'brace' ? '}' : ']')) depth--;
 
@@ -408,6 +422,7 @@ export class Renderer {
                         let depth = 1;
                         let start = cursor;
                         for (let i = cursor + 1; i < content.length; i++) {
+                            // this.checkTimeout();
                             if (content[i] === '{') depth++;
                             if (content[i] === '}') depth--;
                             if (depth === 0) {
@@ -453,7 +468,10 @@ export class Renderer {
                 } else {
                     const processedContent = this.processStringRecursive(content, context, tracker);
                     const evalRes = this.evaluateToken(String(processedContent), context, tracker);
-                    if (typeof result === 'string') result += String(evalRes);
+
+                    if (typeof result === 'string') {
+                        result += String(evalRes);
+                    }
                 }
             } else {
                 // Bracket: [content]
@@ -465,13 +483,6 @@ export class Renderer {
                     if (typeof result === 'string') result += `[${content}]`;
                 } else {
                     // INLINE ARRAY vs SEQUENTIAL EVALUATION
-
-                    // HEURISTIC: If content contains "thisResult", we treat it as a sequential evaluation list
-                    // and return the ARRAY (if it's the only thing) or stringify it?
-                    // DrawSteel: "[{{2d6}...}, {use...thisResult...}]" -> Wrapped in quotes in YAML, so str is "[...]"
-                    // If str is EXACTLY "[...]", we can return the array.
-                    // Check if result is empty AND end == str.length-1 AND start == 0
-
                     const isWholeString = (start === 0 && end === str.length - 1);
                     const hasDependency = content.includes('thisResult');
 
@@ -479,41 +490,25 @@ export class Renderer {
                         // SEQUENTIAL ARRAY MODE
                         const items = this.splitByCommaIgnoringGenerics(content);
                         const seqResults: any[] = [];
-                        const seqContext = { ...context }; // Local context for sequence
+                        const seqContext = { ...context };
 
                         for (const item of items) {
-                            // Update thisResult in context to be the array-so-far
-                            // Or should it be the PREVIOUS item?
-                            // DrawSteel expectation: {use...thisResult[0]} -> Access index 0.
-                            // So thisResult must be the array of results calculated so far.
-                            seqContext['thisResult'] = seqResults;
-
-                            // Process item (it might have {} or other tokens)
+                            seqContext['thisResult'] = [...seqResults]; // Snapshot to avoid circular reference
                             const processedItem = this.processStringRecursive(item.trim(), seqContext, tracker);
-                            // Evaluate if it looks like a token? 
-                            // processStringRecursive handles braces {}, so {{2d6}} -> {2d6} -> result.
-                            // The result of {{2d6}} string process is "7". 
-                            // Does it need evaluateToken? 
-                            // content was "{{2d6}...}, {use...}"
-                            // item 1: "{{2d6}...}" -> processStringRecursive -> "7"
-                            // item 2: "{use...}" -> processStringRecursive -> "Suspicious"
-
-                            // Check if processedItem is a string that needs evaluation?
-                            // processStringRecursive ALREADY recurses and evaluates braces.
-                            // So processedItem should be the final value.
                             seqResults.push(processedItem);
                         }
                         return seqResults; // Return array directly
                     } else {
                         // Normal Choice Mode
-                        const processedContent = String(this.processStringRecursive(content, context, tracker));
-                        const choices = processedContent.split(',').map(s => s.trim());
+                        const processedContent = this.processStringRecursive(content, context, tracker);
+                        const valToAppend = String(processedContent);
+
+                        const choices = valToAppend.split(',').map(s => s.trim());
                         const pick = this.rng.choice(choices);
                         if (typeof result === 'string') result += pick;
                     }
                 }
             }
-
             index = end + 1;
         }
 
@@ -527,6 +522,7 @@ export class Renderer {
         let bracketDepth = 0; // [] depth
 
         for (let i = 0; i < str.length; i++) {
+            // this.checkTimeout();
             const c = str[i];
             if (c === '{') depth++;
             else if (c === '}') depth--;
@@ -544,6 +540,7 @@ export class Renderer {
     }
 
     private evaluateToken(token: string, context: Context, tracker: RecursionTracker): string | number {
+        this.checkTimeout();
         try {
             const roll = this.dice.roll(token);
             context['thisResult'] = roll;
@@ -551,14 +548,11 @@ export class Renderer {
         } catch (e) { }
 
         // Check for Probability syntax: {Table, 0.5}
-        // Token comes in as "Table, 0.5" or "Table,0.5"
-        // Regex for "Something, Number"
         const probMatch = token.match(/^(.+?),\s*((?:0\.)?\d+)$/);
         if (probMatch) {
             const tableName = probMatch[1].trim();
             const prob = parseFloat(probMatch[2]);
             if (!isNaN(prob)) {
-                // Start Roll
                 if (this.rng.nextFloat() <= prob) {
                     return this.evaluateToken(tableName, context, tracker);
                 } else {
@@ -576,7 +570,6 @@ export class Renderer {
             const keyTable = token.substring('selectedResult,'.length).trim();
             let table = this.loader.findTable(keyTable);
 
-            // If not found global, check if it's a subtable of the current table context
             if (!table && context._currentTable) {
                 const sub = this.loader.findSubTable(context._currentTable, keyTable);
                 if (sub) table = sub;
@@ -584,39 +577,12 @@ export class Renderer {
 
             if (table) {
                 const keyRes = this.processTable(table, context, tracker).result;
-                // Target MUST be subtable of current table context (or sibling?)
-                // Spells logic: RandomTier -> Tier1. RandomTier is sibling of Tier1. Both under SpellsPriest.
-                // context._currentTable points to ... RandomSpellAnyTier?
-                // If RandomSpellAnyTier is a sibling of Tier1...
-                // Wait. In SpellsPriest.yaml:
-                // tables:
-                //   - RandomSpellAnyTier
-                //   - Tier1
-                //   - Tier2
-                // They are SIBLINGS.
-                // processCustomDisplay uses `table` (which is the current table passed in).
-                // `evaluateToken` receives `context`. `context._currentTable` is `RandomSpellAnyTier`.
-                // We need to look for `Tier1` which is a SIBLING of `context._currentTable`.
-                // BUT `RandomSpellAnyTier` doesn't know its parent.
-                // So we can only lookup Global (unlikely if same name exists elsewhere) or via Loader traversal?
-                // Actually, if they are root tables in the file (SpellsPriest has `tables:` list), they are indexed globally by name?
-                // Tier1, Tier2... are common names. They might be overwritten globally!
-                // This is a risk.
-                // BUT `loader.findSubTable` logic.
-                // If `context._currentTable` is a Root Table? No, it's in a list. 
-                // We don't have reference to "Parent Table".
                 const keyResStr = String(keyRes);
 
-                // 1. Try finding globally (Exact)
                 let targetSub = this.loader.findTable(keyResStr);
-
-                // 2. Try finding as subtable of current table (Fuzzy allowed via findSubTable)
                 if (!targetSub && context._currentTable) {
                     targetSub = this.loader.findSubTable(context._currentTable, keyResStr);
                 }
-
-                // 3. Try finding globally (Fuzzy? - Loader.findTable doesn't do fuzzy, but maybe we should?)
-                // For now, relying on subtable fuzzy match which covers the Shops case (Types -> Standard Shops).
 
                 if (targetSub) {
                     return String(this.processTable(targetSub, context, tracker).result);
@@ -645,7 +611,6 @@ export class Renderer {
 
             let table = this.loader.findTable(base);
 
-            // If not found global, check if it's a subtable of the current table context
             if (!table && context._currentTable) {
                 const sub = this.loader.findSubTable(context._currentTable, base);
                 if (sub) table = sub;
@@ -698,5 +663,12 @@ export class Renderer {
         }
 
         return String(this.processString(template, context, tracker));
+    }
+
+    private checkTimeout(extraInfo?: string) {
+        if (Date.now() - this.startTime > this.timeoutMs) {
+            if (extraInfo) console.error(extraInfo);
+            throw new Error(`[Renderer Timeout] Execution exceeded ${this.timeoutMs}ms`);
+        }
     }
 }
