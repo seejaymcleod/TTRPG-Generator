@@ -74,6 +74,11 @@ function build() {
                 // Feature: Inject Filename for indexing
                 (table as any).filename = filename;
 
+                // Feature: Split comma-separated types
+                if (typeof (table as any).type === 'string' && (table as any).type.includes(',')) {
+                    (table as any).type = (table as any).type.split(',').map((t: string) => t.trim());
+                }
+
                 // Recursive processing to fix missing tablenames
                 processTable(table, filename.replace(/\.(yaml|yml)$/, ''), 0);
 
