@@ -4,18 +4,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTRPG Generator - Version 127</title>
+  <title>TTRPG Generator - Version 128</title>
   <!-- Add extractContext polyfill script first - IMPORTANT! -->
   <script src="/js/extractContext.js"></script>
   <!-- REMOVE Choices.js dependency since we're using buttons instead -->
   <link rel="stylesheet" href="css/styles.css">
 
 </head>
+<style>
+  /* Auth Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    background-color: var(--bg-card);
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    position: relative;
+  }
+
+  .close-modal {
+    color: var(--text-muted);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .close-modal:hover,
+  .close-modal:focus {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .auth-form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+  }
+
+  .auth-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+    margin-top: 15px;
+  }
+
+  .auth-form button:hover {
+    background-color: var(--primary-hover);
+  }
+
+  .auth-switch {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-muted);
+  }
+
+  .auth-switch a {
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* Header User Section */
+  #userSection {
+    float: right;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  #userDisplay {
+    font-weight: bold;
+    color: var(--primary-color);
+    display: none;
+  }
+
+  .auth-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+  }
+
+  .auth-btn:hover {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  /* Favorites UI */
+  .favorite-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    /* Larger star */
+    color: var(--text-muted);
+    /* Inactive color */
+    padding: 0 5px;
+    transition: color 0.2s, transform 0.2s;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  .favorite-toggle.active {
+    color: #FFD700;
+    /* Gold for active */
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  }
+
+  .favorite-toggle:hover {
+    transform: scale(1.2);
+  }
+
+  /* Favorites Filter Button */
+  #favoritesFilterBtn {
+    margin-left: 10px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    /* Match Reset button style initially */
+    color: var(--text-primary);
+  }
+
+  #favoritesFilterBtn.active {
+    background-color: #FFD700;
+    color: #000;
+    border-color: #FFD700;
+    font-weight: bold;
+  }
+
+  /* Adjust reset button area */
+  .filter-actions {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+</style>
+</head>
 
 <body>
   <div id="titleContainer">
-    <h1>TTRPG Generator - Version 127</h1>
-    <button id="themeToggle" onclick="toggleTheme()">Toggle Theme</button>
+    <h1>TTRPG Generator - Version 128</h1>
+    <div id="userSection" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+      <span id="userDisplay"></span>
+      <button id="loginBtn" class="auth-btn" onclick="openAuthModal('login')">Login</button>
+      <button id="registerBtn" class="auth-btn" onclick="openAuthModal('register')">Sign Up</button>
+      <button id="logoutBtn" class="auth-btn" onclick="logout()" style="display:none;">Logout</button>
+    </div>
+    <button id="themeToggle" onclick="toggleTheme()" style="margin-left: 10px;">Toggle Theme</button>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+      <h2 id="authTitle">Login</h2>
+      <div id="authError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form id="authForm" class="auth-form" onsubmit="handleAuth(event)">
+        <input type="text" id="username" placeholder="Username" required autocomplete="username">
+        <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" id="authSubmitBtn">Login</button>
+      </form>
+      <div class="auth-switch">
+        <span id="authSwitchText">Don't have an account? <a onclick="toggleAuthMode()">Sign up</a></span>
+      </div>
+    </div>
   </div>
 
   <div id="searchContainer">
@@ -60,7 +245,10 @@
       </div>
     </div>
 
-    <button id="resetButton" onclick="resetFilters()">Reset</button>
+    <div class="filter-actions">
+      <button id="resetButton" onclick="resetFilters()">Reset</button>
+      <button id="favoritesFilterBtn" onclick="toggleFavoritesFilter()">★ Show Favorites</button>
+    </div>
 
     <!-- Single expand button for the entire filter bar REMOVED -->
   </div>
@@ -100,7 +288,204 @@
     let currentSelectedTable = null;
     let generationContexts = {};
 
+    // --- User System State & Logic ---
+    window.currentUser = null;
+
+    // Check for session on load
+    function checkSession() {
+      const savedUser = localStorage.getItem('ttrpg_user');
+      if (savedUser) {
+        try {
+          window.currentUser = JSON.parse(savedUser);
+          updateUserUI();
+        } catch (e) {
+          console.error("Error parsing saved user:", e);
+          localStorage.removeItem('ttrpg_user');
+        }
+      }
+    }
+
+    function updateUserUI() {
+      const userSection = document.getElementById('userSection');
+      const userDisplay = document.getElementById('userDisplay');
+      const loginBtn = document.getElementById('loginBtn');
+      const registerBtn = document.getElementById('registerBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (window.currentUser) {
+        userDisplay.textContent = `Hello, ${window.currentUser.username}`;
+        userDisplay.style.display = 'inline';
+        loginBtn.style.display = 'none';
+        registerBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+      } else {
+        userDisplay.style.display = 'none';
+        loginBtn.style.display = 'inline';
+        registerBtn.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+      }
+
+      // Re-apply filters in case favorites changed or login state changed
+      applyFilters();
+    }
+
+    // Modal Logic
+    function openAuthModal(mode) {
+      const modal = document.getElementById('authModal');
+      const title = document.getElementById('authTitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const switchText = document.getElementById('authSwitchText');
+
+      modal.style.display = 'block';
+      document.getElementById('authError').style.display = 'none';
+      document.getElementById('authForm').reset();
+
+      if (mode === 'login') {
+        title.textContent = 'Login';
+        submitBtn.textContent = 'Login';
+        switchText.innerHTML = 'Don\'t have an account? <a onclick="toggleAuthMode()">Sign up</a>';
+        modal.dataset.mode = 'login';
+      } else {
+        title.textContent = 'Sign Up';
+        submitBtn.textContent = 'Sign Up';
+        switchText.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Login</a>';
+        modal.dataset.mode = 'register';
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function toggleAuthMode() {
+      const currentMode = document.getElementById('authModal').dataset.mode;
+      openAuthModal(currentMode === 'login' ? 'register' : 'login');
+    }
+
+    // Close modal if clicked outside
+    window.onclick = function (event) {
+      const modal = document.getElementById('authModal');
+      if (event.target == modal) {
+        closeAuthModal();
+      }
+    }
+
+    async function handleAuth(event) {
+      event.preventDefault();
+      const mode = document.getElementById('authModal').dataset.mode; // 'login' or 'register'
+      const username = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const errorDiv = document.getElementById('authError');
+
+      if (!username || !pass) {
+        errorDiv.textContent = "Please fill in all fields.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const endpoint = mode === 'login' ? '/api/login' : '/api/register';
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password: pass })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        // Success
+        window.currentUser = data.user;
+        localStorage.setItem('ttrpg_user', JSON.stringify(data.user));
+        updateUserUI();
+        closeAuthModal();
+        showToast(`Successfully ${mode === 'login' ? 'logged in' : 'registered'}!`);
+
+      } catch (e) {
+        errorDiv.textContent = e.message;
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    function logout() {
+      window.currentUser = null;
+      localStorage.removeItem('ttrpg_user');
+      updateUserUI();
+      // Reset favorites filter if it was active
+      const favBtn = document.getElementById('favoritesFilterBtn');
+      if (favBtn.classList.contains('active')) {
+        toggleFavoritesFilter();
+      }
+      showToast('Logged out');
+    }
+
+    // Favorites Logic
+    async function toggleFavorite(filename, btnElement) {
+      if (!window.currentUser) {
+        // Prompt to login
+        openAuthModal('login');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/user/favorites/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: window.currentUser.username,
+            tableFilename: filename
+          })
+        });
+
+        if (!response.ok) throw new Error("Failed to toggle favorite");
+
+        const data = await response.json();
+
+        // Update local state
+        window.currentUser.favorites = data.favorites;
+        localStorage.setItem('ttrpg_user', JSON.stringify(window.currentUser));
+
+        // Update UI
+        if (data.isFavorite) {
+          btnElement.classList.add('active');
+        } else {
+          btnElement.classList.remove('active');
+        }
+
+        // If we are currently filtering by favorites and we removed one, 
+        // we might need to refresh the list, but applyFilters handles general filtering.
+        if (document.getElementById('favoritesFilterBtn').classList.contains('active')) {
+          applyFilters();
+        }
+
+      } catch (e) {
+        console.error(e);
+        showToast("Error updating favorite");
+      }
+    }
+
+    function toggleFavoritesFilter() {
+      const btn = document.getElementById('favoritesFilterBtn');
+      if (!window.currentUser && !btn.classList.contains('active')) {
+        openAuthModal('login');
+        return;
+      }
+
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        btn.textContent = '★ Favorites Active';
+      } else {
+        btn.textContent = '★ Show Favorites';
+      }
+      applyFilters();
+    }
+
+
     document.addEventListener('DOMContentLoaded', async function () {
+      checkSession(); // Check for logged in user
       try {
         const response = await fetch('/api/tables');
         tablesData = await response.json();
@@ -415,7 +800,12 @@
         const matchesSetting = settingFilter.length === 0 ||
           (table.setting && settingFilter.includes(table.setting));
 
-        return matchesSearch && matchesGame && matchesType && matchesSetting;
+        // Filter by Favorites
+        const showFavoritesOnly = document.getElementById('favoritesFilterBtn').classList.contains('active');
+        const matchesFavorite = !showFavoritesOnly ||
+          (window.currentUser && window.currentUser.favorites && window.currentUser.favorites.includes(table.filename));
+
+        return matchesSearch && matchesGame && matchesType && matchesSetting && matchesFavorite;
       });
 
       console.log(`Found ${filteredTables.length} matching tables`);
@@ -474,7 +864,31 @@
       tableHeadersContainer.innerHTML = '';
 
       const tableNameTitle = document.createElement('h2');
-      tableNameTitle.textContent = table.tablename ?? 'Unnamed Table';
+      tableNameTitle.style.display = 'flex';
+      tableNameTitle.style.alignItems = 'center';
+      tableNameTitle.style.gap = '10px';
+
+      const titleText = document.createElement('span');
+      titleText.textContent = table.tablename ?? 'Unnamed Table';
+      tableNameTitle.appendChild(titleText);
+
+      // Add "Favorite" toggle button
+      const favBtn = document.createElement('button');
+      favBtn.className = 'favorite-toggle';
+      favBtn.innerHTML = '★';
+      favBtn.title = 'Toggle Favorite';
+      favBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleFavorite(table.filename, favBtn);
+      };
+
+      // Check if currently favorited
+      if (window.currentUser && window.currentUser.favorites && window.currentUser.favorites.includes(table.filename)) {
+        favBtn.classList.add('active');
+      }
+
+      tableNameTitle.appendChild(favBtn);
+
       // Store the filename as a data attribute for clear identification
       tableNameTitle.dataset.filename = table.filename;
       tableNameTitle.dataset.game = table.game;

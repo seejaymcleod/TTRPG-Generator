@@ -293,3 +293,113 @@ app.listen(PORT, () => {
   console.log(`Server v2 running on port ${PORT}`);
   console.log(`Powered by TypeScript Engine`);
 });
+
+// --- User System Implementation ---
+
+const crypto = require('crypto');
+const USERS_FILE = path.join(__dirname, 'data', 'users.json');
+
+// Ensure data directory exists
+if (!fs.existsSync(path.join(__dirname, 'data'))) {
+  fs.mkdirSync(path.join(__dirname, 'data'));
+}
+
+// User Data Helper Functions
+function loadUsers() {
+  if (!fs.existsSync(USERS_FILE)) {
+    return [];
+  }
+  try {
+    return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+  } catch (e) {
+    console.error("Error loading users:", e);
+    return [];
+  }
+}
+
+function saveUsers(users) {
+  try {
+    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+  } catch (e) {
+    console.error("Error saving users:", e);
+  }
+}
+
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
+// POST /api/register
+app.post('/api/register', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password required' });
+  }
+
+  const users = loadUsers();
+  if (users.find(u => u.username === username)) {
+    return res.status(409).json({ error: 'Username already exists' });
+  }
+
+  const newUser = {
+    username,
+    passwordHash: hashPassword(password),
+    favorites: []
+  };
+
+  users.push(newUser);
+  saveUsers(users);
+
+  // Return user without password
+  const { passwordHash, ...safeUser } = newUser;
+  res.json({ user: safeUser });
+});
+
+// POST /api/login
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  const users = loadUsers();
+  const user = users.find(u => u.username === username);
+
+  if (!user || user.passwordHash !== hashPassword(password)) {
+    return res.status(401).json({ error: 'Invalid credentials' });
+  }
+
+  const { passwordHash, ...safeUser } = user;
+  res.json({ user: safeUser });
+});
+
+// POST /api/user/favorites/toggle
+app.post('/api/user/favorites/toggle', (req, res) => {
+  const { username, tableFilename } = req.body;
+
+  // In a real app we'd verify a session token here. 
+  // For this simple local tool, we trust the client provided username for now, 
+  // or we could require password again (too annoying).
+  // Implicit trust for local tool context.
+
+  const users = loadUsers();
+  const userIndex = users.findIndex(u => u.username === username);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const user = users[userIndex];
+  if (!user.favorites) user.favorites = [];
+
+  const favIndex = user.favorites.indexOf(tableFilename);
+  let isFavorite = false;
+
+  if (favIndex === -1) {
+    user.favorites.push(tableFilename);
+    isFavorite = true;
+  } else {
+    user.favorites.splice(favIndex, 1);
+    isFavorite = false;
+  }
+
+  saveUsers(users);
+
+  res.json({ favorites: user.favorites, isFavorite });
+});

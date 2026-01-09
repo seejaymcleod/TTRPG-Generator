@@ -3,11 +3,10 @@ ai/00_SYSTEM_CONTRACT.md
 ai/REPO_MAP.md
 ai/STATE.md
 
-TASK: 
-1) I asked for a timeout on the renderer to prevent infinite loops. Add that.
-2) Related. [Generate] Request for: AllFeaturesTest (ATest_AllFeatures.yaml). Count: 1 
-
-That hung for 30 seconds. WHY? 
+PLANNING TASK ONLY: 
+1) Implement simple users with usernames and passwords. Where\how are they stored? Onboarding? 
+2) Adding favorites button to a table page
+3) adding a favorites button to the category (in the same section as Reset)
 
 CONTEXT:
 <only the relevant code snippets or diff>
