@@ -312,11 +312,9 @@ export class Renderer {
         return { header: 'Number', result: entry };
     }
 
-    private processString(template: string, context: Context, tracker: RecursionTracker): string | number {
+    private processString(template: string, context: Context, tracker: RecursionTracker): any {
         // Handle Inline Arrays first: [A, B, C] logic is inside processStringRecursive via bracket detection
-        const res = this.processStringRecursive(template, context, tracker);
-        if (Array.isArray(res)) return JSON.stringify(res); // Fallback for string expectations
-        return res as string | number;
+        return this.processStringRecursive(template, context, tracker);
     }
 
     private processStringRecursive(str: string, context: Context, tracker: RecursionTracker): any {
@@ -546,7 +544,11 @@ export class Renderer {
     }
 
     private evaluateToken(token: string, context: Context, tracker: RecursionTracker): string | number {
-        try { return this.dice.roll(token); } catch (e) { }
+        try {
+            const roll = this.dice.roll(token);
+            context['thisResult'] = roll;
+            return roll;
+        } catch (e) { }
 
         // Check for Probability syntax: {Table, 0.5}
         // Token comes in as "Table, 0.5" or "Table,0.5"
@@ -656,6 +658,7 @@ export class Renderer {
                 }
                 const res = this.processTable(table, context, tracker);
                 const val = res.result;
+                context['thisResult'] = val; // Store result for same-string reuse
                 if (index !== -1) {
                     if (Array.isArray(val)) return val[index];
                     return `[Index ${index} invalid]`;
