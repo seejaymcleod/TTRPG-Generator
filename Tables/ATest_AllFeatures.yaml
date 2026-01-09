@@ -184,7 +184,7 @@ tables:
 
   # - tablename: CustomDisplayPickOne
   #   description: Tests the {pickOneFromArrays} directive.
-  #   customDisplay: "{pickOneFromArrays}"
+  #   # customDisplay: "{pickOneFromArrays}" # REMOVED: Redundant specific logic
   #   results:
   #     - "Option 1 with choices [A, B, C]"
   #     - "Option 2 with choices [X, Y, Z]"

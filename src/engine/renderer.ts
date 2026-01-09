@@ -637,31 +637,6 @@ export class Renderer {
     }
 
     private processCustomDisplay(template: string, table: SubTable, context: Context, tracker: RecursionTracker): string {
-        if (template.includes('pickOneFromArrays')) {
-            if (!table.results) return "No results";
-            const pick = this.pickResult(table.results).entry;
-            return String(this.processString(String(pick), context, tracker));
-        }
-
-        const selResRegex = /\[\{selectedResult,\s*([^}]+)\}\]/;
-        const match = template.match(selResRegex);
-        if (match) {
-            const keyTable = match[1];
-            // Look for subtable, or fallback to global table (sibling)
-            let keySub = this.loader.findSubTable(table, keyTable);
-            if (!keySub) {
-                keySub = this.loader.findTable(keyTable);
-            }
-
-            if (keySub) {
-                const keyRes = this.processTable(keySub, context, tracker).result;
-                const targetSub = this.loader.findSubTable(table, String(keyRes)); // Target MUST be subtable of current
-                if (targetSub) {
-                    return String(this.processTable(targetSub, context, tracker).result);
-                }
-            }
-        }
-
         return String(this.processString(template, context, tracker));
     }
 

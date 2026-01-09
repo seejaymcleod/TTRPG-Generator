@@ -60,7 +60,6 @@ tables:
           - Silk-wrapped
           - Stained glass
       - tablename: Item
-        customDisplay: "{pickOneFromArrays}" 
         results: 
           - Life-sized humanoid figure
           - "[tusk, horn, fang, skull]"
