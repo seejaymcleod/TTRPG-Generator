@@ -639,6 +639,8 @@ function populateFilterButtons(tables) {
     createFilterButtons('gameFilter', Array.from(gameSet));
     createFilterButtons('typeFilter', Array.from(typeSet));
     createFilterButtons('settingFilter', Array.from(settingSet));
+
+    populateSearchSuggestions(tables);
 }
 
 // Helper function to create filter buttons
@@ -672,6 +674,33 @@ function createFilterButtons(filterId, options) {
         };
         filterContainer.appendChild(button);
     });
+}
+
+
+function populateSearchSuggestions(tables) {
+    const suggestions = new Set();
+    tables.forEach(table => {
+        if (table.tablename) suggestions.add(table.tablename);
+        if (table.game) suggestions.add(table.game);
+        if (table.setting) suggestions.add(table.setting);
+        if (table.type) {
+            if (Array.isArray(table.type)) {
+                table.type.forEach(t => suggestions.add(t));
+            } else {
+                suggestions.add(table.type);
+            }
+        }
+    });
+
+    const dataList = document.getElementById('searchSuggestions');
+    if (dataList) {
+        dataList.innerHTML = '';
+        Array.from(suggestions).sort().forEach(val => {
+            const option = document.createElement('option');
+            option.value = val;
+            dataList.appendChild(option);
+        });
+    }
 }
 
 // Reuse toggleFilterButton, clearFilter, etc. from legacy
@@ -735,6 +764,63 @@ function performSearch() {
     applyFilters();
 }
 
+function handleSearchKeydown(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) return;
+
+        // check if query matches a filter option
+        if (tryApplySmartFilter(query)) {
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+    }
+}
+
+function tryApplySmartFilter(query) {
+    // Try Game Filter
+    if (attemptFilterMatch('gameFilter', query)) return true;
+    // Try Setting Filter
+    if (attemptFilterMatch('settingFilter', query)) return true;
+    // Try Type Filter
+    if (attemptFilterMatch('typeFilter', query)) return true;
+
+    return false;
+}
+
+function attemptFilterMatch(filterId, query) {
+    const container = document.getElementById(filterId);
+    if (!container) return false;
+
+    // Find a button that matches the query case-insensitive
+    const buttons = Array.from(container.querySelectorAll('.filter-btn'));
+    const match = buttons.find(btn => btn.dataset.value.toLowerCase() === query.toLowerCase());
+
+    if (match) {
+        // If already selected, do nothing? Or maybe ensure it IS selected.
+        // The logic says "Accept my entry". Usually implies "Set this filter".
+        // Use existing toggle logic.
+
+        // If we are in 'all-selected' mode, we need to switch to 'choice' mode.
+        // toggleFilterButton handles this.
+
+        // However, if it's ALREADY selected in choice mode, toggling it might Deselect it.
+        // We probably want to ENSURE it is selected.
+
+        const isSelected = match.classList.contains('selected');
+        if (!isSelected) {
+            toggleFilterButton(match, filterId);
+        } else {
+            // If already selected, maybe we just want to focus it? 
+            // But for "Smart Search", if I type "Knave" and it's already "Knave", 
+            // clearing the search box is still the right visual feedback that "I understood you".
+        }
+        return true;
+    }
+    return false;
+}
+
 function applyFilters() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();
     const gameFilter = getSelectedValues('gameFilter');
@@ -746,7 +832,13 @@ function applyFilters() {
 
     const filteredTables = tablesData.filter(table => {
         const matchesSearch = searchQuery === '' ||
-            (table.tablename && table.tablename.toLowerCase().includes(searchQuery));
+            (table.tablename && table.tablename.toLowerCase().includes(searchQuery)) ||
+            (table.filename && table.filename.toLowerCase().includes(searchQuery)) ||
+            (table.game && table.game.toLowerCase().includes(searchQuery)) ||
+            (table.setting && table.setting.toLowerCase().includes(searchQuery)) ||
+            (Array.isArray(table.type)
+                ? table.type.some(t => t.toLowerCase().includes(searchQuery))
+                : (table.type && table.type.toLowerCase().includes(searchQuery)));
         const matchesGame = gameFilter.length === 0 ||
             (table.game && gameFilter.includes(table.game));
 
