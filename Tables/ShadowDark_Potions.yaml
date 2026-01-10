@@ -96,3 +96,41 @@ tables:
       - DC 15 CON check or go blind for 5 rounds
       - You are the source of an antimagic shell spell for 1 hour
       - "Your [arms, legs] petrify for 5 rounds"
+
+  - tablename: Tastes
+    results: 
+      - Sweet and honeyed
+      - Salty like the sea
+      - Bitter herbs
+      - Sour lemon
+      - Metallic copper
+      - Spicy pepper
+      - Earthy soil
+      - Cool mint
+      - Rotten eggs
+      - Fresh berries
+
+  - tablename: Smells
+    results: 
+      - Sulfur and brimstone
+      - Fresh roses
+      - Decaying leaves
+      - Ozone and lightning
+      - Spearmint
+      - Fresh baked bread
+      - Damp earth after rain
+      - Metallic blood
+      - Pine needles
+      - Smokey woodfire
+
+  - tablename: Labels
+    results: 
+      - Faded paper tag
+      - Embossed leather wrapping
+      - Small metal medallion
+      - Etched directly into glass
+      - No label, mystery liquid
+      - Glowing rune
+      - Wax seal on ribbon
+      - Scratched notes in common
+      - Warning symbol

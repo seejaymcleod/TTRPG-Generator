@@ -61,6 +61,7 @@ tables:
     customDisplay: "[{selectedResult, CapsuleAreaTypes}]"
     subTables:
       - tablename: ItemBasedBackstories
+        customDisplay: "{Items} {ItemLocationRelationships} {ItemOtherFactorInvolved} {RoughTimeframe}"
         subTables: 
         - tablename: Items
           results: 
@@ -138,6 +139,7 @@ tables:
             - "[1 year ago, 5]"
             - "[1 month ago, 4]"    
       - tablename: PersonBasedBackstories
+        customDisplay: "{PersonInvolvedWithLocation} {PersonRelationshipToLocation} {LastImportantEventAtLocation} {OptionalAdditionalFactor} {RoughTimeframe}"
         subTables: 
           - tablename: PersonInvolvedWithLocation
             results: 
@@ -202,7 +204,7 @@ tables:
               - Rendering of a judgment
               - Long-awaited revenge
               - A discovery            
-          - tablename: OptionalAdditional Factor
+          - tablename: OptionalAdditionalFactor
             results:      
             - Someone or something knew more than it was expected to know
             - An accident of timing
@@ -232,6 +234,6 @@ tables:
               - "[1 month ago, 4]"    
   - tablename: CapsuleAreaTypes
     results:
-      - ItemBasedBackstories
-      - PersonBasedBackstories
+      - "{ItemBasedBackstories}"
+      - "{PersonBasedBackstories}"
         
