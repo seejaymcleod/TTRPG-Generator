@@ -37,6 +37,23 @@ function processTable(table: any, parentName: string, index: number) {
         table.tablename = `${parentName}_SubTable_${index + 1}`;
     }
 
+    // 1. Process Results for Shorthand Weights ("Item ^5")
+    if (table.results && Array.isArray(table.results)) {
+        table.results = table.results.map((entry: any) => {
+            if (typeof entry === 'string') {
+                const match = entry.match(/^(.+?)\s*\^(\d+(?:\.\d+)?)$/);
+                if (match) {
+                    const content = match[1];
+                    const weight = parseFloat(match[2]);
+                    // Convert to local tuple format [value, weight] which engine supports
+                    // OR object format if schema supports it. Engine checks for Array(2) with number.
+                    return [content, weight];
+                }
+            }
+            return entry;
+        });
+    }
+
     // Iterate subTables and tables
     const recursables = ['tables', 'subTables'];
     recursables.forEach(key => {

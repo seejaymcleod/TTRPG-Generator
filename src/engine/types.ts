@@ -66,4 +66,5 @@ export interface GeneratedResult {
     _tableName?: string;
     _fileName?: string;
     _originalSource?: string;
+    context?: Context;
 }

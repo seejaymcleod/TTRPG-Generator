@@ -2,8 +2,8 @@
 import { Context } from './types';
 
 export class ExpressionEvaluator {
-    // Evaluates "10 + 5", "TestInput * 2", "100 / 0"
-    // Valid tokens: numbers, +, -, *, /, (, ), identifiers
+    // Evaluates "10 + 5", "TestInput * 2", "100 / 0", "Dice > 5"
+    // Valid tokens: numbers, +, -, *, /, %, >, <, >=, <=, ==, !=, (, ), identifiers
     evaluate(expr: string, context: Context): number {
         // Tokenize
         const tokens = this.tokenize(expr);
@@ -16,9 +16,6 @@ export class ExpressionEvaluator {
             // It's an identifier
             const val = context[t];
             if (val === undefined) {
-                // Try looking in thisResult for implicit array index usage in complex cases, 
-                // but strict spec says context identifiers.
-                // We'll log/warn and return 0 for safety as per prompt 'MathErrorHandling'
                 return 0;
             }
             return Number(val);
@@ -37,13 +34,25 @@ export class ExpressionEvaluator {
     }
 
     private isOperator(s: string): boolean {
-        return ['+', '-', '*', '/'].includes(s);
+        return ['+', '-', '*', '/', '%', '>', '<', '>=', '<=', '==', '!='].includes(s);
     }
 
     private tokenize(expr: string): string[] {
         // Spaces are separators. Operators are separators.
-        // Clean cleanup
-        return expr.replace(/([+\-*/()])/g, ' $1 ').trim().split(/\s+/).filter(x => x.length > 0);
+        // We need to capture multi-char operators first
+        // Regex: Split by spaces, but keep operators. 
+        // A simple split by space isn't enough if operators don't have spaces.
+        // We use a regex that matches operators or other tokens.
+
+        // Match:
+        // 1. Comparison Operators (descending length)
+        // 2. Arithmetic Operators
+        // 3. Parentheses
+        // 4. Numbers / Identifiers (non-operator chars)
+
+        const pattern = /(>=|<=|==|!=|[+\-*/%><()]|[a-zA-Z0-9_.]+|"[^"]*")/g;
+        const matches = expr.match(pattern);
+        return matches ? matches : [];
     }
 
     // Shunting-yard algorithm to RPN then evaluate
@@ -52,10 +61,9 @@ export class ExpressionEvaluator {
         const operatorStack: string[] = [];
 
         const precedence: Record<string, number> = {
-            '+': 1,
-            '-': 1,
-            '*': 2,
-            '/': 2
+            '*': 3, '/': 3, '%': 3,
+            '+': 2, '-': 2,
+            '>': 1, '<': 1, '>=': 1, '<=': 1, '==': 1, '!=': 1
         };
 
         for (const token of tokens) {
@@ -73,7 +81,7 @@ export class ExpressionEvaluator {
                 while (
                     operatorStack.length > 0 &&
                     operatorStack[operatorStack.length - 1] !== '(' &&
-                    precedence[operatorStack[operatorStack.length - 1]] >= precedence[op]
+                    (precedence[operatorStack[operatorStack.length - 1]] || 0) >= (precedence[op] || 0)
                 ) {
                     outputQueue.push(operatorStack.pop()!);
                 }
@@ -99,13 +107,14 @@ export class ExpressionEvaluator {
                     case '+': evalStack.push(a + b); break;
                     case '-': evalStack.push(a - b); break;
                     case '*': evalStack.push(a * b); break;
-                    case '/':
-                        if (b === 0) {
-                            evalStack.push(0); // Safely handle division by zero
-                        } else {
-                            evalStack.push(a / b);
-                        }
-                        break;
+                    case '/': evalStack.push(b === 0 ? 0 : a / b); break;
+                    case '%': evalStack.push(a % b); break;
+                    case '>': evalStack.push(a > b ? 1 : 0); break;
+                    case '<': evalStack.push(a < b ? 1 : 0); break;
+                    case '>=': evalStack.push(a >= b ? 1 : 0); break;
+                    case '<=': evalStack.push(a <= b ? 1 : 0); break;
+                    case '==': evalStack.push(a === b ? 1 : 0); break;
+                    case '!=': evalStack.push(a !== b ? 1 : 0); break;
                 }
             }
         }

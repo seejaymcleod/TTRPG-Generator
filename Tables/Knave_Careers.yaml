@@ -4,7 +4,7 @@ setting: Fantasy
 type: People
 tablename: Careers
 results:
-    - [Acolyte, candlestick, censer, incense]
+    - [[Acolyte, candlestick, censer, incense], 5]
     - [Acrobat, flash powder, balls, lamp oil]
     - [Actor, wig, makeup, costume]
     - [Alchemist, acid, mortar and pestle, 6 vials]
@@ -14,7 +14,7 @@ results:
     - [Assassin, crossbow, garrote, soft boots]
     - [Astrologer, star charts, almanac, telescope]
     - [Baker, rolling pin, flour bag, lard block]
-    - [Bandit, mask, manacles, caltrops]
+    - [[Bandit, mask, manacles, caltrops], 5]
     - [Barber, scissors, hair oil, straight razor]
     - [Beast Tamer, whip, gloves, leash]
     - [Beekeeper, honey, mask, smoke bomb]
@@ -40,7 +40,8 @@ results:
     - [Fence, short sword, file, sealing wax]
     - [Fisherman, spear, net, fishing tackle]
     - [Folklorist, prophecy, bones, scales]
-    - [Gambler, rapier, card deck, dice]
+    - [Gambler, rapier, "[if:{1d2}==1, Loaded Dice, Normal Dice]", dice]
+    - [Noble, "[set:Title, Sir]Signet Ring", "Scroll", "Fancy Clothes"]
     - [Gamekeeper, sling, horn, rope ladder]
     - [Gardener, sickle, shovel, shears]
     - [Grave Robber, saw, crowbar, pulleys]

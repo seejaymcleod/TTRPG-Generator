@@ -234,6 +234,26 @@ tables:
   #   results:
   #     - "B calls A: {RecursionA}" # Expecting "[Recursive reference...]" or "[Max depth...]"
 
+  # --- New Features (Perchance Parity) ---
+  - tablename: TestShorthandWeights
+    description: Tests "Item ^Weight" syntax.
+    results:
+      - Common Item ^5
+      - Rare Item ^1
+      - Basic Item # Default weight 1
+
+  - tablename: TestVariables
+    description: Tests [set:Var, Val] and {Var} retrieval.
+    results:
+      - "[set:MyObs, Created]Stored: {MyObs}"
+
+  - tablename: TestLogic
+    description: Tests [if:Cond, True, False] syntax.
+    results:
+      - "Check 10 > 5: [if:10 > 5, True, False]"
+      - "Check 10 < 5: [if:10 < 5, True, False]"
+      - "Dice Logic: [set:Roll, {1d6}]Rolled {Roll}. Result: [if:{Roll} > 3, High, Low]"
+
 # --- Reference Table Definition ---
 referenceTables:
   - tablename: TestReferenceTable

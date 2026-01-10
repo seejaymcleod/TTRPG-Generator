@@ -2,17 +2,17 @@ filename: Custom_NPC.yaml
 game: Custom
 setting: Fantasy
 type: People
-tablename: NPC
+tablename: CustomNPC
 tables:
   - tablename: Blarf
     results: 
       - "{Knave_Names}"
   - tablename: Name
     results: 
-      - "{Knave_Names}"
+      - "[set:N, {Knave_Names}]{N}"
   - tablename: Archetype
     results: 
-      - "{Knave_Archetypes}"
+      - "[set:A, {Knave_Archetypes}]{A}"
   - tablename: Relevant Profession
     results: 
       - "{Knave_Professions}"
@@ -37,3 +37,6 @@ tables:
   - tablename: Secret
     results: 
       - "{ShadowDark_NPC|Secret}"
+  - tablename: Summary
+    results:
+      - "{N} is a {A}."

@@ -34,6 +34,11 @@ export class Renderer {
     }
 
     public generate(identifier: string, context: Context = {}): GeneratedResult {
+        // Initialize shared memory if not present
+        if (!context.memory) {
+            context.memory = {};
+        }
+
         const tracker: RecursionTracker = {
             depth: 0,
             tables: new Set(),
@@ -51,7 +56,8 @@ export class Renderer {
         }
 
         this.startTime = Date.now();
-        return this.processTable(rootTable, context, tracker);
+        const res = this.processTable(rootTable, context, tracker);
+        return { ...res, context };
     }
 
     private processTable(
@@ -280,7 +286,8 @@ export class Renderer {
 
             return {
                 ...res,
-                header: header
+                header: header,
+                context: currentContext
             };
         }
 
@@ -481,6 +488,46 @@ export class Renderer {
 
                 if (looksLikeIndex) {
                     if (typeof result === 'string') result += `[${content}]`;
+                } else if (content.startsWith('set:')) {
+                    // [set:Variable, Value]
+                    const parts = this.splitByCommaIgnoringGenerics(content.substring(4));
+                    if (parts.length >= 2) {
+                        const varName = parts[0].trim();
+                        const valueExpr = parts.slice(1).join(',').trim();
+                        const processedValue = this.processStringRecursive(valueExpr, context, tracker);
+
+                        // Write to shared memory if available, else local context
+                        if (context.memory) {
+                            context.memory[varName] = processedValue;
+                        } else {
+                            context[varName] = processedValue;
+                        }
+
+                        if (typeof result === 'string') result += "";
+                    } else {
+                        if (typeof result === 'string') result += `[Invalid set syntax]`;
+                    }
+                } else if (content.startsWith('if:')) {
+                    // [if:Condition, TrueVal, FalseVal]
+                    const parts = this.splitByCommaIgnoringGenerics(content.substring(3));
+                    if (parts.length >= 2) {
+                        const condition = parts[0];
+                        const trueVal = parts[1];
+                        const falseVal = parts[2] || "";
+
+                        const condRes = this.evaluateToken(String(this.processStringRecursive(condition, context, tracker)), context, tracker);
+
+                        let isTrue = false;
+                        if (typeof condRes === 'number') isTrue = condRes !== 0;
+                        else if (typeof condRes === 'string') isTrue = (condRes === 'true' || (condRes.length > 0 && condRes !== 'false'));
+                        else if (typeof condRes === 'boolean') isTrue = condRes;
+
+                        if (isTrue) {
+                            if (typeof result === 'string') result += this.processStringRecursive(trueVal, context, tracker);
+                        } else {
+                            if (typeof result === 'string') result += this.processStringRecursive(falseVal, context, tracker);
+                        }
+                    }
                 } else {
                     // INLINE ARRAY vs SEQUENTIAL EVALUATION
                     const isWholeString = (start === 0 && end === str.length - 1);
@@ -561,7 +608,7 @@ export class Renderer {
             }
         }
 
-        if (/[+\-*/]/.test(token) && !/\|/.test(token)) {
+        if (/[+\-*/%<>=!]/.test(token) && !/\|/.test(token)) {
             return this.expr.evaluate(token, context);
         }
 
@@ -597,16 +644,30 @@ export class Renderer {
             const index = match[3] ? parseInt(match[3]) : -1;
             const sub = match[4];
 
+            // 1. Check Local Context
             if (base in context) {
                 const val = context[base];
                 if (index !== -1 && Array.isArray(val)) return val[index];
                 return val;
             }
+
+            // 2. Check Shared Memory
+            if (context.memory && base in context.memory) {
+                const val = context.memory[base];
+                if (index !== -1 && Array.isArray(val)) return val[index];
+                return val;
+            }
+
             if (base === 'thisResult' && context.thisResult) {
                 const val = context.thisResult;
                 if (index !== -1 && Array.isArray(val)) return val[index];
                 if (index !== -1 && !Array.isArray(val) && index === 0) return val;
                 return val;
+            }
+
+            // Fallback for simple variables like {MyVar} if it's not a table
+            if (base in context) {
+                return context[base];
             }
 
             let table = this.loader.findTable(base);

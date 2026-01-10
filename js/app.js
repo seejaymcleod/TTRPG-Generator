@@ -3,6 +3,16 @@ let tablesData = [];
 let currentSelectedTable = null;
 let generationContexts = {};
 
+
+// --- Context Helper ---
+function extractContext(result, storage) {
+    if (!result || typeof result !== 'object') return;
+    if (result.context) {
+        Object.assign(storage, result.context);
+    }
+}
+window.extractContext = extractContext;
+
 // --- User System State & Logic ---
 window.currentUser = null;
 
@@ -1043,14 +1053,16 @@ function generateContent() {
         });
 }
 
+
 function rerollContent(button) {
     // Legacy reroll logic - reusing code structure
     const resultRow = button.closest('.result-row');
-    if (!resultRow || resultRow.classList.contains('locked')) return;
+    if (!resultRow || resultRow.classList.contains('locked')) return Promise.resolve();
 
     const header = resultRow.querySelector('.result-header').textContent;
     const generationContainer = button.closest('.generation-container');
-    if (!generationContainer) return;
+    if (!generationContainer) return Promise.resolve();
+
 
     const generationIndex = generationContainer.dataset.index;
     const context = generationContexts[generationIndex] || {};
@@ -1065,7 +1077,7 @@ function rerollContent(button) {
 
     resultRow.style.opacity = '0.5';
 
-    fetch('/api/reroll', {
+    return fetch('/api/reroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1235,13 +1247,14 @@ function toggleCardCollapse(btn) {
     btn.closest('.generation-container').classList.toggle('collapsed');
 }
 
-function rerollAllContent(container) {
-    // Basic implementation: find all reroll buttons in non-locked rows and click them
+
+async function rerollAllContent(container) {
+    // Sequential implementation to ensure context updates propagate correctly
     const rows = container.querySelectorAll('.result-row:not(.locked)');
-    rows.forEach(row => {
+    for (const row of rows) {
         const btn = row.querySelector('.reroll-btn');
-        if (btn) rerollContent(btn);
-    });
+        if (btn) await rerollContent(btn);
+    }
 }
 
 function toggleTheme() {
