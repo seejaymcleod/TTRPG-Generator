@@ -613,6 +613,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     window.addEventListener('resize', debounce(() => {
         checkFilterBarOverflow();
     }, 250));
+
+    // Initialize resizer
+    setupSidebarResizer();
 });
 
 // New function to populate filter buttons
@@ -820,6 +823,68 @@ function attemptFilterMatch(filterId, query) {
     }
     return false;
 }
+
+// --- Sidebar Resizer Logic ---
+function setupSidebarResizer() {
+    const divider = document.getElementById('verticalDivider');
+    const sidebar = document.getElementById('savedSidebar');
+
+    if (!divider || !sidebar) return;
+
+    let isResizing = false;
+
+    divider.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        divider.classList.add('resizing');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none'; // Prevent text selection
+
+        // Ensure transition is off during drag
+        sidebar.style.transition = 'none';
+
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+
+        // Sidebar is on the right. 
+        // Width = Window Width - Mouse X
+        // We calculate from the right edge
+        const newWidth = window.innerWidth - e.clientX;
+
+        // Constraints (min 200px, max 800px or 50% of screen)
+        const maxWidth = Math.min(800, window.innerWidth * 0.6);
+
+        if (newWidth >= 200 && newWidth <= maxWidth) {
+            sidebar.style.width = `${newWidth}px`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            divider.classList.remove('resizing');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            // We can optionally restore transition here if we want it for other interactions
+            // sidebar.style.transition = 'width 0.3s ease'; 
+        }
+    });
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
 
 function applyFilters() {
     const searchQuery = document.getElementById('searchInput').value.toLowerCase();

@@ -432,6 +432,21 @@
       border: 2px dashed #9333ea !important;
       background-color: rgba(147, 51, 234, 0.1) !important;
     }
+
+    #verticalDivider {
+      width: 4px;
+      cursor: col-resize;
+      background-color: transparent;
+      transition: background-color 0.2s;
+      z-index: 20;
+      margin-left: -2px;
+      /* Center over border if needed, or just sit between */
+    }
+
+    #verticalDivider:hover,
+    #verticalDivider.resizing {
+      background-color: #9333ea;
+    }
   </style>
 </head>
 
@@ -553,7 +568,7 @@
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary text-3xl">hexagon</span>
         <h1 class="font-bold text-lg tracking-tight">TTRPG <span class="text-primary">Gen</span> <span
-            class="text-xs font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">v134</span></h1>
+            class="text-xs font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">v135</span></h1>
       </div>
       <div class="relative w-full max-w-xs group">
         <span
@@ -700,10 +715,13 @@
           </div>
         </section>
 
+        <!-- Divider -->
+        <div id="verticalDivider"></div>
+
         <!-- Saved Cards Sidebar -->
         <aside
-          class="w-80 bg-surface-light dark:bg-[#161f32] border-l border-border-light dark:border-border-dark flex flex-col shrink-0 z-10 transition-all duration-300 transform"
-          id="savedSidebar">
+          class="bg-surface-light dark:bg-[#161f32] border-l border-border-light dark:border-border-dark flex flex-col shrink-0 z-10 transform"
+          id="savedSidebar" style="width: 320px;">
           <div
             class="p-4 border-b border-border-light dark:border-border-dark bg-gray-50 dark:bg-[#131b2e] flex justify-between items-center">
             <h2 class="font-semibold text-sm text-text-muted-light dark:text-text-muted-dark uppercase tracking-wide">
