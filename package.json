@@ -4,7 +4,7 @@
   "description": "TTRPG-Generator",
   "main": "server.js",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "node server.js",
     "build": "npx tsc && npm run build:tables",
     "build:tables": "npx ts-node src/compiler/build.ts",
     "cli": "npx ts-node scripts/cli.ts",
@@ -20,6 +20,7 @@
     "@types/seedrandom": "^3.0.8",
     "eslint": "^8.21.0",
     "js-yaml": "^4.1.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   },
