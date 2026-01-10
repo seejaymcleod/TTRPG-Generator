@@ -1,0 +1,108 @@
+# Master Table Reference for TTRPG Generator
+# This file demonstrates all supported features of the table engine.
+# It is designed to be a copy-paste resource for creating new tables.
+
+filename: Master_Table_Reference.yaml
+game: GenericSystem
+setting: Fantasy
+type: [Reference, Example]
+tablename: MasterGenerator
+description: 
+  - A comprehensive example of all table features.
+  - Use this as a reference or template.
+titleDescription: The Master Table Reference generated this title.
+
+# Input Fields
+# usage: {InputName} in strings
+inputField: [HeroLevel, number]
+
+tables:
+  # --- 1. Basic Lists ---
+  - tablename: SimpleList
+    description: A simple list of string options.
+    results:
+      - Sword
+      - Shield
+      - Potion
+      - Scroll
+
+  # --- 2. Weighted Lists ---
+  - tablename: WeightedList
+    description: Items with different probabilities.
+    results:
+      - [Common Item, 10]    # Weight 10
+      - [Uncommon Item, 5]   # Weight 5
+      - [Rare Item, 1]       # Weight 1
+      - Very Common Item ^20 # Shorthand syntax (Weight 20)
+
+  # --- 3. Dice Rolling ---
+  - tablename: DiceRolls
+    description: rolling dice within text.
+    results:
+      - "You find {1d6} gold pieces."
+      - "Damage: {2d8+3} slashing."
+      - "Range: {1d100} feet."
+
+  # --- 4. Subtable References ---
+  - tablename: LootGeneration
+    description: Calling other tables.
+    results:
+      - "You find a {SimpleList}."
+      - "Chest contains: {WeightedList} and {DiceRolls}."
+
+  # --- 5. Math Expressions ---
+  - tablename: MathExamples
+    description: Performing calculations.
+    results:
+      - "Double Level: {HeroLevel * 2}"
+      - "Half Gold: {{1d100} / 2}" # Nested braces for dice result usage
+      - "Stat Check: {3d6 + HeroLevel}"
+
+  # --- 6. Logic and Variables ---
+  - tablename: ConditionalLogic
+    description: Using [set] and [if].
+    results:
+      - "[set:Roll, {1d20}]Rolled {Roll}. Result: [if:{Roll} >= 15, Success, Failure]"
+      - "High Level Bonus: [if:{HeroLevel} > 5, You get a special ability!, None]"
+
+  # --- 7. Reference Table Lookups (Ranges) ---
+  - tablename: EncounterDifficulty
+    description: Looking up values based on a key (e.g. dice roll or input).
+    results:
+      - "Encounter for Level {HeroLevel} (Roll {1d20}): {useReferenceTable{Difficultychart}{thisResult}}"
+      - "Random Encounter: {useReferenceTable{Difficultychart}{1d20}}"
+
+  # --- 8. Array Results ---
+  - tablename: NpcProfile
+    description: Returning multiple associated values (Name, Job).
+    results:
+      - ["Alice", "Alchemist"]
+      - ["Bob", "Blacksmith"]
+      - ["Charlie", "Carpenter"]
+
+  # --- 9. Custom Display & Formatting ---
+  - tablename: FormattedOutput
+    description: Formatting the final output string.
+    customDisplay: "{NpcProfile[0]} the {NpcProfile[1]} offers you {SimpleList}." 
+    # NpcProfile[0] gets the name, [1] gets the job
+
+  # --- 10. Multi-Roll Directives ---
+  - tablename: MultiLoot
+    description: Rolling multiple times on the same table.
+    results:
+      - ["Two Items", { roll: 2 }] # Rolls on this table 2 more times
+      - "Single Item A"
+      - "Single Item B"
+
+referenceTables:
+  - tablename: Difficultychart
+    description: Map levels/rolls to difficulty.
+    entries:
+      - key: "1-4"
+        value: "Easy"
+      - key: "5-10"
+        value: "Medium"
+      - key: "11-15"
+        value: "Hard"
+      - key: "16+"
+        value: "Deadly"

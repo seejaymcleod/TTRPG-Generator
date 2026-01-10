@@ -1,6 +1,6 @@
 {
   "name": "ttrpg-generator",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "description": "TTRPG-Generator",
   "main": "server.js",
   "scripts": {
