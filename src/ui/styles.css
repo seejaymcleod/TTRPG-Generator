@@ -1,0 +1,19 @@
+/* 
+   PASTE GOOGLE STITCH CSS HERE 
+   
+   If Stitch provides internal <style> tags, copy the content between them here.
+*/
+
+body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+#app-container {
+    border: 1px dashed #666;
+    padding: 20px;
+    text-align: center;
+}

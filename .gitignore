@@ -6,4 +6,3 @@ node_modules
 dist
 coverage
 *.log
-ai/Task.md

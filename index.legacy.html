@@ -1,0 +1,2897 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TTRPG Generator - Version 131</title>
+  <!-- Add extractContext polyfill script first - IMPORTANT! -->
+  <script src="/js/extractContext.js"></script>
+  <!-- REMOVE Choices.js dependency since we're using buttons instead -->
+  <link rel="stylesheet" href="css/styles.css">
+
+</head>
+<style>
+  /* Title Container */
+  #titleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+  }
+
+  #titleContainer h1 {
+    margin: 0;
+    /* Remove default margin for better alignment */
+    font-size: 1.5em;
+    /* Check font size if needed */
+  }
+
+  /* Auth Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    background-color: var(--bg-card);
+    margin: 10% auto;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    position: relative;
+  }
+
+  .close-modal {
+    color: var(--text-muted);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .close-modal:hover,
+  .close-modal:focus {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .auth-form input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+  }
+
+  .auth-form button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+    margin-top: 15px;
+  }
+
+  .auth-form button:hover {
+    background-color: var(--primary-hover);
+  }
+
+  .auth-switch {
+    margin-top: 15px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-muted);
+  }
+
+  .auth-switch a {
+    color: var(--primary-color);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* Header User Section */
+  #userSection {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Increased gap for better spacing */
+  }
+
+
+
+  #userDisplay {
+    font-weight: bold;
+    color: var(--primary-color);
+    display: none;
+  }
+
+  .auth-btn {
+    background: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 5px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+  }
+
+  .auth-btn:hover {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  /* Favorites UI */
+  .favorite-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    /* Larger star */
+    color: var(--text-muted);
+    /* Inactive color */
+    padding: 0 5px;
+    transition: color 0.2s, transform 0.2s;
+    line-height: 1;
+    vertical-align: middle;
+  }
+
+  .favorite-toggle.active {
+    color: #FFD700;
+    /* Gold for active */
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  }
+
+  .favorite-toggle:hover {
+    transform: scale(1.2);
+  }
+
+  /* Adjust reset button area */
+
+  /* Adjust reset button area */
+  .filter-actions {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+</style>
+</head>
+
+<body>
+  <div id="titleContainer">
+    <h1>TTRPG Generator - Version 131</h1>
+    <div id="userSection">
+      <span id="userDisplay"></span>
+      <button id="loginBtn" class="auth-btn" onclick="openAuthModal('login')">Login</button>
+      <button id="registerBtn" class="auth-btn" onclick="openAuthModal('register')">Sign Up</button>
+      <button id="logoutBtn" class="auth-btn" onclick="logout()" style="display:none;">Logout</button>
+      <button id="adminBtn" class="auth-btn" onclick="openAdminDashboard()"
+        style="display:none; border-color: red; color: red;">Admin</button>
+      <button id="themeToggle" onclick="toggleTheme()" class="auth-btn" style="padding: 0 10px; min-width: 40px;"
+        title="Toggle Theme">🌓</button>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+      <h2 id="authTitle">Login</h2>
+      <div id="authError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form id="authForm" class="auth-form" onsubmit="handleAuth(event)">
+        <input type="text" id="username" placeholder="Username" required autocomplete="username">
+        <input type="email" id="email" placeholder="Email" style="display:none;" autocomplete="email">
+        <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+        <button type="submit" id="authSubmitBtn">Login</button>
+      </form>
+      <div class="auth-switch">
+        <span id="authSwitchText">Don't have an account? <a onclick="toggleAuthMode()">Sign up</a></span>
+        <br><br>
+        <a id="forgotPasswordLink" onclick="openAuthModal('forgot-password')"
+          style="font-size: 0.9em; cursor: pointer;">Forgot Password?</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('forgotPasswordModal')">&times;</span>
+      <h2>Forgot Password</h2>
+      <div id="forgotPasswordMessage" style="color: green; margin-bottom: 10px; display: none;"></div>
+      <div id="forgotPasswordError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form class="auth-form" onsubmit="handleForgotPassword(event)">
+        <p style="color: var(--text-muted); margin-bottom: 15px;">Enter your email address to receive a password reset
+          token.</p>
+        <input type="email" id="forgotEmail" placeholder="Email Address" required>
+        <button type="submit">Send Reset Token</button>
+      </form>
+      <div class="auth-switch">
+        <a onclick="openAuthModal('reset-password')">I already have a token</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset Password Modal -->
+  <div id="resetPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('resetPasswordModal')">&times;</span>
+      <h2>Reset Password</h2>
+      <div id="resetPasswordMessage" style="color: green; margin-bottom: 10px; display: none;"></div>
+      <div id="resetPasswordError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form class="auth-form" onsubmit="handleResetPassword(event)">
+        <input type="text" id="resetToken" placeholder="Reset Token" required>
+        <input type="password" id="newPassword" placeholder="New Password" required>
+        <button type="submit">Reset Password</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Modal -->
+  <div id="adminDashboardModal" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+      <span class="close-modal" onclick="closeModal('adminDashboardModal')">&times;</span>
+      <h2>Admin Dashboard</h2>
+      <div id="adminError" style="color: red; margin-bottom: 10px; display: none;"></div>
+
+      <div style="overflow-x: auto;">
+        <table id="userTable" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+              <th style="padding: 10px;">Username</th>
+              <th style="padding: 10px;">Email</th>
+              <th style="padding: 10px;">Admin</th>
+              <th style="padding: 10px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Users populated here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal('editUserModal')">&times;</span>
+      <h2>Edit User</h2>
+      <div id="editUserError" style="color: red; margin-bottom: 10px; display: none;"></div>
+      <form class="auth-form" onsubmit="handleEditUser(event)">
+        <input type="hidden" id="editOriginalUsername">
+        <label>Username</label>
+        <input type="text" id="editUsername" required>
+        <label>Email</label>
+        <input type="email" id="editEmail">
+        <label>New Password (leave blank to keep current)</label>
+        <input type="password" id="editPassword" placeholder="New Password">
+
+        <div style="margin: 15px 0;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="editIsAdmin" style="width: auto; margin: 0;">
+            Is Admin
+          </label>
+        </div>
+
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="searchContainer">
+    <input type="text" id="searchInput" placeholder="Search for tables..." oninput="performSearch()">
+  </div>
+
+  <!-- REPLACE the filter section with our new button-based UI in vertical layout -->
+  <div id="filtersContainer">
+    <div class="filter-container">
+      <div class="filter-header">
+        <span class="filter-title">Game</span>
+        <!-- Commented out individual clear button
+        <button class="filter-clear" onclick="clearFilter('game')">&times;</button>
+        -->
+      </div>
+      <div id="gameFilter" class="filter-buttons" data-mode="all-selected">
+        <!-- Game filter buttons will be added here dynamically -->
+      </div>
+    </div>
+
+    <div class="filter-container">
+      <div class="filter-header">
+        <span class="filter-title">Type</span>
+        <!-- Commented out individual clear button
+        <button class="filter-clear" onclick="clearFilter('type')">&times;</button>
+        -->
+      </div>
+      <div id="typeFilter" class="filter-buttons" data-mode="all-selected">
+        <!-- Type filter buttons will be added here dynamically -->
+      </div>
+    </div>
+
+    <div class="filter-container">
+      <div class="filter-header">
+        <span class="filter-title">Setting</span>
+        <!-- Commented out individual clear button
+        <button class="filter-clear" onclick="clearFilter('setting')">&times;</button>
+        -->
+      </div>
+      <div id="settingFilter" class="filter-buttons" data-mode="all-selected">
+        <!-- Setting filter buttons will be added here dynamically -->
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button id="resetButton" onclick="resetFilters()">Reset</button>
+      <button id="favoritesFilterBtn" onclick="toggleFavoritesFilter()">★ Show Favorites</button>
+    </div>
+
+    <!-- Single expand button for the entire filter bar REMOVED -->
+  </div>
+
+  <div id="contentWrapper">
+    <div id="leftColumn">
+      <div id="matchingTablesContainer">
+        <!-- Matching table buttons will be dynamically populated here -->
+      </div>
+    </div>
+
+    <div id="mainContent">
+      <div id="tableHeaders">
+        <!-- Table name and details will be displayed here -->
+      </div>
+      <div id="generationControls" class="slider-container" style="display: none;">
+        <label for="generationSlider">Number of Generations: <span id="generationValue">1</span></label><br>
+        <input type="range" id="generationSlider" min="1" max="100" value="1" oninput="updateGenerationValue()">
+        <button id="generateBtn" style="margin-top: 10px;" onclick="generateContent()">Generate</button>
+        <button id="showTableBtn" style="margin-top: 10px; margin-left: 10px;" onclick="showTableContent()">Show
+          Table</button>
+        <button id="clearBtn" style="margin-top: 10px; margin-left: 10px;" onclick="clearGeneratedList()">Clear
+          All</button>
+      </div>
+      <div id="results" class="generation-list">
+        <!-- Generation List goes here, each generation being its own object in the list. -->
+      </div>
+    </div>
+
+    <div id="savedGenerations" class="saved-cards">
+      <h2>Saved Cards</h2>
+    </div>
+  </div>
+
+  <script>
+    let tablesData = [];
+    let currentSelectedTable = null;
+    let generationContexts = {};
+
+    // --- User System State & Logic ---
+    window.currentUser = null;
+
+    // Check for session on load
+    function checkSession() {
+      const savedUser = localStorage.getItem('ttrpg_user');
+      if (savedUser) {
+        try {
+          window.currentUser = JSON.parse(savedUser);
+          updateUserUI();
+        } catch (e) {
+          console.error("Error parsing saved user:", e);
+          localStorage.removeItem('ttrpg_user');
+        }
+      }
+    }
+
+    function updateUserUI() {
+      const userSection = document.getElementById('userSection');
+      const userDisplay = document.getElementById('userDisplay');
+      const loginBtn = document.getElementById('loginBtn');
+      const registerBtn = document.getElementById('registerBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const adminBtn = document.getElementById('adminBtn');
+
+      if (window.currentUser) {
+        userDisplay.textContent = `Hello, ${window.currentUser.username}`;
+        userDisplay.style.display = 'inline';
+        loginBtn.style.display = 'none';
+        registerBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline';
+
+        if (window.currentUser.isAdmin) {
+          adminBtn.style.display = 'inline';
+        } else {
+          adminBtn.style.display = 'none';
+        }
+
+      } else {
+        userDisplay.style.display = 'none';
+        loginBtn.style.display = 'inline';
+        registerBtn.style.display = 'inline';
+        logoutBtn.style.display = 'none';
+        adminBtn.style.display = 'none';
+      }
+
+      // Re-apply filters in case favorites changed or login state changed
+      applyFilters();
+    }
+
+    // Modal Logic
+    function openAuthModal(mode) {
+      // Close all other modals first
+      document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+
+      if (mode === 'forgot-password') {
+        document.getElementById('forgotPasswordModal').style.display = 'block';
+        return;
+      }
+      if (mode === 'reset-password') {
+        document.getElementById('resetPasswordModal').style.display = 'block';
+        return;
+      }
+
+      const modal = document.getElementById('authModal');
+      const title = document.getElementById('authTitle');
+      const submitBtn = document.getElementById('authSubmitBtn');
+      const switchText = document.getElementById('authSwitchText');
+      const emailInput = document.getElementById('email');
+      const forgotLink = document.getElementById('forgotPasswordLink');
+
+      modal.style.display = 'block';
+      document.getElementById('authError').style.display = 'none';
+      document.getElementById('authForm').reset();
+
+      if (mode === 'login') {
+        title.textContent = 'Login';
+        submitBtn.textContent = 'Login';
+        switchText.innerHTML = 'Don\'t have an account? <a onclick="toggleAuthMode()">Sign up</a>';
+        emailInput.style.display = 'none';
+        emailInput.required = false;
+        forgotLink.style.display = 'inline-block';
+        modal.dataset.mode = 'login';
+      } else {
+        title.textContent = 'Sign Up';
+        submitBtn.textContent = 'Sign Up';
+        switchText.innerHTML = 'Already have an account? <a onclick="toggleAuthMode()">Login</a>';
+        emailInput.style.display = 'block';
+        emailInput.required = true;
+        forgotLink.style.display = 'none';
+        modal.dataset.mode = 'register';
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function toggleAuthMode() {
+      const currentMode = document.getElementById('authModal').dataset.mode;
+      openAuthModal(currentMode === 'login' ? 'register' : 'login');
+    }
+
+    // Close modal if clicked outside
+    window.onclick = function (event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+
+    async function handleAuth(event) {
+      event.preventDefault();
+      const mode = document.getElementById('authModal').dataset.mode; // 'login' or 'register'
+      const username = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      const email = document.getElementById('email').value;
+      const errorDiv = document.getElementById('authError');
+
+      if (!username || !pass) {
+        errorDiv.textContent = "Please fill in all fields.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      try {
+        const endpoint = mode === 'login' ? '/api/login' : '/api/register';
+        const body = { username, password: pass };
+        if (mode === 'register') body.email = email;
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        // Success
+        window.currentUser = data.user;
+        localStorage.setItem('ttrpg_user', JSON.stringify(data.user));
+        updateUserUI();
+        closeAuthModal();
+        showToast(`Successfully ${mode === 'login' ? 'logged in' : 'registered'}!`);
+
+      } catch (e) {
+        errorDiv.textContent = e.message;
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    async function handleForgotPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('forgotEmail').value;
+      const msgDiv = document.getElementById('forgotPasswordMessage');
+      const errDiv = document.getElementById('forgotPasswordError');
+
+      msgDiv.style.display = 'none';
+      errDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/forgot-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to request reset');
+
+        msgDiv.textContent = data.message;
+        msgDiv.style.display = 'block';
+
+      } catch (e) {
+        errDiv.textContent = e.message;
+        errDiv.style.display = 'block';
+      }
+    }
+
+    async function handleResetPassword(event) {
+      event.preventDefault();
+      const token = document.getElementById('resetToken').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const msgDiv = document.getElementById('resetPasswordMessage');
+      const errDiv = document.getElementById('resetPasswordError');
+
+      msgDiv.style.display = 'none';
+      errDiv.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, newPassword })
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Failed to reset password');
+
+        msgDiv.textContent = data.message;
+        msgDiv.style.display = 'block';
+
+        // Auto close after 2s and show login
+        setTimeout(() => {
+          closeModal('resetPasswordModal');
+          openAuthModal('login');
+          showToast('Password reset! Please log in.');
+        }, 2000);
+
+      } catch (e) {
+        errDiv.textContent = e.message;
+        errDiv.style.display = 'block';
+      }
+    }
+
+    function logout() {
+      window.currentUser = null;
+      localStorage.removeItem('ttrpg_user');
+      updateUserUI();
+      // Reset favorites filter if it was active
+      const favBtn = document.getElementById('favoritesFilterBtn');
+      if (favBtn.classList.contains('active')) {
+        toggleFavoritesFilter();
+      }
+      showToast('Logged out');
+    }
+
+    // Favorites Logic
+    async function toggleFavorite(filename, btnElement) {
+      if (!window.currentUser) {
+        // Prompt to login
+        openAuthModal('login');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/user/favorites/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: window.currentUser.username,
+            tableFilename: filename
+          })
+        });
+
+        if (!response.ok) throw new Error("Failed to toggle favorite");
+
+        const data = await response.json();
+
+        // Update local state
+        window.currentUser.favorites = data.favorites;
+        localStorage.setItem('ttrpg_user', JSON.stringify(window.currentUser));
+
+        // Update UI
+        if (data.isFavorite) {
+          btnElement.classList.add('active');
+        } else {
+          btnElement.classList.remove('active');
+        }
+
+        // If we are currently filtering by favorites and we removed one, 
+        // we might need to refresh the list, but applyFilters handles general filtering.
+        if (document.getElementById('favoritesFilterBtn').classList.contains('active')) {
+          applyFilters();
+        }
+
+      } catch (e) {
+        console.error(e);
+        showToast("Error updating favorite");
+      }
+    }
+
+    function toggleFavoritesFilter() {
+      const btn = document.getElementById('favoritesFilterBtn');
+      if (!window.currentUser && !btn.classList.contains('active')) {
+        openAuthModal('login');
+        return;
+      }
+
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        btn.textContent = '★ Favorites Active';
+      } else {
+        btn.textContent = '★ Show Favorites';
+      }
+      applyFilters();
+    }
+
+
+    // Admin Logic
+    async function openAdminDashboard() {
+      if (!window.currentUser || !window.currentUser.isAdmin) return;
+
+      document.getElementById('adminDashboardModal').style.display = 'block';
+      loadUsers();
+    }
+
+    async function loadUsers() {
+      try {
+        const response = await fetch('/api/admin/users', {
+          headers: { 'x-username': window.currentUser.username }
+        });
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error);
+
+        renderUserTable(data.users);
+      } catch (e) {
+        document.getElementById('adminError').textContent = e.message;
+        document.getElementById('adminError').style.display = 'block';
+      }
+    }
+
+    function renderUserTable(users) {
+      const tbody = document.getElementById('userTableBody');
+      tbody.innerHTML = '';
+
+      users.forEach(u => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border-color)';
+
+        tr.innerHTML = `
+                <td style="padding: 10px;">${escapeHtml(u.username)}</td>
+                <td style="padding: 10px;">${escapeHtml(u.email || '-')}</td>
+                <td style="padding: 10px;">${u.isAdmin ? '✅' : ''}</td>
+                <td style="padding: 10px;">
+                    <button onclick="openEditUser('${escapeHtml(u.username)}')" style="padding: 5px 10px; margin-right: 5px;">Edit</button>
+                    ${u.username !== window.currentUser.username ? `<button onclick="deleteUser('${escapeHtml(u.username)}', this)" style="padding: 5px 10px; background-color: #d32f2f;">Delete</button>` : ''}
+                </td>
+            `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Helper to prevent XSS
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    let currentEditingUser = null;
+
+    async function openEditUser(username) {
+      // Need to fetch user details first or pass them?
+      // We have the list, can simple find from cache if we stored it, or just use what we have in the row?
+      // Let's refetch or simplify. 
+      // We can just iterate the rows or fetch list again.
+      // Or cleaner: store users globally when loading.
+
+      // Quick hack: fetch fresh list to find user
+      try {
+        const response = await fetch('/api/admin/users', {
+          headers: { 'x-username': window.currentUser.username }
+        });
+        const data = await response.json();
+        const user = data.users.find(u => u.username === username);
+
+        if (!user) return;
+
+        currentEditingUser = user;
+        document.getElementById('editOriginalUsername').value = user.username;
+        document.getElementById('editUsername').value = user.username;
+        document.getElementById('editEmail').value = user.email || '';
+        document.getElementById('editPassword').value = ''; // Don't show hash
+        document.getElementById('editIsAdmin').checked = !!user.isAdmin;
+
+        document.getElementById('editUserModal').style.display = 'block';
+        document.getElementById('editUserError').style.display = 'none';
+
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function handleEditUser(event) {
+      event.preventDefault();
+      const originalUsername = document.getElementById('editOriginalUsername').value;
+      const newUsername = document.getElementById('editUsername').value;
+      const email = document.getElementById('editEmail').value;
+      const password = document.getElementById('editPassword').value;
+      const isAdmin = document.getElementById('editIsAdmin').checked;
+
+      try {
+        const body = {
+          newUsername,
+          email,
+          isAdmin
+        };
+        if (password) body.password = password;
+
+        const response = await fetch(`/api/admin/users/${originalUsername}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-username': window.currentUser.username
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+
+        closeModal('editUserModal');
+        showToast('User updated successfully');
+        loadUsers(); // Refresh list
+
+        // If we edited ourselves, update local session
+        if (originalUsername === window.currentUser.username) {
+          window.currentUser = { ...window.currentUser, ...data.user };
+          localStorage.setItem('ttrpg_user', JSON.stringify(window.currentUser));
+          updateUserUI();
+        }
+
+      } catch (e) {
+        document.getElementById('editUserError').textContent = e.message;
+        document.getElementById('editUserError').style.display = 'block';
+      }
+    }
+
+    async function deleteUser(username, btnElement) {
+      if (!btnElement) return; // Should not happen if called correctly
+
+      // Check if we are in confirmation state
+      if (btnElement.dataset.confirming === 'true') {
+        // Perform delete
+        console.log('Sending delete request for:', username);
+        // Disable button
+        btnElement.disabled = true;
+        btnElement.textContent = 'Deleting...';
+
+        try {
+          const response = await fetch(`/api/admin/users/${username}`, {
+            method: 'DELETE',
+            headers: { 'x-username': window.currentUser.username }
+          });
+
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error);
+
+          console.log('Delete success');
+          showToast('User deleted');
+          loadUsers(); // This will re-render the table, so button state handling is not needed after
+        } catch (e) {
+          console.error('Delete failed:', e);
+          alert("Error deleting user: " + e.message);
+          // Restore button
+          btnElement.disabled = false;
+          btnElement.textContent = 'Delete';
+          btnElement.style.backgroundColor = '#d32f2f';
+          delete btnElement.dataset.confirming;
+        }
+      } else {
+        // Switch to confirmation state
+        btnElement.dataset.confirming = 'true';
+        btnElement.textContent = 'Confirm?';
+        btnElement.style.backgroundColor = 'darkred'; // Darker red
+
+        // Auto-revert after 3 seconds
+        setTimeout(() => {
+          // Check if still in document and hasn't been clicked (which would remove or disable it)
+          if (document.body.contains(btnElement) && !btnElement.disabled && btnElement.dataset.confirming === 'true') {
+            btnElement.textContent = 'Delete';
+            btnElement.style.backgroundColor = '#d32f2f';
+            delete btnElement.dataset.confirming;
+          }
+        }, 3000);
+      }
+    }
+    // Explicitly attach to window
+    window.deleteUser = deleteUser;
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      checkSession(); // Check for logged in user
+      try {
+        const response = await fetch('/api/tables');
+        tablesData = await response.json();
+        console.log('Tables Data:', tablesData);
+        populateFilterButtons(tablesData); // New function to populate filter buttons
+        applyFilters();
+      } catch (error) {
+        console.error('Error fetching tables:', error);
+      }
+
+      // Set up drag and drop for saved cards
+      const savedArea = document.getElementById('savedGenerations');
+
+      savedArea.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        this.classList.add('drop-target-highlight');
+        e.dataTransfer.dropEffect = 'copy';
+      });
+
+      savedArea.addEventListener('dragleave', function (e) {
+        this.classList.remove('drop-target-highlight');
+      });
+
+      savedArea.addEventListener('drop', function (e) {
+        e.preventDefault();
+        this.classList.remove('drop-target-highlight');
+        const cardIndex = e.dataTransfer.getData('text/plain');
+        const originalCard = document.querySelector(`.generation-container[data-index="${cardIndex}"]`);
+
+        if (!originalCard) return;
+
+        // Check if this card already exists in the saved area by comparing content
+        const cardTitle = originalCard.querySelector('.card-title-text').textContent;
+
+        // Get all headers and contents from the original card to create a unique signature
+        const originalHeaders = Array.from(originalCard.querySelectorAll('.result-header')).map(h => h.textContent);
+        const originalContents = Array.from(originalCard.querySelectorAll('.result-content')).map(c => c.textContent);
+        const cardSignature = JSON.stringify({ title: cardTitle, headers: originalHeaders, contents: originalContents });
+
+        // Check if a card with the same signature already exists
+        let isDuplicate = false;
+        const savedCards = savedArea.querySelectorAll('.generation-container');
+        savedCards.forEach(savedCard => {
+          const savedHeaders = Array.from(savedCard.querySelectorAll('.result-header')).map(h => h.textContent);
+          const savedContents = Array.from(savedCard.querySelectorAll('.result-content')).map(c => c.textContent);
+          const savedSignature = JSON.stringify({
+            title: savedCard.querySelector('.card-title-text').textContent,
+            headers: savedHeaders,
+            contents: savedContents
+          });
+
+          if (savedSignature === cardSignature) {
+            isDuplicate = true;
+          }
+        });
+
+        if (isDuplicate) {
+          showToast('Card already exists in Saved Cards');
+          return;
+        }
+
+        // Clone the card and add to saved area
+        const cardClone = originalCard.cloneNode(true);
+        const newIndex = `saved-${Date.now()}`;
+        cardClone.dataset.index = newIndex;
+
+        // Reattach event handlers for all buttons in the cloned card
+        cardClone.querySelector('.copy-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          copyToMarkdown(cardClone);
+        });
+
+        cardClone.querySelector('.reroll-all-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          rerollAllContent(cardClone);
+        });
+
+        cardClone.querySelector('.delete-card-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteCard(cardClone);
+        });
+
+        // Make the clone draggable too, but it won't actually be draggable due to our check in handleCardDragStart
+        cardClone.addEventListener('dragstart', handleCardDragStart);
+        cardClone.addEventListener('dragend', handleCardDragEnd);
+
+        // Update collapse button handlers
+        cardClone.querySelector('.collapse-btn')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleCardCollapse(e.currentTarget);
+        });
+
+        // Add the card to the saved area
+        this.appendChild(cardClone);
+
+        // Show confirmation
+        showToast('Card saved!');
+      });
+    });
+
+    // New function to populate filter buttons
+    function populateFilterButtons(tables) {
+      console.log('Populating filter buttons with', tables.length, 'tables');
+      const gameSet = new Set();
+      const typeSet = new Set();
+      const settingSet = new Set();
+
+      tables.forEach(table => {
+        if (table.game) gameSet.add(table.game);
+
+        // Handle type as either an array or string
+        if (Array.isArray(table.type)) {
+          table.type.forEach(t => {
+            if (t) typeSet.add(t);
+          });
+        } else if (table.type) {
+          typeSet.add(table.type);
+        }
+
+        if (table.setting) settingSet.add(table.setting);
+      });
+
+      console.log(`Found ${gameSet.size} Games, ${typeSet.size} Types, ${settingSet.size} Settings`);
+
+      createFilterButtons('gameFilter', Array.from(gameSet));
+      createFilterButtons('typeFilter', Array.from(typeSet));
+      createFilterButtons('settingFilter', Array.from(settingSet));
+    }
+
+    // Helper function to create filter buttons
+    function createFilterButtons(filterId, options) {
+      const filterContainer = document.getElementById(filterId);
+      if (!filterContainer) {
+        console.error(`Filter container not found: ${filterId}`);
+        return;
+      }
+
+      console.log(`Creating ${options.length} buttons for ${filterId}`);
+      filterContainer.innerHTML = '';
+
+      if (options.length === 0) {
+        const noOptionsMsg = document.createElement('span');
+        noOptionsMsg.textContent = 'None available';
+        noOptionsMsg.style.color = 'var(--text-muted)';
+        noOptionsMsg.style.fontSize = '0.85em';
+        noOptionsMsg.style.fontStyle = 'italic';
+        filterContainer.appendChild(noOptionsMsg);
+        return;
+      }
+
+      options.sort().forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'filter-btn';
+        button.textContent = option;
+        button.dataset.value = option;
+        button.onclick = function () {
+          toggleFilterButton(this, filterId);
+        };
+        filterContainer.appendChild(button);
+      });
+
+      // No longer need overflow check for grid layout
+    }
+
+    // New function to check if filter container has significant overflow content
+    function checkFilterOverflow(filterId) {
+      const container = document.getElementById(filterId);
+      const significantOverflowThreshold = 10; // Show "More" when we have this much overflow
+
+      if (container.scrollHeight > container.clientHeight || container.scrollWidth > container.clientWidth) {
+        // Add has-overflow class for any overflow
+        container.classList.add('has-overflow');
+
+        // Check if overflow is significant enough to show controls
+        const hasSignificantOverflow =
+          container.scrollHeight - container.clientHeight > significantOverflowThreshold ||
+          container.scrollWidth - container.clientWidth > 20; // Higher threshold for horizontal
+
+        if (hasSignificantOverflow) {
+          container.closest('.filter-container').classList.add('has-significant-overflow');
+        } else {
+          container.closest('.filter-container').classList.remove('has-significant-overflow');
+        }
+      } else {
+        container.classList.remove('has-overflow');
+        container.closest('.filter-container').classList.remove('has-significant-overflow');
+      }
+    }
+
+    // Toggle filter button states
+    function toggleFilterButton(button, filterId) {
+      const filterContainer = document.getElementById(filterId);
+      const currentMode = filterContainer.dataset.mode;
+
+      if (currentMode === 'all-selected') {
+        // Switching from AllSelectedMode to ChoiceMode
+        filterContainer.dataset.mode = 'choice';
+
+        // Set all buttons to unselected state
+        const buttons = filterContainer.querySelectorAll('.filter-btn');
+        buttons.forEach(btn => {
+          btn.classList.add('unselected');
+          btn.classList.remove('selected');
+        });
+
+        // Set the clicked button to selected
+        button.classList.remove('unselected');
+        button.classList.add('selected');
+      } else {
+        // Already in ChoiceMode, toggle this button
+        button.classList.toggle('unselected');
+        button.classList.toggle('selected');
+
+        // If no buttons are selected, switch back to all-selected mode
+        const selectedButtons = filterContainer.querySelectorAll('.filter-btn.selected');
+        if (selectedButtons.length === 0) {
+          clearFilter(filterId.replace('Filter', ''));
+        }
+      }
+
+      // Apply filters with the new selection
+      applyFilters();
+    }
+
+    // Clear a specific filter (reset to all-selected mode)
+    function clearFilter(filterType) {
+      const filterId = filterType + 'Filter';
+      const filterContainer = document.getElementById(filterId);
+
+      filterContainer.dataset.mode = 'all-selected';
+      const buttons = filterContainer.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('unselected', 'selected');
+      });
+
+      console.log('Filter cleared:', filterType);
+      applyFilters();
+    }
+
+    // Toggle filter section expansion
+    function toggleFilterExpand(filterId) {
+      const filterContainer = document.getElementById(filterId);
+      filterContainer.classList.toggle('expanded');
+
+      const expandBtn = document.querySelector(`.expand-btn[onclick*="${filterId}"]`);
+      if (filterContainer.classList.contains('expanded')) {
+        expandBtn.textContent = '▲';
+      } else {
+        expandBtn.textContent = '▼';
+      }
+
+      // Recalculate overflow after toggling
+      setTimeout(() => {
+        checkFilterOverflow(filterId);
+      }, 300);
+    }
+
+    // Reset all filters to default state
+    function resetFilters() {
+      clearFilter('game');
+      clearFilter('type');
+      clearFilter('setting');
+      document.getElementById('searchInput').value = '';
+
+      const favBtn = document.getElementById('favoritesFilterBtn');
+      if (favBtn && favBtn.classList.contains('active')) {
+        favBtn.classList.remove('active');
+        favBtn.textContent = '★ Show Favorites';
+      }
+
+      applyFilters();
+    }
+
+    function performSearch() {
+      applyFilters();
+    }
+
+    // Updated applyFilters function to work with the new button-based UI
+    function applyFilters() {
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+      // Get selected filter values from the new button UI
+      const gameFilter = getSelectedValues('gameFilter');
+      const typeFilter = getSelectedValues('typeFilter');
+      const settingFilter = getSelectedValues('settingFilter');
+
+      console.log('Applying filters:', {
+        search: searchQuery,
+        game: gameFilter,
+        type: typeFilter,
+        setting: settingFilter
+      });
+
+      const matchingTablesContainer = document.getElementById('matchingTablesContainer');
+      matchingTablesContainer.innerHTML = '';
+
+      const filteredTables = tablesData.filter(table => {
+        // Search by name
+        const matchesSearch = searchQuery === '' ||
+          (table.tablename && table.tablename.toLowerCase().includes(searchQuery));
+
+        // Filter by game
+        const matchesGame = gameFilter.length === 0 ||
+          (table.game && gameFilter.includes(table.game));
+
+        // Handle type filter when type is an array
+        let matchesType = false;
+        if (typeFilter.length === 0) {
+          matchesType = true;
+        } else if (Array.isArray(table.type)) {
+          // Check if any type in the array matches any selected type filter
+          matchesType = table.type.some(t => typeFilter.includes(t));
+        } else {
+          // Handle single type as before
+          matchesType = table.type && typeFilter.includes(table.type);
+        }
+
+        // Filter by setting
+        const matchesSetting = settingFilter.length === 0 ||
+          (table.setting && settingFilter.includes(table.setting));
+
+        // Filter by Favorites
+        const showFavoritesOnly = document.getElementById('favoritesFilterBtn').classList.contains('active');
+        const matchesFavorite = !showFavoritesOnly ||
+          (window.currentUser && window.currentUser.favorites && window.currentUser.favorites.includes(table.filename));
+
+        return matchesSearch && matchesGame && matchesType && matchesSetting && matchesFavorite;
+      });
+
+      console.log(`Found ${filteredTables.length} matching tables`);
+
+      filteredTables.forEach(table => {
+        const button = document.createElement('button');
+        button.className = 'matching-table-button';
+        button.textContent = `${table.game ?? 'Unknown'} : ${table.tablename ?? 'Undefined'}`;
+
+        // Add additional info for debugging when hovering
+        button.title = `Filename: ${table.filename}`;
+
+        button.onclick = () => {
+          console.log('Selected table from list:', {
+            tablename: table.tablename,
+            filename: table.filename,
+            game: table.game
+          });
+          displayTableDetails(table);
+          clearGeneratedList();
+          generateContent(); // Automatically generate one result
+        };
+
+        matchingTablesContainer.appendChild(button);
+      });
+
+      // Update available options in other filters based on current selection
+      updateAvailableOptions(filteredTables);
+    }
+
+    // Helper function to get selected values from button-based filter
+    function getSelectedValues(filterId) {
+      const filterContainer = document.getElementById(filterId);
+      const mode = filterContainer.dataset.mode;
+
+      // If in all-selected mode, return empty array (no filtering)
+      if (mode === 'all-selected') {
+        return [];
+      }
+
+      // Otherwise get selected button values
+      const selectedButtons = filterContainer.querySelectorAll('.filter-btn.selected');
+      return Array.from(selectedButtons).map(btn => btn.dataset.value);
+    }
+
+    function displayTableDetails(table) {
+      // Add debugging to see which table is being selected
+      console.log('Selected table details:', {
+        tablename: table.tablename,
+        filename: table.filename,
+        game: table.game,
+        inputField: table.inputField // Add this to debug
+      });
+
+      const tableHeadersContainer = document.getElementById('tableHeaders');
+      tableHeadersContainer.innerHTML = '';
+
+      const tableNameTitle = document.createElement('h2');
+      tableNameTitle.style.display = 'flex';
+      tableNameTitle.style.alignItems = 'center';
+      tableNameTitle.style.gap = '10px';
+
+      const titleText = document.createElement('span');
+      titleText.textContent = table.tablename ?? 'Unnamed Table';
+      tableNameTitle.appendChild(titleText);
+
+      // Add "Favorite" toggle button
+      const favBtn = document.createElement('button');
+      favBtn.className = 'favorite-toggle';
+      favBtn.innerHTML = '★';
+      favBtn.title = 'Toggle Favorite';
+      favBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleFavorite(table.filename, favBtn);
+      };
+
+      // Check if currently favorited
+      if (window.currentUser && window.currentUser.favorites && window.currentUser.favorites.includes(table.filename)) {
+        favBtn.classList.add('active');
+      }
+
+      tableNameTitle.appendChild(favBtn);
+
+      // Store the filename as a data attribute for clear identification
+      tableNameTitle.dataset.filename = table.filename;
+      tableNameTitle.dataset.game = table.game;
+      tableHeadersContainer.appendChild(tableNameTitle);
+
+      const details = [
+        { key: 'game', label: 'Game' },
+        { key: 'type', label: 'Type' },
+        { key: 'setting', label: 'Setting' },
+        { key: 'filename', label: 'Filename' } // Add filename to display for debugging
+      ];
+
+      details.forEach(detail => {
+        if (table[detail.key]) {
+          const detailDiv = document.createElement('div');
+          detailDiv.className = 'header';
+          detailDiv.textContent = `${detail.label}: ${table[detail.key]}`;
+          tableHeadersContainer.appendChild(detailDiv);
+        }
+      });
+
+      // Add input field if the table has inputField property
+      if (table.inputField && Array.isArray(table.inputField) && table.inputField.length >= 2) {
+        console.log('Creating input field for:', table.inputField); // Add debug log
+
+        const inputFieldName = table.inputField[0];
+        const inputFieldType = table.inputField[1];
+
+        const inputContainer = document.createElement('div');
+        inputContainer.className = 'header input-field-container';
+
+        const inputLabel = document.createElement('label');
+        inputLabel.textContent = `${inputFieldName}: `;
+        inputLabel.htmlFor = `input-${inputFieldName}`;
+
+        const inputElement = document.createElement('input');
+        inputElement.id = `input-${inputFieldName}`;
+        inputElement.name = inputFieldName;
+        inputElement.className = 'table-input-field';
+
+        // Set input type and default value based on specified type
+        if (inputFieldType === 'number') {
+          inputElement.type = 'number';
+          inputElement.value = '0';
+        } else {
+          inputElement.type = 'text';
+          inputElement.value = '';
+        }
+
+        inputContainer.appendChild(inputLabel);
+        inputContainer.appendChild(inputElement);
+        tableHeadersContainer.appendChild(inputContainer);
+      } else {
+        console.log('No input field found for this table', table); // Add debug log
+      }
+
+      document.getElementById('generationControls').style.display = 'block';
+      document.getElementById('generationSlider').value = 1;
+      document.getElementById('generationValue').textContent = 1;
+    }
+
+    function updateGenerationValue() {
+      const generationSlider = document.getElementById('generationSlider');
+      document.getElementById('generationValue').textContent = generationSlider.value;
+    }
+
+    function clearGeneratedList() {
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+    }
+
+    function displayErrorMessage(message) {
+      const resultsContainer = document.getElementById('results');
+      const errorDiv = document.createElement('div');
+      errorDiv.className = 'generation-object';
+      errorDiv.style.color = 'red';
+      errorDiv.textContent = message;
+      resultsContainer.appendChild(errorDiv);
+    }
+
+    function generateContent() {
+      clearGeneratedList();
+
+      const numberOfGenerations = document.getElementById('generationSlider').value;
+      // Get the header element with the table name
+      const tableHeader = document.querySelector('#tableHeaders h2');
+
+      if (!tableHeader) {
+        console.error('No table header found');
+        displayErrorMessage('Error: No table selected for generation.');
+        return;
+      }
+
+      // Get the filename and game from data attributes
+      const selectedTableName = tableHeader.textContent;
+      const selectedFileName = tableHeader.dataset.filename;
+      const selectedGameName = tableHeader.dataset.game;
+
+      console.log('Looking for table with:', {
+        tablename: selectedTableName,
+        filename: selectedFileName,
+        game: selectedGameName
+      });
+
+      // Find the selected table using multiple criteria to ensure precision
+      const selectedTable = tablesData.find(t => {
+        // First try exact filename match (most reliable)
+        if (selectedFileName && t.filename === selectedFileName) {
+          console.log(`Found table by filename: ${t.filename}`);
+          return true;
+        }
+
+        // If no filename match, try tablename + game
+        if (t.tablename === selectedTableName && t.game === selectedGameName) {
+          console.log(`Found table by name and game: ${t.tablename} (${t.game})`);
+          return true;
+        }
+
+        return false;
+      });
+
+      if (!selectedTable) {
+        console.error(`No matching table found for "${selectedTableName}" (${selectedFileName})`);
+        displayErrorMessage(`Error: Table "${selectedTableName}" (${selectedFileName}) not found.`);
+        return;
+      }
+
+      // Log full table details for debugging
+      console.log('Selected table for generation:', {
+        tablename: selectedTable.tablename,
+        filename: selectedTable.filename,
+        game: selectedTable.game
+      });
+
+      // Keep full table object for reference
+      currentSelectedTable = selectedTable;
+
+      // Reset contexts
+      generationContexts = {};
+
+      // Show loading indicator
+      const resultsContainer = document.getElementById('results');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'generation-object';
+      loadingDiv.id = 'loading-indicator';
+      loadingDiv.textContent = 'Loading...';
+      resultsContainer.appendChild(loadingDiv);
+
+      // Collect input field values if present
+      const inputValues = {};
+      if (selectedTable.inputField && Array.isArray(selectedTable.inputField)) {
+        const inputFieldName = selectedTable.inputField[0];
+        const inputField = document.getElementById(`input-${inputFieldName}`);
+        if (inputField) {
+          // Convert to number if type is number, otherwise keep as string
+          if (selectedTable.inputField[1] === 'number') {
+            inputValues[inputFieldName] = parseFloat(inputField.value) || 0; // Default to 0 if parsing fails
+          } else {
+            inputValues[inputFieldName] = inputField.value;
+          }
+          console.log(`Added input field ${inputFieldName} with value:`, inputValues[inputFieldName]);
+        } else {
+          console.error(`Input field element not found for ${inputFieldName}`);
+        }
+      } else {
+        console.log('No input field configured for this table', selectedTable);
+      }
+
+      // Send the complete table object to ensure proper identification
+      fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          table: selectedTable,
+          number: parseInt(numberOfGenerations),
+          inputValues: inputValues
+        })
+      })
+        .then(response => {
+          // First remove the loading indicator
+          document.getElementById('loading-indicator')?.remove();
+          if (!response.ok) {
+            return response.json().then(err => {
+              throw new Error(`Server error: ${err.error || 'Unknown server error'}`);
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Received generation data:", data.results);
+          if (!data.results || data.results.length === 0) {
+            throw new Error('Server returned empty results');
+          }
+
+          const resultsContainer = document.getElementById('results');
+
+          // For each generation, create a separate container
+          data.results.forEach((result, index) => {
+            // Initialize context for this generation
+            generationContexts[index] = {};
+            const generationContainer = document.createElement('div');
+            generationContainer.className = 'generation-container';
+            generationContainer.dataset.index = index;
+            // Make it draggable
+            generationContainer.draggable = true;
+            generationContainer.addEventListener('dragstart', handleCardDragStart);
+            generationContainer.addEventListener('dragend', handleCardDragEnd);
+
+            // Create a title container with buttons
+            const cardTitle = document.createElement('div');
+            cardTitle.className = 'card-title';
+
+            // Add the collapse button
+            const collapseBtn = document.createElement('button');
+            collapseBtn.className = 'collapse-btn';
+            collapseBtn.onclick = (e) => {
+              e.stopPropagation(); // Prevent card drag
+              toggleCardCollapse(collapseBtn);
+            };
+            collapseBtn.innerHTML = `
+            <span class="down-arrow">▼</span>
+            <span class="up-arrow">▲</span>
+          `;
+            cardTitle.appendChild(collapseBtn);
+
+            // Add the title text
+            const titleText = document.createElement('span');
+            titleText.className = 'card-title-text';
+            // Extract first meaningful value for the title
+            let firstValue = extractDisplayValueForTitle(result);
+            firstValue = firstValue.trim();
+            // Remove the truncation - let CSS handle it
+            titleText.textContent = firstValue ?
+              `${selectedTable.tablename || 'Result'} - ${firstValue}` :
+              selectedTable.tablename || 'Result';
+            cardTitle.appendChild(titleText);
+
+            // Create buttons container
+            const cardActions = document.createElement('div');
+            cardActions.className = 'card-actions';
+
+            // Add the Copy button
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.title = "Copy to Markdown"; // Add title attribute for hover text
+            copyBtn.onclick = (e) => {
+              e.stopPropagation(); // Prevent drag when clicking buttons
+              copyToMarkdown(generationContainer);
+            };
+            copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
+            cardActions.appendChild(copyBtn);
+
+            // Add the Reroll All button
+            const rerollAllBtn = document.createElement('button');
+            rerollAllBtn.className = 'reroll-all-btn';
+            rerollAllBtn.title = "Reroll All"; // Add title attribute for hover text
+            rerollAllBtn.onclick = (e) => {
+              e.stopPropagation(); // Prevent drag when clicking buttons
+              rerollAllContent(generationContainer);
+            };
+            rerollAllBtn.innerHTML = `<img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All" title="Reroll All">`;
+            cardActions.appendChild(rerollAllBtn);
+
+            // Add the Delete button (in the action bar instead of corner)
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-card-btn';
+            deleteBtn.title = "Delete Card"; // Add title attribute for hover text
+            deleteBtn.onclick = (e) => {
+              e.stopPropagation(); // Prevent drag when clicking buttons
+              deleteCard(generationContainer);
+            };
+            deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Delete" title="Delete Card">`;
+            cardActions.appendChild(deleteBtn);
+
+            // Add the actions to the card title
+            cardTitle.appendChild(cardActions);
+            generationContainer.appendChild(cardTitle);
+
+            // Extract initial context from result
+            extractContext(result, generationContexts[index]);
+
+            // --- START: Modified Result Rendering for separateRows ---
+            const contentWrapper = document.createElement('div');
+            contentWrapper.className = 'card-content';
+
+            // Check if the result itself is an array (from separateRows)
+            if (Array.isArray(result)) {
+              // If it's an array of results, render each one as a row
+              result.forEach(subResult => {
+                // Extract context from each sub-result
+                extractContext(subResult, generationContexts[index]);
+                // Render item, ensuring isTopLevel is false for subsequent items
+                // Pass isNestedContent = true to prevent buttons on these inner rows
+                contentWrapper.innerHTML += renderResultItem(subResult, false, index, true);
+              });
+              // Update the main card title based on the first sub-result
+              if (result.length > 0) {
+                let firstValue = extractDisplayValueForTitle(result[0]);
+                firstValue = firstValue.trim();
+                titleText.textContent = firstValue ?
+                  `${selectedTable.tablename || 'Result'} - ${firstValue}` :
+                  selectedTable.tablename || 'Result';
+              }
+            } else {
+              // Original behavior: render the single result object
+              extractContext(result, generationContexts[index]);
+              contentWrapper.innerHTML = renderResultItem(result, true, index);
+              // Update title based on this single result
+              let firstValue = extractDisplayValueForTitle(result);
+              firstValue = firstValue.trim();
+              titleText.textContent = firstValue ?
+                `${selectedTable.tablename || 'Result'} - ${firstValue}` :
+                selectedTable.tablename || 'Result';
+            }
+            // --- END: Modified Result Rendering ---
+
+            generationContainer.appendChild(contentWrapper);
+            resultsContainer.appendChild(generationContainer);
+          });
+        })
+        .catch(error => {
+          console.error('Error generating content:', error);
+          displayErrorMessage(`Error: ${error.message || 'Unable to generate content. Please try again later.'}`);
+        });
+    }
+
+    function rerollContent(button) {
+      if (!currentSelectedTable) {
+        console.error('No table currently selected');
+        return;
+      }
+
+      // Get the row containing this button
+      const resultRow = button.closest('.result-row');
+      if (!resultRow) {
+        console.error('Could not find parent result row');
+        return;
+      }
+
+      // Check if the row is locked
+      if (resultRow.classList.contains('locked')) {
+        console.log('This row is locked and cannot be rerolled');
+        return;
+      }
+
+      // Get the header text to know what to reroll
+      const header = resultRow.querySelector('.result-header').textContent;
+
+      // Find which generation this belongs to
+      const generationContainer = button.closest('.generation-container');
+      if (!generationContainer) {
+        console.error('Could not find parent generation container');
+        return;
+      }
+
+      const generationIndex = generationContainer.dataset.index;
+      const context = generationContexts[generationIndex] || {};
+
+      // Collect input field values if present
+      const inputValues = {};
+      if (currentSelectedTable.inputField && Array.isArray(currentSelectedTable.inputField)) {
+        const inputFieldName = currentSelectedTable.inputField[0];
+        const inputField = document.getElementById(`input-${inputFieldName}`);
+        if (inputField) {
+          // Convert to number if type is number, otherwise keep as string
+          if (currentSelectedTable.inputField[1] === 'number') {
+            inputValues[inputFieldName] = parseFloat(inputField.value) || 0;
+          } else {
+            inputValues[inputFieldName] = inputField.value;
+          }
+          // Add the input value directly to the context
+          context[inputFieldName] = inputValues[inputFieldName];
+        }
+      }
+
+      // Get the format of the existing row to help with re-rendering
+      const rowFormat = resultRow.getAttribute('data-format') || '';
+      console.log(`Rerolling ${header} in table ${currentSelectedTable.filename} (format: ${rowFormat})`);
+      console.log(`Context:`, context);
+
+      // Show loading indicator in the row
+      resultRow.style.opacity = '0.5';
+
+      // Call the server to reroll just this item
+      fetch('/api/reroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          table: currentSelectedTable,
+          header: header,
+          context: context,
+          inputValues: inputValues
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(`Received reroll response for ${header}:`, data);
+          // Update the context if provided
+          if (data.context) {
+            Object.assign(context, data.context);
+          }
+          // Make sure we have data.result
+          if (!data.result) {
+            throw new Error('No result data returned from server');
+          }
+
+          try {
+            // IMPORTANT: Clear all existing content divs first
+            const contentDivs = resultRow.querySelectorAll('.result-content');
+            contentDivs.forEach(div => div.remove());
+
+            // Get reference to header div
+            const headerDiv = resultRow.querySelector('.result-header');
+
+            // Variables to store the new content value for the title update
+            let newTitleValue = '';
+            let shouldUpdateTitle = false;
+
+            // First, check if this was a career-style row (from original format or from array structure)
+            const isCareerRow = rowFormat === 'career' ||
+              (Array.isArray(data.result.result) &&
+                data.result.result.length === 2 &&
+                typeof data.result.result[0] === 'string' &&
+                typeof data.result.result[1] === 'string');
+
+            // Career-style array handling (array with exactly two string elements)
+            if (isCareerRow) {
+              console.log('Processing career-style array:', data.result.result);
+              let career, items;
+              // Extract the two string values from the result
+              if (Array.isArray(data.result.result) && data.result.result.length === 2) {
+                // Normal array of two strings
+                [career, items] = data.result.result;
+              } else if (typeof data.result.result === 'object' && data.result.result.career && data.result.result.items) {
+                // Object with career and items properties
+                career = data.result.result.career;
+                items = data.result.result.items;
+              } else if (typeof data.result.result === 'string') {
+                // Split string result if needed (fallback)
+                const parts = data.result.result.split(',');
+                career = parts[0];
+                items = parts.slice(1).join(',');
+              } else {
+                console.error('Unexpected career format:', data.result.result);
+                career = "Unknown Career";
+                items = "Unknown Items";
+              }
+
+              // Create first content div for career
+              const careerDiv = document.createElement('div');
+              careerDiv.className = 'result-content';
+              careerDiv.textContent = career;
+              careerDiv.title = career;
+              headerDiv.insertAdjacentElement('afterend', careerDiv);
+
+              // Create second content div for items
+              const itemsDiv = document.createElement('div');
+              itemsDiv.className = 'result-content';
+              itemsDiv.textContent = items;
+              itemsDiv.title = items;
+              careerDiv.insertAdjacentElement('afterend', itemsDiv);
+
+              // Update the row's format attribute
+              resultRow.setAttribute('data-format', 'career');
+
+              // Update context with the array
+              context[header] = [career, items];
+
+              // Use career for title update if this is the first row
+              if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                newTitleValue = career;
+                shouldUpdateTitle = true;
+              }
+            }
+            // Simple string handling
+            else if (typeof data.result.result === 'string' || typeof data.result.result === 'number') {
+              // This handles most simple cases
+              console.log('Processing simple string value:', data.result.result);
+              const stringValue = String(data.result.result);
+              const contentDiv = document.createElement('div');
+              contentDiv.className = 'result-content';
+              contentDiv.textContent = stringValue;
+              contentDiv.title = stringValue;
+              headerDiv.insertAdjacentElement('afterend', contentDiv);
+
+              // Update context with the string value
+              context[header] = stringValue;
+
+              // Only update title if this is the first row
+              if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                newTitleValue = stringValue;
+                shouldUpdateTitle = true;
+              }
+            }
+            // Regular array handling (non-career arrays)
+            else if (Array.isArray(data.result.result)) {
+              console.log('Processing array format:', data.result.result);
+
+              // Special case for weighted arrays [value, weight]
+              if (data.result.result.length === 2 &&
+                typeof data.result.result[0] === 'string' &&
+                typeof data.result.result[1] === 'number') {
+                const value = data.result.result[0];
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'result-content';
+                contentDiv.textContent = value;
+                contentDiv.title = value;
+                headerDiv.insertAdjacentElement('afterend', contentDiv);
+
+                // Update context with just the value
+                context[header] = value;
+
+                // Check if this is the first row
+                if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                  newTitleValue = value;
+                  shouldUpdateTitle = true;
+                }
+              }
+              // Normal array case
+              else {
+                // Process each array element and create corresponding content divs
+                let resultValues = [];
+                let lastInsertedDiv = headerDiv;
+
+                // Loop through array items (limit to max 4)
+                const maxItems = Math.min(data.result.result.length, 4);
+                for (let i = 0; i < maxItems; i++) {
+                  let arrayValue;
+                  // Handle nested weighted arrays
+                  if (Array.isArray(data.result.result[i]) &&
+                    data.result.result[i].length === 2 &&
+                    typeof data.result.result[i][0] === 'string' &&
+                    typeof data.result.result[i][1] === 'number') {
+                    arrayValue = data.result.result[i][0]; // Just take the value
+                  } else {
+                    arrayValue = String(data.result.result[i] || '');
+                  }
+
+                  resultValues.push(arrayValue);
+                  const contentDiv = document.createElement('div');
+                  contentDiv.className = 'result-content';
+                  contentDiv.textContent = arrayValue;
+                  contentDiv.title = arrayValue;
+                  lastInsertedDiv.insertAdjacentElement('afterend', contentDiv);
+                  lastInsertedDiv = contentDiv;
+                }
+
+                // Update context with the array
+                context[header] = resultValues;
+
+                // Use first array element for title update if this is the first row
+                if (resultValues.length > 0 && resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                  newTitleValue = resultValues[0];
+                  shouldUpdateTitle = true;
+                }
+              }
+            }
+            // Object result handling
+            else if (typeof data.result.result === 'object' && data.result.result !== null) {
+              console.log('Processing object result:', data.result);
+
+              let extractedValue = "";
+              // Try to extract a usable string value from the object
+              // First, look for a 'result' property in the nested result
+              if (typeof data.result.result.result === 'string') {
+                extractedValue = data.result.result.result;
+              }
+              // Otherwise look for any string property that's not special (starts with _)
+              else {
+                for (const key in data.result.result) {
+                  if (typeof data.result.result[key] === 'string' && !key.startsWith('_')) {
+                    extractedValue = data.result.result[key];
+                    break;
+                  }
+                }
+              }
+              // If nothing found in nested result, check top level
+              if (!extractedValue && typeof data.result === 'object') {
+                for (const key in data.result) {
+                  if (typeof data.result[key] === 'string' && !key.startsWith('_') && key !== 'header') {
+                    extractedValue = data.result[key];
+                    break;
+                  }
+                }
+              }
+              // If still no value found, use a generic message
+              if (!extractedValue) {
+                extractedValue = "No string value found";
+                console.warn('Could not extract string value from result:', data.result);
+              }
+
+              // Create the content div with the extracted value
+              const contentDiv = document.createElement('div');
+              contentDiv.className = 'result-content';
+              contentDiv.textContent = extractedValue;
+              contentDiv.title = extractedValue;
+              headerDiv.insertAdjacentElement('afterend', contentDiv);
+
+              // Update context with the string value
+              context[header] = extractedValue;
+
+              // Use extracted value for title update if this is the first row
+              if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                newTitleValue = extractedValue;
+                shouldUpdateTitle = true;
+              }
+            }
+            // Fallback for any other type
+            else {
+              console.log('Using fallback handling for result:', data.result);
+              const resultStr = JSON.stringify(data.result.result);
+              const contentDiv = document.createElement('div');
+              contentDiv.className = 'result-content';
+              contentDiv.textContent = resultStr;
+              contentDiv.title = resultStr;
+              headerDiv.insertAdjacentElement('afterend', contentDiv);
+
+              // Update context with the string value
+              context[header] = resultStr;
+
+              // Use extracted value for title update if this is the first row
+              if (resultRow === generationContainer.querySelector('.result-row:first-child')) {
+                newTitleValue = resultStr;
+                shouldUpdateTitle = true;
+              }
+            }
+
+            // UPDATE CARD TITLE if appropriate
+            if (newTitleValue && newTitleValue.trim() && shouldUpdateTitle) {
+              updateCardTitle(generationContainer, newTitleValue);
+            }
+
+            // Always reset opacity
+            resultRow.style.opacity = '1';
+          } catch (error) {
+            console.error('Error processing reroll result:', error);
+            console.error('Data that caused error:', data);
+            resultRow.style.opacity = '1';
+            alert(`Error processing result: ${error.message}`);
+          }
+        })
+        .catch(error => {
+          console.error('Error rerolling content:', error);
+          resultRow.style.opacity = '1';
+          alert('Failed to reroll content. Please try again.');
+        });
+    }
+
+    function rerollAllContent(generationContainer) {
+      if (!currentSelectedTable) {
+        console.error('No table currently selected');
+        return;
+      }
+
+      // Store the collapsed state
+      const wasCollapsed = generationContainer.classList.contains('collapsed');
+
+      // Find all unlocked rows that need to be rerolled
+      const unlockedRows = generationContainer.querySelectorAll('.result-row:not(.locked)');
+      if (unlockedRows.length === 0) {
+        console.log('No unlocked rows to reroll');
+        showToast('No unlocked rows to reroll');
+        return;
+      }
+
+      // Pre-process and cache all locked rows BEFORE starting any rerolls
+      const lockedRowsCache = {};
+      const lockedRows = generationContainer.querySelectorAll('.result-row.locked');
+      lockedRows.forEach(row => {
+        const header = row.querySelector('.result-header').textContent;
+        const contentElements = row.querySelectorAll('.result-content');
+
+        // Store content based on row format
+        const format = row.getAttribute('data-format');
+        if (format === 'career' && contentElements.length >= 2) {
+          lockedRowsCache[header] = [
+            contentElements[0].textContent,
+            contentElements[1].textContent
+          ];
+        } else if (format === 'multi-array') {
+          lockedRowsCache[header] = Array.from(contentElements).map(el => el.textContent);
+        } else {
+          lockedRowsCache[header] = contentElements.length > 0 ? contentElements[0].textContent : '';
+        }
+
+        // Also capture the DOM elements to help with restoration
+        lockedRowsCache[header + '_elements'] = {
+          row: row,
+          format: format,
+          contentElements: contentElements
+        };
+
+        console.log(`Cached locked row "${header}" with format ${format}`);
+      });
+
+      // Check if the first row is locked (to prevent title updates)
+      const firstRow = generationContainer.querySelector('.result-row:first-child');
+      const isFirstRowLocked = firstRow && firstRow.classList.contains('locked');
+
+      console.log(`Rerolling ${unlockedRows.length} unlocked rows in card (${lockedRows.length} locked rows will be preserved)`);
+
+      // Get the generation index for context access
+      const generationIndex = generationContainer.dataset.index;
+      const context = generationContexts[generationIndex] || {};
+
+      // Track progress for sequential rerolling
+      let currentIndex = 0;
+      let rerollFailed = false;
+
+      // Show loading indicator
+      generationContainer.style.opacity = '0.6';
+
+      // Process rows sequentially to maintain context between them
+      function processNextRow() {
+        if (currentIndex >= unlockedRows.length || rerollFailed) {
+          // All rows processed or an error occurred
+          generationContainer.style.opacity = '1';
+          // Restore collapsed state if needed
+          if (wasCollapsed) {
+            generationContainer.classList.add('collapsed');
+          }
+
+          // Update the card title based on the first row's content
+          // ONLY if the first row isn't locked
+          if (!isFirstRowLocked) {
+            updateCardTitleFromFirstRow(generationContainer);
+          }
+
+          return;
+        }
+
+        const row = unlockedRows[currentIndex];
+        const rerollButton = row.querySelector('.reroll-btn');
+
+        if (rerollButton) {
+          // Use the existing reroll function to maintain context properly
+          try {
+            // Set up a one-time event listener to know when this reroll finishes
+            const observer = new MutationObserver((mutations, obs) => {
+              // Check if the row's opacity has been reset, signaling the reroll is complete
+              if (row.style.opacity === '1') {
+                obs.disconnect();
+                currentIndex++;
+                setTimeout(processNextRow, 50); // Small delay between rerolls for stability
+              }
+            });
+            observer.observe(row, {
+              attributes: true,
+              attributeFilter: ['style']
+            });
+
+            // Trigger the reroll
+            rerollContent(rerollButton);
+          } catch (error) {
+            console.error('Error rerolling row:', error);
+            rerollFailed = true;
+            currentIndex++;
+            setTimeout(processNextRow, 50);
+          }
+        } else {
+          // Skip this row if it doesn't have a reroll button
+          currentIndex++;
+          setTimeout(processNextRow, 50);
+        }
+      }
+
+      // Start the sequential rerolling process
+      processNextRow();
+    }
+
+    function updateCardTitle(container, newValue) {
+      newValue = newValue.trim();
+      // Remove the hardcoded truncation - let CSS handle it
+      const titleText = container.querySelector('.card-title-text');
+      if (titleText) {
+        titleText.textContent = `${currentSelectedTable.tablename || 'Result'} - ${newValue}`;
+        // Using the full text and letting CSS truncate
+      }
+    }
+
+    function updateCardTitleFromFirstRow(generationContainer) {
+      const firstRow = generationContainer.querySelector('.result-row:first-child');
+      if (!firstRow) return;
+      // Skip title update if the first row is locked
+      if (firstRow.classList.contains('locked')) {
+        return;
+      }
+
+      // Get content from the first row
+      let titleValue = '';
+
+      // Handle different row formats
+      const format = firstRow.getAttribute('data-format');
+      const contentElements = firstRow.querySelectorAll('.result-content');
+      if (format === 'career' && contentElements.length >= 1) {
+        // For career format, use the career name (first content cell)
+        titleValue = contentElements[0].textContent;
+      } else if (contentElements.length > 0) {
+        // For other formats, use the first content cell
+        titleValue = contentElements[0].textContent;
+      }
+
+      // Update the title if we found content
+      if (titleValue && titleValue.trim()) {
+        updateCardTitle(generationContainer, titleValue);
+      }
+    }
+
+    function copyToMarkdown(generationContainer) {
+      let markdown = '';
+
+      // Get the main table information
+      let mainTableName = '';
+      let mainTableDisplayName = '';
+      if (currentSelectedTable) {
+        // Get table name from filename (without extension) for references
+        if (currentSelectedTable.filename) {
+          mainTableName = currentSelectedTable.filename.replace(/\.(yaml|yml)$/, '');
+        }
+        // Get the display name from the tablename property
+        mainTableDisplayName = currentSelectedTable.tablename || '';
+      }
+
+      // Extract all the rows
+      const rows = generationContainer.querySelectorAll('.result-row');
+      const rowFormat = rows.length > 0 ? rows[0].getAttribute('data-format') : '';
+
+      // Helper function to normalize strings for comparison
+      const normalize = str => str.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/gi, '');
+
+      // Process each row
+
+      // Process each row
+      rows.forEach(row => {
+        const header = row.querySelector('.result-header').textContent;
+        const contentCells = row.querySelectorAll('.result-content');
+        // Get format from THIS row, not just the first one
+        const rowFormat = row.getAttribute('data-format');
+
+        // Start building the markdown line for this row
+        let rowMd = `*${header}*: `;
+
+        // Handle career format - detect by format attribute
+        if (rowFormat === 'career' && contentCells.length >= 2) {
+          // Career format - first cell is career, second cell is items
+          const career = contentCells[0].textContent.trim();
+          const items = contentCells[1].textContent.trim();
+          rowMd += `${career} - ${items}`;
+        }
+        // Handle general array format with multiple cells
+        else if (contentCells.length > 1) {
+          const cellTexts = Array.from(contentCells).map(cell => cell.textContent.trim());
+          // Join all cells with commas
+          rowMd += cellTexts.join(', ');
+        }
+        else if (contentCells.length === 1) {
+          // Normal case - single content cell
+          rowMd += contentCells[0].textContent.trim();
+        }
+
+        // Add table reference using data attributes stored on the row
+        const sourceTable = row.getAttribute('data-source-table');
+        const tableName = row.getAttribute('data-table-name');
+        const subtableName = row.getAttribute('data-subtable-name');
+
+        if (sourceTable) {
+          // Clean up source table (remove extension)
+          const cleanSource = sourceTable.replace(/\.(yaml|yml)$/, '');
+
+          if (subtableName) {
+            // Subtable reference
+            rowMd += `.:{${cleanSource}|${subtableName}}`;
+          } else {
+            // Root table reference
+            rowMd += `.:{${cleanSource}}`;
+          }
+        }
+
+        markdown += rowMd + '\n';
+      });
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(markdown)
+        .then(() => {
+          showToast('Copied to clipboard!');
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+          showToast('Failed to copy to clipboard');
+        });
+    }
+
+    function showToast(message, duration = 2000) {
+      // Check if a toast already exists
+      let toast = document.querySelector('.toast-message');
+
+      // If not, create one
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'toast-message';
+        document.body.appendChild(toast);
+      }
+
+      // Update the toast message
+      toast.textContent = message;
+      toast.classList.add('toast-visible');
+
+      // Hide the toast after duration
+      setTimeout(() => {
+        toast.classList.remove('toast-visible');
+      }, duration);
+    }
+
+    function handleCardDragStart(e) {
+      // Only allow dragging from the title area, not the buttons
+      if (e.target.closest('.reroll-all-btn, .copy-btn, .delete-card-btn')) {
+        e.preventDefault();
+        return;
+      }
+
+      // Check if the card is in the saved area and prevent dragging within saved area
+      const inSavedArea = this.closest('#savedGenerations');
+      if (inSavedArea) {
+        e.preventDefault();
+        return;
+      }
+
+      e.dataTransfer.setData('text/plain', this.dataset.index);
+      this.classList.add('card-being-dragged');
+
+      // Allow the card to be copied to the saved area
+      e.dataTransfer.effectAllowed = 'copy';
+    }
+
+    function handleCardDragEnd(e) {
+      this.classList.remove('card-being-dragged');
+
+      // Remove highlight from drop targets
+      document.querySelectorAll('.drop-target-highlight').forEach(el => {
+        el.classList.remove('drop-target-highlight');
+      });
+    }
+
+    function deleteCard(card) {
+      if (confirm('Are you sure you want to delete this card?')) {
+        card.remove();
+        showToast('Card deleted');
+      }
+    }
+
+    function toggleCardCollapse(button) {
+      const card = button.closest('.generation-container');
+      card.classList.toggle('collapsed');
+
+      // Update the button icon (though CSS will hide/show the appropriate one)
+      const isCollapsed = card.classList.contains('collapsed');
+
+      // Optional: Scroll to the card if expanding
+      if (!isCollapsed) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function extractDisplayValueForTitle(resultObj) {
+      // Handle arrays by looking at first item
+      if (Array.isArray(resultObj)) {
+        return resultObj.length > 0 ? extractDisplayValueForTitle(resultObj[0]) : '';
+      }
+
+      // If it's an object with header and result properties
+      if (resultObj && typeof resultObj === 'object' && resultObj.result !== undefined) {
+        // Check for simple string result
+        if (typeof resultObj.result === 'string') {
+          return resultObj.result;
+        }
+        // Recurse into nested result structure
+        return extractDisplayValueForTitle(resultObj.result);
+      }
+
+      // Special handling for ShadowDark NPCs - look for the name field
+      if (resultObj && typeof resultObj === 'object' && resultObj.result && Array.isArray(resultObj.result)) {
+        // Try to find the NPC Names entry
+        const nameEntry = resultObj.result.find(item =>
+          item && typeof item === 'object' && item.header === 'NPC Names by Ancestry');
+
+        if (nameEntry) {
+          return nameEntry.result;
+        }
+      }
+
+      // If it's a simple value, return it as string
+      return resultObj ? String(resultObj) : '';
+    }
+
+    function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
+      // Add support for table-level descriptions and title descriptions
+      let descriptionHTML = '';
+      let titleDescriptionHTML = '';
+      if (isTopLevel) {
+        // Add title description if present
+        if (item && item._titleDescription) {
+          titleDescriptionHTML = `<div class="title-description">${item._titleDescription}</div>`;
+        }
+
+        // Standard description
+        if (item && item._description) {
+          descriptionHTML = `<div class="table-description">${item._description}</div>`;
+        }
+      }
+
+      // Special handling for career format flagged by the server
+      if (item && typeof item === 'object' && item._isCareer === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+
+        const career = item.result[0] || '';
+        const items = item.result[1] || '';
+
+        // Escape values for HTML attributes
+        const careerEscaped = career.replace(/"/g, '"');
+        const itemsEscaped = items.replace(/"/g, '"');
+
+        const buttonGroup = !isNestedContent ? `
+          <div class="button-group">
+            <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+              <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+            </button>
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>
+          </div>` : '';
+
+        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+
+        return `
+          ${isTopLevel ? titleDescriptionHTML : ''}
+          ${isTopLevel ? descriptionHTML : ''}
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="career">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            <div class="result-content" title="${careerEscaped}">${career}</div>
+            <div class="result-content" title="${itemsEscaped}">${items}</div>
+            ${buttonGroup}
+          </div>
+          ${rowDescription}
+        `;
+      }
+
+      // Continue with existing case for multi-element array format
+      if (item && typeof item === 'object' && item._isMultiElementArray === true && Array.isArray(item.result)) {
+        const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+
+        const contentCells = item.result.map(element => {
+          const valueStr = String(element || '');
+          const escapedValue = valueStr.replace(/"/g, '"');
+          return `<div class="result-content" title="${escapedValue}">${valueStr}</div>`;
+        }).join('');
+
+        const buttonGroup = !isNestedContent ? `
+          <div class="button-group">
+            <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+              <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+            </button>
+            <button class="reroll-btn" onclick="rerollContent(this)">
+              <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+            </button>
+          </div>` : '';
+
+        const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+
+        return `
+          ${isTopLevel ? titleDescriptionHTML : ''}
+          ${isTopLevel ? descriptionHTML : ''}
+          <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="multi-array">
+            <div class="result-header" title="${headerTitle}">${item.header}</div>
+            ${contentCells}
+            ${buttonGroup}
+          </div>
+          ${rowDescription}
+        `;
+      }
+
+      // Continue with existing standard value handling
+      if (item && typeof item === 'object' && "header" in item && "result" in item) {
+        const originalSource = item._originalSource || item._tableName || '';
+        const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+        const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+        const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+        const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
+
+        // Handle different result types, starting with standard string/number
+        if (typeof item.result === 'string' || typeof item.result === 'number') {
+          const resultStr = String(item.result);
+          const escapedResult = resultStr.replace(/"/g, '"');
+
+          const buttonGroup = !isNestedContent ? `
+            <div class="button-group">
+              <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+                <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+              </button>
+              <button class="reroll-btn" onclick="rerollContent(this)">
+                <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+              </button>
+            </div>` : '';
+
+          const rowDescription = item._description ? `<div class="row-description">${item._description}</div>` : '';
+
+          return `
+            ${isTopLevel ? titleDescriptionHTML : ''}
+            ${isTopLevel ? descriptionHTML : ''}
+            <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
+              <div class="result-header" title="${headerTitle}">${item.header}</div>
+              <div class="result-content" title="${escapedResult}">${resultStr}</div>
+              ${buttonGroup}
+            </div>
+            ${rowDescription}
+          `;
+        }
+
+        // For arrays of objects (nested results)
+        if (Array.isArray(item.result) &&
+          item.result.some(el => typeof el === 'object' && el !== null)) {
+          // Add the parent description if we're at the top level
+          let output = isTopLevel ? titleDescriptionHTML + descriptionHTML : '';
+          // Process each nested result item
+          item.result.forEach(subItem => {
+            output += renderResultItem(subItem, false, generationIndex);
+          });
+
+          return output;
+        }
+      }
+
+      // For arrays of strings (e.g. SeparateRows)
+      if (Array.isArray(item.result) && item.result.length > 0 && typeof item.result[0] === 'string') {
+        let output = isTopLevel ? titleDescriptionHTML + descriptionHTML : '';
+        item.result.forEach(str => {
+          // Construct a simple result object for this string to leverage existing logic?
+          // Or just manually build HTML.
+          // Manually building is safer to avoid deeper recursion weirdness.
+
+          const originalSource = item._originalSource || item._tableName || '';
+          const sourceTable = originalSource ? ` data-source-table="${originalSource}"` : '';
+          const sourceTableName = item._tableName ? ` data-table-name="${item._tableName}"` : '';
+          const subtableName = item.header !== item._tableName ? ` data-subtable-name="${item.header}"` : '';
+          const headerTitle = item.header ? item.header.replace(/"/g, '"') : '';
+
+          const resultStr = String(str);
+          const escapedResult = resultStr.replace(/"/g, '"');
+
+          const buttonGroup = !isNestedContent ? `
+             <div class="button-group">
+               <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock this result">
+                 <img src="./Images/Icons/padlock-open.png" alt="Unlock" title="Lock/Unlock this result">
+               </button>
+               <button class="reroll-btn" onclick="rerollContent(this)">
+                 <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll" title="Reroll">
+               </button>
+             </div>` : '';
+
+          output += `
+             <div class="result-row"${sourceTable}${sourceTableName}${subtableName} data-format="simple">
+               <div class="result-header" title="${headerTitle}">${item.header}</div>
+               <div class="result-content" title="${escapedResult}">${resultStr}</div>
+               ${buttonGroup}
+             </div>
+           `;
+        });
+        return output;
+      }
+
+      // For primitive values and fallback
+      return item !== undefined && item !== null ? String(item) : '';
+    }
+
+    function toggleRowLock(button) {
+      const row = button.closest('.result-row');
+      if (!row) return;
+
+      row.classList.toggle('locked');
+
+      // Update the lock icon
+      const lockImage = button.querySelector('img');
+      if (row.classList.contains('locked')) {
+        lockImage.src = './Images/Icons/padlock.png';
+        lockImage.alt = 'Locked';
+        lockImage.title = 'Unlock this result';
+      } else {
+        lockImage.src = './Images/Icons/padlock-open.png';
+        lockImage.alt = 'Unlocked';
+        lockImage.title = 'Lock this result';
+      }
+    }
+
+    function showTableContent() {
+      if (!currentSelectedTable) {
+        console.error('No table currently selected');
+        displayErrorMessage('Error: No table selected to display.');
+        return;
+      }
+
+      // Clear existing content
+      clearGeneratedList();
+
+      // Show loading indicator
+      const resultsContainer = document.getElementById('results');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'generation-object';
+      loadingDiv.id = 'loading-indicator';
+      loadingDiv.textContent = 'Loading table structure...';
+      resultsContainer.appendChild(loadingDiv);
+
+      // Fetch the table structure - FIXED: use table-contents instead of table-structure
+      fetch('/api/table-contents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: currentSelectedTable })
+      })
+        .then(response => {
+          // First remove the loading indicator
+          document.getElementById('loading-indicator')?.remove();
+
+          // Check for content type to detect HTML error pages
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.indexOf('application/json') === -1) {
+            throw new Error(`Server returned non-JSON response (${contentType}). The API endpoint might be missing or unavailable.`);
+          }
+          if (!response.ok) {
+            return response.text().then(text => {
+              try {
+                const data = JSON.parse(text);
+                throw new Error(`Server error: ${data.error || 'Unknown server error'}`);
+              } catch (e) {
+                throw new Error(`Server error: Response code ${response.status}`);
+              }
+            });
+          }
+
+          return response.json();
+        })
+        .then(data => {
+          // FIXED: Change data.structure to data.tableData to match the server response format
+          if (!data.tableData) {
+            throw new Error('No table structure returned from server');
+          }
+
+          // Create a container for the table display
+          const tableContainer = document.createElement('div');
+          tableContainer.className = 'generation-container table-display';
+
+          // Add title
+          const cardTitle = document.createElement('div');
+          cardTitle.className = 'card-title';
+
+          // Add title text
+          const titleText = document.createElement('span');
+          titleText.className = 'card-title-text';
+          titleText.textContent = `Table: ${currentSelectedTable.tablename || 'Unnamed Table'}`;
+          cardTitle.appendChild(titleText);
+
+          // Add buttons
+          const cardActions = document.createElement('div');
+          cardActions.className = 'card-actions';
+
+          // Add the Copy button
+          const copyBtn = document.createElement('button');
+          copyBtn.className = 'copy-btn';
+          copyBtn.title = "Copy to Markdown";
+          copyBtn.onclick = (e) => {
+            e.stopPropagation();
+            copyTableToMarkdown(tableContainer);
+          };
+          copyBtn.innerHTML = `<img src="./Images/Icons/stack.png" alt="Copy" title="Copy to Markdown">`;
+          cardActions.appendChild(copyBtn);
+
+          // Add the delete button
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-card-btn';
+          deleteBtn.title = "Close Table View";
+          deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            tableContainer.remove();
+          };
+          deleteBtn.innerHTML = `<img src="./Images/Icons/trash-can.png" alt="Close" title="Close Table View">`;
+          cardActions.appendChild(deleteBtn);
+
+          cardTitle.appendChild(cardActions);
+          tableContainer.appendChild(cardTitle);
+
+          // Add collapse button
+          const collapseBtn = document.createElement('button');
+          collapseBtn.className = 'collapse-btn';
+          collapseBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleCardCollapse(collapseBtn);
+          };
+          collapseBtn.innerHTML = `
+          <span class="down-arrow">▼</span>
+          <span class="up-arrow">▲</span>
+        `;
+          tableContainer.appendChild(collapseBtn);
+
+          // Add card content
+          const contentWrapper = document.createElement('div');
+          contentWrapper.className = 'card-content';
+
+          // FIXED: Adapt to the server response format
+          const tableData = data.tableData;
+
+          // Add table description if present
+          if (tableData.description) {
+            const descriptionDiv = document.createElement('div');
+            descriptionDiv.className = 'table-description';
+            descriptionDiv.textContent = tableData.description;
+            contentWrapper.appendChild(descriptionDiv);
+          }
+
+          // Display table entries
+          const entriesDiv = document.createElement('div');
+          entriesDiv.className = 'table-entries';
+
+          // Process main table entries
+          if (tableData.subtables && tableData.subtables.length > 0) {
+            // If the first subtable is called "Main Results", treat it as the main table
+            const mainTable = tableData.subtables.find(t => t.name === "Main Results") || tableData.subtables[0];
+            processTableEntries(entriesDiv, mainTable);
+            // Add other subtables
+            tableData.subtables.forEach(subtable => {
+              // Skip the main table we already processed
+              if (subtable === mainTable) return;
+
+              const subtableContainer = document.createElement('div');
+              subtableContainer.className = 'subtable-container';
+
+              // Add subtable header
+              const subtableHeader = document.createElement('div');
+              subtableHeader.className = 'subtable-header';
+              subtableHeader.textContent = subtable.name;
+              subtableContainer.appendChild(subtableHeader);
+
+              // Add subtable description if present
+              if (subtable.description) {
+                const subtableDesc = document.createElement('div');
+                subtableDesc.className = 'subtable-description';
+                subtableDesc.textContent = subtable.description;
+                subtableContainer.appendChild(subtableDesc);
+              }
+
+              // Process subtable entries
+              processTableEntries(subtableContainer, subtable);
+              // Handle nested subtables if present
+              if (subtable.nestedSubtables && subtable.nestedSubtables.length > 0) {
+                const nestedSubtables = document.createElement('div');
+                nestedSubtables.className = 'nested-subtables';
+                subtable.nestedSubtables.forEach(nestedTable => {
+                  const nestedContainer = document.createElement('div');
+                  nestedContainer.className = 'subtable-container';
+
+                  // Add nested subtable header
+                  const nestedHeader = document.createElement('div');
+                  nestedHeader.className = 'subtable-header';
+                  nestedHeader.textContent = nestedTable.name;
+                  nestedContainer.appendChild(nestedHeader);
+
+                  // Add nested subtable description if present
+                  if (nestedTable.description) {
+                    const nestedDesc = document.createElement('div');
+                    nestedDesc.className = 'subtable-description';
+                    nestedDesc.textContent = nestedTable.description;
+                    nestedContainer.appendChild(nestedDesc);
+                  }
+
+                  // Process nested subtable entries
+                  processTableEntries(nestedContainer, nestedTable);
+
+                  nestedSubtables.appendChild(nestedContainer);
+                });
+                subtableContainer.appendChild(nestedSubtables);
+              }
+
+              entriesDiv.appendChild(subtableContainer);
+            });
+          } else {
+            // No subtables, just process the main table
+            processTableEntries(entriesDiv, tableData);
+          }
+
+          contentWrapper.appendChild(entriesDiv);
+          tableContainer.appendChild(contentWrapper);
+
+          // Add the table display to the results container
+          resultsContainer.appendChild(tableContainer);
+        })
+        .catch(error => {
+          console.error('Error displaying table structure:', error);
+
+          // Show a helpful message if the API might not exist
+          if (error.message && error.message.includes('non-JSON response')) {
+            displayErrorMessage('The table structure API endpoint (/api/table-contents) appears to be missing. Make sure the server supports this feature.');
+          } else {
+            displayErrorMessage(`Error: ${error.message || 'Unable to display table structure.'}`);
+          }
+        });
+    }
+
+    function processTableEntries(container, tableData) {
+      // FIXED: Use either results or entries depending on what's available
+      const entries = tableData.results || tableData.entries || [];
+      if (entries && entries.length > 0) {
+        entries.forEach((entry, index) => {
+          const entryDiv = document.createElement('div');
+          entryDiv.className = 'table-entry';
+
+          // Add entry number/index
+          const entryNumDiv = document.createElement('div');
+          entryNumDiv.className = 'entry-number';
+          entryNumDiv.textContent = (index + 1) + '.';
+          entryDiv.appendChild(entryNumDiv);
+
+          // Add content based on type
+          const entryContentDiv = document.createElement('div');
+          entryContentDiv.className = 'entry-content';
+
+          // FIXED: Handle entries from the server's format
+          let displayValue, weight;
+          if (entry && typeof entry === 'object') {
+            // Handle different object formats
+            if (entry.isCareer) {
+              // Career format from server
+              const careerDiv = document.createElement('div');
+              careerDiv.className = 'career-entry';
+
+              const careerName = document.createElement('span');
+              careerName.className = 'career-name';
+              careerName.textContent = entry.career || '';
+
+              const careerItems = document.createElement('span');
+              careerItems.className = 'career-items';
+              careerItems.textContent = ' - ' + (entry.items || '');
+
+              careerDiv.appendChild(careerName);
+              careerDiv.appendChild(careerItems);
+              entryContentDiv.appendChild(careerDiv);
+            } else if (entry.isWeighted) {
+              // Weighted entry from server
+              displayValue = entry.value;
+              weight = entry.weight;
+              entryContentDiv.textContent = typeof displayValue === 'object' ?
+                JSON.stringify(displayValue) : String(displayValue || '');
+            } else if (entry.value !== undefined) {
+              // Simple value object
+              displayValue = entry.value;
+              entryContentDiv.textContent = typeof displayValue === 'object' ?
+                JSON.stringify(displayValue) : String(displayValue || '');
+            } else {
+              // Unknown object format
+              entryContentDiv.textContent = JSON.stringify(entry);
+            }
+          } else if (Array.isArray(entry)) {
+            // Handle arrays - career or weighted format
+            if (entry.length === 2 && typeof entry[0] === 'string' && typeof entry[1] === 'string') {
+              // Career format [career, items]
+              const careerDiv = document.createElement('div');
+              careerDiv.className = 'career-entry';
+
+              const careerName = document.createElement('span');
+              careerName.className = 'career-name';
+              careerName.textContent = entry[0];
+
+              const careerItems = document.createElement('span');
+              careerItems.className = 'career-items';
+              careerItems.textContent = ' - ' + entry[1];
+
+              careerDiv.appendChild(careerName);
+              careerDiv.appendChild(careerItems);
+              entryContentDiv.appendChild(careerDiv);
+            } else if (entry.length === 2 && typeof entry[0] === 'string' && typeof entry[1] === 'number') {
+              // Weighted entry [value, weight]
+              displayValue = entry[0];
+              weight = entry[1];
+              entryContentDiv.textContent = displayValue;
+            } else {
+              // Regular array
+              entryContentDiv.textContent = entry.join(', ');
+            }
+          } else {
+            // Simple string or number
+            entryContentDiv.textContent = String(entry || '');
+          }
+
+          entryDiv.appendChild(entryContentDiv);
+
+          // Add weight if present
+          if (weight !== undefined) {
+            const weightDiv = document.createElement('div');
+            weightDiv.className = 'entry-weight';
+            weightDiv.textContent = `(${weight})`;
+            entryDiv.appendChild(weightDiv);
+          }
+
+          container.appendChild(entryDiv);
+        });
+      } else if (tableData.table) {
+        // Some tables use 'table' property instead of 'entries'
+        processTableEntries(container, { entries: tableData.table });
+      }
+
+      // Display the display format if present
+      if (tableData.displayFormat || tableData.customDisplay) {
+        const formatDiv = document.createElement('div');
+        formatDiv.className = 'subtable-custom-display';
+        formatDiv.textContent = `Format: ${tableData.displayFormat || tableData.customDisplay}`;
+        container.appendChild(formatDiv);
+      }
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+    }
+
+    function checkFilterBarOverflow() {
+      // Logic removed
+    }
+
+
+
+    function toggleAllFilters() {
+      const filtersContainer = document.getElementById('filtersContainer');
+      filtersContainer.classList.toggle('filters-expanded');
+      // Update button text
+      const expandBtn = document.getElementById('filterExpandBtn');
+      expandBtn.innerHTML = filtersContainer.classList.contains('filters-expanded') ? '▲' : '▼';
+    }
+
+    function updateAvailableOptions(filteredTables) {
+      const gameFilter = document.getElementById('gameFilter');
+      const typeFilter = document.getElementById('typeFilter');
+      const settingFilter = document.getElementById('settingFilter');
+      // Get currently selected values
+      const selectedGames = getSelectedValues('gameFilter');
+      const selectedTypes = getSelectedValues('typeFilter');
+      const selectedSettings = getSelectedValues('settingFilter');
+      // Create sets to store available options
+      const availableGames = new Set();
+      const availableTypes = new Set();
+      const availableSettings = new Set();
+
+      // Populate available options based on filtered tables
+      filteredTables.forEach(table => {
+        if (table.game) availableGames.add(table.game);
+
+        if (Array.isArray(table.type)) {
+          table.type.forEach(t => {
+            if (t) availableTypes.add(t);
+          });
+        } else if (table.type) {
+          availableTypes.add(table.type);
+        }
+
+        if (table.setting) availableSettings.add(table.setting);
+      });
+
+      // Update filter buttons to reflect available options
+      updateFilterButtons(gameFilter, availableGames, selectedGames);
+      updateFilterButtons(typeFilter, availableTypes, selectedTypes);
+      updateFilterButtons(settingFilter, availableSettings, selectedSettings);
+    }
+
+    function updateFilterButtons(filterContainer, availableOptions, selectedOptions) {
+      const buttons = filterContainer.querySelectorAll('.filter-btn');
+      buttons.forEach(button => {
+        const value = button.dataset.value;
+        if (availableOptions.has(value)) {
+          button.classList.remove('unavailable');
+          button.disabled = false;
+        } else {
+          button.classList.add('unavailable');
+          button.disabled = true;
+        }
+
+        // Restore selected state if previously selected
+        if (selectedOptions.includes(value)) {
+          button.classList.add('selected');
+          button.classList.remove('unselected');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Check filter overflow on window resize
+      window.addEventListener('resize', debounce(() => {
+        checkFilterBarOverflow();
+      }, 250));
+    });
+
+    function debounce(func, wait) {
+      let timeout;
+      return function () {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+      };
+    }
+  </script>
+</body>
+
+</html>
