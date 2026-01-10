@@ -22,5 +22,53 @@
     "favorites": [],
     "resetToken": null,
     "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768081229019",
+    "email": "admin_1768081229019@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768081229019",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768081229019",
+    "email": "user_1768081229019@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768084259427",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768084259427",
+    "email": "admin_1768084259427@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768084259427",
+    "email": "user_1768084259427@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
   }
 ]

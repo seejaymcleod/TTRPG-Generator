@@ -1,0 +1,229 @@
+diff --git a/Tables/TomeOfAdventure_DungeonBackstories.yaml b/Tables/TomeOfAdventure_DungeonBackstories.yaml
+index e80bc25..fd07ca8 100644
+--- a/Tables/TomeOfAdventure_DungeonBackstories.yaml
++++ b/Tables/TomeOfAdventure_DungeonBackstories.yaml
+@@ -5,6 +5,7 @@ type: Places
+ tablename: DungeonBackstories
+ tables:
+   - tablename: BigPictureBackstories
++    customDisplay: "{WhyNowDangerous_FactorOne} {WhyNowDangerous_FactorTwo} {RoughTimeframe}"
+     subTables:
+       - tablename: WhyNowDangerous_FactorOne
+         results: 
+@@ -53,12 +54,27 @@ tables:
+       - tablename: RoughTimeframe
+         results:
+         - "1000 years ago"
+-        - "[100 years ago, 5]"
+-        - "[10 years ago, 5]"
+-        - "[1 year ago, 5]"
+-        - "[1 month ago, 4]"
++        - "100 years ago"
++        - "100 years ago"
++        - "100 years ago"
++        - "100 years ago"
++        - "100 years ago"
++        - "10 years ago"
++        - "10 years ago"
++        - "10 years ago"
++        - "10 years ago"
++        - "10 years ago"
++        - "1 year ago"
++        - "1 year ago"
++        - "1 year ago"
++        - "1 year ago"
++        - "1 year ago"
++        - "1 month ago"
++        - "1 month ago"
++        - "1 month ago"
++        - "1 month ago"
+   - tablename: CapsuleAreaBackstories
+-    customDisplay: "[{selectedResult, CapsuleAreaTypes}]"
++    customDisplay: "{CapsuleAreaTypes}"
+     subTables:
+       - tablename: ItemBasedBackstories
+         customDisplay: "{Items} {ItemLocationRelationships} {ItemOtherFactorInvolved} {RoughTimeframe}"
+@@ -133,11 +149,26 @@ tables:
+             - Unquestioning loyalty to a person or a cause
+         - tablename: RoughTimeframe
+           results:
+-            - "1000 years ago"
+-            - "[100 years ago, 5]"
+-            - "[10 years ago, 5]"
+-            - "[1 year ago, 5]"
+-            - "[1 month ago, 4]"    
++               - "1000 years ago"
++               - "100 years ago"
++               - "100 years ago"
++               - "100 years ago"
++               - "100 years ago"
++               - "100 years ago"
++               - "10 years ago"
++               - "10 years ago"
++               - "10 years ago"
++               - "10 years ago"
++               - "10 years ago"
++               - "1 year ago"
++               - "1 year ago"
++               - "1 year ago"
++               - "1 year ago"
++               - "1 year ago"
++               - "1 month ago"
++               - "1 month ago"
++               - "1 month ago"
++               - "1 month ago"    
+       - tablename: PersonBasedBackstories
+         customDisplay: "{PersonInvolvedWithLocation} {PersonRelationshipToLocation} {LastImportantEventAtLocation} {OptionalAdditionalFactor} {RoughTimeframe}"
+         subTables: 
+@@ -228,12 +259,26 @@ tables:
+           - tablename: RoughTimeframe
+             results:
+               - "1000 years ago"
+-              - "[100 years ago, 5]"
+-              - "[10 years ago, 5]"
+-              - "[1 year ago, 5]"
+-              - "[1 month ago, 4]"    
++              - "100 years ago"
++              - "100 years ago"
++              - "100 years ago"
++              - "100 years ago"
++              - "100 years ago"
++              - "10 years ago"
++              - "10 years ago"
++              - "10 years ago"
++              - "10 years ago"
++              - "10 years ago"
++              - "1 year ago"
++              - "1 year ago"
++              - "1 year ago"
++              - "1 year ago"
++              - "1 year ago"
++              - "1 month ago"
++              - "1 month ago"
++              - "1 month ago"
++              - "1 month ago"    
+   - tablename: CapsuleAreaTypes
+     results:
+       - "{ItemBasedBackstories}"
+       - "{PersonBasedBackstories}"
+-        
+diff --git a/Tables/TomeOfAdventure_Missions.yaml b/Tables/TomeOfAdventure_Missions.yaml
+index 0f1d8cb..decc97a 100644
+--- a/Tables/TomeOfAdventure_Missions.yaml
++++ b/Tables/TomeOfAdventure_Missions.yaml
+@@ -48,7 +48,16 @@ tables:
+             - Messenger
+             - Saboteur
+             - Secret agent or spy
+-            - "[PatronsOrTargets, 10]"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
++            - "{PatronsOrTargets}"
+   - tablename: MissionItems
+     customDisplay: "{Item_Missions} {Item_Mission_Subjects}"
+     subTables: 
+@@ -103,10 +112,12 @@ tables:
+     subTables: 
+         - tablename: Location_Missions
+           results:
+-            - "[Assault, 2]"
++            - Assault
++            - Assault
+             - Break siege of
+             - Capture and hold
+-            - "[Defend from attack, 2]"
++            - Defend from attack
++            - Defend from attack
+             - Destroy
+             - Escape from
+             - Explore
+@@ -116,13 +127,16 @@ tables:
+             - Infiltrate and spy upon
+             - Liberate
+             - Locate intruder/spy
+-            - "[Loot, 2]"
++            - Loot
++            - Loot
+             - Protect from infiltration
+             - Reinforce
+-            - "[Rescue hostages from, 2]"
++            - Rescue hostages from
++            - Rescue hostages from
+             - Retake
+             - Secretly return something to
+-            - "[Stage raid upon, 2]"         
++            - Stage raid upon
++            - Stage raid upon         
+         - tablename: Location_Mission_Subjects
+           results: 
+             - Archaeological dig
+@@ -159,17 +173,22 @@ tables:
+             - Destroy results of
+             - Escape from
+             - Solve bizarre mystery arising from
+-            - "[Expose someone involved in, 2]"
++            - Expose someone involved in
++            - Expose someone involved in
+             - Hide evidence of what really happened in a recent
+-            - "[Infiltrate group involved in, 2]"
++            - Infiltrate group involved in
++            - Infiltrate group involved in
+             - Investigate events of a recent
+             - Investigate events of an ancient
+             - Lead or coordinate
+             - Plan and execute
+-            - "[Prevent, 2]"
+-            - "[Protect someone involved in, 2]"
++            - Prevent
++            - Prevent
++            - Protect someone involved in
++            - Protect someone involved in
+             - Sabotage
+-            - "[Survive or overcome, 2]"
++            - Survive or overcome
++            - Survive or overcome
+             - Take leadership in              
+         - tablename: Event_Mission_Subjects
+           results: 
+@@ -1277,15 +1296,28 @@ tables:
+       - To-hit or damage bonus in certain circumstances
+   - tablename: Hooks
+     results: 
+-      - "[A person offers to trade information about the opportunity in exchange for money, 2]"
++      - A person offers to trade information about the opportunity in exchange for money
++      - A person offers to trade information about the opportunity in exchange for money
+       - Dream or vision suggests the opportunity in symbols and metaphors
+       - Friend, relative, or mentor of a character informs party of the opportunity
+-      - "[Inquiries in taverns lead to a rumor of this potential opportunity, 3]"
++      - Inquiries in taverns lead to a rumor of this potential opportunity
++      - Inquiries in taverns lead to a rumor of this potential opportunity
++      - Inquiries in taverns lead to a rumor of this potential opportunity
+       - Legend or prophesy suggests the opportunity
+       - Letter or message is intercepted by characters (possibly due to mistaken identity, possibly overheard)
+       - Letter or message is sent to characters
+-      - "[Potential employer contacts party to offer the opportunity, 9]"
+-      - "[Potential employer has posted signs with some details of the opportunity, 2]"
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer contacts party to offer the opportunity
++      - Potential employer has posted signs with some details of the opportunity
++      - Potential employer has posted signs with some details of the opportunity
+       - Recently arrived people bring back word of the opportunity
+-      - "[Rumors are floating around with some details of the opportunity, 2]"
++      - Rumors are floating around with some details of the opportunity
++      - Rumors are floating around with some details of the opportunity
+       - Sent dream suggests the opportunity in clear terms, but without revealing who sent the dream or why
+\ No newline at end of file
