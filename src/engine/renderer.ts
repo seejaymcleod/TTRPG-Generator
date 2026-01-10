@@ -477,7 +477,11 @@ export class Renderer {
                     const evalRes = this.evaluateToken(String(processedContent), context, tracker);
 
                     if (typeof result === 'string') {
-                        result += String(evalRes);
+                        if (typeof evalRes === 'object' && evalRes !== null) {
+                            result += JSON.stringify(evalRes);
+                        } else {
+                            result += String(evalRes);
+                        }
                     }
                 }
             } else {

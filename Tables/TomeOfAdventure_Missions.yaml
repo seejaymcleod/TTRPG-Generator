@@ -103,10 +103,10 @@ tables:
     subTables: 
         - tablename: Location_Missions
           results:
-            - "[Assault, 2]"
+            - [Assault, 2]
             - Break siege of
             - Capture and hold
-            - "[Defend from attack, 2]"
+            - [Defend from attack, 2]
             - Destroy
             - Escape from
             - Explore
@@ -116,13 +116,13 @@ tables:
             - Infiltrate and spy upon
             - Liberate
             - Locate intruder/spy
-            - "[Loot, 2]"
+            - [Loot, 2]
             - Protect from infiltration
             - Reinforce
-            - "[Rescue hostages from, 2]"
+            - [Rescue hostages from, 2]
             - Retake
             - Secretly return something to
-            - "[Stage raid upon, 2]"         
+            - [Stage raid upon, 2]         
         - tablename: Location_Mission_Subjects
           results: 
             - Archaeological dig
@@ -159,17 +159,17 @@ tables:
             - Destroy results of
             - Escape from
             - Solve bizarre mystery arising from
-            - "[Expose someone involved in, 2]"
+            - [Expose someone involved in, 2]
             - Hide evidence of what really happened in a recent
-            - "[Infiltrate group involved in, 2]"
+            - [Infiltrate group involved in, 2]
             - Investigate events of a recent
             - Investigate events of an ancient
             - Lead or coordinate
             - Plan and execute
-            - "[Prevent, 2]"
-            - "[Protect someone involved in, 2]"
+            - [Prevent, 2]
+            - [Protect someone involved in, 2]
             - Sabotage
-            - "[Survive or overcome, 2]"
+            - [Survive or overcome, 2]
             - Take leadership in              
         - tablename: Event_Mission_Subjects
           results: 
