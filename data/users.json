@@ -6,5 +6,21 @@
     "favorites": [
       "ATest_AllFeatures.yaml"
     ]
+  },
+  {
+    "username": "testuser_1768008919647",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser",
+    "email": "test@example.com",
+    "passwordHash": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
   }
 ]
