@@ -198,6 +198,27 @@ export class Renderer {
         return { header, result: "No results", ...sourceInfo };
     }
 
+    // Helper to flatten results into a string for token replacement
+    private flattenResultToString(res: any): string {
+        if (typeof res === 'string') return res;
+        if (typeof res === 'number') return String(res);
+        if (Array.isArray(res)) {
+            return res.map(r => this.flattenResultToString(r)).join(', ');
+        }
+        if (typeof res === 'object' && res !== null) {
+            if ('result' in res) {
+                return this.flattenResultToString(res.result);
+            }
+            // Fallback for unknown objects
+            // Use JSON stringify but maybe better to verify structure?
+            // If it's a GeneratedResult like object, we want keys? No, user hated Object Object.
+            // If we are FLATTENING to string, we probably want text content.
+            // But if it's strictly an object with no result property, JSON is safest for debugging.
+            return JSON.stringify(res);
+        }
+        return String(res);
+    }
+
     private pickResult(results: ResultEntry[]): { entry: ResultEntry, index: number } {
         // Correct implementation matching RNG types
         const weightedList: { item: { entry: ResultEntry, index: number }; weight: number }[] = [];
@@ -477,11 +498,8 @@ export class Renderer {
                     const evalRes = this.evaluateToken(String(processedContent), context, tracker);
 
                     if (typeof result === 'string') {
-                        if (typeof evalRes === 'object' && evalRes !== null) {
-                            result += JSON.stringify(evalRes);
-                        } else {
-                            result += String(evalRes);
-                        }
+                        // Use helper to safely stringify objects (e.g. GeneratedResult[])
+                        result += this.flattenResultToString(evalRes);
                     }
                 }
             } else {
@@ -561,6 +579,49 @@ export class Renderer {
                 }
             }
             index = end + 1;
+        }
+
+        // Post-processing for ShadowDark 1d4 syntax: "Some Prefix 1d4: 1-2. A, 3. B"
+        if (typeof result === 'string') {
+            // Regex: Catch "1d4: ..." or "1d6: ..." at some point in the string
+            const sdMatch = result.match(/(.*?)(\b\d+d\d+:\s*)(.+)/);
+            if (sdMatch && !result.includes('{')) {
+                const prefix = sdMatch[1];
+                const diceStr = sdMatch[2].replace(':', '').trim();
+                const optionsStr = sdMatch[3];
+
+                try {
+                    const roll = this.dice.roll(diceStr);
+                    let selected = "";
+
+                    // Regex to match "1. Option" or "1-2. Option"
+                    // LookAhead ensures we stop before the next number bullet
+                    const regex = /(?:^|\s|,)(\d+(?:-\d+)?)\.\s*(.*?)(?=$|,\s*\d+(?:-\d+)?\.)/g;
+                    let match;
+                    while ((match = regex.exec(optionsStr)) !== null) {
+                        const rangeStr = match[1];
+                        const content = match[2];
+                        let min, max;
+                        if (rangeStr.includes('-')) {
+                            const [l, h] = rangeStr.split('-').map(Number);
+                            min = l; max = h;
+                        } else {
+                            min = max = parseInt(rangeStr);
+                        }
+
+                        if (roll >= min && roll <= max) {
+                            selected = content.trim();
+                            break;
+                        }
+                    }
+
+                    if (selected) {
+                        return prefix + selected;
+                    }
+                } catch (e) {
+                    // Ignore parsing errors, return format as is
+                }
+            }
         }
 
         return result;
@@ -693,8 +754,8 @@ export class Renderer {
                     if (Array.isArray(val)) return val[index];
                     return `[Index ${index} invalid]`;
                 }
-                if (Array.isArray(val)) return val.join(', ');
-                return val;
+                if (Array.isArray(val)) return this.flattenResultToString(val);
+                return this.flattenResultToString(val);
             }
         }
 
