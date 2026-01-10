@@ -209,12 +209,12 @@ export class Renderer {
             if ('result' in res) {
                 return this.flattenResultToString(res.result);
             }
-            // Fallback for unknown objects
-            // Use JSON stringify but maybe better to verify structure?
-            // If it's a GeneratedResult like object, we want keys? No, user hated Object Object.
-            // If we are FLATTENING to string, we probably want text content.
-            // But if it's strictly an object with no result property, JSON is safest for debugging.
-            return JSON.stringify(res);
+            // Fallback for unknown objects: NEVER return [object Object]
+            try {
+                return JSON.stringify(res);
+            } catch (e) {
+                return `[Complex Object: ${Object.keys(res).join(', ')}]`;
+            }
         }
         return String(res);
     }
@@ -356,6 +356,21 @@ export class Renderer {
 
         if (typeof entry === 'string') {
             return { header: 'String', result: this.processString(entry, context, tracker) };
+        }
+
+        // Failsafe for accidental YAML objects (e.g. "Key: Value" unquoted)
+        if (typeof entry === 'object' && entry !== null) {
+            const keys = Object.keys(entry);
+            // If it looks like a single key-value pair, treat it as a string
+            if (keys.length === 1) {
+                const key = keys[0];
+                const val = entry[key];
+                const reconstructed = `${key}: ${val}`;
+                // Recursively process as string
+                return { header: 'String', result: this.processString(reconstructed, context, tracker) };
+            }
+            // Otherwise stringify safely
+            return { header: 'Object', result: JSON.stringify(entry) };
         }
 
         return { header: 'Number', result: entry };
