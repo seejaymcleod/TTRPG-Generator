@@ -1,0 +1,79 @@
+filename: ShadowDark_CursedScroll1_PatronBoons.yaml
+game: ShadowDark
+source: Cursed Scroll 1
+page: 18
+tablename: PatronBoons
+type: Patron Boon
+tables:
+  - tablename: Almazzat
+    results:
+      - - 1/day, gain advantage on melee attacks for 3 rounds
+        - 1
+      - - Learn to wield 1 melee weapon or get +1 to melee attacks
+        - 20
+      - - +2 to Strength or Constitution stat or +1 to melee damage
+        - 9
+      - - Gain advantage on initiative rolls (reroll if duplicate)
+        - 5
+      - - Choose one option or 2 points to distribute to stats
+        - 1
+  - tablename: Kytheros
+    results:
+      - - 1/day, force the GM to reroll a single roll
+        - 1
+      - - Gain +1 to your AC through supernatural foresight
+        - 20
+      - - +2 to Strength, Dexterity, or Wisdom stat
+        - 9
+      - - 3/day, add your WIS bonus to any roll (reroll if duplicate)
+        - 5
+      - - Choose one option or 2 points to distribute to stats
+        - 1
+  - tablename: Mugdulblub
+    results:
+      - - 1/day, turn into a crawling puddle of slime for 3 rounds
+        - 1
+      - - Maximize 2 hit point die rolls (prior or future)
+        - 20
+      - - +2 to Dexterity or Constitution stat
+        - 9
+      - - 'Become immune to 1: acid, cold, poison (reroll if no options)'
+        - 5
+      - - Choose one option or 2 points to distribute to stats
+        - 1
+  - tablename: Shune
+    results:
+      - - 1/day, read the mind of a creature you touch for 3 rounds
+        - 1
+      - - Learn a wizard spell, tier = half your level. Cast it with INT
+        - 20
+      - - +2 to Dexterity or Intelligence stat
+        - 9
+      - - +1 XP whenever you learn a valuable or significant secret
+        - 5
+      - - Choose one option or 2 points to distribute to stats
+        - 1
+  - tablename: Titania
+    results:
+      - - 1/day, hypnotize a LV 5 or less creature for 3 rounds
+        - 1
+      - - Learn to wield a longbow or gain +1 to ranged attacks
+        - 20
+      - - +2 to Dexterity or Charisma stat
+        - 9
+      - - Hostile spells that target you are always hard to cast
+        - 5
+      - - Choose one option or 2 points to distribute to stats
+        - 1
+  - tablename: Willowman
+    results:
+      - - 1/day, teleport to a far location you see as your move
+        - 1
+      - - +1 to melee or ranged attacks
+        - 20
+      - - +2 to Strength or Dexterity stat
+        - 9
+      - - 1/day, force a close being to check morale, even if immune
+        - 5
+      - - Choose one option or 2 points to distribute to stats
+        - 1

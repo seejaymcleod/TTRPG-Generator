@@ -1,0 +1,50 @@
+filename: ShadowDark_CursedScroll1_DiabolicalBackgrounds.yaml
+game: ShadowDark
+source: Cursed Scroll 1
+page: 20
+tablename: DiabolicalBackgrounds
+type: Background
+headers:
+  - Name
+  - Description
+results:
+  - - Hermit
+    - The wilds (and its creatures) are your family
+  - - Outcast
+    - You were thrown out for real or supposed crimes
+  - - Woodborn
+    - They found you in the hollow of an oak tree
+  - - Amnesiac
+    - Your past is a haze, but some memories return
+  - - Haunted
+    - A restless spirit wants something from you
+  - - Fugitive
+    - An anonymous savior helped you disappear
+  - - Feytouched
+    - A fairy befriended you in your childhood
+  - - Witchborn
+    - They burned your mother, but spared you
+  - - Forager
+    - You know how to find the edible and the deadly
+  - - Redeemer
+    - You must redeem the name of your kin
+  - - Marked
+    - You carry an eldritch mark. Is it a curse, or a gift?
+  - - Sacrifice
+    - You were to be ritually sacrificed, but escaped
+  - - Marooned
+    - They left you behind, but you refused to die
+  - - Fallen
+    - You fell from grace. Will you atone, or embrace it?
+  - - Drawn
+    - You hear a whispered call and follow it
+  - - Ascetic
+    - People fear you, but seek out your guidance
+  - - Wolfchild
+    - Long ago, you walked into town wearing pelts
+  - - Healer
+    - You understand how life and death intertwine
+  - - Chosen
+    - An eldritch being selected you for a purpose
+  - - Demonborn
+    - An ancestor of yours is a powerful demon

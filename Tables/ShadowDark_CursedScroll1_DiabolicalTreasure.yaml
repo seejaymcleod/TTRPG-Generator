@@ -1,0 +1,50 @@
+filename: ShadowDark_CursedScroll1_DiabolicalTreasure.yaml
+game: ShadowDark
+source: Cursed Scroll 1
+page: 68
+tablename: DiabolicalTreasure
+type: Treasure
+headers:
+  - Name
+  - Description
+results:
+  - - Carved bone
+    - Ignites in flames once/day for 1d4 rounds
+  - - Eyeball
+    - Repels insects and spiders to arm's length
+  - - Wolf idol
+    - Floats in the air wherever it's placed
+  - - Dried rose
+    - Turns toward due north when untouched
+  - - Pickled imp
+    - Attracts demonic creatures to its location
+  - - Bundle of sage
+    - A creature holding it can't knowingly lie
+  - - Cold iron spike
+    - You can smell if something is poisonous
+  - - Warped skull
+    - Drips blood in the presence of undead
+  - - Cracked mirror
+    - Sings a haunting lullaby when rattled
+  - - Severed finger
+    - Belongs to a witch who wants it back
+  - - Black candle
+    - Causes pain and disgust in fey creatures
+  - - Shrunken head
+    - Can open a one-way gate to hell once
+  - - Ring of daisies
+    - Allows you to hold your breath for an hour
+  - - Unholy symbol
+    - A demon owes the item's owner a favor
+  - - Rusty key
+    - Once/day, fire immunity 1d4 rounds
+  - - Vial of blood
+    - Slowly rolls away on its own if released
+  - - Faded locket
+    - Once/day, briefly read one creature's mind
+  - - Bag of teeth
+    - Object cannot be crushed by anything
+  - - Pan pipe
+    - As heavy as an anvil when not carried
+  - - Brain in a jar
+    - Causes doubt and hesitation in demons

@@ -1,0 +1,19 @@
+filename: ShadowDark_CursedScroll1_HideousHallsEncounters.yaml
+game: ShadowDark
+source: Cursed Scroll 1
+page: 52
+tablename: HideousHallsEncounters
+type: Encounter
+results:
+  - Plogrina Bittermold (Area 29) with 1d6 Bittermolds looking for something to feed to Mugdulblub that it's never tasted
+  - 1d6 Howlers wrestling a mutant catfish down the hall
+  - An ichor ooze slurping toward the nearest source of heat
+  - Gordock Breeg (Area 4) leading a band of 2d6 Howlers in pursuit of 1d4 wounded Bittermolds
+  - 1d6 Bittermolds stealthily looking for Howlers to capture
+  - A new pocket of acid quicksand gives way beneath 1d4 characters (DC 12 DEX to escape, 1d4 damage/round)
+  - 1d4 vengeful mutant catfish out for violence (can be distracted with tasty food or sympathy)
+  - 1d6 bandits looking for treasure who are realizing coming here was a bad idea; they refuse to leave empty-handed
+  - 2d4 Bittermolds dragging 1d4 tied Howlers to Mugdulblub
+  - A lone cultist in an algae-induced fever dream looking for Mugdulblub; mutters about how all must be Dissolved
+  - 2d6 roosting tar bats; open flame makes them frenzy
+  - A fat glob of sticky slime drips onto a light source, ruining it

@@ -1,0 +1,476 @@
+CURSED SCROLL 1
+### FILE START: Gloaming_Encounter_Check.yaml ###
+filename: Gloaming_Encounter_Check.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 3
+tablename: GloamingEncounterCheck
+type: Lookup
+description: Determine the encounter type based on terrain (d8).
+headers: ["d8", "Forest", "Marsh", "Path", "Water"]
+results:
+  - {d8: "1", Forest: "Demon", Marsh: "Demon", Path: "Demon", Water: "Demon"}
+  - {d8: "2", Forest: "Demon", Marsh: "Demon", Path: "People", Water: "Aquatic"}
+  - {d8: "3", Forest: "Animal", Marsh: "Aquatic", Path: "People", Water: "Aquatic"}
+  - {d8: "4", Forest: "Animal", Marsh: "Aquatic", Path: "People", Water: "Aquatic"}
+  - {d8: "5", Forest: "Animal", Marsh: "Aquatic", Path: "Animal", Water: "Aquatic"}
+  - {d8: "6", Forest: "Animal", Marsh: "Animal", Path: "Animal", Water: "Aquatic"}
+  - {d8: "7", Forest: "People", Marsh: "Animal", Path: "Animal", Water: "Animal"}
+  - {d8: "8", Forest: "People", Marsh: "People", Path: "Animal", Water: "People"}
+
+### FILE START: Encounter_List_Animal.yaml ###
+filename: Encounter_List_Animal.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 3
+tablename: EncounterListAnimal
+type: Encounter
+dice: d8
+results:
+  - "3d6 stingbats"
+  - "1d4 crocodiles"
+  - "2d4 tar bats"
+  - "2d6 gt. rats"
+  - "2d4 bogthorns"
+  - "Unicorn"
+  - "2d6 bogthorns"
+  - "1d6 moose"
+
+### FILE START: Encounter_List_Demon.yaml ###
+filename: Encounter_List_Demon.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 3
+tablename: EncounterListDemon
+type: Encounter
+dice: d8
+results:
+  - "2d6 hexlings"
+  - "Brown bear"
+  - "Troll"
+  - "1d6 willowisps"
+  - "2d4 boars"
+  - "1d4 wights"
+  - "Dralech"
+  - "The Willowman"
+
+### FILE START: Encounter_List_Aquatic.yaml ###
+filename: Encounter_List_Aquatic.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 3
+tablename: EncounterListAquatic
+type: Encounter
+dice: d8
+results:
+  - "2d6 wolves"
+  - "Ichor ooze"
+  - "Giant snake"
+  - "2d6 skrell"
+  - "2d6 gt. leeches"
+  - "Marrow fiend"
+  - "Gt. spider"
+  - "3d6 orcs"
+
+### FILE START: Encounter_List_People.yaml ###
+filename: Encounter_List_People.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 3
+tablename: EncounterListPeople
+type: Encounter
+dice: d8
+results:
+  - "1d6 faeries"
+  - "Werewolf"
+  - "3d6 bandits"
+  - "2d4 orcs"
+  - "2d6 knights"
+  - "1d4 reavers"
+  - "2d6 cultists"
+  - "2d4 villagers"
+
+### FILE START: Gloaming_Rumors.yaml ###
+filename: Gloaming_Rumors.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 3
+tablename: GloamingRumors
+type: Rumor
+dice: d12
+results:
+  - "The stones of Bittermold Keep are slowly melting like wax"
+  - "The Lord of Time grants boons for offering his slain enemies"
+  - "Watch for strange happenings on the new and full moons"
+  - "The ruins of Myre Castle once housed a holy order of knights"
+  - "A six-eyed wolf as big as a horse roams the marshes"
+  - "Cultists have been tossing people into a rift near Toad Pond"
+  - "Three witches were burned on Boot Hill near Marin's Hold"
+  - "Bandits camp by a huge marrow tree near Wardenwood"
+  - "There is a priory of secretive, cursed knights in the forest"
+  - "The Witch Queen of the bog is looking for a new apprentice"
+  - "Fairies will steal your name if you say it aloud in the woods"
+  - "A demon called The Willowman stalks travelers who leave the path"
+
+### FILE START: Diabolical_Backgrounds.yaml ###
+filename: Diabolical_Backgrounds.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 20
+tablename: DiabolicalBackgrounds
+type: Background
+dice: d20
+results:
+  - "Hermit. The wilds (and its creatures) are your family"
+  - "Outcast. You were thrown out for real or supposed crimes"
+  - "Woodborn. They found you in the hollow of an oak tree"
+  - "Amnesiac. Your past is a haze, but some memories return"
+  - "Haunted. A restless spirit wants something from you"
+  - "Fugitive. An anonymous savior helped you disappear"
+  - "Feytouched. A fairy befriended you in your childhood"
+  - "Witchborn. They burned your mother, but spared you"
+  - "Forager. You know how to find the edible and the deadly"
+  - "Redeemer. You must redeem the name of your kin"
+  - "Marked. You carry an eldritch mark. Is it a curse, or a gift?"
+  - "Sacrifice. You were to be ritually sacrificed, but escaped"
+  - "Marooned. They left you behind, but you refused to die"
+  - "Fallen. You fell from grace. Will you atone, or embrace it?"
+  - "Drawn. You hear a whispered call and follow it"
+  - "Ascetic. People fear you, but seek out your guidance"
+  - "Wolfchild. Long ago, you walked into town wearing pelts"
+  - "Healer. You understand how life and death intertwine"
+  - "Chosen. An eldritch being selected you for a purpose"
+  - "Demonborn. An ancestor of yours is a powerful demon"
+
+### FILE START: Knight_St_Ydris_Talents.yaml ###
+filename: Knight_St_Ydris_Talents.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 10
+tablename: KnightStYdrisTalents
+type: Class Talent
+dice: 2d6
+results:
+  - {roll: "2", effect: "Your Demonic Possession bonus increases by 1 point"}
+  - {roll: "3-6", effect: "+1 to melee or ranged attacks"}
+  - {roll: "7-9", effect: "+2 to Strength, Dexterity, or Constitution stat"}
+  - {roll: "10-11", effect: "+2 to Charisma stat or +1 to witch spellcasting checks"}
+  - {roll: "12", effect: "Choose a talent or +2 points to distribute to stats"}
+
+### FILE START: Warlock_Talents.yaml ###
+filename: Warlock_Talents.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 12
+tablename: WarlockTalents
+type: Class Talent
+dice: 2d6
+results:
+  - {roll: "2", effect: "Roll a Patron Boon from any patron; an unexplained gift"}
+  - {roll: "3-6", effect: "Add +1 point to two stats (they must be different)"}
+  - {roll: "7-9", effect: "+1 to melee or ranged attacks"}
+  - {roll: "10-11", effect: "Roll two Patron Boons and choose one to keep"}
+  - {roll: "12", effect: "Choose a talent or +2 points to distribute to stats"}
+
+### FILE START: Witch_Talents.yaml ###
+filename: Witch_Talents.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 15
+tablename: WitchTalents
+type: Class Talent
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, teleport to your familiar's location as a move"}
+  - {roll: "3-7", effect: "+2 to Charisma stat or +1 to witch spellcasting checks"}
+  - {roll: "8-9", effect: "Gain advantage on casting one spell you know"}
+  - {roll: "10-11", effect: "Learn an additional witch spell of any tier you can cast"}
+  - {roll: "12", effect: "Choose a talent or +2 points to distribute to stats"}
+
+### FILE START: Knight_Spells_Known.yaml ###
+filename: Knight_Spells_Known.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 11
+tablename: KnightSpellsKnown
+type: Class Feature
+description: Witch spells known by Knight level.
+headers: ["Level", "Tier 1", "Tier 2", "Tier 3"]
+results:
+  - {Level: "1", Tier 1: "0", Tier 2: "0", Tier 3: "0"}
+  - {Level: "2", Tier 1: "0", Tier 2: "0", Tier 3: "0"}
+  - {Level: "3", Tier 1: "1", Tier 2: "0", Tier 3: "0"}
+  - {Level: "4", Tier 1: "2", Tier 2: "0", Tier 3: "0"}
+  - {Level: "5", Tier 1: "3", Tier 2: "0", Tier 3: "0"}
+  - {Level: "6", Tier 1: "3", Tier 2: "1", Tier 3: "0"}
+  - {Level: "7", Tier 1: "3", Tier 2: "2", Tier 3: "0"}
+  - {Level: "8", Tier 1: "3", Tier 2: "3", Tier 3: "0"}
+  - {Level: "9", Tier 1: "3", Tier 2: "3", Tier 3: "1"}
+  - {Level: "10", Tier 1: "3", Tier 2: "3", Tier 3: "2"}
+
+### FILE START: Witch_Spells_Known.yaml ###
+filename: Witch_Spells_Known.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 15
+tablename: WitchSpellsKnown
+type: Class Feature
+headers: ["Level", "Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"]
+results:
+  - {Level: "1", Tier 1: "3", Tier 2: "0", Tier 3: "0", Tier 4: "0", Tier 5: "0"}
+  - {Level: "2", Tier 1: "4", Tier 2: "0", Tier 3: "0", Tier 4: "0", Tier 5: "0"}
+  - {Level: "3", Tier 1: "4", Tier 2: "1", Tier 3: "0", Tier 4: "0", Tier 5: "0"}
+  - {Level: "4", Tier 1: "4", Tier 2: "2", Tier 3: "0", Tier 4: "0", Tier 5: "0"}
+  - {Level: "5", Tier 1: "4", Tier 2: "2", Tier 3: "1", Tier 4: "0", Tier 5: "0"}
+  - {Level: "6", Tier 1: "4", Tier 2: "3", Tier 3: "2", Tier 4: "0", Tier 5: "0"}
+  - {Level: "7", Tier 1: "4", Tier 2: "3", Tier 3: "2", Tier 4: "1", Tier 5: "0"}
+  - {Level: "8", Tier 1: "4", Tier 2: "4", Tier 3: "2", Tier 4: "2", Tier 5: "0"}
+  - {Level: "9", Tier 1: "4", Tier 2: "4", Tier 3: "3", Tier 4: "2", Tier 5: "1"}
+  - {Level: "10", Tier 1: "4", Tier 2: "4", Tier 3: "4", Tier 4: "2", Tier 5: "2"}
+
+### FILE START: Titles_Knight.yaml ###
+filename: Titles_Knight.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 16
+tablename: KnightTitles
+type: Title
+headers: ["Level", "Lawful", "Chaotic", "Neutral"]
+results:
+  - {Level: "1-2", Lawful: "Arbiter", Chaotic: "Traitor", Neutral: "Brother/Sister"}
+  - {Level: "3-4", Lawful: "Enforcer", Chaotic: "Fallen", Neutral: "Exorcist"}
+  - {Level: "5-6", Lawful: "Knight Marshal", Chaotic: "Oathbreaker", Neutral: "Reverend Knight"}
+  - {Level: "7-8", Lawful: "Judge", Chaotic: "Blackguard", Neutral: "Inquisitor"}
+  - {Level: "9-10", Lawful: "Justiciar", Chaotic: "Demonlord", Neutral: "Grand Inquisitor"}
+
+### FILE START: Titles_Warlock.yaml ###
+filename: Titles_Warlock.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 16
+tablename: WarlockTitles
+type: Title
+headers: ["Level", "Lawful", "Chaotic", "Neutral"]
+results:
+  - {Level: "1-2", Lawful: "Favored", Chaotic: "Marked", Neutral: "Chosen"}
+  - {Level: "3-4", Lawful: "Herald", Chaotic: "Zealot", Neutral: "Channeler"}
+  - {Level: "5-6", Lawful: "Eminent", Chaotic: "Occultist", Neutral: "Prophesied"}
+  - {Level: "7-8", Lawful: "Exalted", Chaotic: "Champion", Neutral: "Transcendent"}
+  - {Level: "9-10", Lawful: "Incarnation", Chaotic: "Harbinger", Neutral: "Avatar"}
+
+### FILE START: Titles_Witch.yaml ###
+filename: Titles_Witch.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 16
+tablename: WitchTitles
+type: Title
+headers: ["Level", "Lawful", "Chaotic", "Neutral"]
+results:
+  - {Level: "1-2", Lawful: "Fortune Teller", Chaotic: "Whisperer", Neutral: "Shaman"}
+  - {Level: "3-4", Lawful: "Far Seer", Chaotic: "Hexer", Neutral: "Conjurer"}
+  - {Level: "5-6", Lawful: "Prophet", Chaotic: "Hag/Elder", Neutral: "Soothsayer"}
+  - {Level: "7-8", Lawful: "Wise One", Chaotic: "Crone/Uncle", Neutral: "Conduit"}
+  - {Level: "9-10", Lawful: "Baba", Chaotic: "Baba", Neutral: "Baba"}
+
+### FILE START: Patron_Boons_Almazzat.yaml ###
+filename: Patron_Boons_Almazzat.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 18
+tablename: PatronBoonsAlmazzat
+type: Patron Boon
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, gain advantage on melee attacks for 3 rounds"}
+  - {roll: "3-7", effect: "Learn to wield 1 melee weapon or get +1 to melee attacks"}
+  - {roll: "8-9", effect: "+2 to Strength or Constitution stat or +1 to melee damage"}
+  - {roll: "10-11", effect: "Gain advantage on initiative rolls (reroll if duplicate)"}
+  - {roll: "12", effect: "Choose one option or 2 points to distribute to stats"}
+
+### FILE START: Patron_Boons_Kytheros.yaml ###
+filename: Patron_Boons_Kytheros.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 18
+tablename: PatronBoonsKytheros
+type: Patron Boon
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, force the GM to reroll a single roll"}
+  - {roll: "3-7", effect: "Gain +1 to your AC through supernatural foresight"}
+  - {roll: "8-9", effect: "+2 to Strength, Dexterity, or Wisdom stat"}
+  - {roll: "10-11", effect: "3/day, add your WIS bonus to any roll (reroll if duplicate)"}
+  - {roll: "12", effect: "Choose one option or 2 points to distribute to stats"}
+
+### FILE START: Patron_Boons_Shune.yaml ###
+filename: Patron_Boons_Shune.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 18
+tablename: PatronBoonsShune
+type: Patron Boon
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, read the mind of a creature you touch for 3 rounds"}
+  - {roll: "3-7", effect: "Learn a wizard spell, tier = half your level. Cast it with INT"}
+  - {roll: "8-9", effect: "+2 to Dexterity or Intelligence stat"}
+  - {roll: "10-11", effect: "+1 XP whenever you learn a valuable or significant secret"}
+  - {roll: "12", effect: "Choose one option or 2 points to distribute to stats"}
+
+### FILE START: Patron_Boons_Mugdulblub.yaml ###
+filename: Patron_Boons_Mugdulblub.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 19
+tablename: PatronBoonsMugdulblub
+type: Patron Boon
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, turn into a crawling puddle of slime for 3 rounds"}
+  - {roll: "3-7", effect: "Maximize 2 hit point die rolls (prior or future)"}
+  - {roll: "8-9", effect: "+2 to Dexterity or Constitution stat"}
+  - {roll: "10-11", effect: "Become immune to 1: acid, cold, poison (reroll if no options)"}
+  - {roll: "12", effect: "Choose one option or 2 points to distribute to stats"}
+
+### FILE START: Patron_Boons_Titania.yaml ###
+filename: Patron_Boons_Titania.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 19
+tablename: PatronBoonsTitania
+type: Patron Boon
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, hypnotize a LV 5 or less creature for 3 rounds"}
+  - {roll: "3-7", effect: "Learn to wield a longbow or gain +1 to ranged attacks"}
+  - {roll: "8-9", effect: "+2 to Dexterity or Charisma stat"}
+  - {roll: "10-11", effect: "Hostile spells that target you are always hard to cast"}
+  - {roll: "12", effect: "Choose one option or 2 points to distribute to stats"}
+
+### FILE START: Patron_Boons_Willowman.yaml ###
+filename: Patron_Boons_Willowman.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 19
+tablename: PatronBoonsWillowman
+type: Patron Boon
+dice: 2d6
+results:
+  - {roll: "2", effect: "1/day, teleport to a far location you see as your move"}
+  - {roll: "3-7", effect: "+1 to melee or ranged attacks"}
+  - {roll: "8-9", effect: "+2 to Strength or Dexterity stat"}
+  - {roll: "10-11", effect: "1/day, force a close being to check morale, even if immune"}
+  - {roll: "12", effect: "Choose one option or 2 points to distribute to stats"}
+
+### FILE START: Diabolical_Mishap_1_3.yaml ###
+filename: Diabolical_Mishap_1_3.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 22
+tablename: DiabolicalMishap1to3
+type: Mishap
+dice: d12
+results:
+  - "Diablerie! Roll twice and combine both effects (reroll any further 1s)"
+  - "Wither! You take 1d6 damage per spell tier"
+  - "Newt! You turn into a tiny, 1 hit point newt for 3 rounds. You can't cast spells in this form"
+  - "Shune's baleful gaze! You can't cast this spell and another random spell again for a week"
+  - "Thieving fairies! You lose a random piece of gear"
+  - "Cobwebs! Mental cobwebs cloud your mind; you can't cast this spell again for a week"
+  - "Cackles! You fall to the ground in a fit of cackling, unable to do anything but laugh for the next 3 rounds"
+  - "Double trouble! You lose the ability to cast a random spell until you complete a rest"
+  - "Swamp gas! The air fills with sulfurous gas in a near-sized cube around you. All creatures who end their turn in it are blinded and take 1d6 damage. It lasts 3 rounds"
+  - "Bat! An angry bat appears on your head, flapping and clinging to your face. You are blinded for 3 rounds or until you can toss the beastie away from you"
+  - "Salt! You're surrounded by a ring of salt and can't touch it or pass through it until something breaks the ring"
+  - "Siphon! You have disadvantage on casting spells of the same tier or lower for the next 10 rounds"
+
+### FILE START: Diabolical_Mishap_4_5.yaml ###
+filename: Diabolical_Mishap_4_5.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 23
+tablename: DiabolicalMishap4to5
+type: Mishap
+dice: d12
+results:
+  - "Maelstrom! Roll twice and combine both effects (reroll any further 1s)"
+  - "Ruin! You take 1d8 damage per spell tier"
+  - "Mind rot! You permanently forget one random spell"
+  - "The Willowman! You summon The Willowman (who is angry with you) in a space near to you. He stays for 1d6 rounds before disappearing from whence he came"
+  - "Accursed imps! Cackling imps from hell swarm you, stealing three pieces of random gear and flapping away"
+  - "Lightning blast! You deal 3d6 damage to yourself and all nearby creatures"
+  - "Cold iron! Spikes of cold iron lance from the ethereal realm, piercing you. You take 2d6 damage and are paralyzed for 2 rounds"
+  - "Mother of Night! You displease the Dark Mother and lose the ability to cast this spell until atoning to her"
+  - "Catatonia! You stare blankly and can't take any actions for the next hour"
+  - "Tongue of dog! Your tongue lolls every time you try to cast a spell of a random tier, ruining the magic. This persists until you complete a rest"
+  - "Fiddlesticks! You have disadvantage on casting all spells for the next 10 rounds"
+  - "Nemesis! Somewhere, a child is born who will grow up to become a mighty, sworn enemy to you"
+
+### FILE START: Spell_Enfeeble_Stat_Loss.yaml ###
+filename: Spell_Enfeeble_Stat_Loss.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 30
+tablename: SpellEnfeebleStatLoss
+type: Magic
+dice: d6
+results:
+  - "Strength"
+  - "Dexterity"
+  - "Constitution"
+  - "Intelligence"
+  - "Wisdom"
+  - "Charisma"
+
+### FILE START: Hideous_Halls_Encounters.yaml ###
+filename: Hideous_Halls_Encounters.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 52
+tablename: HideousHallsEncounters
+type: Encounter
+dice: d12
+results:
+  - "Plogrina Bittermold (Area 29) with 1d6 Bittermolds looking for something to feed to Mugdulblub that it's never tasted"
+  - "1d6 Howlers wrestling a mutant catfish down the hall"
+  - "An ichor ooze slurping toward the nearest source of heat"
+  - "Gordock Breeg (Area 4) leading a band of 2d6 Howlers in pursuit of 1d4 wounded Bittermolds"
+  - "1d6 Bittermolds stealthily looking for Howlers to capture"
+  - "A new pocket of acid quicksand gives way beneath 1d4 characters (DC 12 DEX to escape, 1d4 damage/round)"
+  - "1d4 vengeful mutant catfish out for violence (can be distracted with tasty food or sympathy)"
+  - "1d6 bandits looking for treasure who are realizing coming here was a bad idea; they refuse to leave empty-handed"
+  - "2d4 Bittermolds dragging 1d4 tied Howlers to Mugdulblub"
+  - "A lone cultist in an algae-induced fever dream looking for Mugdulblub; mutters about how all must be Dissolved"
+  - "2d6 roosting tar bats; open flame makes them frenzy"
+  - "A fat glob of sticky slime drips onto a light source, ruining it"
+
+### FILE START: Diabolical_Treasure.yaml ###
+filename: Diabolical_Treasure.yaml
+game: Shadowdark
+source: Cursed Scroll 1
+page: 68
+tablename: DiabolicalTreasure
+type: Treasure
+dice: d20
+results:
+  - "Carved bone: Ignites in flames once/day for 1d4 rounds"
+  - "Eyeball: Repels insects and spiders to arm's length"
+  - "Wolf idol: Floats in the air wherever it's placed"
+  - "Dried rose: Turns toward due north when untouched"
+  - "Pickled imp: Attracts demonic creatures to its location"
+  - "Bundle of sage: A creature holding it can't knowingly lie"
+  - "Cold iron spike: You can smell if something is poisonous"
+  - "Warped skull: Drips blood in the presence of undead"
+  - "Cracked mirror: Sings a haunting lullaby when rattled"
+  - "Severed finger: Belongs to a witch who wants it back"
+  - "Black candle: Causes pain and disgust in fey creatures"
+  - "Shrunken head: Can open a one-way gate to hell once"
+  - "Ring of daisies: Allows you to hold your breath for an hour"
+  - "Unholy symbol: A demon owes the item's owner a favor"
+  - "Rusty key: Once/day, fire immunity 1d4 rounds"
+  - "Vial of blood: Slowly rolls away on its own if released"
+  - "Faded locket: Once/day, briefly read one creature's mind"
+  - "Bag of teeth: Object cannot be crushed by anything"
+  - "Pan pipe: As heavy as an anvil when not carried"
+  - "Brain in a jar: Causes doubt and hesitation in demons"
