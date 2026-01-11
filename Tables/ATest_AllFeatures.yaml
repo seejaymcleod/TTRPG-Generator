@@ -102,137 +102,110 @@ tables:
       - "Undefined variable: {NonExistentVar + 5}" # Should result in 0 or error string
 
   # --- Table References ---
-  # - tablename: InternalRef
-  #   description: Tests referencing another subtable within this file.
-  #   results:
-  #     - "Reference SimpleStringResult: {SimpleStringResult}"
+  - tablename: InternalRef
+    description: Tests referencing another subtable within this file.
+    results:
+      - "Reference SimpleStringResult: {SimpleStringResult}"
 
-  # - tablename: CrossFileRefTable
-  #   description: Tests referencing a table in another file.
-  #   results:
-  #     - "Reference ShadowDark Ancestry: {ShadowDark_NPC|Ancestry}"
+  - tablename: CrossFileRefTable
+    description: Tests referencing a table in another file.
+    results:
+      - "Reference ShadowDark Ancestry: {Ancestry}"
 
-  # - tablename: CrossFileRefSubtable
-  #   description: Tests referencing a specific subtable in another file.
-  #   results:
-  #     - "Reference ShadowDark Dwarf Name: {ShadowDark_NPC|Dwarf}" # Assumes 'Dwarf' is a subtable in ShadowDark_NPC
+  - tablename: ArrayIndexRef
+    description: Tests accessing an element from an array result via reference.
+    results:
+      - "Career Name: {CareerStyleResult[0]}"
+      - "Career Items: {CareerStyleResult[1]}"
 
-  # - tablename: ArrayIndexRef
-  #   description: Tests accessing an element from an array result via reference.
-  #   results:
-  #     - "Career Name: {CareerStyleResult[0]}" # Get first element (Career)
-  #     - "Career Items: {CareerStyleResult[1]}" # Get second element (Items)
-
-  # - tablename: MissingTableRef
-  #   description: Tests referencing a non-existent table.
-  #   results:
-  #     - "This should fail: {NonExistentTable}" # Expecting "[NonExistentTable not found]"
+  - tablename: MissingTableRef
+    description: Tests referencing a non-existent table.
+    results:
+      - "This should fail: {NonExistentTable}"
 
   # --- Reference Tables ---
-  # - tablename: RefTableLookupExact
-  #   description: Tests exact key lookup in a reference table.
-  #   results:
-  #     - "Lookup 5: {useReferenceTable{TestReferenceTable}{5}}" # Should be 'Value C'
+  - tablename: RefTableLookupExact
+    description: Tests exact key lookup in a reference table.
+    results:
+      - "Lookup 5: {useReferenceTable{TestReferenceTable}{5}}"
 
-  # - tablename: RefTableLookupRange
-  #   description: Tests range key lookup (e.g., "10-12").
-  #   results:
-  #     - "Lookup 11: {useReferenceTable{TestReferenceTable}{11}}" # Should be 'Value D'
+  - tablename: RefTableLookupRange
+    description: Tests range key lookup (e.g., "10-12").
+    results:
+      - "Lookup 11: {useReferenceTable{TestReferenceTable}{11}}"
 
-  # - tablename: RefTableLookupInequality
-  #   description: Tests inequality keys (e.g., "<=N", "N<").
-  #   results:
-  #     - "Lookup 2: {useReferenceTable{TestReferenceTable}{2}}" # Should be 'Value A' (<=3)
-  #     - "Lookup 15: {useReferenceTable{TestReferenceTable}{15}}" # Should be 'Value E' (13<=)
-
-  # - tablename: RefTableLookupWithDice
-  #   description: Tests using a dice roll result for lookup.
-  #   results:
-  #     - "Roll {1d20} -> {useReferenceTable{TestReferenceTable}{thisResult}}" # Uses implicit thisResult
-
-  # - tablename: RefTableLookupWithArrayIndex
-  #   description: Tests using an array index from a previous result for lookup.
-  #   results:
-  #     - "Score: {ArrayWithDiceAndRef[0]}, Modifier: {useReferenceTable{AbilityModifiers}{thisResult[0]}}" # Uses thisResult[0] explicitly
+  - tablename: RefTableLookupInequality
+    description: Tests inequality keys (e.g., "<=N", "N<").
+    results:
+      - "Lookup 2: {useReferenceTable{TestReferenceTable}{2}}"
+      - "Lookup 15: {useReferenceTable{TestReferenceTable}{15}}"
 
   # --- Custom Display ---
-  # - tablename: CustomDisplayConcat
-  #   description: Tests simple concatenation using customDisplay.
-  #   customDisplay: "[{SimpleStringResult} and {SimpleNumberResult}]" # Note: Needs subtables defined below
+  - tablename: CustomDisplayConcat
+    description: Tests simple concatenation using customDisplay.
+    customDisplay: "[{SimpleStringResult} and {SimpleNumberResult}]"
 
-  # - tablename: CustomDisplayProbability
-  #   description: Tests probabilistic inclusion in customDisplay.
-  #   customDisplay: "[AlwaysPresent{SometimesPresent, 0.5}{RarelyPresent, 0.1}]"
-  #   subTables: # Define subtables used in the customDisplay
-  #     - tablename: AlwaysPresent
-  #       results: ["(Always)"]
-  #     - tablename: SometimesPresent
-  #       results: ["(Sometimes)"]
-  #     - tablename: RarelyPresent
-  #       results: ["(Rarely)"]
+  - tablename: CustomDisplayProbability
+    description: Tests probabilistic inclusion in customDisplay.
+    customDisplay: "[AlwaysPresent{SometimesPresent, 0.5}{RarelyPresent, 0.1}]"
+    subTables:
+      - tablename: AlwaysPresent
+        results: ["(Always)"]
+      - tablename: SometimesPresent
+        results: ["(Sometimes)"]
+      - tablename: RarelyPresent
+        results: ["(Rarely)"]
 
-  # - tablename: CustomDisplaySelectedResult
-  #   description: Tests dynamic subtable lookup using {selectedResult, Key}.
-  #   customDisplay: "[{selectedResult, DynamicKey}]" # Will look up based on DynamicKey result
-  #   subTables:
-  #     - tablename: DynamicKey # The key provider
-  #       results: ["OptionX", "OptionY"]
-  #     - tablename: OptionX # Subtable matching a key
-  #       results: ["Result for X"]
-  #     - tablename: OptionY # Subtable matching another key
-  #       results: ["Result for Y"]
-
-  # - tablename: CustomDisplayPickOne
-  #   description: Tests the {pickOneFromArrays} directive.
-  #   # customDisplay: "{pickOneFromArrays}" # REMOVED: Redundant specific logic
-  #   results:
-  #     - "Option 1 with choices [A, B, C]"
-  #     - "Option 2 with choices [X, Y, Z]"
-  #     - "Option 3 with weighted choices [[Fast, 3], [Slow, 1]]"
+  - tablename: CustomDisplayPickOne
+    description: Tests inline array picking in results.
+    results:
+      - "Option 1 with choices [A, B, C]"
+      - "Option 2 with choices [X, Y, Z]"
 
   # --- Directives ---
-  # - tablename: MultiRollDirective
-  #   description: Tests the multi-roll directive. # Simplified description
-  #   results:
-  #     - ["Base Result", { roll: 2 }] # Get Base Result + 2 more rolls from this table
-  #     - "Another Base"
-  #     - "Yet Another Base"
+  - tablename: MultiRollDirective
+    description: Tests the multi-roll directive.
+    results:
+      - ["Base Result", { roll: 2 }]
+      - "Another Base"
+      - "Yet Another Base"
 
-  # - tablename: MultiRollExcludeDirective
-  #   description: Tests the multi-roll exclude directive. # Simplified description
-  #   results:
-  #     - ["Roll 1, exclude self", { roll: 1, exclude: true }]
-  #     - "Possible Result A"
-  #     - "Possible Result B"
+  - tablename: MultiRollExcludeDirective
+    description: Tests the multi-roll exclude directive.
+    results:
+      - ["Roll 1, exclude self", { roll: 1, exclude: true }]
+      - "Possible Result A"
+      - "Possible Result B"
 
-  # - tablename: SeparateRowsDirective
-  #   description: Tests the separateRows directive. # Simplified description
-  #   results:
-  #     - { separateRows: ["{SimpleStringResult}", "{SimpleNumberResult}", "Static Text"] }
+  - tablename: SeparateRowsDirective
+    description: Tests the separateRows directive.
+    results:
+      - { separateRows: ["{SimpleStringResult}", "{SimpleNumberResult}", "Static Text"] }
 
   # --- Inline Arrays ---
-  # - tablename: InlineArrays
-  #   description: Tests inline array syntax like [A, B, C].
-  #   results:
-  #     - "Choose one: [Red, Green, Blue]"
-  #     - "Combine: [Small, Medium, Large] [Wooden, Metal] Box"
+  - tablename: InlineArrays
+    description: Tests inline array syntax like [A, B, C].
+    results:
+      - "Choose one: [Red, Green, Blue]"
+      - "Combine: [Small, Medium, Large] [Wooden, Metal] Box"
 
   # --- Descriptions ---
-  # - tablename: TableWithDescription
-  #   description: This subtable has a description.
-  #   results:
-  #     - "Description test result."
+  - tablename: TableWithDescription
+    description: This subtable has a description.
+    results:
+      - "Description test result."
 
   # --- Recursion Test ---
-  # - tablename: RecursionA
-  #   description: Tests recursion limits. A calls B.
-  #   results:
-  #     - "A calls B: {RecursionB}"
+  - tablename: RecursionA
+    description: Tests recursion limits. A calls B.
+    results:
+      - "A calls B: {RecursionB}"
 
-  # - tablename: RecursionB
-  #   description: B calls A. Should hit recursion limit.
-  #   results:
-  #     - "B calls A: {RecursionA}" # Expecting "[Recursive reference...]" or "[Max depth...]"
+  - tablename: RecursionB
+    description: B calls A. Should hit recursion limit.
+    results:
+      - "B calls A: {RecursionA}"
+ # Expecting "[Recursive reference...]" or "[Max depth...]"
 
   # --- New Features (Perchance Parity) ---
   - tablename: TestShorthandWeights

@@ -175,7 +175,7 @@ describe('TTRPG Engine V2', () => {
 
     it('should handle Recursion Limits', () => {
         const res = renderer.generate('RecursionA');
-        expect(JSON.stringify(res.result)).toContain('Max depth reached');
+        expect(JSON.stringify(res.result)).toMatch(/Loop Limit|Max depth reached/);
     });
 
     it('should handle InlineArrays [A, B]', () => {

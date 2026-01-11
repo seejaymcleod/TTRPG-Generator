@@ -1,0 +1,195 @@
+# Comprehensive Edge Cases Test Table for TTRPG Generator
+# Tests parsing edge cases, error handling, and unusual inputs
+filename: ATest_EdgeCases.yaml
+game: ATestSystem
+setting: TestSetting
+type: Test
+tablename: EdgeCasesTest
+description: Tests edge cases, unusual inputs, and error handling scenarios.
+
+tables:
+  # --- String Edge Cases ---
+  - tablename: ColonInString
+    description: Tests strings containing colons (YAML object risk).
+    results:
+      - "Time: 10:30 AM"
+      - "Ratio: 1:2:3"
+      - "Note: This has a colon in the middle"
+
+  - tablename: SpecialCharacters
+    description: Tests HTML special characters.
+    results:
+      - "Less than: < Greater than: >"
+      - "Ampersand: & Quotes: \" and '"
+      - "Angle brackets: <b>bold</b>"
+
+  - tablename: UnicodeCharacters
+    description: Tests unicode and emoji.
+    results:
+      - "Sword ⚔️"
+      - "Magic ✨🔮"
+      - "Café résumé naïve"
+
+  - tablename: LongString
+    description: Tests very long strings.
+    results:
+      - "This is a very long string that contains a lot of text. It goes on and on and on, testing how the engine handles longer content. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
+
+  - tablename: EmptyishResults
+    description: Tests empty and whitespace strings.
+    results:
+      - ""
+      - " "
+      - "   "
+      - "Normal text"
+
+  # --- Dice Edge Cases ---
+  - tablename: ConstantDice
+    description: Tests 1d1 (constant value).
+    results:
+      - "Roll 1d1: {1d1}"
+
+  - tablename: ZeroDice
+    description: Tests edge cases with zero.
+    results:
+      - "Zero modifier: {1d6+0}"
+      - "Zero subtraction: {1d6-0}"
+
+  - tablename: LargeDice
+    description: Tests large dice rolls.
+    results:
+      - "Roll 10d100: {10d100}"
+      - "Roll 1d1000: {1d1000}"
+
+  - tablename: NegativeModifier
+    description: Tests negative modifiers.
+    results:
+      - "Roll 1d6-10: {1d6-10}"
+      - "Roll 1d20-25: {1d20-25}"
+
+  # --- Reference Edge Cases ---
+  - tablename: SelfReference
+    description: Tests self-referencing (should hit loop limit).
+    results:
+      - "Self: {SelfReference}"
+
+  - tablename: DeepNesting
+    description: Tests deeply nested references.
+    results:
+      - "Level 1: {DeepNest2}"
+  
+  - tablename: DeepNest2
+    results:
+      - "Level 2: {DeepNest3}"
+  
+  - tablename: DeepNest3
+    results:
+      - "Level 3: {DeepNest4}"
+  
+  - tablename: DeepNest4
+    results:
+      - "Level 4: {DeepNest5}"
+  
+  - tablename: DeepNest5
+    results:
+      - "Level 5 (End)"
+
+  # --- Math Edge Cases ---
+  - tablename: ComplexMath
+    description: Tests complex math expressions.
+    results:
+      - "Complex: {10 + 5 * 2}"
+      - "Parentheses: {(10 + 5) * 2}"
+      - "Modulo: {17 % 5}"
+
+  - tablename: DivisionEdgeCases
+    description: Tests division edge cases.
+    results:
+      - "Integer division: {10 / 3}"
+      - "Division by zero: {10 / 0}"
+      - "Zero divided: {0 / 10}"
+
+  # --- Array Edge Cases ---
+  - tablename: SingleElementArray
+    description: Tests single element arrays.
+    results:
+      - ["Only One"]
+
+  - tablename: EmptyStringInArray
+    description: Tests arrays with empty strings.
+    results:
+      - ["", "Valid"]
+      - ["Valid", ""]
+
+  - tablename: MixedTypeArray
+    description: Tests arrays with mixed types.
+    results:
+      - ["String", 123]
+      - [456, "Another String"]
+
+  # --- Weighted Edge Cases ---
+  - tablename: ZeroWeight
+    description: Tests zero weight items.
+    results:
+      - [Should Never Appear, 0]
+      - [Always Appears, 100]
+
+  - tablename: VeryHighWeight
+    description: Tests very high weights.
+    results:
+      - [Common, 1]
+      - [Dominant, 99999]
+
+  # --- Variable Edge Cases ---
+  - tablename: VariableOverwrite
+    description: Tests overwriting a variable.
+    results:
+      - "[set:MyVar, First][set:MyVar, Second]Final: {MyVar}"
+
+  - tablename: NestedVariables
+    description: Tests variables containing other references.
+    results:
+      - "[set:Nested, {SimpleEdge}]Stored: {Nested}"
+
+  - tablename: SimpleEdge
+    results:
+      - "Simple Value"
+
+  # --- Conditional Edge Cases ---
+  - tablename: EdgeConditionals
+    description: Tests edge cases in conditionals.
+    results:
+      - "[if:0, Zero is true, Zero is false]"
+      - "[if:1, One is true, One is false]"
+      - "[if:, Empty is true, Empty is false]"
+
+  # --- Inline Array Edge Cases ---
+  - tablename: SingleOptionArray
+    description: Tests inline array with single option.
+    results:
+      - "Choice: [OnlyOne]"
+
+  - tablename: NestedBrackets
+    description: Tests nested bracket patterns.
+    results:
+      - "Outer [Inner [Deep] End] Done"
+
+  # --- Reference Table Edge Cases ---
+  - tablename: RefTableBoundary
+    description: Tests reference table boundary values.
+    results:
+      - "At boundary 3: {useReferenceTable{BoundaryTest}{3}}"
+      - "At boundary 4: {useReferenceTable{BoundaryTest}{4}}"
+      - "At boundary 10: {useReferenceTable{BoundaryTest}{10}}"
+
+referenceTables:
+  - tablename: BoundaryTest
+    entries:
+      - key: "<=3"
+        value: "Low"
+      - key: "4-6"
+        value: "Medium"
+      - key: "7-9"
+        value: "High"
+      - key: "10+"
+        value: "Maximum"

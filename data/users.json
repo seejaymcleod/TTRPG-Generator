@@ -70,5 +70,125 @@
     "favorites": [],
     "resetToken": null,
     "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768088288151",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768088288258",
+    "email": "admin_1768088288258@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768088288258",
+    "email": "user_1768088288258@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768090594654",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768090594739",
+    "email": "admin_1768090594739@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768090594739",
+    "email": "user_1768090594739@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768092785690",
+    "email": "admin_1768092785690@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768092785694",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768092785690",
+    "email": "user_1768092785690@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768092819286",
+    "email": "admin_1768092819286@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768092819285",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768092819286",
+    "email": "user_1768092819286@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "testuser_1768092866892",
+    "email": "",
+    "passwordHash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "admin_1768092866925",
+    "email": "admin_1768092866925@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
+  },
+  {
+    "username": "user_1768092866925",
+    "email": "user_1768092866925@example.com",
+    "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+    "favorites": [],
+    "resetToken": null,
+    "resetTokenExpiry": null
   }
 ]

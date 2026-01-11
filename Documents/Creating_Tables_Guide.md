@@ -181,3 +181,106 @@ referenceTables:
         value: "Friendly"
 ```
 **Access**: `{useReferenceTable{ReactionTable}{2d6}}`
+
+### Separate Rows
+Display multiple results on separate lines in the UI.
+**Syntax**: `{ separateRows: [Item1, Item2, ...] }`
+
+```yaml
+results:
+  - { separateRows: ["{Virtue}", "{Vice}", "{Background}"] }
+```
+
+### Selected Result (Dynamic Lookup)
+Dynamically select which subtable to roll based on a previous result.
+**Syntax**: `{selectedResult, KeyTable}`
+
+```yaml
+customDisplay: "[{selectedResult, Ancestry}]"
+tables:
+  - tablename: Ancestry
+    results: ["Human", "Elf", "Dwarf"]
+  - tablename: Human
+    results: ["John", "Jane"]
+  - tablename: Elf
+    results: ["Legolas", "Arwen"]
+```
+*The engine first rolls on `Ancestry`, then uses that result (e.g., "Human") as the name of the subtable to roll next.*
+
+### Probability Inclusion
+Include a table reference only some percentage of the time.
+**Syntax**: `{TableName, Probability}`
+
+```yaml
+customDisplay: "[{Name}{Nickname, 0.3}]"
+# Nickname is included only 30% of the time
+```
+
+### Array Index Access
+Access specific elements from an array result.
+**Syntax**: `{TableName[Index]}`
+
+```yaml
+- tablename: Career
+  results:
+    - ["Warrior", "Sword and Shield"]
+    - ["Mage", "Staff and Spellbook"]
+
+- tablename: Summary
+  results:
+    - "Class: {Career[0]}, Equipment: {Career[1]}"
+```
+
+### Inline Choices
+Pick one option randomly from a comma-separated list.
+**Syntax**: `[Option1, Option2, Option3]`
+
+```yaml
+results:
+  - "The goblin is [angry, scared, curious]."
+  - "You find a [red, blue, green] gem."
+```
+
+---
+
+## 8. Metadata Fields
+
+These optional fields provide context and filtering in the UI.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `filename` | string | Must match the `.yaml` filename exactly |
+| `tablename` | string | Unique identifier for the table |
+| `game` | string | Game system filter (e.g., "D&D 5e", "Cairn") |
+| `type` | string or array | Category filter (e.g., "Loot", ["People", "NPC"]) |
+| `setting` | string | Setting filter (e.g., "Fantasy", "Sci-Fi") |
+| `description` | string or array | Shown in UI beneath the table header |
+| `titleDescription` | string | Shown above the generated content |
+
+**Example:**
+```yaml
+filename: My_NPCs.yaml
+tablename: TavernPatron
+game: Knave
+type: [People, NPC]
+setting: Fantasy
+description:
+  - Generates a random tavern patron.
+  - Roll multiple times for a busy tavern.
+titleDescription: "A patron at the local tavern."
+```
+
+---
+
+## 9. Error Markers
+
+When something goes wrong, the engine produces these markers. If you see them in output, check your YAML:
+
+| Marker | Meaning |
+|--------|---------|
+| `[Table X not found]` | Referenced table doesn't exist |
+| `[Max depth reached]` | Recursion limit hit (circular reference?) |
+| `[Loop Limit: X]` | Same table called too many times in one roll |
+| `[object Object]` | Unquoted YAML parsed as object instead of string |
+| `[Invalid set syntax]` | Malformed `[set:...]` directive |
+
