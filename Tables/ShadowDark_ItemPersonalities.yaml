@@ -10,7 +10,7 @@ tables:
       - Warns its wielder if it senses impending danger
       - Gladly translates Primordial for its wielder
       - Senses hiding creatures within near, but not exact place
-      - "Owed a favor by a 1d4: 1-2. unicorn, 3. dragon, 4. noble"
+      - "Owed a favor by a [unicorn, unicorn, dragon, noble]"
       - Commands the respect of the followers of a god
       - Occasionally remembers useful ancient history
       - Imparts pleasant dreams and good sleep to its wielder
@@ -18,25 +18,25 @@ tables:
       - Sometimes provides helpful strategic advice
       - Occasionally notices important details others have missed
       - Tries to mediate disagreements between conscious items
-      - "Calming presence to 1d4: 1. dogs, 2. horses, 3. cats, 4. birds"
+      - "Calming presence to [dogs, horses, cats, birds]"
       - Has an extremely acute sense of smell
       - Knows the direction of the nearest running water
       - Lawful, intimidating to chaotic creatures
       - Neutral, intimidating to lawful and chaotic creatures
       - Chaotic, intimidating to lawful creatures
       - Has legitimate prophecies but isn't sure of their meaning
-      - "Can undo a great 1d4: 1. evil, 2. lie, 3. spell, 4. alliance"
+      - "Can undo a great [evil, lie, spell, alliance]"
   - tablename: Item Flaws
     results: 
-      - "Afraid of 1d4: 1. the dark, 2. vermin, 3. heights, 4. water"
+      - "Afraid of [the dark, vermin, heights, water]"
       - Preferred a past owner and always draws comparisons
       - Chatters while wielder is trying to concentrate
-      - "Dislikes 1d4: 1. elves, 2. dwarves, 3. humans, 4. goblins"
+      - "Dislikes [elves, dwarves, humans, goblins]"
       - Tries to get wielder into fights so it "has something to do"
       - Does not want to be separated from wielder for any reason
-      - "Objects to 1d4: 1. gambling, 2. carousing, 3. stealth, 4. theft"
+      - "Objects to [gambling, carousing, stealth, theft]"
       - Accuses everyone of lying; is correct once in a while
-      - Won't harm 1d4: 1-2. lawful, 3. neutral, 4. chaotic creatures
+      - "Won't harm [lawful, lawful, neutral, chaotic] creatures"
       - Believes its wielder is a pawn in its apocalyptic scheme
       - Constantly tries to escape its current wielder
       - Demands its wielder observe its god's strict rituals
@@ -46,7 +46,7 @@ tables:
       - Purposefully goes magically inert when mad at its wielder
       - Insists on being meticulously cleaned every day
       - Loves the color purple and despises all other colors
-      - "Objects to 1d4: 1. negotiating, 2-3. fighting, 4. planning"
+      - "Objects to [negotiating, fighting, fighting, planning]"
       - Pretends to know information it doesn't know
   - tablename: Personality Traits
     results:

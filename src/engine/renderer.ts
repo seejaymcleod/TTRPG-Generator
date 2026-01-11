@@ -596,48 +596,6 @@ export class Renderer {
             index = end + 1;
         }
 
-        // Post-processing for ShadowDark 1d4 syntax: "Some Prefix 1d4: 1-2. A, 3. B"
-        if (typeof result === 'string') {
-            // Regex: Catch "1d4: ..." or "1d6: ..." at some point in the string
-            const sdMatch = result.match(/(.*?)(\b\d+d\d+:\s*)(.+)/);
-            if (sdMatch && !result.includes('{')) {
-                const prefix = sdMatch[1];
-                const diceStr = sdMatch[2].replace(':', '').trim();
-                const optionsStr = sdMatch[3];
-
-                try {
-                    const roll = this.dice.roll(diceStr);
-                    let selected = "";
-
-                    // Regex to match "1. Option" or "1-2. Option"
-                    // LookAhead ensures we stop before the next number bullet
-                    const regex = /(?:^|\s|,)(\d+(?:-\d+)?)\.\s*(.*?)(?=$|,\s*\d+(?:-\d+)?\.)/g;
-                    let match;
-                    while ((match = regex.exec(optionsStr)) !== null) {
-                        const rangeStr = match[1];
-                        const content = match[2];
-                        let min, max;
-                        if (rangeStr.includes('-')) {
-                            const [l, h] = rangeStr.split('-').map(Number);
-                            min = l; max = h;
-                        } else {
-                            min = max = parseInt(rangeStr);
-                        }
-
-                        if (roll >= min && roll <= max) {
-                            selected = content.trim();
-                            break;
-                        }
-                    }
-
-                    if (selected) {
-                        return prefix + selected;
-                    }
-                } catch (e) {
-                    // Ignore parsing errors, return format as is
-                }
-            }
-        }
 
         return result;
     }
