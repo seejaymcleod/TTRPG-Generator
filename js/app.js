@@ -84,6 +84,7 @@ function restoreCardState(container, state) {
     const contentWrapper = container.querySelector('.card-content');
     if (contentWrapper && state.contentHtml) {
         contentWrapper.innerHTML = state.contentHtml;
+        attachEditableListeners(container);
     }
 }
 
@@ -598,6 +599,7 @@ async function deleteUser(username, btnElement) {
 window.deleteUser = deleteUser;
 
 document.addEventListener('DOMContentLoaded', async function () {
+    createAutocompleteContainer();
     checkSession(); // Check for logged in user
     try {
         const response = await fetch('/api/tables');
@@ -701,6 +703,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 e.stopPropagation();
                 toggleCardCollapse(e.currentTarget);
             });
+
+            attachEditableListeners(cardClone);
 
             // Add the card to the saved area
             this.appendChild(cardClone);
@@ -1059,6 +1063,29 @@ function getSelectedValues(filterId) {
 
 // IMPORTANT: Implementation of displayTableDetails needs to target the new layout
 function displayTableDetails(table) {
+    currentSelectedTable = table;
+
+    // Fetch and cache full data for autocomplete
+    if (!table.subtables) {
+        fetch('/api/table-contents', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ table: table })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (data.tableData) {
+                    Object.assign(table, data.tableData);
+                    // Update cache in tablesData
+                    const cachedIndex = tablesData.findIndex(t => t.filename === table.filename);
+                    if (cachedIndex !== -1) {
+                        tablesData[cachedIndex] = table;
+                    }
+                }
+            })
+            .catch(e => console.error("Failed to load table details for autocomplete", e));
+    }
+
     const tableHeadersContainer = document.getElementById('tableHeaders');
     tableHeadersContainer.innerHTML = '';
 
@@ -1238,6 +1265,7 @@ function generateContent() {
                 const generationContainer = document.createElement('div');
                 generationContainer.className = 'generation-container'; // CSS class handles style
                 generationContainer.dataset.index = index;
+                generationContainer.dataset.tableFilename = selectedTable.filename; // Store for autocomplete
                 generationContainer.draggable = true;
                 generationContainer.addEventListener('dragstart', handleCardDragStart);
                 generationContainer.addEventListener('dragend', handleCardDragEnd);
@@ -1260,6 +1288,9 @@ function generateContent() {
                 titleText.textContent = firstValue ? `${selectedTable.tablename} - ${firstValue}` : selectedTable.tablename;
                 titleText.contentEditable = true;
                 titleText.spellcheck = false;
+                titleText.addEventListener('input', () => {
+                    titleText.dataset.edited = 'true';
+                });
                 titleText.addEventListener('blur', () => {
                     pushUndoState(generationContainer);
                 });
@@ -1331,6 +1362,7 @@ function generateContent() {
 
                 generationContainer.appendChild(contentWrapper);
                 resultsContainer.appendChild(generationContainer);
+                attachEditableListeners(generationContainer);
             });
         })
         .catch(error => {
@@ -1404,6 +1436,8 @@ function rerollContent(button) {
                 updateCardTitle(generationContainer, valForTitle);
             }
 
+            attachEditableListeners(resultRow);
+
             resultRow.style.opacity = '1';
         })
         .catch(e => {
@@ -1414,6 +1448,180 @@ function rerollContent(button) {
 // Add rerollAllContent, updateCardTitle, updateCardTitleFromFirstRow, extractDisplayValueForTitle
 // copyToMarkdown, renderResultItem... duplicating legacy logic.
 // I'll define renderResultItem specifically since it generates the HTML structure that CSS depends on.
+
+// --- Autocomplete Logic ---
+
+function getAutocompleteValues(tableFilename, header, colIndex) {
+    const table = tablesData.find(t => t.filename === tableFilename);
+    if (!table || !table.subtables) return [];
+
+    const subtable = table.subtables.find(st => st.name === header);
+    if (!subtable || !subtable.results) return [];
+
+    const values = new Set();
+    const index = parseInt(colIndex);
+
+    subtable.results.forEach(res => {
+        let val = res;
+        if (typeof res === 'string' && (res.startsWith('[') || res.startsWith('{'))) {
+            try { val = JSON.parse(res); } catch (e) { }
+        }
+
+        if (Array.isArray(val)) {
+            // Career or multi-element
+            if (index < val.length) values.add(String(val[index]));
+        } else if (typeof val === 'object' && val !== null) {
+            // Weighted or object
+            if (val.result) values.add(String(val.result));
+        } else {
+            // Simple string
+            if (index === 0) values.add(String(val));
+        }
+    });
+
+    return Array.from(values).sort();
+}
+
+let activeAutocomplete = null;
+
+function createAutocompleteContainer() {
+    if (document.getElementById('autocomplete-list')) return;
+    const ul = document.createElement('ul');
+    ul.id = 'autocomplete-list';
+    ul.className = 'autocomplete-list';
+    ul.style.display = 'none';
+    document.body.appendChild(ul);
+}
+
+function showAutocomplete(element, values) {
+    const list = document.getElementById('autocomplete-list');
+    if (!list) return;
+
+    list.innerHTML = '';
+
+    if (values.length === 0) {
+        list.style.display = 'none';
+        return;
+    }
+
+    values.forEach(val => {
+        const li = document.createElement('li');
+        li.className = 'autocomplete-item';
+        li.textContent = val;
+        li.onmousedown = (e) => {
+            e.preventDefault();
+            element.textContent = val;
+            checkLockState(element);
+            hideAutocomplete();
+        };
+        list.appendChild(li);
+    });
+
+    const rect = element.getBoundingClientRect();
+    list.style.top = (rect.bottom + window.scrollY) + 'px';
+    list.style.left = (rect.left + window.scrollX) + 'px';
+    list.style.width = Math.max(rect.width, 200) + 'px';
+    list.style.display = 'block';
+
+    activeAutocomplete = element;
+}
+
+function hideAutocomplete() {
+    const list = document.getElementById('autocomplete-list');
+    if (list) list.style.display = 'none';
+    activeAutocomplete = null;
+}
+
+function checkLockState(element) {
+    const row = element.closest('.result-row');
+    if (!row) return;
+
+    const container = row.closest('.generation-container');
+    if (!container) return;
+
+    const filename = container.dataset.tableFilename;
+    const header = element.dataset.header;
+    const colIndex = element.dataset.colIndex;
+
+    if (!filename || !header) return;
+
+    const currentVal = element.textContent.trim();
+    const validValues = getAutocompleteValues(filename, header, colIndex);
+
+    const isValid = validValues.includes(currentVal);
+
+    if (isValid) {
+        if (row.classList.contains('locked')) {
+            row.classList.remove('locked');
+            updateRowLockIcon(row);
+        }
+    } else {
+        if (!row.classList.contains('locked')) {
+            row.classList.add('locked');
+            updateRowLockIcon(row);
+        }
+    }
+}
+
+function attachEditableListeners(container) {
+    if (!container) return;
+    container.querySelectorAll('.result-content[contenteditable="true"]').forEach(el => {
+        el.addEventListener('input', debounce((e) => {
+            const val = e.target.textContent;
+            const container = el.closest('.generation-container');
+            const filename = container.dataset.tableFilename;
+            const header = el.dataset.header;
+            const colIndex = el.dataset.colIndex;
+
+            if (filename && header) {
+                const allValues = getAutocompleteValues(filename, header, colIndex);
+                if (val.length > 0) {
+                    const matches = allValues.filter(v => v.toLowerCase().includes(val.toLowerCase()));
+                    showAutocomplete(el, matches);
+                } else {
+                    hideAutocomplete();
+                }
+            }
+
+            checkLockState(el);
+
+            // Sync title if first row
+            const row = el.closest('.result-row');
+            if (row && container && row === container.querySelector('.result-row:first-child')) {
+                let newVal = '';
+                if (row.dataset.format === 'career') {
+                    newVal = row.querySelector('.career-value').textContent;
+                } else {
+                    newVal = row.querySelector('.result-content').textContent;
+                }
+                updateCardTitle(container, newVal);
+            }
+        }, 200));
+
+        el.addEventListener('focus', () => {
+            // Optional: Show suggestions on focus?
+        });
+
+        el.addEventListener('blur', () => {
+            setTimeout(() => hideAutocomplete(), 200);
+            checkLockState(el);
+            pushUndoState(container);
+        });
+
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                el.blur();
+                hideAutocomplete();
+            }
+            if (e.key === 'Escape') {
+                hideAutocomplete();
+            }
+        });
+    });
+
+    // Also re-attach title listeners if needed (already handled in generateContent)
+}
 
 function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
     // Generate the HTML for a row
@@ -1433,8 +1641,8 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
         return `${titleDesc}${desc}
         <div class="result-row" data-format="career">
             <div class="result-header">${item.header}</div>
-            <div class="result-content career-value">${escapeHtml(String(item.result[0]))}</div>
-            <div class="result-content career-description">${escapeHtml(String(item.result[1]))}</div>
+            <div class="result-content career-value" contenteditable="true" data-header="${item.header}" data-col-index="0" spellcheck="false">${escapeHtml(String(item.result[0]))}</div>
+            <div class="result-content career-description" contenteditable="true" data-header="${item.header}" data-col-index="1" spellcheck="false">${escapeHtml(String(item.result[1]))}</div>
             ${btnGroup}
         </div>`;
     }
@@ -1453,7 +1661,7 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
         return `${titleDesc}${desc}
         <div class="result-row" data-format="simple">
             <div class="result-header">${item.header}</div>
-            <div class="result-content">${escapeHtml(String(item.result))}</div>
+            <div class="result-content" contenteditable="true" data-header="${item.header}" data-col-index="0" spellcheck="false">${escapeHtml(String(item.result))}</div>
             ${btnGroup}
         </div>`;
     }
@@ -1512,7 +1720,19 @@ async function resetRow(btn) {
 
 function updateCardTitle(container, val) {
     const t = container.querySelector('.card-title-text');
-    if (t) t.textContent = `${currentSelectedTable.tablename} - ${val}`;
+    if (!t) return;
+    if (t.dataset.edited === 'true') return;
+
+    let tableName = 'Unknown Table';
+    const filename = container.dataset.tableFilename;
+    if (filename) {
+        const table = tablesData.find(t => t.filename === filename);
+        if (table) tableName = table.tablename;
+    } else if (currentSelectedTable) {
+        tableName = currentSelectedTable.tablename;
+    }
+
+    t.textContent = `${tableName} - ${val}`;
 }
 
 function extractDisplayValueForTitle(res) {
