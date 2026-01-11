@@ -1305,8 +1305,8 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
         return `${titleDesc}${desc}
         <div class="result-row" data-format="career">
             <div class="result-header">${item.header}</div>
-            <div class="result-content career-value">${item.result[0]}</div>
-            <div class="result-content career-description">${item.result[1]}</div>
+            <div class="result-content career-value">${escapeHtml(String(item.result[0]))}</div>
+            <div class="result-content career-description">${escapeHtml(String(item.result[1]))}</div>
             ${btnGroup}
         </div>`;
     }
@@ -1325,7 +1325,7 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
         return `${titleDesc}${desc}
         <div class="result-row" data-format="simple">
             <div class="result-header">${item.header}</div>
-            <div class="result-content">${String(item.result)}</div>
+            <div class="result-content">${escapeHtml(String(item.result))}</div>
             ${btnGroup}
         </div>`;
     }
