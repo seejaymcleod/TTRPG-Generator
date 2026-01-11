@@ -1,0 +1,152 @@
+filename: ShadowDark_Core_RivalCrawlers.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, People
+tablename: RivalCrawlers
+tables:
+  - tablename: Party Name
+    customDisplay: "[{Name1} {Name2}]"
+    subtables:
+      - tablename: Name1
+        results:
+          - The Savage
+          - The Steel
+          - The Icy
+          - Hell's
+          - The Dread
+          - The Marvelous
+          - The Flaming
+          - The Lone
+          - The Noble
+          - The Mighty
+          - The Iron
+          - The Devil's
+          - The Emerald
+          - The Vigilant
+          - The Lightless
+          - The Forest
+          - Death's
+          - The Dark
+          - The Thundering
+          - The Divine
+      - tablename: Name2
+        results:
+          - Wardens
+          - Skulls
+          - Guardians
+          - Hammers
+          - Rangers
+          - Explorers
+          - Moon
+          - Wolves
+          - Delvers
+          - Dawn
+          - Drakes
+          - Miscreants
+          - Scimitars
+          - Storm
+          - Trackers
+          - Oath
+          - Sentinels
+          - Lions
+          - Knights
+          - Hunters
+  - tablename: Number Of Crawlers
+    results:
+      - "{1d4+1}"
+  - tablename: Ancestry
+    results:
+      - [Humans, 8]
+      - [Elves, 4]
+      - [Dwarves, 4]
+      - [Halflings, 4]
+      - [Half-orcs, 2]
+      - [Goblins, 2]
+      - [Kobolds, 1]
+  - tablename: Class
+    results:
+      - [Fighters, 4]
+      - [Priests, 4]
+      - [Thieves, 4]
+      - [Wizards, 4]
+      - Knights of St. Ydris
+      - Warlocks
+      - Witches
+      - Desert Riders
+      - Pit Fighters
+      - Ras-Godais
+      - Sea Wolves
+      - Seers
+      - Basalisk Warriors
+      - [Rangers, 2]
+      - [Bards, 2]
+  - tablename: Alignment
+    results: 
+      - Lawful
+      - Neutral
+      - Chaotic
+  - tablename: Party Renown
+    results:
+      - Unknown
+      - [Locally known, 2]
+      - [Widely recognized, 2]
+      - Extremely famous
+  - tablename: Known Forest
+    results:
+      - Defeating a dragon
+      - Specializing in undead
+      - Zealous worship of a god
+      - Slaying a two-headed ogre
+      - Going missing for a year
+      - Taking monster trophies
+      - Setting taverns on fire
+      - Their signature clothing
+      - Brashness and arrogance
+      - A disastrous expedition
+      - Dabbling in evil magic
+      - Their frenzied admirers
+      - Serving in a brutal war
+      - Large gambling debts
+      - Their pet lion
+      - Surviving the fall of Korint
+      - Finding a legendary sword
+      - Spying on other crawlers
+      - Defeating a necromancer
+      - Poaching treasure finds
+  - tablename: Secrets
+    results:     
+      - [Party Secret, 0.5]
+      - Betrayed an oath
+      - False/stolen identities
+      - In debt to Thieves' Guild
+      - Map to major treasure
+      - Suffering a curse
+      - [Has a powerful patron, 0.5]
+  - tablename: Party Wealth
+    results: 
+      - Poor
+      - [Standard, 3]
+      - Wealthy
+      - Extravagant
+  - tablename: Signature Tactics
+    customDisplay: "[{selectedResult, Alignment}]"
+    subtables: 
+      - tablename: Lawful
+        results:
+          - Always negotiate
+          - Fight honorably
+          - Never use stealth
+          - Loyal followers
+      - tablename: Neutral
+        results:
+          - Scout and sneak
+          - Follow rivals
+          - Cache resources
+          - Buy information
+      - tablename: Chaotic
+        results:
+          - Ambush rivals
+          - Sacrifice NPCs
+          - Kill everything
+          - Target the helpless

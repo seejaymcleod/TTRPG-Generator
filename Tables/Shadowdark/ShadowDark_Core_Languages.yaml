@@ -1,0 +1,21 @@
+filename: ShadowDark_Core_Languages.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, People
+tablename: Languages
+results:
+   - [Common, Humanoids]
+   - [Dwarvish, Dwarves]
+   - [Elvish, Elves]
+   - [Giant, Giants]
+   - [Goblin, Goblinoids]
+   - [Merran, Aquatic folk]
+   - [Orcish, Orcs]
+   - [Reptilian, Reptile folk]
+   - [Sylvan, Fey folk]
+   - [Thanian, Beast folk]
+   - [Celestial (R), Angels]
+   - [Diabolic (R), Demons]
+   - [Draconic (R), Dragons]
+   - [Primordial (R), Elder things]

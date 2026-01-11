@@ -1,0 +1,49 @@
+filename: ShadowDark_Core_MishapsWizard.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, Places
+tablename: MishapsWizard
+tables:
+  - tablename: Tier1-2
+    results:
+      - "Devastation! Roll twice and combine both effects (reroll any further 1s)"
+      - "Explosion! You take 1d8 damage"
+      - "Refraction! You target yourself with the spell"
+      - "Your hand slipped! You target a random ally with the spell"
+      - "Mind wound! You can't cast this spell again for a week"
+      - "Discorporation! One random piece of your gear disappears forever"
+      - "Spell worm! You lose the ability to cast a random spell on each of your turns until you pass a DC 12 Constitution check. You regain the ability to cast those spells after completing a rest"
+      - "Harmonic failure! You lose the ability to cast a random spell until you complete a rest"
+      - "Poof! You suppress all light within a near distance from you, including sunlight and magical light, for 10 rounds"
+      - "The horror! You scream uncontrollably for 3 rounds in Primordial, drawing lots of attention"
+      - "Energy surge! You glow bright purple for 10 rounds, granting enemies advantage on attacks against you"
+      - "Unstable conduit! You have disadvantage on casting spells of the same tier for 10 rounds"
+  - tablename: Tier3-4
+    results:
+      - "Devastation! Roll twice and combine both effects (reroll any further 1s)"
+      - "Blast radius! You and all near creatures take 2d6 damage"
+      - "Duplicate refraction! You target yourself and the nearest ally with two identical copies of the spell"
+      - "You flubbed the incantation! You cast a random spell  from your known spells at the same targets, even if it would not normally be possible"
+      - "Ethereal bandersnatch! Two random pieces of your gear disappear forever"
+      - "Arcano-mutagenesis! You must pass a DC 12 Constitution check or a random stat drops to 3 (-4) until you successfully complete a rest"
+      - "Boom! You open a 30-foot deep sinkhole in the ground with you at the center. You and all near creatures must pass a DC 15 Dexterity check or fall in"
+      - "Petrification! 1d4 of your limbs petrify for the next 24 hours"
+      - "Stupefaction! You lose the ability to cast all spells of the same tier until you complete a rest"
+      - "It cannot be unseen! You must pass a DC 12 Wisdom check or descend into mad raving for 1d10 rounds"
+      - "Radioactive energies! You whirl with repulsive energies, drawing the hostility and attacks of all enemies who can see you for the next 1d4 rounds"
+      - "Uncontained channeling! You have disadvantage on casting spells of the same tier and lower for 10 rounds"
+  - tablename: Tier5
+    results:
+      - "Devastation! Roll twice and combine both effects (reroll any further 1s)"
+      - "Pyroclastic extrusion! You deal 3d8 damage to yourself and all creatures within near"
+      - "Astral incision! An otherworldly blade cuts into your memory. You permanently forget one random spell"
+      - "The grimlow! You accidentally summon a hostile grimlow in a space near to you. It persists for 2d4 rounds before disappearing whence it came"
+      - "Dark plasma aura! Attacks against you pass through a vile aura, dealing double damage for the next 2d6 rounds"
+      - "Gate! You open a magic portal to another location, whether on this plane or another. Something dreadful will come through in 1d4 rounds unless you close it with a DC 18 Intelligence check on your turn"
+      - "Runaway arcana loop! Your spell targets a random creature you can see, even if it would not normally be possible. Each subsequent turn, you must pass a spellcasting check for that spell or you cast it on another random creature in the same way (effect ends on success)"
+      - "Arcane obstruction! You lose the ability to cast all spells of a random tier until you complete a rest"
+      - "What lurks beyond the veil! You must pass a DC 15 Wisdom check or fall into mad raving for 1d4 hours"
+      - "Ord's balance! You must either permanently sacrifice a magic item or the ability to cast a tier 3+ spell you know"
+      - "Unmitigated chain reaction! You have disadvantage on casting all spells for the next 10 rounds"
+      - "Shred! You tear a large hole in the fabric of the universe close to you; the lightless tear grows larger every round"

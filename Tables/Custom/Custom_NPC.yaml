@@ -36,7 +36,7 @@ tables:
       - "{Knave_Relationships}"
   - tablename: Secret
     results: 
-      - "{ShadowDark_NPC|Secret}"
+      - "{ShadowDark_Core_NPC|Secret}"
   - tablename: Summary
     results:
       - "{N} is a {A}."

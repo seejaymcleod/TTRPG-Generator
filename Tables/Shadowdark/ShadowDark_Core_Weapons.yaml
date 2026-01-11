@@ -1,0 +1,83 @@
+filename: ShadowDark_Core_Weapons.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Stuff
+tablename: Weapons
+tables:
+  - tablename: Types
+    results:
+      - Arrows ("2d6")
+      - [Bastard sword, 2]
+      - Club
+      - Crossbow
+      - Crossbow bolts (2d6)
+      - [Dagger, 2]
+      - Greataxe
+      - Greatsword
+      - Javelin
+      - Longbow
+      - [Longsword, 2]
+      - Mace
+      - Shortbow
+      - [Shortsword, 2]
+      - Staff
+      - Warhammer
+      
+  - tablename: Bonuses
+    results:
+      - ["+0", 3]
+      - ["+1", 27]
+      - ["+2", 5]
+      - ["+3", 1]
+      
+  - tablename: Features
+    results:
+      - Trails sparkles
+      - Starmetal
+      - Rusted and chipped
+      - Gem in pommel/handle
+      - Drips green ichor
+      - Moon motif and silvered
+      - Galaxies swirl on surface
+      - Ironwood
+      - Rune-scribed
+      - Faint, ghostly aura
+      - Inlaid with gold
+      - Trails incense
+      - Studded with gemstones
+      - Sparks dance on surface
+      - Shaped like an animal
+      - Carved from granite
+      - Dragonbone hardware
+      - Whispers in a language
+      - Drips ocean water
+      - Turns blood to rose petals
+  - tablename: Benefits
+    results:
+      - Cut or smash through any material
+      - Once per day, ignites for 5 rounds, deals 1d4 extra damage
+      - DC 15 CHA check to command a wild animal within far
+      - Behead the enemy on a critical hit
+      - When you hit a creature, learn its True Name (see pg. 319)
+      - Shoot a bolt of energy near with DEX, 1d6 damage
+      - Once per day, deflect a melee attack that would hit you
+      - Regain 1d6 hit points when you slay a creature
+      - You have advantage on initiative rolls
+      - Has thrown property (pg. 37), near distance, returns to you
+      - "Double damage to [[undead, 2], demons, dragons]"
+      - Reroll natural 1s once each when attacking with this weapon
+  - tablename: Curses
+    results:
+      - "You can't see [undead, demons, snakes, spiders]"
+      - You are compelled to swallow all gemstones at first sight
+      - Burn a straw doll daily or weapon temporarily loses magic
+      - Any light source you hold immediately extinguishes
+      - You must loudly praise a god whenever you see its symbol
+      - Venomous creatures always target you with attacks
+      - You turn into a rat every day at midnight for one hour
+      - Your checks to swim are always extreme (DC 18)
+      - You are burned by the touch of gold
+      - Bathe weapon in blood daily or it temporarily loses its magic
+      - You cannot wear armor while wielding this weapon
+      - Weapon can possess you by winning contested CHA (+2)

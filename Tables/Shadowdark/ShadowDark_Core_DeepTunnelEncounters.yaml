@@ -1,0 +1,57 @@
+filename: ShadowDark_Core_DeepTunnelEncounters.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, Places
+tablename: Deep Tunnel Encounters
+results:
+    - ["The Ten-Eyed Oracle drifts into sight, chattering of doom", 0.5]
+    - 1d4 brain eaters walk surrounded by 3d6 duergar captives
+    - An albino hydra stampedes in, lashed on by 2d4 drow
+    - A duergar calls for help; 2d4 more prepare to ambush
+    - 2d6 drow led by a drow priestess hunt for new prisoners
+    - 2d6 pale, giant spiders skitter out of the darkness
+    - Dripping ooze douses flames and sticks creatures in place
+    - 2d6 beastmen thralls haul a troll to their aboleth overlord
+    - 2d4 giant leeches slither along the walls like snakes
+    - Shimmering spores kick up underfoot; they cause lethargy
+    - 2d8 mushroomfolk track 2d4 thieving deep gnomes
+    - 1d6 cave creepers glue dead drow to the walls as egg hosts
+    - 1d8 battered dwarf knights retreat toward the upper caves
+    - 1d4 ropers spring to life amid a nest of stalagmites
+    - A moaning, mushroom-infested mummy staggers along
+    - The earth shakes; a purple worm arrives here in 1d4 rounds
+    - 2d12 grim duergar (N) run a traveling mercantile caravan
+    - A strangler stalks the PCs and ambushes from the rear
+    - An earthquake causes a tunnel to collapse
+    - An ogre zombie mindlessly wanders toward sounds
+    - 1d4 hell hounds leap out of a sudden magma rupture
+    - An injured human warrior lies unconscious on the ground
+    - A drow-made trap of poison darts and web snares triggers
+    - A blind, pale halfling tends a flock of 2d6 cockatrice
+    - 2d6 giant bats dive from the ceiling toward warm prey
+    - Two tribes of beastmen battle over a cold, obsidian altar
+    - The floor gives way into a sinkhole 2d6 x 10 feet deep
+    - Two minotaurs stalk each other and anyone in the way
+    - A nest of 2d12 darkmantles swarms any loud noises
+    - 2d20 quiet mushroomfolk build a colony of fungi homes
+    - A deep gnome druid tends to a patch of neon mushrooms
+    - 1d4 brain eaters try to escape a pursuing purple worm
+    - Puffs of sour-smelling gas cause auditory hallucinations
+    - 2d6 void spiders step through starry portals that snap shut
+    - 2d4 cloakers feast greedily on a dead purple worm
+    - A cave brute grapples with 1d4 ravenous cave creepers
+    - A group of rival crawlers out of torches stumbles into sight
+    - Gravity suddenly reverses for 1d4 rounds
+    - A crazed drow priest leads a pack of 3d6 drow ghouls
+    - 2d4 gibbering mouthers slurp up a tunnel, wailing loudly
+    - A human priest who has been lost 15 years offers healing
+    - Ancient, moldy skeletons fuse into a hissing bone naga
+    - A shadow rises out of a PC's shadow and attacks
+    - 2d6 drow dart around the attacks of 3d6 albino lizardfolk
+    - 2d6 coal-streaked dwarven miners tunnel through the wall
+    - 2d20 zigzagging motes of light heal 1 HP each if caught
+    - A night hag rides by on the back of a clear giant scorpion
+    - The Wandering Merchant squeezes out of a narrow fissure
+    - Roll two encounters and combine the results (reroll 98-99)
+    - ["An ancient treasure chest holds a random magic item", 0.5]

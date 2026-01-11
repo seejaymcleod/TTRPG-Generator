@@ -1,0 +1,57 @@
+filename: ShadowDark_Core_CaveEncounters.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, Places
+tablename: Cave Encounters
+results:
+    - ["An enraged pair of manticores protect their 1d4 cubs", 0.5]
+    - 1d6 possessed mushroomfolk charge in a murderous rage
+    - 2d4 deep gnomes are irritated at the unwanted intrusion
+    - A band of 2d6 gnolls demands a toll of blood or gold
+    - A hungry, giant frog leaps out to swallow a PC
+    - 1d6 ghouls stalk the living from the edge of the light
+    - Dripping water from above is actually searing acid
+    - A basilisk guards its nest of 1d4 stone eggs
+    - 2d6 cannibalistic beastmen hunt for their next meal
+    - Cracked stalagmites vent superheated gouts of steam
+    - 2d4 bugbears search for weaker creatures to rob
+    - 2d6 orcs scavenge for food for their rotund hill giant queen
+    - 2d4 dwarf knights bring news of calamity to the surface
+    - A scouting party of 2d4 drow creep through the caves
+    - An old chimera makes its nest among a pile of bones
+    - 1d4 cave creepers cling to the walls of a new, deep rift
+    - 3d4 kobolds carry mushrooms back to their troll overlord
+    - 1d6 far-ranging duergar emerge from a small tunnel
+    - Toxic spores puff up from thousands of delicate fungi
+    - 1d4 sleeping cloakers hang from the walls
+    - 1d6 giant spiders lurk on the ceiling, waiting to ambush
+    - A kobold caught by the tail in a bear trap begs for help
+    - 1d6 darkmantles bob and spin around stalactites
+    - A wounded, outcast drider skitters along the ceiling
+    - A trapped water elemental whirls inside a shallow puddle
+    - 1d6 ettercaps affix thin lines of webbing across a passage
+    - Sharp stalactites fall with even the slightest vibration
+    - 2d6 drow pursue a weary group of 2d4 bugbear escapees
+    - A Blue Tusk clan goblin shaman and 2d8 goblins rampage
+    - 2d12 unguarded grick eggs are glued to the walls
+    - An elf warrior tracks a wounded otyugh that fled inside
+    - 2d6 violet fungi slowly tromp past in search of water
+    - Luminous cave paintings of running elk emit soft light
+    - A troll drags the dead body of a rival crawler by the leg
+    - A giant snake rests inside a series of tunnels in the walls
+    - 1d6 kobolds clash with 1d6 goblins over a prize mushroom
+    - A group of rival crawlers flees a chittering swarm of spiders
+    - A stone carving of a dwarf magically speaks to passersby
+    - A wraith hovers over its own recently deceased body
+    - A snorting wyvern trundles up the hall dragging a deer
+    - Binkin and Bobbin, twin halflings, tumble into the room
+    - 1d6 buzzing stingbats gust from a narrow cave chimney
+    - An ochre jelly rears up from a thin crack in the floor
+    - 1d8 lizardfolk lure 1d6 giant centipedes from their nest
+    - A patrol of 2d4 dwarves roasts mutton around a campfire
+    - A swarm of startled bats whirls past toward the surface
+    - The floor shakes as a tunneling bulette roves through
+    - The Wandering Merchant spelunks by on a truffle hunt
+    - Roll two encounters and combine the results (reroll 98-99)
+    - ["An orc mystic (L) offers 2 random beneficial potions", 0.5]

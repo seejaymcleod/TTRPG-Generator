@@ -1,0 +1,57 @@
+filename: ShadowDark_Core_SpellsPriest.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Powers
+tablename: SpellsPriest
+tables:
+  - tablename: RandomSpellAnyTier
+    results:
+      - "[{selectedResult, RandomTier}]"
+  - tablename: RandomTier
+    results: 
+      - Tier1
+      - Tier2
+      - Tier3
+      - Tier4
+      - Tier5  
+  - tablename: Tier1
+    results: 
+      - Cure Wounds
+      - Holy Weapon
+      - Light
+      - Protection From Evil
+      - Shield of Faith
+      - Turn Undead    
+  - tablename: Tier2
+    results: 
+      - Augury
+      - Bless
+      - Blind/Deafen
+      - Cleansing Weapon
+      - Smite
+      - Zone of Truth    
+  - tablename: Tier3
+    results: 
+      - Command
+      - Lay To Rest
+      - Mass Cure
+      - Rebuke Unholy
+      - Restoration
+      - Speak With Dead
+  - tablename: Tier4
+    results: 
+      - Commune
+      - Control Water
+      - Flame Strike
+      - Pillar of Salt
+      - Regenerate
+      - Wrath    
+  - tablename: Tier5
+    results: 
+      - Divine Vengeance
+      - Dominion
+      - Heal
+      - Judgment
+      - Plane Shift
+      - Prophecy

@@ -1,0 +1,57 @@
+filename: ShadowDark_Core_CastleDistrictEncounters.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, Places
+tablename: Castle Districts Encounters
+results:
+    - ["{2d20} guards surround the group, accusing a PC of murder", 0.5]
+    - Piercing horns sound an alarm inside the royal palace
+    - Prisoners on a chain revolt in unison against their escort
+    - A drunk noble swings an axe, yelling, "Off with 'er head!"
+    - Screaming, robed bathers stampede out of the bathhouse
+    - A visiting noble's honor guard chases a gray street cat
+    - A mounted group of knights charges down the busy street
+    - A condemned prisoner's noose breaks; he scampers away
+    - A fledgling gladiator takes offense at the garb a PC wears
+    - Overhead, a crumbling gargoyle breaks loose and falls
+    - A lion tears free from handlers leading it to the coliseum
+    - A wild-eyed playwright calls a PC an "unread cretin"
+    - Armed tax collectors stop each person to levy a war tax
+    - A venerable knight mistakes a PC for Targ the Betrayer
+    - Two holy orders of rival crusaders square off in the street
+    - A hooded man slips into a sewer grate near the theater
+    - An elephant dragging chains bursts from the coliseum
+    - Mercenaries push people aside ahead of a visiting prince
+    - The street crumbles, revealing a dry cistern full of tunnels
+    - The water from a fountain rises into a humanoid shape
+    - A gleaming knight parades a sickly captive to the garrison
+    - Robal Goodwin darts by hauling bags of stolen royal gold
+    - A 30' tall catapult in a military parade ignites in fast flames
+    - A PC spots a new wanted poster with their own face on it
+    - A golden horseshoe peeks from the gutter filth
+    - Two rival gladiators start a fist fight in a rollicking tavern
+    - A spooked horse crashes into fragile building construction
+    - A dripping sewer beast bursts from the bathhouse doors
+    - Drunk Sir Galvin gets thrown out of the Blue Mare again
+    - An explosion rocks the nearest City Watch garrison
+    - A foreign dignitary mistakes a PC for a horse groom
+    - Bleary-eyed dwarf miners tunnel up through the street
+    - Dungeon prisoners grab at ankles from the barred gutters
+    - Four figures throw their hoods off, revealing devil masks
+    - The lead actor on an open street stage falls dead mid-word
+    - Two rival bounty hunters fight to capture the same man
+    - The PCs spot a group of crawlers dressed exactly like them
+    - A sewer grate thumps and clangs loudly, then goes still
+    - A cowled figure subtly hands a scroll to a passing woman
+    - A crossbow bolt flies at the PCs from the rooftops
+    - The famed singer Branzolini insists he knows a character
+    - A strong gust blows a key out of a window flower box
+    - A brash guard falls to his knee before the disguised Duke
+    - Two nervous men rush by with an object tied in a sheet
+    - Smoke begins pouring from the theater's upper windows
+    - A magic sword appears in the hand of a gladiator statue
+    - The Overlord rides by with a heavily armed honor guard
+    - The Wandering Merchant scalps premium coliseum seats
+    - Roll two encounters and combine the results (reroll 98-99)
+    - ["A visiting Duchess invites the PCs to attend a royal ball", 0.5]

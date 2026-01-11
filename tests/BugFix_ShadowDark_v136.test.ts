@@ -16,8 +16,8 @@ describe('ShadowDark Bug Fixes v136', () => {
         renderer = new Renderer(loader);
     });
 
-    test('ShadowDark_Weapons should preserve structure (List of SubTables)', () => {
-        const result = renderer.generate('ShadowDark_Weapons');
+    test('ShadowDark_Core_Weapons should preserve structure (List of SubTables)', () => {
+        const result = renderer.generate('ShadowDark_Core_Weapons');
         // If flattened, result.result is ['Arrow', '+1', ...].
         // If structured, result.result is [{header:'Types', result:'Arrow'}, ...].
         // User wants structure.
@@ -32,12 +32,12 @@ describe('ShadowDark Bug Fixes v136', () => {
         }
     });
 
-    test('ShadowDark_MagicItemAttributes should not return [object Object]', () => {
+    test('ShadowDark_Core_MagicItemAttributes should not return [object Object]', () => {
         // We might need to mock RNG to hit the specific path if it's "occasional"
         // But if it's structural, any roll might trigger it if it hits a container subtable.
         // Let's force a roll.
 
-        const result = renderer.generate('ShadowDark_MagicItemAttributes');
+        const result = renderer.generate('ShadowDark_Core_MagicItemAttributes');
         console.log('MagicItemAttributes Result:', JSON.stringify(result, null, 2));
 
         // Check recursively if any "result" part contains "[object Object]" string or is unhandled object
@@ -130,7 +130,7 @@ describe('ShadowDark Bug Fixes v136', () => {
         expect((resStr as string)).toMatch(/^Won't harm/);
     });
 
-    test('ShadowDark_ItemPersonalities should parse 1d4 syntax', () => {
+    test('ShadowDark_Core_ItemPersonalities should parse 1d4 syntax', () => {
         // We want to force a roll that hits one of the complex entries.
         // "Owed a favor by a 1d4: 1-2. unicorn, 3. dragon, 4. noble"
         // This is index 12 in "Item Virtues". 

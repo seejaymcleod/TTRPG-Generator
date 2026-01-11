@@ -1,0 +1,57 @@
+filename: ShadowDark_Core_JungleEncounters.yaml
+game: ShadowDark
+source: ShadowDark Core
+setting: Fantasy
+type: Adventure, Places
+tablename: Jungle Encounters
+results:
+    - ["Mossy, lifelike statues crop up; a medusa resides nearby", 0.5]
+    - A T-Rex thunders over the ground, looking for fresh meat
+    - 3d6 hissing viperians encircle 2d4 red-scaled lizardfolk
+    - A kobold sorcerer riding a leashed crocodile demands gold
+    - A yowling panther falls onto a PC from a high tree branch
+    - A snorting gorilla prowls in the dense ground vegetation
+    - A patch of muddy ground is actually a pool of quicksand
+    - 2d4 drow in basilisk hide armor creep through the mist
+    - 1d4 giant scorpions scuttle down thick tree trunks
+    - A carpet of minuscule, biting ants pours across the ground
+    - 2d4 stingbats flutter and dart through the dense canopy
+    - 1d4 giant frogs peek their eyes out of a mossy, still pond
+    - 2d6 Bloodspear tribe lizardfolk check net traps for game
+    - 2d4 yellow-striped velociraptors circle around the PCs
+    - A howling gorilla punches and bites a thrashing crocodile
+    - 2d6 drow in chitin armor flit among colossal, mossy pillars
+    - A forest dragon slumbers outside a vine-choked cave
+    - A slimy troll swings between tree branches like an ape
+    - Carnivorous, pink flowers unfurl and fling poisonous darts
+    - 2d4 zombies (former crawlers) stagger through the jungle
+    - A towering brachiosaurus slowly plods through, grazing
+    - A flailing human arm juts out of a dark pool of quicksand
+    - Heady, perfumed flowers lull creatures into a deep sleep
+    - A giant zombie (x3 LV and damage) claws out of the earth
+    - 1d6 pterodactyls roost in the trees around a deep sinkhole
+    - 2d4 drow covered in white war paint charge out of a cave
+    - Flimsy reeds and grass cover a swarm of snakes in a 10' pit
+    - A drider clings to a tree, scanning the area with sharp eyes
+    - A viperian wizard and 1d4 zombie thralls inspect a boulder
+    - 1d6 playful faeries cavort around a sun-dappled clearing
+    - Doctor Bartom Halsy leads an expedition of 2d12 peasants
+    - A giant snake coils on a low branch, forked tongue flicking
+    - 1d4 spiders hang on threads at head-height
+    - 2d4 giant centipedes wriggle out of a hollow, rotting log
+    - 1d4 crocodiles mock charge out of a river with bared fangs
+    - Two adolescent forest dragons clash over a territory claim
+    - A frantic rival crawling party offers a gold idol to the PCs
+    - 2d4 berserkers carry a baby basilisk in a wicker basket
+    - Javelins shoot from the mouth of a hulking stone statue
+    - 1d4 berserkers and a druid hunt with their trained basilisk
+    - A wandering mushroomfolk mystic offers healing salves
+    - A naga guards a towering, stone ruin housing a black altar
+    - A viperian ophid leads 2d4 viperians on a patrol
+    - 2d6 drow dart with silk thread around a bellowing cyclops
+    - 2d20 Amber-Eye tribe lizardfolk bustle around mud huts
+    - A beam of sun touches the top of a three-stepped ziggurat
+    - A sphinx draped in jade and gold lounges on a stone dais
+    - The Wandering Merchant flees a group of 2d4 beastmen
+    - Roll two encounters and combine the results (reroll 98-99)
+    - ["A radiant couatl snakes through the air; it offers a blessing", 0.5]

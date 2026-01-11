@@ -226,7 +226,7 @@ describe('TTRPG Engine V2', () => {
         });
 
         it('should reroll ShadowDark Ancestry', () => {
-            const root = loader.getTableByName('NPC'); // ShadowDark_NPC.yaml tablename is NPC
+            const root = loader.getTableByName('NPC'); // ShadowDark_Core_NPC.yaml tablename is NPC
             expect(root).toBeDefined();
             if (!root) return;
 
