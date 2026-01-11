@@ -798,6 +798,8 @@ function createFilterButtons(filterId, options) {
             wrapper.className = 'game-filter-wrapper';
 
             const button = createGameFilterButton(option, filterId);
+            // Add all-active class for default "on" appearance
+            button.classList.add('all-active');
             wrapper.appendChild(button);
 
             // Add source dropdown if this game has sources
@@ -818,6 +820,8 @@ function createFilterButtons(filterId, options) {
             const button = document.createElement('button');
             button.className = 'filter-btn';
             button.classList.add('px-3', 'py-1', 'rounded-full', 'text-xs', 'font-medium', 'border', 'border-transparent', 'hover:bg-gray-200', 'dark:hover:bg-slate-600', 'transition-colors', 'whitespace-nowrap');
+            // Add all-active class for default "on" appearance
+            button.classList.add('all-active');
 
             button.textContent = option;
             button.dataset.value = option;
@@ -834,6 +838,7 @@ function createGameFilterButton(option, filterId) {
     const button = document.createElement('button');
     button.className = 'filter-btn';
     button.classList.add('px-3', 'py-1', 'rounded-full', 'text-xs', 'font-medium', 'border', 'border-transparent', 'hover:bg-gray-200', 'dark:hover:bg-slate-600', 'transition-colors', 'whitespace-nowrap');
+    // Note: all-active class is added by the caller (createFilterButtons)
 
     button.textContent = option;
     button.dataset.value = option;
@@ -885,24 +890,29 @@ function createSourceDropdown(gameName) {
     dropdown.className = 'source-dropdown';
     dropdown.dataset.game = gameName;
 
-    // Header
+    // Header with action buttons only (no title)
     const header = document.createElement('div');
     header.className = 'source-dropdown-header';
 
-    const title = document.createElement('span');
-    title.className = 'source-dropdown-title';
-    title.textContent = `${gameName} Sources`;
-    header.appendChild(title);
-
-    // Select all link
+    // Select all button
     const selectAllBtn = document.createElement('button');
-    selectAllBtn.className = 'text-xs text-primary hover:underline';
+    selectAllBtn.className = 'source-action-btn text-primary';
     selectAllBtn.textContent = 'Select All';
     selectAllBtn.onclick = (e) => {
         e.stopPropagation();
         toggleAllSourcesForGame(gameName, true);
     };
     header.appendChild(selectAllBtn);
+
+    // Clear button
+    const clearBtn = document.createElement('button');
+    clearBtn.className = 'source-action-btn clear-btn';
+    clearBtn.textContent = 'Clear';
+    clearBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleAllSourcesForGame(gameName, false);
+    };
+    header.appendChild(clearBtn);
 
     dropdown.appendChild(header);
 
@@ -1226,21 +1236,33 @@ function toggleFilterButton(button, filterId) {
     const currentMode = filterContainer.dataset.mode || 'all-selected';
 
     if (currentMode === 'all-selected') {
+        // Transition from all-selected to choice mode
+        // Only the clicked button should be "on", others "off"
         filterContainer.dataset.mode = 'choice';
         const buttons = filterContainer.querySelectorAll('.filter-btn');
         buttons.forEach(btn => {
+            btn.classList.remove('all-active', 'selected');
             btn.classList.add('unselected');
-            btn.classList.remove('selected', 'bg-primary', 'text-white');
         });
 
         button.classList.remove('unselected');
         button.classList.add('selected');
     } else {
-        button.classList.toggle('unselected');
-        button.classList.toggle('selected');
+        // In choice mode - toggle this button
+        const wasSelected = button.classList.contains('selected');
 
+        if (wasSelected) {
+            button.classList.remove('selected');
+            button.classList.add('unselected');
+        } else {
+            button.classList.remove('unselected');
+            button.classList.add('selected');
+        }
+
+        // If no buttons are selected, return to all-selected mode
         if (filterContainer.querySelectorAll('.filter-btn.selected').length === 0) {
             clearFilter(filterId.replace('Filter', ''));
+            return; // clearFilter will call applyFilters
         }
     }
     applyFilters();
@@ -1256,6 +1278,7 @@ function clearFilter(filterType) {
     const buttons = filterContainer.querySelectorAll('.filter-btn');
     buttons.forEach(btn => {
         btn.classList.remove('unselected', 'selected');
+        btn.classList.add('all-active');
     });
     applyFilters();
 }
