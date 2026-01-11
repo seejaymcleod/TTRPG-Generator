@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_CharacterGenerator.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: People
 tablename: CharacterGenerator

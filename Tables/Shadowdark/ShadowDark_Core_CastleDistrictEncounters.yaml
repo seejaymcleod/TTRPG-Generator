@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_CastleDistrictEncounters.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: Adventure, Places
 tablename: Castle Districts Encounters

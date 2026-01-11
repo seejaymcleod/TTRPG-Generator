@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_TempleDistrictEncounters.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: Adventure, Places
 tablename: Temple District Encounters

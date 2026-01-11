@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_SwampEncounters.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: Adventure, Places
 tablename: Swamp Encounters

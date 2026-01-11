@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_RandomEncounters.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: Adventure
 tablename: Random Encounters

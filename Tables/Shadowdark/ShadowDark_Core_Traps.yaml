@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_Traps.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: Adventure, Places
 tablename: Traps

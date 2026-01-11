@@ -563,8 +563,92 @@
     [contenteditable="true"]:focus {
       outline: none;
       background-color: rgba(139, 92, 246, 0.1);
-      border-color: #8b5cf6;
-      box-shadow: 0 0 0 1px #8b5cf6;
+    }
+
+    /* Source Filter Popup */
+    .source-filter-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffffff;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      min-width: 280px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .dark .source-filter-popup {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+    }
+
+    .source-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      cursor: pointer;
+    }
+
+    .source-checkbox-item:hover {
+      background-color: rgba(147, 51, 234, 0.1);
+      border-radius: 0.25rem;
+      padding-left: 0.5rem;
+      margin-left: -0.5rem;
+    }
+
+    .source-checkbox-item input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: #9333ea;
+    }
+
+    /* Filter wrap - max 3 rows before scroll */
+    .filter-wrap {
+      max-height: calc(1.75rem * 3 + 0.5rem * 2);
+      /* 3 rows of buttons (~1.75rem each) + gaps */
+      overflow-y: auto;
+      align-content: flex-start;
+    }
+
+    .filter-wrap::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .filter-wrap::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 2px;
+    }
+
+    .dark .filter-wrap::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
+
+    /* Source game group in popup */
+    .source-game-group {
+      margin-bottom: 1rem;
+    }
+
+    .source-game-header {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .dark .source-game-header {
+      color: #94a3b8;
+      border-color: #334155;
+    }
+
+    .source-game-sources {
+      padding-left: 0.5rem;
     }
   </style>
 </head>
@@ -775,24 +859,31 @@
         class="bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark py-3 px-6 flex flex-col gap-3 shrink-0 z-10 shadow-sm"
         id="filtersContainer">
 
-        <div class="filter-container flex items-center gap-4 overflow-x-auto no-scrollbar pb-1">
-          <span
-            class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider shrink-0 w-16">Game</span>
-          <div id="gameFilter" class="flex gap-2" data-mode="all-selected">
+        <div class="filter-container flex items-center gap-4 pb-1">
+          <div class="flex items-center gap-1 shrink-0">
+            <span
+              class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider w-16">Game</span>
+            <button id="sourceFilterBtn" onclick="openSourceFilterPopup()"
+              class="p-1 rounded text-primary hover:bg-primary/20 transition-colors" style="display: none;"
+              title="Filter by source">
+              <span class="material-symbols-outlined text-sm">filter_alt</span>
+            </button>
+          </div>
+          <div id="gameFilter" class="flex flex-wrap gap-2 filter-wrap" data-mode="all-selected">
             <!-- Buttons injected by JS -->
           </div>
         </div>
 
-        <div class="filter-container flex items-center gap-4 overflow-x-auto no-scrollbar">
+        <div class="filter-container flex items-center gap-4">
           <span
             class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider shrink-0 w-16">Type</span>
-          <div id="typeFilter" class="flex gap-2" data-mode="all-selected"></div>
+          <div id="typeFilter" class="flex flex-wrap gap-2 filter-wrap" data-mode="all-selected"></div>
         </div>
 
-        <div class="filter-container flex items-center gap-4 overflow-x-auto no-scrollbar">
+        <div class="filter-container flex items-center gap-4">
           <span
             class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider shrink-0 w-16">Setting</span>
-          <div id="settingFilter" class="flex gap-2" data-mode="all-selected"></div>
+          <div id="settingFilter" class="flex flex-wrap gap-2 filter-wrap" data-mode="all-selected"></div>
         </div>
       </div>
 
@@ -861,6 +952,28 @@
           </div>
         </aside>
       </div>
+    </div>
+  </div>
+
+  <!-- Source Filter Popup -->
+  <div id="sourceFilterPopup" class="modal">
+    <div class="source-filter-popup">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold">Filter by Source</h3>
+        <button onclick="closeSourceFilterPopup()" class="text-2xl opacity-50 hover:opacity-100">&times;</button>
+      </div>
+      <div class="mb-3">
+        <label class="source-checkbox-item">
+          <input type="checkbox" id="sourceSelectAll" onchange="toggleAllSources(this.checked)" checked>
+          <span class="font-medium">Select All</span>
+        </label>
+      </div>
+      <hr class="border-border-light dark:border-border-dark mb-3">
+      <div id="sourceCheckboxContainer" class="space-y-1">
+        <!-- Checkboxes injected by JS -->
+      </div>
+      <button onclick="closeSourceFilterPopup()"
+        class="mt-4 w-full bg-primary hover:bg-primary-hover text-white py-2 rounded-lg font-medium transition-colors">Done</button>
     </div>
   </div>
 

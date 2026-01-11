@@ -1,6 +1,6 @@
 filename: ShadowDark_Core_GrasslandEncounters.yaml
 game: ShadowDark
-source: ShadowDark Core
+source: Core
 setting: Fantasy
 type: Encounter, Places
 tablename: Grassland Encounters

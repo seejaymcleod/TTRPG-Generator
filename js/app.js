@@ -3,6 +3,14 @@ let tablesData = [];
 let currentSelectedTable = null;
 let generationContexts = {};
 
+// --- Source Filter State ---
+// Maps game name -> Set of sources
+let sourcesByGame = {};
+// Currently selected sources (empty = all selected)
+let selectedSources = [];
+// Whether we're in "all sources selected" mode
+let sourceFilterMode = 'all-selected';
+
 // --- Undo Stack System ---
 // Map of cardIndex -> array of undo states (max 100)
 const cardUndoStacks = new Map();
@@ -730,8 +738,21 @@ function populateFilterButtons(tables) {
     const typeSet = new Set();
     const settingSet = new Set();
 
+    // Reset source tracking
+    sourcesByGame = {};
+
     tables.forEach(table => {
-        if (table.game) gameSet.add(table.game);
+        if (table.game) {
+            gameSet.add(table.game);
+
+            // Track sources per game
+            if (table.source) {
+                if (!sourcesByGame[table.game]) {
+                    sourcesByGame[table.game] = new Set();
+                }
+                sourcesByGame[table.game].add(table.source);
+            }
+        }
 
         if (Array.isArray(table.type)) {
             table.type.forEach(t => {
@@ -749,6 +770,7 @@ function populateFilterButtons(tables) {
     createFilterButtons('settingFilter', Array.from(settingSet));
 
     populateSearchSuggestions(tables);
+    updateSourceFilterVisibility();
 }
 
 // Helper function to create filter buttons
@@ -839,6 +861,7 @@ function toggleFilterButton(button, filterId) {
         }
     }
     applyFilters();
+    updateSourceFilterVisibility();
 }
 
 function clearFilter(filterType) {
@@ -859,6 +882,9 @@ function resetFilters() {
     clearFilter('type');
     clearFilter('setting');
     document.getElementById('searchInput').value = '';
+
+    // Reset source filter
+    resetSourceFilter();
 
     const favBtn = document.getElementById('favoritesFilterBtn');
     if (favBtn && favBtn.classList.contains('active')) {
@@ -1028,7 +1054,13 @@ function applyFilters() {
         const matchesFavorite = !showFavoritesOnly ||
             (window.currentUser && window.currentUser.favorites && window.currentUser.favorites.includes(table.filename));
 
-        return matchesSearch && matchesGame && matchesType && matchesSetting && matchesFavorite;
+        // Source filter
+        const sourceFilter = getSelectedSources();
+        const matchesSource = sourceFilter.length === 0 ||
+            (table.source && sourceFilter.includes(table.source)) ||
+            (!table.source); // Tables without source always match
+
+        return matchesSearch && matchesGame && matchesType && matchesSetting && matchesFavorite && matchesSource;
     });
 
     filteredTables.forEach(table => {
@@ -1055,6 +1087,169 @@ function getSelectedValues(filterId) {
     if (mode === 'all-selected') return [];
     const selectedButtons = filterContainer.querySelectorAll('.filter-btn.selected');
     return Array.from(selectedButtons).map(btn => btn.dataset.value);
+}
+
+// --- Source Filter Functions ---
+
+function updateSourceFilterVisibility() {
+    const selectedGames = getSelectedValues('gameFilter');
+    const sourceBtn = document.getElementById('sourceFilterBtn');
+
+    // Check if any selected game (or all games if none selected) has sources
+    let hasSourcesAvailable = false;
+
+    if (selectedGames.length === 0) {
+        // All games mode - check if any game has sources
+        hasSourcesAvailable = Object.keys(sourcesByGame).some(game =>
+            sourcesByGame[game] && sourcesByGame[game].size > 0
+        );
+    } else {
+        // Specific games selected - check if those games have sources
+        hasSourcesAvailable = selectedGames.some(game =>
+            sourcesByGame[game] && sourcesByGame[game].size > 0
+        );
+    }
+
+    if (sourceBtn) {
+        sourceBtn.style.display = hasSourcesAvailable ? 'block' : 'none';
+    }
+
+    // Rebuild checkboxes when visibility changes
+    if (hasSourcesAvailable) {
+        buildSourceCheckboxes(selectedGames);
+    }
+}
+
+function buildSourceCheckboxes(selectedGames) {
+    const container = document.getElementById('sourceCheckboxContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Determine which games to show
+    const gamesToShow = selectedGames.length === 0
+        ? Object.keys(sourcesByGame).filter(g => sourcesByGame[g] && sourcesByGame[g].size > 0)
+        : selectedGames.filter(g => sourcesByGame[g] && sourcesByGame[g].size > 0);
+
+    // Group sources by game
+    gamesToShow.sort().forEach(game => {
+        const sources = sourcesByGame[game];
+        if (!sources || sources.size === 0) return;
+
+        const gameGroup = document.createElement('div');
+        gameGroup.className = 'source-game-group';
+
+        const header = document.createElement('div');
+        header.className = 'source-game-header';
+        header.textContent = game;
+        gameGroup.appendChild(header);
+
+        const sourcesDiv = document.createElement('div');
+        sourcesDiv.className = 'source-game-sources';
+
+        Array.from(sources).sort().forEach(source => {
+            const label = document.createElement('label');
+            label.className = 'source-checkbox-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = source;
+            checkbox.dataset.game = game;
+            checkbox.checked = sourceFilterMode === 'all-selected' || selectedSources.includes(source);
+            checkbox.onchange = () => handleSourceCheckboxChange();
+
+            const span = document.createElement('span');
+            span.textContent = source;
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            sourcesDiv.appendChild(label);
+        });
+
+        gameGroup.appendChild(sourcesDiv);
+        container.appendChild(gameGroup);
+    });
+
+    // Update "Select All" checkbox state
+    updateSelectAllCheckbox();
+}
+
+function handleSourceCheckboxChange() {
+    const container = document.getElementById('sourceCheckboxContainer');
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+    if (checkedCount === checkboxes.length) {
+        // All checked - switch to all-selected mode
+        sourceFilterMode = 'all-selected';
+        selectedSources = [];
+    } else {
+        // Some unchecked - switch to choice mode
+        sourceFilterMode = 'choice';
+        selectedSources = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+    }
+
+    updateSelectAllCheckbox();
+    applyFilters();
+}
+
+function updateSelectAllCheckbox() {
+    const container = document.getElementById('sourceCheckboxContainer');
+    const selectAllCheckbox = document.getElementById('sourceSelectAll');
+    if (!container || !selectAllCheckbox) return;
+
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+
+    selectAllCheckbox.checked = checkedCount === checkboxes.length;
+    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+}
+
+function toggleAllSources(checked) {
+    const container = document.getElementById('sourceCheckboxContainer');
+    if (!container) return;
+
+    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => cb.checked = checked);
+
+    if (checked) {
+        sourceFilterMode = 'all-selected';
+        selectedSources = [];
+    } else {
+        sourceFilterMode = 'choice';
+        selectedSources = [];
+    }
+
+    applyFilters();
+}
+
+function openSourceFilterPopup() {
+    const popup = document.getElementById('sourceFilterPopup');
+    if (popup) {
+        popup.style.display = 'block';
+    }
+}
+
+function closeSourceFilterPopup() {
+    const popup = document.getElementById('sourceFilterPopup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}
+
+function getSelectedSources() {
+    if (sourceFilterMode === 'all-selected') {
+        return []; // Empty means all sources
+    }
+    return selectedSources;
+}
+
+function resetSourceFilter() {
+    sourceFilterMode = 'all-selected';
+    selectedSources = [];
+    updateSourceFilterVisibility();
 }
 
 // ... Rest of the functions (displayTableDetails, generateContent, etc) 

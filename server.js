@@ -73,6 +73,7 @@ app.get('/api/tables', (req, res) => {
         game: t.game || 'Unknown',
         type: t.type || 'Unknown',
         setting: t.setting || 'Unknown',
+        source: t.source || null,
         inputField: t.inputField || null
       };
     });
