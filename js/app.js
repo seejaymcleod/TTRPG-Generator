@@ -3,6 +3,16 @@ let tablesData = [];
 let currentSelectedTable = null;
 let generationContexts = {};
 
+// --- Undo Stack System ---
+// Map of cardIndex -> array of undo states (max 100)
+const cardUndoStacks = new Map();
+const UNDO_STACK_LIMIT = 100;
+
+// --- Table Column Data for Autocomplete ---
+// Cached column values per table for autocomplete validation
+let currentTableColumnValues = {};
+
+
 
 // --- Context Helper ---
 function extractContext(result, storage) {
@@ -12,6 +22,87 @@ function extractContext(result, storage) {
     }
 }
 window.extractContext = extractContext;
+
+// --- Undo Stack Helper Functions ---
+function getCardState(container) {
+    const state = {
+        title: container.querySelector('.card-title-text')?.textContent || '',
+        contentHtml: container.querySelector('.card-content')?.innerHTML || ''
+    };
+    return state;
+}
+
+function pushUndoState(container) {
+    const cardIndex = container.dataset.index;
+    if (!cardUndoStacks.has(cardIndex)) {
+        cardUndoStacks.set(cardIndex, []);
+    }
+    const stack = cardUndoStacks.get(cardIndex);
+    const state = getCardState(container);
+    stack.push(state);
+    if (stack.length > UNDO_STACK_LIMIT) {
+        stack.shift(); // Remove oldest
+    }
+    updateUndoButtonState(container);
+}
+
+function popUndoState(container) {
+    const cardIndex = container.dataset.index;
+    const stack = cardUndoStacks.get(cardIndex);
+    if (!stack || stack.length === 0) return null;
+    const state = stack.pop();
+    updateUndoButtonState(container);
+    return state;
+}
+
+function clearUndoStack(container) {
+    const cardIndex = container.dataset.index;
+    cardUndoStacks.delete(cardIndex);
+    updateUndoButtonState(container);
+}
+
+function updateUndoButtonState(container) {
+    const cardIndex = container.dataset.index;
+    const stack = cardUndoStacks.get(cardIndex);
+    const undoBtn = container.querySelector('.undo-btn');
+    if (undoBtn) {
+        undoBtn.disabled = !stack || stack.length === 0;
+        undoBtn.style.opacity = undoBtn.disabled ? '0.3' : '1';
+    }
+}
+
+function restoreCardState(container, state) {
+    if (!state) return;
+
+    // Restore title
+    const titleEl = container.querySelector('.card-title-text');
+    if (titleEl && state.title) {
+        titleEl.textContent = state.title;
+    }
+
+    // Restore full card content HTML
+    const contentWrapper = container.querySelector('.card-content');
+    if (contentWrapper && state.contentHtml) {
+        contentWrapper.innerHTML = state.contentHtml;
+    }
+}
+
+function updateRowLockIcon(row) {
+    const lockBtn = row.querySelector('.lock-btn');
+    if (!lockBtn) return;
+    const icon = lockBtn.querySelector('.material-symbols-outlined');
+    if (icon) {
+        icon.textContent = row.classList.contains('locked') ? 'lock' : 'lock_open';
+    }
+}
+
+function undoCardChange(container) {
+    const state = popUndoState(container);
+    if (state) {
+        restoreCardState(container, state);
+    }
+}
+
 
 // --- User System State & Logic ---
 window.currentUser = null;
@@ -576,6 +667,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             cardClone.dataset.index = newIndex;
 
             // Reattach event handlers for all buttons in the cloned card
+            cardClone.querySelector('.undo-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                undoCardChange(cardClone);
+            });
+
             cardClone.querySelector('.copy-btn')?.addEventListener('click', (e) => {
                 e.stopPropagation();
                 copyToMarkdown(cardClone);
@@ -584,6 +680,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             cardClone.querySelector('.reroll-all-btn')?.addEventListener('click', (e) => {
                 e.stopPropagation();
                 rerollAllContent(cardClone);
+            });
+
+            cardClone.querySelector('.reset-all-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                resetAllContent(cardClone);
             });
 
             cardClone.querySelector('.delete-card-btn')?.addEventListener('click', (e) => {
@@ -1157,31 +1258,58 @@ function generateContent() {
                 titleText.className = 'card-title-text';
                 let firstValue = extractDisplayValueForTitle(result).trim();
                 titleText.textContent = firstValue ? `${selectedTable.tablename} - ${firstValue}` : selectedTable.tablename;
+                titleText.contentEditable = true;
+                titleText.spellcheck = false;
+                titleText.addEventListener('blur', () => {
+                    pushUndoState(generationContainer);
+                });
+                titleText.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        titleText.blur();
+                    }
+                });
                 cardTitle.appendChild(titleText);
 
                 // Actions
                 const cardActions = document.createElement('div');
                 cardActions.className = 'card-actions';
 
+                const undoBtn = document.createElement('button');
+                undoBtn.className = 'undo-btn';
+                undoBtn.title = "Undo";
+                undoBtn.onclick = (e) => { e.stopPropagation(); undoCardChange(generationContainer); };
+                undoBtn.innerHTML = '<span class="material-symbols-outlined">undo</span>';
+                undoBtn.disabled = true;
+                undoBtn.style.opacity = '0.3';
+                cardActions.appendChild(undoBtn);
+
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
                 copyBtn.title = "Copy to Markdown";
                 copyBtn.onclick = (e) => { e.stopPropagation(); copyToMarkdown(generationContainer); };
-                copyBtn.innerHTML = '<img src="./Images/Icons/stack.png" alt="Copy">';
+                copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
                 cardActions.appendChild(copyBtn);
 
                 const rerollAllBtn = document.createElement('button');
                 rerollAllBtn.className = 'reroll-all-btn';
                 rerollAllBtn.title = "Reroll All";
                 rerollAllBtn.onclick = (e) => { e.stopPropagation(); rerollAllContent(generationContainer); };
-                rerollAllBtn.innerHTML = '<img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll All">';
+                rerollAllBtn.innerHTML = '<span class="material-symbols-outlined">casino</span>';
                 cardActions.appendChild(rerollAllBtn);
+
+                const resetAllBtn = document.createElement('button');
+                resetAllBtn.className = 'reset-all-btn';
+                resetAllBtn.title = "Reset All (Reroll + Unlock All)";
+                resetAllBtn.onclick = (e) => { e.stopPropagation(); resetAllContent(generationContainer); };
+                resetAllBtn.innerHTML = '<span class="material-symbols-outlined">restart_alt</span>';
+                cardActions.appendChild(resetAllBtn);
 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-card-btn';
                 deleteBtn.title = "Delete Card";
                 deleteBtn.onclick = (e) => { e.stopPropagation(); deleteCard(generationContainer); };
-                deleteBtn.innerHTML = '<img src="./Images/Icons/trash-can.png" alt="Delete">';
+                deleteBtn.innerHTML = '<span class="material-symbols-outlined">delete_forever</span>';
                 cardActions.appendChild(deleteBtn);
 
                 cardTitle.appendChild(cardActions);
@@ -1337,24 +1465,50 @@ function getButtonGroup() {
     return `
     <div class="button-group">
         <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock">
-             <img src="./Images/Icons/padlock-open.png" alt="Unlock">
+             <span class="material-symbols-outlined">lock_open</span>
         </button>
         <button class="reroll-btn" onclick="rerollContent(this)" title="Reroll">
-             <img src="./Images/Icons/perspective-dice-six-faces-random.png" alt="Reroll">
+             <span class="material-symbols-outlined">casino</span>
+        </button>
+        <button class="reset-row-btn" onclick="resetRow(this)" title="Reset (Reroll + Unlock)">
+             <span class="material-symbols-outlined">refresh</span>
+        </button>
+        <button class="delete-row-btn" onclick="deleteRow(this)" title="Delete Row">
+             <span class="material-symbols-outlined">delete</span>
         </button>
     </div>`;
 }
 
 function toggleRowLock(btn) {
     const row = btn.closest('.result-row');
+    const container = row.closest('.generation-container');
+    if (container) pushUndoState(container);
+
     row.classList.toggle('locked');
-    const img = btn.querySelector('img');
-    if (row.classList.contains('locked')) {
-        img.src = './Images/Icons/padlock.png';
-    } else {
-        img.src = './Images/Icons/padlock-open.png';
-    }
+    updateRowLockIcon(row);
 }
+
+function deleteRow(btn) {
+    const row = btn.closest('.result-row');
+    const container = row.closest('.generation-container');
+    if (container) pushUndoState(container);
+    row.remove();
+    showToast('Row deleted');
+}
+
+async function resetRow(btn) {
+    const row = btn.closest('.result-row');
+    const container = row.closest('.generation-container');
+    if (container) pushUndoState(container);
+
+    // Unlock first
+    row.classList.remove('locked');
+    updateRowLockIcon(row);
+
+    // Then reroll
+    await rerollContent(btn);
+}
+
 
 function updateCardTitle(container, val) {
     const t = container.querySelector('.card-title-text');
@@ -1398,7 +1552,8 @@ function handleCardDragStart(e) {
 function handleCardDragEnd(e) { this.classList.remove('opacity-50'); }
 
 function deleteCard(card) {
-    if (confirm('Delete card?')) card.remove();
+    clearUndoStack(card);
+    card.remove();
 }
 function toggleCardCollapse(btn) {
     btn.closest('.generation-container').classList.toggle('collapsed');
@@ -1406,12 +1561,31 @@ function toggleCardCollapse(btn) {
 
 
 async function rerollAllContent(container) {
+    pushUndoState(container);
     // Sequential implementation to ensure context updates propagate correctly
     const rows = container.querySelectorAll('.result-row:not(.locked)');
     for (const row of rows) {
         const btn = row.querySelector('.reroll-btn');
         if (btn) await rerollContent(btn);
     }
+}
+
+async function resetAllContent(container) {
+    pushUndoState(container);
+    // Unlock all rows first
+    container.querySelectorAll('.result-row').forEach(row => {
+        row.classList.remove('locked');
+        updateRowLockIcon(row);
+    });
+    // Then reroll all
+    const rows = container.querySelectorAll('.result-row');
+    for (const row of rows) {
+        const btn = row.querySelector('.reroll-btn');
+        if (btn) await rerollContent(btn);
+    }
+    // Clear undo stack after full reset
+    clearUndoStack(container);
+    showToast('Card reset');
 }
 
 function toggleTheme() {
