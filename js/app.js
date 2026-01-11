@@ -792,17 +792,400 @@ function createFilterButtons(filterId, options) {
     }
 
     options.sort().forEach(option => {
-        const button = document.createElement('button');
-        button.className = 'filter-btn'; // Uses our CSS class
-        // Add Tailwind classes for basic styling as fallback/augment
-        button.classList.add('px-3', 'py-1', 'rounded-full', 'text-xs', 'font-medium', 'border', 'border-transparent', 'hover:bg-gray-200', 'dark:hover:bg-slate-600', 'transition-colors', 'whitespace-nowrap');
+        // For game filter, wrap buttons with source dropdown capability
+        if (filterId === 'gameFilter') {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'game-filter-wrapper';
 
-        button.textContent = option;
-        button.dataset.value = option;
-        button.onclick = function () {
-            toggleFilterButton(this, filterId);
-        };
-        filterContainer.appendChild(button);
+            const button = createGameFilterButton(option, filterId);
+            wrapper.appendChild(button);
+
+            // Add source dropdown if this game has sources
+            if (sourcesByGame[option] && sourcesByGame[option].size > 0) {
+                button.classList.add('has-sources');
+
+                // Add the dropdown trigger arrow button
+                const trigger = createDropdownTrigger(option);
+                button.appendChild(trigger);
+
+                // Add the dropdown panel
+                const dropdown = createSourceDropdown(option);
+                wrapper.appendChild(dropdown);
+            }
+
+            filterContainer.appendChild(wrapper);
+        } else {
+            const button = document.createElement('button');
+            button.className = 'filter-btn';
+            button.classList.add('px-3', 'py-1', 'rounded-full', 'text-xs', 'font-medium', 'border', 'border-transparent', 'hover:bg-gray-200', 'dark:hover:bg-slate-600', 'transition-colors', 'whitespace-nowrap');
+
+            button.textContent = option;
+            button.dataset.value = option;
+            button.onclick = function () {
+                toggleFilterButton(this, filterId);
+            };
+            filterContainer.appendChild(button);
+        }
+    });
+}
+
+// Create a game filter button with click and right-click handlers
+function createGameFilterButton(option, filterId) {
+    const button = document.createElement('button');
+    button.className = 'filter-btn';
+    button.classList.add('px-3', 'py-1', 'rounded-full', 'text-xs', 'font-medium', 'border', 'border-transparent', 'hover:bg-gray-200', 'dark:hover:bg-slate-600', 'transition-colors', 'whitespace-nowrap');
+
+    button.textContent = option;
+    button.dataset.value = option;
+
+    // Left click: ONLY toggle filter selection (no dropdown)
+    button.onclick = function (e) {
+        e.stopPropagation();
+        toggleFilterButton(this, filterId);
+        // Do NOT toggle dropdown on regular click
+    };
+
+    // Right click: open dropdown AND filter to only this game
+    button.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Show hint on first right-click
+        showRightClickHint(e);
+
+        // Filter to only this game (this also opens the dropdown)
+        filterOnlyThisGame(this);
+    });
+
+    return button;
+}
+
+// Create a dropdown trigger arrow button
+function createDropdownTrigger(gameName) {
+    const trigger = document.createElement('span');
+    trigger.className = 'dropdown-trigger';
+    trigger.dataset.game = gameName;
+    trigger.title = 'Show sources';
+    trigger.innerHTML = '<svg viewBox="0 0 10 6"><path d="M1 1l4 4 4-4"/></svg>';
+
+    trigger.onclick = function (e) {
+        e.stopPropagation();
+        const wrapper = this.closest('.game-filter-wrapper');
+        const btn = wrapper.querySelector('.filter-btn');
+        toggleSourceDropdown(btn);
+        this.classList.toggle('expanded');
+    };
+
+    return trigger;
+}
+
+// Create source dropdown panel for a game
+function createSourceDropdown(gameName) {
+    const dropdown = document.createElement('div');
+    dropdown.className = 'source-dropdown';
+    dropdown.dataset.game = gameName;
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'source-dropdown-header';
+
+    const title = document.createElement('span');
+    title.className = 'source-dropdown-title';
+    title.textContent = `${gameName} Sources`;
+    header.appendChild(title);
+
+    // Select all link
+    const selectAllBtn = document.createElement('button');
+    selectAllBtn.className = 'text-xs text-primary hover:underline';
+    selectAllBtn.textContent = 'Select All';
+    selectAllBtn.onclick = (e) => {
+        e.stopPropagation();
+        toggleAllSourcesForGame(gameName, true);
+    };
+    header.appendChild(selectAllBtn);
+
+    dropdown.appendChild(header);
+
+    // Content with checkboxes
+    const content = document.createElement('div');
+    content.className = 'source-dropdown-content';
+
+    const sources = sourcesByGame[gameName];
+    if (sources) {
+        Array.from(sources).sort().forEach(source => {
+            const item = document.createElement('div');
+            item.className = 'source-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `source-${gameName}-${source}`.replace(/\s+/g, '-');
+            checkbox.value = source;
+            checkbox.dataset.game = gameName;
+            checkbox.checked = sourceFilterMode === 'all-selected' || selectedSources.includes(source);
+            checkbox.onchange = () => handleSourceCheckChange(checkbox);
+
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = source;
+
+            item.appendChild(checkbox);
+            item.appendChild(label);
+
+            // Click on item toggles checkbox
+            item.onclick = (e) => {
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    handleSourceCheckChange(checkbox);
+                }
+            };
+
+            content.appendChild(item);
+        });
+    }
+
+    dropdown.appendChild(content);
+
+    // Prevent dropdown clicks from bubbling
+    dropdown.onclick = (e) => e.stopPropagation();
+
+    return dropdown;
+}
+
+// Toggle a source dropdown open/closed
+function toggleSourceDropdown(button) {
+    const wrapper = button.closest('.game-filter-wrapper');
+    const gameName = button.dataset.value;
+    // Look for dropdown in wrapper OR body (if already portaled)
+    let dropdown = wrapper.querySelector('.source-dropdown') ||
+        document.body.querySelector(`.source-dropdown[data-game="${gameName}"]`);
+    const backdrop = document.getElementById('sourceDropdownBackdrop');
+
+    if (!dropdown) return;
+
+    // Close all other dropdowns first
+    document.querySelectorAll('.source-dropdown.expanded').forEach(dd => {
+        if (dd !== dropdown) {
+            dd.classList.remove('expanded');
+            // Find associated button and trigger
+            const associatedBtn = document.querySelector(`.filter-btn[data-value="${dd.dataset.game}"]`);
+            if (associatedBtn) {
+                associatedBtn.classList.remove('expanded');
+                const trigger = associatedBtn.querySelector('.dropdown-trigger');
+                if (trigger) trigger.classList.remove('expanded');
+            }
+            // Return dropdown to its wrapper
+            const originalWrapper = document.querySelector(`.game-filter-wrapper .filter-btn[data-value="${dd.dataset.game}"]`)?.closest('.game-filter-wrapper');
+            if (originalWrapper && dd.parentElement === document.body) {
+                originalWrapper.appendChild(dd);
+            }
+        }
+    });
+
+    // Toggle this dropdown
+    const isExpanding = !dropdown.classList.contains('expanded');
+    const trigger = button.querySelector('.dropdown-trigger');
+
+    if (isExpanding) {
+        // Portal dropdown to body to escape stacking context
+        document.body.appendChild(dropdown);
+
+        // Position dropdown below button using fixed positioning
+        const rect = button.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = `${rect.bottom + 4}px`;
+        dropdown.style.left = `${rect.left}px`;
+        dropdown.classList.add('expanded');
+        button.classList.add('expanded');
+        if (trigger) trigger.classList.add('expanded');
+        backdrop.classList.add('active');
+    } else {
+        dropdown.classList.remove('expanded');
+        button.classList.remove('expanded');
+        if (trigger) trigger.classList.remove('expanded');
+        // Return dropdown to wrapper
+        wrapper.appendChild(dropdown);
+        if (!document.querySelector('.source-dropdown.expanded')) {
+            backdrop.classList.remove('active');
+        }
+    }
+}
+
+// Close all source dropdowns
+function closeAllSourceDropdowns() {
+    document.querySelectorAll('.source-dropdown.expanded').forEach(dropdown => {
+        dropdown.classList.remove('expanded');
+        // Find the wrapper by game name
+        const gameName = dropdown.dataset.game;
+        const wrapper = document.querySelector(`.game-filter-wrapper .filter-btn[data-value="${gameName}"]`)?.closest('.game-filter-wrapper');
+        const btn = document.querySelector(`.filter-btn[data-value="${gameName}"]`);
+        if (btn) {
+            btn.classList.remove('expanded');
+            const trigger = btn.querySelector('.dropdown-trigger');
+            if (trigger) trigger.classList.remove('expanded');
+        }
+        // Return dropdown to wrapper if it's in body
+        if (wrapper && dropdown.parentElement === document.body) {
+            wrapper.appendChild(dropdown);
+        }
+    });
+    document.getElementById('sourceDropdownBackdrop').classList.remove('active');
+}
+// Attach to window for onclick handler
+window.closeAllSourceDropdowns = closeAllSourceDropdowns;
+
+// Handle individual source checkbox change
+function handleSourceCheckChange(checkbox) {
+    const allCheckboxes = document.querySelectorAll('.source-dropdown input[type="checkbox"]');
+    const checkedBoxes = document.querySelectorAll('.source-dropdown input[type="checkbox"]:checked');
+
+    if (checkedBoxes.length === allCheckboxes.length) {
+        // All checked = all-selected mode
+        sourceFilterMode = 'all-selected';
+        selectedSources = [];
+    } else {
+        // Some unchecked = choice mode
+        sourceFilterMode = 'choice';
+        selectedSources = Array.from(checkedBoxes).map(cb => cb.value);
+    }
+
+    applyFilters();
+    updateSourceBadges();
+}
+
+// Toggle all sources for a specific game
+function toggleAllSourcesForGame(gameName, checked) {
+    const dropdown = document.querySelector(`.source-dropdown[data-game="${gameName}"]`);
+    if (!dropdown) return;
+
+    dropdown.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = checked;
+    });
+
+    // Recalculate selected sources
+    recalculateSelectedSources();
+    applyFilters();
+    updateSourceBadges();
+}
+
+// Recalculate selected sources from all checkboxes
+function recalculateSelectedSources() {
+    const allCheckboxes = document.querySelectorAll('.source-dropdown input[type="checkbox"]');
+    const checkedBoxes = document.querySelectorAll('.source-dropdown input[type="checkbox"]:checked');
+
+    if (checkedBoxes.length === allCheckboxes.length) {
+        sourceFilterMode = 'all-selected';
+        selectedSources = [];
+    } else {
+        sourceFilterMode = 'choice';
+        selectedSources = Array.from(checkedBoxes).map(cb => cb.value);
+    }
+}
+
+// Filter to only show this game's sources (right-click action)
+function filterOnlyThisGame(button) {
+    const gameName = button.dataset.value;
+
+    // First, ensure this game is selected in the filter
+    const gameFilter = document.getElementById('gameFilter');
+    const currentMode = gameFilter.dataset.mode || 'all-selected';
+
+    // Set to choice mode with only this game
+    gameFilter.dataset.mode = 'choice';
+    gameFilter.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.value === gameName) {
+            btn.classList.add('selected');
+            btn.classList.remove('unselected');
+        } else {
+            btn.classList.add('unselected');
+            btn.classList.remove('selected');
+        }
+    });
+
+    // Select all sources for this game, deselect others
+    document.querySelectorAll('.source-dropdown input[type="checkbox"]').forEach(cb => {
+        if (cb.dataset.game === gameName) {
+            cb.checked = true;
+        } else {
+            cb.checked = false;
+        }
+    });
+
+    // Update source filter state
+    sourceFilterMode = 'choice';
+    selectedSources = sourcesByGame[gameName] ? Array.from(sourcesByGame[gameName]) : [];
+
+    // Open only this game's dropdown
+    closeAllSourceDropdowns();
+    if (button.classList.contains('has-sources')) {
+        const wrapper = button.closest('.game-filter-wrapper');
+        const dropdown = wrapper.querySelector('.source-dropdown');
+        const trigger = button.querySelector('.dropdown-trigger');
+        if (dropdown) {
+            // Portal dropdown to body to escape stacking context
+            document.body.appendChild(dropdown);
+
+            // Position dropdown using fixed positioning
+            const rect = button.getBoundingClientRect();
+            dropdown.style.position = 'fixed';
+            dropdown.style.top = `${rect.bottom + 4}px`;
+            dropdown.style.left = `${rect.left}px`;
+            dropdown.classList.add('expanded');
+            button.classList.add('expanded');
+            if (trigger) trigger.classList.add('expanded');
+            document.getElementById('sourceDropdownBackdrop').classList.add('active');
+        }
+    }
+
+    applyFilters();
+    updateSourceBadges();
+}
+
+// Show right-click hint tooltip
+let rightClickHintShown = localStorage.getItem('rightClickHintShown') === 'true';
+
+function showRightClickHint(e) {
+    if (rightClickHintShown) return;
+
+    const hint = document.getElementById('rightClickHint');
+    if (!hint) return;
+
+    hint.style.left = `${e.clientX + 10}px`;
+    hint.style.top = `${e.clientY + 10}px`;
+    hint.classList.add('visible');
+
+    setTimeout(() => {
+        hint.classList.remove('visible');
+    }, 2000);
+
+    rightClickHintShown = true;
+    localStorage.setItem('rightClickHintShown', 'true');
+}
+
+// Update source filter badges on game buttons
+function updateSourceBadges() {
+    document.querySelectorAll('.game-filter-wrapper').forEach(wrapper => {
+        const button = wrapper.querySelector('.filter-btn');
+        const gameName = button?.dataset.value;
+        if (!gameName) return;
+
+        // Remove existing badge
+        wrapper.querySelector('.source-filter-badge')?.remove();
+
+        // Count active source filters for this game
+        if (sourceFilterMode === 'choice' && sourcesByGame[gameName]) {
+            const gameSourcesTotal = sourcesByGame[gameName].size;
+            const gameSourcesSelected = selectedSources.filter(s =>
+                sourcesByGame[gameName].has(s)
+            ).length;
+
+            if (gameSourcesSelected > 0 && gameSourcesSelected < gameSourcesTotal) {
+                const badge = document.createElement('span');
+                badge.className = 'source-filter-badge';
+                badge.textContent = gameSourcesSelected;
+                button.style.position = 'relative';
+                button.appendChild(badge);
+            }
+        }
     });
 }
 
@@ -1091,154 +1474,19 @@ function getSelectedValues(filterId) {
 
 // --- Source Filter Functions ---
 
+// --- Updated Source Filter Functions (Inline Dropdown System) ---
+
 function updateSourceFilterVisibility() {
-    const selectedGames = getSelectedValues('gameFilter');
-    const sourceBtn = document.getElementById('sourceFilterBtn');
-
-    // Check if any selected game (or all games if none selected) has sources
-    let hasSourcesAvailable = false;
-
-    if (selectedGames.length === 0) {
-        // All games mode - check if any game has sources
-        hasSourcesAvailable = Object.keys(sourcesByGame).some(game =>
-            sourcesByGame[game] && sourcesByGame[game].size > 0
-        );
-    } else {
-        // Specific games selected - check if those games have sources
-        hasSourcesAvailable = selectedGames.some(game =>
-            sourcesByGame[game] && sourcesByGame[game].size > 0
-        );
-    }
-
-    if (sourceBtn) {
-        sourceBtn.style.display = hasSourcesAvailable ? 'block' : 'none';
-    }
-
-    // Rebuild checkboxes when visibility changes
-    if (hasSourcesAvailable) {
-        buildSourceCheckboxes(selectedGames);
-    }
+    // No longer needed - sources are now inline with game buttons
+    // This is kept for compatibility with existing calls
+    updateSourceBadges();
 }
 
-function buildSourceCheckboxes(selectedGames) {
-    const container = document.getElementById('sourceCheckboxContainer');
-    if (!container) return;
+// Old modal-based functions are removed - now handled by inline dropdowns
+// buildSourceCheckboxes, handleSourceCheckboxChange, updateSelectAllCheckbox 
+// are replaced by the new inline system functions
 
-    container.innerHTML = '';
-
-    // Determine which games to show
-    const gamesToShow = selectedGames.length === 0
-        ? Object.keys(sourcesByGame).filter(g => sourcesByGame[g] && sourcesByGame[g].size > 0)
-        : selectedGames.filter(g => sourcesByGame[g] && sourcesByGame[g].size > 0);
-
-    // Group sources by game
-    gamesToShow.sort().forEach(game => {
-        const sources = sourcesByGame[game];
-        if (!sources || sources.size === 0) return;
-
-        const gameGroup = document.createElement('div');
-        gameGroup.className = 'source-game-group';
-
-        const header = document.createElement('div');
-        header.className = 'source-game-header';
-        header.textContent = game;
-        gameGroup.appendChild(header);
-
-        const sourcesDiv = document.createElement('div');
-        sourcesDiv.className = 'source-game-sources';
-
-        Array.from(sources).sort().forEach(source => {
-            const label = document.createElement('label');
-            label.className = 'source-checkbox-item';
-
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = source;
-            checkbox.dataset.game = game;
-            checkbox.checked = sourceFilterMode === 'all-selected' || selectedSources.includes(source);
-            checkbox.onchange = () => handleSourceCheckboxChange();
-
-            const span = document.createElement('span');
-            span.textContent = source;
-
-            label.appendChild(checkbox);
-            label.appendChild(span);
-            sourcesDiv.appendChild(label);
-        });
-
-        gameGroup.appendChild(sourcesDiv);
-        container.appendChild(gameGroup);
-    });
-
-    // Update "Select All" checkbox state
-    updateSelectAllCheckbox();
-}
-
-function handleSourceCheckboxChange() {
-    const container = document.getElementById('sourceCheckboxContainer');
-    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-
-    if (checkedCount === checkboxes.length) {
-        // All checked - switch to all-selected mode
-        sourceFilterMode = 'all-selected';
-        selectedSources = [];
-    } else {
-        // Some unchecked - switch to choice mode
-        sourceFilterMode = 'choice';
-        selectedSources = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-    }
-
-    updateSelectAllCheckbox();
-    applyFilters();
-}
-
-function updateSelectAllCheckbox() {
-    const container = document.getElementById('sourceCheckboxContainer');
-    const selectAllCheckbox = document.getElementById('sourceSelectAll');
-    if (!container || !selectAllCheckbox) return;
-
-    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-
-    selectAllCheckbox.checked = checkedCount === checkboxes.length;
-    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
-}
-
-function toggleAllSources(checked) {
-    const container = document.getElementById('sourceCheckboxContainer');
-    if (!container) return;
-
-    const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => cb.checked = checked);
-
-    if (checked) {
-        sourceFilterMode = 'all-selected';
-        selectedSources = [];
-    } else {
-        sourceFilterMode = 'choice';
-        selectedSources = [];
-    }
-
-    applyFilters();
-}
-
-function openSourceFilterPopup() {
-    const popup = document.getElementById('sourceFilterPopup');
-    if (popup) {
-        popup.style.display = 'block';
-    }
-}
-
-function closeSourceFilterPopup() {
-    const popup = document.getElementById('sourceFilterPopup');
-    if (popup) {
-        popup.style.display = 'none';
-    }
-}
-
+// Compatibility stub for getSelectedSources
 function getSelectedSources() {
     if (sourceFilterMode === 'all-selected') {
         return []; // Empty means all sources
@@ -1249,7 +1497,14 @@ function getSelectedSources() {
 function resetSourceFilter() {
     sourceFilterMode = 'all-selected';
     selectedSources = [];
-    updateSourceFilterVisibility();
+
+    // Reset all source checkboxes in inline dropdowns
+    document.querySelectorAll('.source-dropdown input[type="checkbox"]').forEach(cb => {
+        cb.checked = true;
+    });
+
+    closeAllSourceDropdowns();
+    updateSourceBadges();
 }
 
 // ... Rest of the functions (displayTableDetails, generateContent, etc) 
@@ -2019,24 +2274,27 @@ if (localStorage.getItem('theme') === 'light') {
 }
 
 // Helper Utilities
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
+// (debounce function defined earlier in file)
 
 function checkFilterBarOverflow() {
-    // No-op for now as Tailwind handles overflow with scroll
+    // Check each filter-wrap container and add scrollable class if content overflows
+    document.querySelectorAll('.filter-wrap').forEach(container => {
+        // Get computed max-height
+        const maxHeight = parseFloat(getComputedStyle(container).maxHeight);
+        // Get actual scroll height
+        const scrollHeight = container.scrollHeight;
+
+        if (scrollHeight > maxHeight) {
+            container.classList.add('scrollable');
+        } else {
+            container.classList.remove('scrollable');
+        }
+    });
 }
 
 function checkFilterOverflow(filterId) {
-    // No-op compatibility
+    // Compatibility - call main function
+    checkFilterBarOverflow();
 }
 
 function updateAvailableOptions(filteredTables) {

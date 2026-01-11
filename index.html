@@ -611,8 +611,14 @@
     .filter-wrap {
       max-height: calc(1.75rem * 3 + 0.5rem * 2);
       /* 3 rows of buttons (~1.75rem each) + gaps */
-      overflow-y: auto;
+      overflow-y: hidden;
+      overflow-x: visible;
       align-content: flex-start;
+    }
+
+    /* Only show scrollbar when content overflows */
+    .filter-wrap.scrollable {
+      overflow-y: auto;
     }
 
     .filter-wrap::-webkit-scrollbar {
@@ -628,27 +634,198 @@
       background: #475569;
     }
 
-    /* Source game group in popup */
-    .source-game-group {
-      margin-bottom: 1rem;
+    /* Source Dropdown System - Inline Animated Panels */
+    .game-filter-wrapper {
+      position: relative;
+      display: inline-block;
     }
 
-    .source-game-header {
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: #6b7280;
-      margin-bottom: 0.5rem;
-      padding-bottom: 0.25rem;
+    .filter-btn.has-sources {
+      padding-right: 0.5rem;
+      position: relative;
+    }
+
+    /* Separate dropdown trigger button */
+    .dropdown-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.25rem;
+      height: 100%;
+      margin-left: 0.25rem;
+      padding: 0 0.25rem;
+      border: none;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      vertical-align: middle;
+    }
+
+    .dropdown-trigger:hover {
+      opacity: 1;
+    }
+
+    .dropdown-trigger.expanded {
+      transform: rotate(180deg);
+      opacity: 1;
+    }
+
+    .dropdown-trigger svg {
+      width: 10px;
+      height: 10px;
+      fill: currentColor;
+    }
+
+    .source-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 200px;
+      max-width: 280px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      z-index: 9999;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(-10px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .source-dropdown.expanded {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .dark .source-dropdown {
+      background: #1e293b;
+      border-color: #334155;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+    }
+
+    .source-dropdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
       border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(to bottom, #f9fafb, #ffffff);
     }
 
-    .dark .source-game-header {
+    .dark .source-dropdown-header {
+      border-color: #334155;
+      background: linear-gradient(to bottom, #0f172a, #1e293b);
+    }
+
+    .source-dropdown-title {
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6b7280;
+    }
+
+    .dark .source-dropdown-title {
       color: #94a3b8;
+    }
+
+    .source-dropdown-content {
+      padding: 0.5rem;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .source-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      font-size: 0.875rem;
+    }
+
+    .source-item:hover {
+      background-color: rgba(147, 51, 234, 0.1);
+    }
+
+    .source-item input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      accent-color: #9333ea;
+      cursor: pointer;
+    }
+
+    .source-item label {
+      cursor: pointer;
+      flex: 1;
+      user-select: none;
+    }
+
+    .source-select-all {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 0.25rem;
+    }
+
+    .dark .source-select-all {
       border-color: #334155;
     }
 
-    .source-game-sources {
-      padding-left: 0.5rem;
+    /* Right-click indicator */
+    .right-click-hint {
+      position: fixed;
+      padding: 0.5rem 1rem;
+      background: rgba(15, 23, 42, 0.9);
+      color: white;
+      border-radius: 0.5rem;
+      font-size: 0.75rem;
+      z-index: 150;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .right-click-hint.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Badge for active source filters */
+    .source-filter-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: #9333ea;
+      color: white;
+      font-size: 0.625rem;
+      font-weight: 700;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(147, 51, 234, 0.3);
+    }
+
+    /* Backdrop for mobile */
+    .source-dropdown-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      display: none;
+    }
+
+    .source-dropdown-backdrop.active {
+      display: block;
     }
   </style>
 </head>
@@ -771,7 +948,7 @@
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-primary text-3xl">hexagon</span>
         <h1 class="font-bold text-lg tracking-tight">TTRPG <span class="text-primary">Gen</span> <span
-            class="text-xs font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">v139</span></h1>
+            class="text-xs font-mono bg-primary/10 text-primary px-1.5 py-0.5 rounded ml-1">v140</span></h1>
       </div>
       <div class="relative w-full max-w-xs group">
         <span
@@ -863,14 +1040,9 @@
           <div class="flex items-center gap-1 shrink-0">
             <span
               class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider w-16">Game</span>
-            <button id="sourceFilterBtn" onclick="openSourceFilterPopup()"
-              class="p-1 rounded text-primary hover:bg-primary/20 transition-colors" style="display: none;"
-              title="Filter by source">
-              <span class="material-symbols-outlined text-sm">filter_alt</span>
-            </button>
           </div>
-          <div id="gameFilter" class="flex flex-wrap gap-2 filter-wrap" data-mode="all-selected">
-            <!-- Buttons injected by JS -->
+          <div id="gameFilter" class="flex flex-wrap gap-2 filter-wrap relative" data-mode="all-selected">
+            <!-- Game buttons with inline source dropdowns injected by JS -->
           </div>
         </div>
 
@@ -886,6 +1058,12 @@
           <div id="settingFilter" class="flex flex-wrap gap-2 filter-wrap" data-mode="all-selected"></div>
         </div>
       </div>
+
+      <!-- Source dropdown backdrop for closing when clicking outside -->
+      <div id="sourceDropdownBackdrop" class="source-dropdown-backdrop" onclick="closeAllSourceDropdowns()"></div>
+
+      <!-- Right-click hint tooltip -->
+      <div id="rightClickHint" class="right-click-hint">Right-click to filter only this game</div>
 
       <!-- Main Content Area -->
       <div class="flex flex-1 overflow-hidden relative">
@@ -955,27 +1133,7 @@
     </div>
   </div>
 
-  <!-- Source Filter Popup -->
-  <div id="sourceFilterPopup" class="modal">
-    <div class="source-filter-popup">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold">Filter by Source</h3>
-        <button onclick="closeSourceFilterPopup()" class="text-2xl opacity-50 hover:opacity-100">&times;</button>
-      </div>
-      <div class="mb-3">
-        <label class="source-checkbox-item">
-          <input type="checkbox" id="sourceSelectAll" onchange="toggleAllSources(this.checked)" checked>
-          <span class="font-medium">Select All</span>
-        </label>
-      </div>
-      <hr class="border-border-light dark:border-border-dark mb-3">
-      <div id="sourceCheckboxContainer" class="space-y-1">
-        <!-- Checkboxes injected by JS -->
-      </div>
-      <button onclick="closeSourceFilterPopup()"
-        class="mt-4 w-full bg-primary hover:bg-primary-hover text-white py-2 rounded-lg font-medium transition-colors">Done</button>
-    </div>
-  </div>
+  <!-- Source dropdowns are now inline within Game filter buttons -->
 
   <script src="js/app.js"></script>
 </body>
