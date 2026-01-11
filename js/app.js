@@ -1305,8 +1305,8 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
         return `${titleDesc}${desc}
         <div class="result-row" data-format="career">
             <div class="result-header">${item.header}</div>
-            <div class="result-content">${item.result[0]}</div>
-            <div class="result-content">${item.result[1]}</div>
+            <div class="result-content career-value">${item.result[0]}</div>
+            <div class="result-content career-description">${item.result[1]}</div>
             ${btnGroup}
         </div>`;
     }

@@ -447,6 +447,30 @@
     #verticalDivider.resizing {
       background-color: #9333ea;
     }
+
+    /* Career Format Specifics for Grid Layout */
+    .result-row[data-format="career"] {
+      align-items: start;
+      /* Top align for multi-line */
+    }
+
+    .result-row[data-format="career"] .career-value {
+      grid-column: span 3;
+      /* Override generic content span */
+      font-weight: 700;
+    }
+
+    .result-row[data-format="career"] .career-description {
+      grid-column: span 4;
+      /* Override generic content span */
+      white-space: normal;
+      /* Allow wrapping */
+      height: auto;
+      /* Allow growth */
+      line-height: 1.4;
+      display: block;
+      padding-top: 2px;
+    }
   </style>
 </head>
 

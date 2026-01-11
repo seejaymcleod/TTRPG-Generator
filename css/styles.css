@@ -1496,3 +1496,33 @@ div.result-row {
   border-color: var(--filter-btn-border);
   box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
 }
+
+/* Career Format Specifics */
+.result-row[data-format="career"] {
+  height: auto !important;
+  /* Allow growing height */
+  max-height: none !important;
+  align-items: flex-start !important;
+  /* Align to top */
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.result-row[data-format="career"] .career-value {
+  font-weight: bold;
+  min-width: 120px !important;
+  max-width: 200px !important;
+}
+
+.result-row[data-format="career"] .career-description {
+  flex: 1 1 auto !important;
+  min-width: 200px !important;
+  max-width: none !important;
+  height: auto !important;
+  white-space: normal !important;
+  /* Allow wrapping */
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.4 !important;
+  padding: 2px 6px !important;
+}
