@@ -1,0 +1,2216 @@
+- _id: J71TDxKnOnztuE6t
+  _key: '!items.effects!2Ht3xGj1QvHt3znG.J71TDxKnOnztuE6t'
+  changes:
+    - key: system.bonuses.acBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  icon: icons/skills/melee/shield-block-gray-orange.webp
+  name: AC Bonus
+  origin: null
+  statuses: []
+  tint: null
+  transfer: true
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: MquW5uUJ7QQO7eFk
+  _key: '!items.effects!vHwzxeO0sX9GlRbj.MquW5uUJ7QQO7eFk'
+  changes:
+    - key: system.bonuses.gearSlots
+      mode: 2
+      priority: null
+      value: '10'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/defensive/shield-barrier-deflect-teal.webp
+  name: Additional Gear Slots
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: X5FwZjvgzeSXvNDQ
+  _key: '!items!X5FwZjvgzeSXvNDQ'
+  effects:
+    - CFbdBIST0hT7qCyu
+    - OZskI153kjpkFy09
+  folder: null
+  img: icons/weapons/swords/greatsword-guard-split-eyes.webp
+  name: Asterion
+  system:
+    ammoClass: ''
+    attackBonus: '1'
+    baseWeapon: greatsword
+    bonuses:
+      attackBonus: '1'
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: '1'
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: '1'
+      critMultiplier: 2
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d12
+    description: <p><strong>Benefit</strong>. A creature cannot move the wielder against their will.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 78SoFRRmEjEMdPIT
+  _key: '!items.effects!ZamB6OED5J1EeU81.78SoFRRmEjEMdPIT'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '2'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Attack Damage Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: E7DKiIaxjDrxq64c
+  _key: '!items.effects!X5FwZjvgzeSXvNDQ.E7DKiIaxjDrxq64c'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Attack Damage Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: FqtIDxjhOFDvkQFn
+  _key: '!items.effects!jEeDexWHYy7wKsfa.FqtIDxjhOFDvkQFn'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Attack Damage Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: JAfTcoh8jcncSGJM
+  _key: '!items.effects!98cxnRdtTLv0Onka.JAfTcoh8jcncSGJM'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Attack Damage Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: Qj2rqAj7XeIsjzzs
+  _key: '!items.effects!Mb7OBENXa5XnClS9.Qj2rqAj7XeIsjzzs'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Attack Damage Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: pwG7d70XZD8JJL5p
+  _key: '!items.effects!iEbHLvRPWNXo32qm.pwG7d70XZD8JJL5p'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Attack Damage Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 4QneUXW9pG2CMpKS
+  _key: '!items.effects!98cxnRdtTLv0Onka.4QneUXW9pG2CMpKS'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Attack Roll Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 9qMTrleWtCMKO3Xl
+  _key: '!items.effects!ZamB6OED5J1EeU81.9qMTrleWtCMKO3Xl'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '2'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Attack Roll Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: A3cEweAbyqxNxdzl
+  _key: '!items.effects!Mb7OBENXa5XnClS9.A3cEweAbyqxNxdzl'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Attack Roll Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: HhILvM8lD0Nby5gq
+  _key: '!items.effects!jEeDexWHYy7wKsfa.HhILvM8lD0Nby5gq'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Attack Roll Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: Rzbo47LZEvpyHfqg
+  _key: '!items.effects!iEbHLvRPWNXo32qm.Rzbo47LZEvpyHfqg'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Attack Roll Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: qrgFpY2mTci173wM
+  _key: '!items.effects!X5FwZjvgzeSXvNDQ.qrgFpY2mTci173wM'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Attack Roll Bonus
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: vHwzxeO0sX9GlRbj
+  _key: '!items!vHwzxeO0sX9GlRbj'
+  effects:
+    - MquW5uUJ7QQO7eFk
+  folder: null
+  img: icons/containers/bags/sack-leather-purple.webp
+  name: Bag of Holding
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 150
+      sp: 0
+    description: <p><em>A worn, leather pouch with tight drawstrings.</em></p><p><strong>Benefit</strong>. This bag has an interdimensional space inside that can hold up to 10 gear slots.</p><p><strong>Curse</strong>. Placing this item inside another <em>Bag of Holding</em> or a <em>Portable Hole</em> destroys both items and all held inside them.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: Mb7OBENXa5XnClS9
+  _key: '!items!Mb7OBENXa5XnClS9'
+  effects:
+    - 2NdFJHTHy28UaTCh
+    - pOdV4x1mBsF4ZJmg
+    - 97RtiQtpwhaO7qNb
+  folder: null
+  img: icons/weapons/axes/axe-battle-eyes-red.webp
+  name: Bloodlust
+  system:
+    ammoClass: ''
+    attackBonus: '1'
+    baseWeapon: greataxe
+    bonuses:
+      attackBonus: '1'
+      critical:
+        failureThreshold: 1
+        multiplier: '4'
+        successThreshold: 20
+      damageBonus: '1'
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: '1'
+      critMultiplier: '4'
+      numDice: 1
+      oneHanded: d8
+      twoHanded: d10
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.qEIYaQ9j2EUmSrx6
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: WB4r3ZgJ3TfRBEx5
+  _key: '!items!WB4r3ZgJ3TfRBEx5'
+  effects: []
+  folder: null
+  img: icons/equipment/feet/boots-leather-black.webp
+  name: Boots of the Cat
+  system:
+    ac:
+      attribute: ''
+      base: 0
+      modifier: 0
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>Grey, doeskin boots as thin and soft as slippers.</em></p><p><strong>Benefit</strong>. You can jump up to a near distance from a standstill. Your checks to move silently are always easy (DC 9).</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 2Ht3xGj1QvHt3znG
+  _key: '!items!2Ht3xGj1QvHt3znG'
+  effects: []
+  folder: null
+  img: icons/equipment/wrist/bracer-armored-steel-purple.webp
+  name: Bracers of Defense
+  system:
+    ac:
+      attribute: ''
+      base: 0
+      modifier: 1
+    baseArmor: ''
+    bonuses:
+      acBonus: '1'
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>Steel bracers traced with dwarvish runes of protection.</em></p><p><strong>Benefit</strong>. You get a +1 bonus to your armor class.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ZypO4jCOurSK2aOB
+  _key: '!items!ZypO4jCOurSK2aOB'
+  effects:
+    - 07RIJ800mgt95fNl
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection
+  system:
+    abilities:
+      cha:
+        base: '18'
+        value: '18'
+      con:
+        value: '18'
+      dex:
+        value: '18'
+      int:
+        value: '18'
+      str:
+        value: '18'
+      wis:
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4).</p><ol><li><p>@UUID[Compendium.world.magic-items.ZhykyK0shgnyC4Fh]{Strength}</p></li><li><p>@UUID[Compendium.world.magic-items.lUuyDaiDHJbDg82j]{Dexterity}</p></li><li><p>@UUID[Compendium.world.magic-items.7pECwim9a2CVzFLy]{Constitution}</p></li><li><p> @UUID[Compendium.world.magic-items.K7PJLC0GUhtQ7aX2]{Intelligence}</p></li><li><p>@UUID[Compendium.world.magic-items.wrtcUfAY6yXwSqLY]{Wisdom}</p></li><li>@UUID[Compendium.world.magic-items.0Ws5acsixawAITFi]{Charisma}</li></ol><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 0Ws5acsixawAITFi
+  _key: '!items!0Ws5acsixawAITFi'
+  effects:
+    - 1sKZFEAOhR1t3W5D
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection (Cha)
+  system:
+    abilities:
+      cha:
+        value: '18'
+      con:
+        value: '18'
+      dex:
+        value: '18'
+      int:
+        value: '18'
+      str:
+        value: '18'
+      wis:
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4). 1. Strength. 2. Dexterity. 3. Constitution. 4. Intelligence. 5. Wisdom. 6. Charisma.</p><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 7pECwim9a2CVzFLy
+  _key: '!items!7pECwim9a2CVzFLy'
+  effects:
+    - zrPgEyvt0Qpp6rca
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection (Con)
+  system:
+    abilities:
+      con:
+        base: '18'
+        value: '18'
+      dex:
+        value: '18'
+      str:
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4). 1. Strength. 2. Dexterity. 3. Constitution. 4. Intelligence. 5. Wisdom. 6. Charisma.</p><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: lUuyDaiDHJbDg82j
+  _key: '!items!lUuyDaiDHJbDg82j'
+  effects:
+    - 2iAdf3ZD4FdzPonT
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection (Dex)
+  system:
+    abilities:
+      dex:
+        base: '18'
+        value: '18'
+      str:
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4). 1. Strength. 2. Dexterity. 3. Constitution. 4. Intelligence. 5. Wisdom. 6. Charisma.</p><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: K7PJLC0GUhtQ7aX2
+  _key: '!items!K7PJLC0GUhtQ7aX2'
+  effects:
+    - 94JaF8oYeiAAWASd
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection (Int)
+  system:
+    abilities:
+      con:
+        value: '18'
+      dex:
+        value: '18'
+      int:
+        base: '18'
+        value: '18'
+      str:
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4). 1. Strength. 2. Dexterity. 3. Constitution. 4. Intelligence. 5. Wisdom. 6. Charisma.</p><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ZhykyK0shgnyC4Fh
+  _key: '!items!ZhykyK0shgnyC4Fh'
+  effects:
+    - N3a7CEwOlseizR4z
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection (Str)
+  system:
+    abilities:
+      str:
+        base: '18'
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4). 1. Strength. 2. Dexterity. 3. Constitution. 4. Intelligence. 5. Wisdom. 6. Charisma.</p><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: wrtcUfAY6yXwSqLY
+  _key: '!items!wrtcUfAY6yXwSqLY'
+  effects:
+    - cUIGFlc2YR57pzXl
+  folder: null
+  img: icons/sundries/gaming/dice-runed-brown.webp
+  name: Brak's Cube of Perfection (Wis)
+  system:
+    abilities:
+      con:
+        value: '18'
+      dex:
+        value: '18'
+      int:
+        value: '18'
+      str:
+        value: '18'
+      wis:
+        base: '18'
+        value: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A tiny cube with paintings of goblins on each face, each one depicting transcendence in a physical or mental trait.</em></p><p><strong>Benefit</strong>. Roll the cube by rolling a [[/r d6]]. Your corresponding stat permanently increases to 18 (+4). 1. Strength. 2. Dexterity. 3. Constitution. 4. Intelligence. 5. Wisdom. 6. Charisma.</p><p>After being rolled, <em>Brak's Cube of Perfection</em> teleports to a random location in the multiverse.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: z4eAFex0bk8qiQWl
+  _key: '!items!z4eAFex0bk8qiQWl'
+  effects: []
+  folder: null
+  img: icons/equipment/back/cloak-collared-feathers-green.webp
+  name: Cloak of Elvenkind
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A hooded, billowing cloak that shifts colors to match its surroundings.</em></p><p><strong>Benefit</strong>. Your checks to hide are always easy (DC 9). Once per day, you can become invisible for 5 rounds. The invisibility ends if you attack or cast a spell.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: UojiuFQ7ufucHAMl
+  _key: '!items.effects!w3UsdCcYKnwcAgbH.UojiuFQ7ufucHAMl'
+  changes:
+    - key: system.bonuses.critical.failureThreshold
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/life/cross-area-circle-green-white.webp
+  name: Critical Failure Threshold
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 2NdFJHTHy28UaTCh
+  _key: '!items.effects!Mb7OBENXa5XnClS9.2NdFJHTHy28UaTCh'
+  changes:
+    - key: system.bonuses.critical.multiplier
+      mode: 5
+      priority: null
+      value: '4'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/hand-grip-staff-yellow-brown.webp
+  name: Critical Multiplier
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: b7lXcLAavPlpMhqp
+  _key: '!items.effects!w3UsdCcYKnwcAgbH.b7lXcLAavPlpMhqp'
+  changes:
+    - key: system.bonuses.critical.successThreshold
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/fire/flame-burning-fist-strike.webp
+  name: Critical Success Threshold
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: FWQK9qFGagcEXCq5
+  _key: '!items!FWQK9qFGagcEXCq5'
+  effects:
+    - mEwSq29I1Sr8gG2t
+  folder: null
+  img: icons/equipment/hand/gauntlet-clawed-steel-blue.webp
+  name: Gauntlets of Might
+  system:
+    abilities:
+      str:
+        base: '18'
+        value: '18'
+    ac:
+      attribute: ''
+      base: 0
+      modifier: 0
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>Heavy, bronze gauntlets with engravings of Herculean giants.</em></p><p><strong>Benefit</strong>. Your Strength stat becomes 18 (+4) while wearing these gauntlets.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: RQyOkC3sGAe5gsn2
+  _key: '!items!RQyOkC3sGAe5gsn2'
+  effects: []
+  folder: null
+  img: icons/weapons/staves/staff-metal-mask.webp
+  name: Immovable Rod
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A short, bejeweled iron rod with a button on one end.</em></p><p><strong>Benefit</strong>. When you click the button, the rod becomes fixed in space. Clicking the button again ends the effect.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: w3UsdCcYKnwcAgbH
+  _key: '!items!w3UsdCcYKnwcAgbH'
+  effects:
+    - UojiuFQ7ufucHAMl
+    - b7lXcLAavPlpMhqp
+  folder: null
+  img: icons/commodities/gems/pearl-red-gold.webp
+  name: Jewel of Barbalt
+  system:
+    bonuses:
+      critical:
+        failureThreshold: '3'
+        successThreshold: '18'
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A glistening, coconut-sized ruby held in golden claws.</em></p><p><strong>Benefit</strong>. You roll a critical success on an 18-20.</p><p><strong>Curse</strong>. You roll a critical failure on a 1-3.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 0c0G5Dnzq9Il8zZY
+  _key: '!items!0c0G5Dnzq9Il8zZY'
+  effects: []
+  folder: null
+  img: icons/commodities/tech/cog-large-steel-white.webp
+  name: Kytherian Cog
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>A coin-sized, toothed wheel buffed to a silvery shine.</p><p><strong>Benefit</strong>. You start every session with a luck token.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: MyHXrPewu36OmWB6
+  _key: '!items!MyHXrPewu36OmWB6'
+  effects: []
+  folder: null
+  img: icons/equipment/chest/breastplate-layered-leather-green.webp
+  name: Ophidian Armor
+  system:
+    ac:
+      attribute: dex
+      base: 11
+      modifier: 1
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>Glistening, smooth leather of dappled emerald scales.</em></p><p><strong>Bonus</strong>. +1 leather armor.</p><p><strong>Benefit</strong>. You have advantage on checks to avoid the effects of poison.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: t4RYKztP70zmAbGD
+  _key: '!items!t4RYKztP70zmAbGD'
+  effects: []
+  folder: null
+  img: icons/commodities/gems/pearl-natural.webp
+  name: Pearl of Power
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A fat, opalescent pearl glowing with an inner radiance.</em></p><p><strong>Benefit</strong>. Once per day, you may regain the ability to cast a spell you have lost. This cannot restore a spell lost due to a critical spellcasting failure.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 07RIJ800mgt95fNl
+  _key: '!items.effects!ZypO4jCOurSK2aOB.07RIJ800mgt95fNl'
+  changes:
+    - key: system.abilities.cha.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Cha)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: zrPgEyvt0Qpp6rca
+  _key: '!items.effects!7pECwim9a2CVzFLy.zrPgEyvt0Qpp6rca'
+  changes:
+    - key: system.abilities.con.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Con)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 2iAdf3ZD4FdzPonT
+  _key: '!items.effects!lUuyDaiDHJbDg82j.2iAdf3ZD4FdzPonT'
+  changes:
+    - key: system.abilities.dex.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Dex)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 94JaF8oYeiAAWASd
+  _key: '!items.effects!K7PJLC0GUhtQ7aX2.94JaF8oYeiAAWASd'
+  changes:
+    - key: system.abilities.int.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Int)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: N3a7CEwOlseizR4z
+  _key: '!items.effects!ZhykyK0shgnyC4Fh.N3a7CEwOlseizR4z'
+  changes:
+    - key: system.abilities.str.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Str)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: mEwSq29I1Sr8gG2t
+  _key: '!items.effects!FWQK9qFGagcEXCq5.mEwSq29I1Sr8gG2t'
+  changes:
+    - key: system.abilities.str.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Str)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: cUIGFlc2YR57pzXl
+  _key: '!items.effects!wrtcUfAY6yXwSqLY.cUIGFlc2YR57pzXl'
+  changes:
+    - key: system.abilities.wis.base
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: Permanent Ability (Wis)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 1sKZFEAOhR1t3W5D
+  _key: '!items.effects!0Ws5acsixawAITFi.1sKZFEAOhR1t3W5D'
+  changes:
+    - key: system.abilities.cha.value
+      mode: 5
+      priority: null
+      value: '18'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-axe-blood-red.webp
+  name: permanentAbility
+  origin: Item.B3iC2SrJAnnNifTE
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: oS1VcB7hqcsjkUZv
+  _key: '!items!oS1VcB7hqcsjkUZv'
+  effects: []
+  folder: null
+  img: icons/consumables/potions/potion-vial-corked-labeled-purple.webp
+  name: Potion of Extirpation
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>An acrid, tarry substance in an iron flask with a lead stopper.</em></p><p><strong>Benefit</strong>. You can pour the potion on one object or creature filling up to a close area. The target is utterly removed from reality and cannot be returned by anything short of a <em>wish</em> spell.</p><p><strong>Personality</strong>. Chaotic. Protests loudly while being used and never agrees that the target is the right choice for extirpation.</p>
+    duration:
+      type: ''
+      value: 1
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+    treasure: false
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: jucTGEjsqJ1znHdf
+  _key: '!items!jucTGEjsqJ1znHdf'
+  effects: []
+  folder: null
+  img: icons/consumables/potions/bottle-round-corked-orante-red.webp
+  name: Potion of Healing
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: '<p><em>A glass bottle with a fizzy, lemon-vanilla liquid inside.</em></p><p><strong>Benefit</strong>. The imbiber of this potion regains hit points based on its level.</p><p><strong>LV 1-3</strong>: [[/r 1d6]] hit points.</p><p><strong>LV 4-6</strong>: [[/r 2d8]] hit points.</p><p><strong>LV 7-9</strong>: [[/r 3d10]] hit points.</p><p><strong>LV 10+</strong>: [[/r 4d12]] hit points.</p>'
+    duration:
+      type: ''
+      value: 1
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+    treasure: false
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: KAx02m6uAzOSBGXX
+  _key: '!items!KAx02m6uAzOSBGXX'
+  effects: []
+  folder: null
+  img: icons/consumables/potions/vial-cork-empty.webp
+  name: Potion of Invisibility
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 80
+      sp: 0
+    description: '<p><em>This glass vial appears to be empty, but a liquid audibly splashes around inside it.</em></p><p><strong>Benefit</strong>. When you drink this potion, you become invisible for 10 rounds or until you attack or cast a spell.</p><p>@UUID[Compendium.shadowdark.spell-effects.SMXbMbXcj5hLvTjY]{Spell Effect: Invisibility}</p>'
+    duration:
+      type: ''
+      value: 1
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+    treasure: false
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: RPe1Y9rnhOq7Dl6p
+  _key: '!items!RPe1Y9rnhOq7Dl6p'
+  effects: []
+  folder: null
+  img: icons/commodities/treasure/broach-gold-ruby.webp
+  name: Scarab of Protection
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>A brooch made from a horned scarab beetle dipped in gold.</em></p><p><strong>Benefit</strong>. If you die, make a [[check 18 con]] check. If you succeed, you are unconscious instead of dead.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: N27A6nb0epkHZ3lR
+  _key: '!items!N27A6nb0epkHZ3lR'
+  effects: []
+  folder: null
+  img: icons/sundries/scrolls/scroll-writing-orange-black.webp
+  name: Scroll of Burning Hands
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>@UUID[Compendium.shadowdark.spells.ItN82uLU3PhJFLNm]{Burning Hands}</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: mXkpNk8z0eZU8kKj
+  _key: '!items!mXkpNk8z0eZU8kKj'
+  effects: []
+  folder: null
+  img: icons/sundries/scrolls/scroll-bound-green.webp
+  name: Scroll of Hold Portal
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>@UUID[Compendium.shadowdark.spells.q600IZtPTAgkz6vB]{Hold Portal}</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 98cxnRdtTLv0Onka
+  _key: '!items!98cxnRdtTLv0Onka'
+  effects:
+    - 4QneUXW9pG2CMpKS
+    - JAfTcoh8jcncSGJM
+  folder: null
+  img: icons/weapons/swords/sword-guard-worn-purple.webp
+  name: Shoftsword of the Thief
+  system:
+    ammoClass: ''
+    attackBonus: '1'
+    baseWeapon: shortsword
+    bonuses:
+      attackBonus: '1'
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: '1'
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: '1'
+      critMultiplier: 2
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: <p><em>A stubby, grey blade riddled with notches and scars.</em></p><p><strong>Bonus</strong>. +1 shortsword. +2 if wielded by a halfling or thief.</p><p><strong>Benefit</strong>. Once per day, regain a luck token you just spent.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: jEeDexWHYy7wKsfa
+  _key: '!items!jEeDexWHYy7wKsfa'
+  effects:
+    - HhILvM8lD0Nby5gq
+    - FqtIDxjhOFDvkQFn
+  folder: null
+  img: icons/weapons/staves/staff-engraved-red.webp
+  name: Staff of Healing
+  system:
+    ammoClass: ''
+    attackBonus: '1'
+    baseWeapon: staff
+    bonuses:
+      attackBonus: '1'
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: '1'
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: '1'
+      critMultiplier: 2
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: <p><em>A knotted, oak stave with a heavy knurl on one end.</em></p><p><strong>Bonus</strong>. +1 staff.</p><p><strong>Benefit</strong>. Once per day, you can touch a creature with the staff to heal it for [[/r 1d6]] hit points.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ZamB6OED5J1EeU81
+  _key: '!items!ZamB6OED5J1EeU81'
+  effects:
+    - 9qMTrleWtCMKO3Xl
+    - 78SoFRRmEjEMdPIT
+  folder: null
+  img: icons/weapons/swords/sword-guard-worn-brown.webp
+  name: Sword of the Ancients
+  system:
+    ammoClass: ''
+    attackBonus: '2'
+    baseWeapon: longsword
+    bonuses:
+      attackBonus: '2'
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: '2'
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: '2'
+      critMultiplier: 2
+      numDice: 1
+      oneHanded: d8
+      twoHanded: ''
+    description: <p><em>A chipped and rusting blade with an oiled leather grip.</em></p><p><strong>Bonus</strong>. +2 longsword.</p><p><strong>Benefit</strong>. The sword is unbreakable and can carve through any material.</p><p>The owner can summon the sword to their hand if it's on the same plane.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: gNah418e2ykhDWDE
+  _key: '!items!gNah418e2ykhDWDE'
+  effects: []
+  folder: null
+  img: icons/sundries/documents/document-symbol-triangle-pink.webp
+  name: True Name
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p><em>The secret, unique name borne by a creature and documented in The Covenant. Few creatures know their own True Names.</em></p><p><strong>Benefit</strong>. You have advantage on attack rolls and spellcasting checks targeting a creature whose True Name you utter.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iEbHLvRPWNXo32qm
+  _key: '!items!iEbHLvRPWNXo32qm'
+  effects:
+    - yMBdo0WUxtzRzji9
+    - OlbaGSPCczzedFMQ
+  folder: null
+  img: icons/weapons/polearms/pike-flared-brown.webp
+  name: Vigilant
+  system:
+    ammoClass: ''
+    attackBonus: '1'
+    baseWeapon: spear
+    bonuses:
+      attackBonus: '1'
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: '1'
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: '1'
+      critMultiplier: 2
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: <p><strong>Benefit</strong>. The wielder cannot be surprised.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: yyUwr6H9imWcJ9YS
+  _key: '!items!yyUwr6H9imWcJ9YS'
+  effects: []
+  folder: null
+  img: icons/weapons/wands/wand-gem-purple.webp
+  name: Wand of Blind/Deafen
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: wand
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    damage:
+      bonus: 0
+      critMultiplier: 2
+      numDice: 1
+      oneHanded: ''
+      twoHanded: ''
+    description: <p>@UUID[Compendium.shadowdark.spells.ItoZZ0nli29N5d7G]{Blind/Deafen}</p><p>DC 12</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 97RtiQtpwhaO7qNb
+  _key: '!items.effects!Mb7OBENXa5XnClS9.97RtiQtpwhaO7qNb'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    startTime: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Weapon Attack Damage Bonus
+  origin: Compendium.shadowdark.magic-items.Item.Mb7OBENXa5XnClS9
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: OZskI153kjpkFy09
+  _key: '!items.effects!X5FwZjvgzeSXvNDQ.OZskI153kjpkFy09'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Weapon Attack Damage Bonus
+  origin: Compendium.shadowdark.magic-items.Item.X5FwZjvgzeSXvNDQ
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: OlbaGSPCczzedFMQ
+  _key: '!items.effects!iEbHLvRPWNXo32qm.OlbaGSPCczzedFMQ'
+  changes:
+    - key: system.bonuses.damageBonus
+      mode: 2
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    startTime: null
+  img: icons/weapons/ammunition/arrow-head-war-flight.webp
+  name: Weapon Attack Damage Bonus
+  origin: Compendium.shadowdark.magic-items.Item.iEbHLvRPWNXo32qm
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: CFbdBIST0hT7qCyu
+  _key: '!items.effects!X5FwZjvgzeSXvNDQ.CFbdBIST0hT7qCyu'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Weapon Attack Roll Bonus
+  origin: Compendium.shadowdark.magic-items.Item.X5FwZjvgzeSXvNDQ
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: pOdV4x1mBsF4ZJmg
+  _key: '!items.effects!Mb7OBENXa5XnClS9.pOdV4x1mBsF4ZJmg'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    startTime: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Weapon Attack Roll Bonus
+  origin: Compendium.shadowdark.magic-items.Item.Mb7OBENXa5XnClS9
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: yMBdo0WUxtzRzji9
+  _key: '!items.effects!iEbHLvRPWNXo32qm.yMBdo0WUxtzRzji9'
+  changes:
+    - key: system.bonuses.attackBonus
+      mode: 2
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    startTime: null
+  img: icons/skills/melee/strike-polearm-glowing-white.webp
+  name: Weapon Attack Roll Bonus
+  origin: Compendium.shadowdark.magic-items.Item.iEbHLvRPWNXo32qm
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: false
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core

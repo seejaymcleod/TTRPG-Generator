@@ -1,0 +1,2567 @@
+- _id: xE08WjX14HjHwSJC
+  _key: '!items.effects!Grd46xo0lgHLtfVe.xE08WjX14HjHwSJC'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/creatures/eyes/humanoid-single-blind.webp
+  name: Blind
+  origin: Item.Grd46xo0lgHLtfVe
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: g02s1plvTDRI6Ido
+  _key: '!items.effects!fDUPAItc64pmW5zM.g02s1plvTDRI6Ido'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/life/heart-shadow-red.webp
+  name: Charmed
+  origin: Item.fDUPAItc64pmW5zM
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 6Hd5Dzf2TnXL9Gxs
+  _key: '!items!6Hd5Dzf2TnXL9Gxs'
+  effects:
+    - CyZNMVHNjIMTM0g7
+  folder: null
+  img: icons/magic/control/fear-fright-white.webp
+  name: 'Condition: Afraid'
+  system:
+    category: condition
+    description: <p>The character is afraid.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: CyZNMVHNjIMTM0g7
+  _key: '!items.effects!6Hd5Dzf2TnXL9Gxs.CyZNMVHNjIMTM0g7'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/control/fear-fright-white.webp
+  name: 'Condition: Afraid'
+  origin: Item.6Hd5Dzf2TnXL9Gxs
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 9LKEdqM5gksbj8xV
+  _key: '!items.effects!FoXNI5CfBkJOvJ9c.9LKEdqM5gksbj8xV'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/control/sleep-bubble-purple.webp
+  name: 'Condition: Asleep'
+  origin: Item.FoXNI5CfBkJOvJ9c
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: FoXNI5CfBkJOvJ9c
+  _key: '!items!FoXNI5CfBkJOvJ9c'
+  effects:
+    - 9LKEdqM5gksbj8xV
+  folder: null
+  img: icons/magic/control/sleep-bubble-purple.webp
+  name: 'Condition: Asleep'
+  system:
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: NytuNX2lLUibvXSB
+  _key: '!items!NytuNX2lLUibvXSB'
+  effects: []
+  folder: null
+  img: icons/magic/holy/projectiles-blades-salvo-yellow.webp
+  name: 'Condition: Banished'
+  system:
+    category: effect
+    description: ''
+    duration:
+      type: rounds
+      value: '5'
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 4OcLCPW1pxzTua7d
+  _key: '!items!4OcLCPW1pxzTua7d'
+  effects:
+    - qSuLDWBjPNH2wizr
+  folder: null
+  img: icons/magic/control/hypnosis-mesmerism-pendulum.webp
+  name: 'Condition: Beguiled'
+  system:
+    category: condition
+    description: <p>The character is beguiled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: qSuLDWBjPNH2wizr
+  _key: '!items.effects!4OcLCPW1pxzTua7d.qSuLDWBjPNH2wizr'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/control/hypnosis-mesmerism-pendulum.webp
+  name: 'Condition: Beguiled'
+  origin: Item.4OcLCPW1pxzTua7d
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: Grd46xo0lgHLtfVe
+  _key: '!items!Grd46xo0lgHLtfVe'
+  effects:
+    - xE08WjX14HjHwSJC
+  folder: null
+  img: icons/creatures/eyes/humanoid-single-blind.webp
+  name: 'Condition: Blind'
+  system:
+    category: condition
+    description: <p>The blinded character has disadvantage on tasks requiring sight.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: YPYxo5WhLBPCnkRd
+  _key: '!items.effects!rbOmeG3R2mmiiIMT.YPYxo5WhLBPCnkRd'
+  changes:
+    - key: system.abilities.int.base
+      mode: 5
+      priority: null
+      value: '1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/creatures/invertebrates/centipede-brown.webp
+  name: 'Condition: Bug Brain'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: rbOmeG3R2mmiiIMT
+  _key: '!items!rbOmeG3R2mmiiIMT'
+  effects:
+    - YPYxo5WhLBPCnkRd
+  folder: null
+  img: icons/creatures/invertebrates/centipede-brown.webp
+  name: 'Condition: Bug Brain'
+  system:
+    abilities:
+      int:
+        base: '1'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: fDUPAItc64pmW5zM
+  _key: '!items!fDUPAItc64pmW5zM'
+  effects:
+    - g02s1plvTDRI6Ido
+  folder: null
+  img: icons/magic/life/heart-shadow-red.webp
+  name: 'Condition: Charmed'
+  system:
+    category: condition
+    description: <p>The character is charmed and regards the source as a friend.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 7DNtQwX31lpChHZH
+  _key: '!items!7DNtQwX31lpChHZH'
+  effects:
+    - jtCuGSncFiHgfNgZ
+  folder: null
+  img: icons/magic/control/energy-stream-link-spiral-white.webp
+  name: 'Condition: Compelled'
+  system:
+    category: condition
+    description: <p>The character is compelled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: jtCuGSncFiHgfNgZ
+  _key: '!items.effects!7DNtQwX31lpChHZH.jtCuGSncFiHgfNgZ'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/control/energy-stream-link-spiral-white.webp
+  name: 'Condition: Compelled'
+  origin: Item.7DNtQwX31lpChHZH
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: T7PD6qqfanwAMEzo
+  _key: '!items!T7PD6qqfanwAMEzo'
+  effects:
+    - h8IoE9DUt8lyCAgQ
+  folder: null
+  img: icons/magic/unholy/strike-body-explode-disintegrate.webp
+  name: 'Condition: Cursed'
+  system:
+    category: condition
+    description: <p>The character is cursed.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: h8IoE9DUt8lyCAgQ
+  _key: '!items.effects!T7PD6qqfanwAMEzo.h8IoE9DUt8lyCAgQ'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-explode-disintegrate.webp
+  name: 'Condition: Cursed'
+  origin: Item.T7PD6qqfanwAMEzo
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!WRFmdFxvPhVKXQB2.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (1)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: WRFmdFxvPhVKXQB2
+  _key: '!items!WRFmdFxvPhVKXQB2'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (1)'
+  system:
+    abilities:
+      con:
+        bonus: '-1'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!fMXSo5UqQD0fedRc.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-2'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (2)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: fMXSo5UqQD0fedRc
+  _key: '!items!fMXSo5UqQD0fedRc'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (2)'
+  system:
+    abilities:
+      con:
+        bonus: '-2'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!wDCrj4X7ccqB2jA8.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (3)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: wDCrj4X7ccqB2jA8
+  _key: '!items!wDCrj4X7ccqB2jA8'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (3)'
+  system:
+    abilities:
+      con:
+        bonus: '-3'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!PY16IzWMkbYbGAWJ.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-4'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (4)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PY16IzWMkbYbGAWJ
+  _key: '!items!PY16IzWMkbYbGAWJ'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/death/skull-poison-green.webp
+  name: 'Condition: Disease (4)'
+  system:
+    abilities:
+      con:
+        bonus: '-4'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: fHiOjFwljNOeJ2aX
+  _key: '!items!fHiOjFwljNOeJ2aX'
+  effects:
+    - iatMWq8uzO8KPaxd
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (1)'
+  system:
+    abilities:
+      wis:
+        bonus: '-1'
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iatMWq8uzO8KPaxd
+  _key: '!items.effects!fHiOjFwljNOeJ2aX.iatMWq8uzO8KPaxd'
+  changes:
+    - key: system.abilities.wis.bonus
+      mode: 2
+      priority: null
+      value: '-1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (1)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iatMWq8uzO8KPaxd
+  _key: '!items.effects!mqOVlejHMZAvqnn4.iatMWq8uzO8KPaxd'
+  changes:
+    - key: system.abilities.wis.bonus
+      mode: 2
+      priority: null
+      value: '-2'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (2)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: mqOVlejHMZAvqnn4
+  _key: '!items!mqOVlejHMZAvqnn4'
+  effects:
+    - iatMWq8uzO8KPaxd
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (2)'
+  system:
+    abilities:
+      wis:
+        bonus: '-2'
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iatMWq8uzO8KPaxd
+  _key: '!items.effects!jT3yIGZpBlEYa2va.iatMWq8uzO8KPaxd'
+  changes:
+    - key: system.abilities.wis.bonus
+      mode: 2
+      priority: null
+      value: '-3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (3)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: jT3yIGZpBlEYa2va
+  _key: '!items!jT3yIGZpBlEYa2va'
+  effects:
+    - iatMWq8uzO8KPaxd
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (3)'
+  system:
+    abilities:
+      wis:
+        bonus: '-3'
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: GQDiR0cXfb86m83P
+  _key: '!items!GQDiR0cXfb86m83P'
+  effects:
+    - iatMWq8uzO8KPaxd
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (4)'
+  system:
+    abilities:
+      wis:
+        bonus: '-4'
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iatMWq8uzO8KPaxd
+  _key: '!items.effects!GQDiR0cXfb86m83P.iatMWq8uzO8KPaxd'
+  changes:
+    - key: system.abilities.wis.bonus
+      mode: 2
+      priority: null
+      value: '-4'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (4)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: BcWf0hoWC2DZyaFH
+  _key: '!items!BcWf0hoWC2DZyaFH'
+  effects:
+    - iatMWq8uzO8KPaxd
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (5)'
+  system:
+    abilities:
+      wis:
+        bonus: '-5'
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iatMWq8uzO8KPaxd
+  _key: '!items.effects!BcWf0hoWC2DZyaFH.iatMWq8uzO8KPaxd'
+  changes:
+    - key: system.abilities.wis.bonus
+      mode: 2
+      priority: null
+      value: '-5'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (5)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 5S5y0GWE2akNYJiq
+  _key: '!items!5S5y0GWE2akNYJiq'
+  effects:
+    - iatMWq8uzO8KPaxd
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (6)'
+  system:
+    abilities:
+      wis:
+        bonus: '-6'
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iatMWq8uzO8KPaxd
+  _key: '!items.effects!5S5y0GWE2akNYJiq.iatMWq8uzO8KPaxd'
+  changes:
+    - key: system.abilities.wis.bonus
+      mode: 2
+      priority: null
+      value: '-6'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-green.webp
+  name: 'Condition: Drained (6)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: XPk44UuWpkKBxyf3
+  _key: '!items!XPk44UuWpkKBxyf3'
+  effects:
+    - F7lcubzHfIM4jQDu
+  folder: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: 'Condition: Enfeebled (Cha)'
+  system:
+    abilities:
+      cha:
+        base: '3'
+    category: condition
+    description: <p>The character is enfeebled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: fkb9HwrPEq9mlZbb
+  _key: '!items!fkb9HwrPEq9mlZbb'
+  effects:
+    - uBrDknMQigqBcbl0
+  folder: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: 'Condition: Enfeebled (Con)'
+  system:
+    abilities:
+      con:
+        base: '3'
+    category: condition
+    description: <p>The character is enfeebled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: lsVOr4eduzSNGkVY
+  _key: '!items!lsVOr4eduzSNGkVY'
+  effects:
+    - O8bVaWHv6gSA7mPq
+  folder: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: 'Condition: Enfeebled (Dex)'
+  system:
+    abilities:
+      dex:
+        base: '3'
+      str:
+        base: '3'
+        value: '3'
+    category: condition
+    description: <p>The character is enfeebled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: dmEiJzqy55xVYfD2
+  _key: '!items!dmEiJzqy55xVYfD2'
+  effects:
+    - niI5k5QCYV7npdse
+  folder: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: 'Condition: Enfeebled (Int)'
+  system:
+    abilities:
+      int:
+        base: '3'
+    category: condition
+    description: <p>The character is enfeebled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ov1K3L3kuKj8hCUG
+  _key: '!items!ov1K3L3kuKj8hCUG'
+  effects:
+    - O8bVaWHv6gSA7mPq
+  folder: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: 'Condition: Enfeebled (Str)'
+  system:
+    abilities:
+      str:
+        base: '3'
+        value: '3'
+    category: condition
+    description: <p>The character is enfeebled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: OvpXs6E4W6Ta6LJZ
+  _key: '!items!OvpXs6E4W6Ta6LJZ'
+  effects:
+    - 38EONK96mLJWmtGS
+  folder: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: 'Condition: Enfeebled (Wis)'
+  system:
+    abilities:
+      wis:
+        base: '3'
+    category: condition
+    description: <p>The character is enfeebled.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: XGGzrINaGvRwwXPC
+  _key: '!items.effects!pcBuNszkAjGRJ0XX.XGGzrINaGvRwwXPC'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/commodities/bones/bone-broken-grey.webp
+  name: 'Condition: Fragile'
+  origin: Item.pcBuNszkAjGRJ0XX
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: pcBuNszkAjGRJ0XX
+  _key: '!items!pcBuNszkAjGRJ0XX'
+  effects:
+    - XGGzrINaGvRwwXPC
+  folder: null
+  img: icons/commodities/bones/bone-broken-grey.webp
+  name: 'Condition: Fragile'
+  system:
+    category: condition
+    description: <p>The character is fragile and takes double damage.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 7mCWjMOGoEUpJlGc
+  _key: '!items.effects!iU2qaminUz77BQ0L.7mCWjMOGoEUpJlGc'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/creatures/abilities/mouth-teeth-human.webp
+  name: 'Condition: Gibbering'
+  origin: Item.iU2qaminUz77BQ0L
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iU2qaminUz77BQ0L
+  _key: '!items!iU2qaminUz77BQ0L'
+  effects:
+    - 7mCWjMOGoEUpJlGc
+  folder: null
+  img: icons/creatures/abilities/mouth-teeth-human.webp
+  name: 'Condition: Gibbering'
+  system:
+    category: condition
+    description: <p>The character is gibbering.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: LDzTLiVPs1Qvyrzk
+  _key: '!items!LDzTLiVPs1Qvyrzk'
+  effects: []
+  folder: null
+  img: icons/magic/light/explosion-star-glow-silhouette.webp
+  name: 'Condition: Invisible'
+  system:
+    category: condition
+    description: <p>The character is invisible.</p>
+    duration:
+      type: rounds
+      value: '10'
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: LmXXpHviIuB684gX
+  _key: '!items.effects!piycdXLudXTFLG0k.LmXXpHviIuB684gX'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: 3
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/light/explosion-star-glow-silhouette.webp
+  name: 'Condition: Invisible'
+  origin: Item.SMXbMbXcj5hLvTjY
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: piycdXLudXTFLG0k
+  _key: '!items!piycdXLudXTFLG0k'
+  effects:
+    - LmXXpHviIuB684gX
+  folder: null
+  img: icons/magic/light/explosion-star-glow-silhouette.webp
+  name: 'Condition: Invisible (Stealthy)'
+  system:
+    category: condition
+    description: <p>The character is invisible.</p>
+    duration:
+      type: rounds
+      value: '3'
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 7yyr32LQtbwxDTAF
+  _key: '!items!7yyr32LQtbwxDTAF'
+  effects:
+    - 8N8VrjrYr7pGris5
+  folder: null
+  img: icons/magic/sonic/scream-wail-shout-teal.webp
+  name: 'Condition: Laughing'
+  system:
+    category: condition
+    description: <p>The character is laughing.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 8N8VrjrYr7pGris5
+  _key: '!items.effects!7yyr32LQtbwxDTAF.8N8VrjrYr7pGris5'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/sonic/scream-wail-shout-teal.webp
+  name: 'Condition: Laughing'
+  origin: Item.7yyr32LQtbwxDTAF
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!eAWhmC9ZXzjhIa1H.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-1'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (1)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: eAWhmC9ZXzjhIa1H
+  _key: '!items!eAWhmC9ZXzjhIa1H'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (1)'
+  system:
+    abilities:
+      con:
+        bonus: '-1'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: HBDRaw3YhM22PJK2
+  _key: '!items!HBDRaw3YhM22PJK2'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (2)'
+  system:
+    abilities:
+      con:
+        bonus: '-2'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!HBDRaw3YhM22PJK2.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-2'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (2)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 74xpXmPIMUYnyt1M
+  _key: '!items!74xpXmPIMUYnyt1M'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (3)'
+  system:
+    abilities:
+      con:
+        bonus: '-3'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!74xpXmPIMUYnyt1M.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (3)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PAkmxzlF6cIsPNkt
+  _key: '!items.effects!pkvfOgSt7c86e1dw.PAkmxzlF6cIsPNkt'
+  changes:
+    - key: system.abilities.con.bonus
+      mode: 2
+      priority: null
+      value: '-4'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (4)'
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: pkvfOgSt7c86e1dw
+  _key: '!items!pkvfOgSt7c86e1dw'
+  effects:
+    - PAkmxzlF6cIsPNkt
+  folder: null
+  img: icons/magic/unholy/hand-light-pink.webp
+  name: 'Condition: Life Drain (4)'
+  system:
+    abilities:
+      con:
+        bonus: '-4'
+    category: condition
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 3XkiakzqwT78EG4j
+  _key: '!items.effects!vmcHEQWOyX933G1R.3XkiakzqwT78EG4j'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/control/hypnosis-mesmerism-pendulum.webp
+  name: 'Condition: Mesmerized'
+  origin: Item.vmcHEQWOyX933G1R
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: vmcHEQWOyX933G1R
+  _key: '!items!vmcHEQWOyX933G1R'
+  effects:
+    - 3XkiakzqwT78EG4j
+  folder: null
+  img: icons/magic/control/hypnosis-mesmerism-pendulum.webp
+  name: 'Condition: Mesmerized'
+  system:
+    category: condition
+    description: ''
+    duration:
+      type: focus
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 5Q6foTiBhvvLG7y3
+  _key: '!items.effects!ROTpAUAHx5s4AZZh.5Q6foTiBhvvLG7y3'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/water/barrier-ice-crystal-wall-faceted-blue.webp
+  name: 'Condition: Paralyzed'
+  origin: Item.ROTpAUAHx5s4AZZh
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ROTpAUAHx5s4AZZh
+  _key: '!items!ROTpAUAHx5s4AZZh'
+  effects:
+    - 5Q6foTiBhvvLG7y3
+  folder: null
+  img: icons/magic/water/barrier-ice-crystal-wall-faceted-blue.webp
+  name: 'Condition: Paralyzed'
+  system:
+    category: condition
+    description: <p>The character is paralyzed.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: Ck88Wezyv7vfvNGV
+  _key: '!items.effects!DihIx1S94zeXV3oM.Ck88Wezyv7vfvNGV'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/creatures/magical/construct-stone-earth-gray.webp
+  name: 'Condition: Petrified'
+  origin: Item.XbrayNCUis3pV0XU
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: DihIx1S94zeXV3oM
+  _key: '!items!DihIx1S94zeXV3oM'
+  effects:
+    - Ck88Wezyv7vfvNGV
+  folder: null
+  img: icons/creatures/magical/construct-stone-earth-gray.webp
+  name: 'Condition: Petrified'
+  system:
+    category: effect
+    description: ''
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: rW7oltlWDmteEpV7
+  _key: '!items!rW7oltlWDmteEpV7'
+  effects:
+    - xyhx2skwDPYWZ20G
+  folder: null
+  img: icons/creatures/mammals/rodent-rat-diseaed-gray.webp
+  name: 'Condition: Polymorphed'
+  system:
+    category: condition
+    description: <p>The character is polymorphed.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: xyhx2skwDPYWZ20G
+  _key: '!items.effects!rW7oltlWDmteEpV7.xyhx2skwDPYWZ20G'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/creatures/mammals/rodent-rat-diseaed-gray.webp
+  name: 'Condition: Polymorphed'
+  origin: Item.rW7oltlWDmteEpV7
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: OL2kOP05K96L9JV9
+  _key: '!items!OL2kOP05K96L9JV9'
+  effects:
+    - rEjr6iPhgVuFTCWl
+  folder: null
+  img: icons/magic/perception/hand-eye-pink.webp
+  name: 'Condition: Possessed'
+  system:
+    category: condition
+    description: <p>The character is possessed.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: rEjr6iPhgVuFTCWl
+  _key: '!items.effects!OL2kOP05K96L9JV9.rEjr6iPhgVuFTCWl'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/perception/hand-eye-pink.webp
+  name: 'Condition: Possessed'
+  origin: Item.OL2kOP05K96L9JV9
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 0McK66FvDi42pjiu
+  _key: '!items!0McK66FvDi42pjiu'
+  effects:
+    - Pw5zyo8apyAphCG2
+  folder: null
+  img: icons/environment/traps/trap-jaw-steel.webp
+  name: 'Condition: Stuck'
+  system:
+    category: condition
+    description: <p>The character can't move until freed.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      initiative: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: Pw5zyo8apyAphCG2
+  _key: '!items.effects!0McK66FvDi42pjiu.Pw5zyo8apyAphCG2'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/environment/traps/trap-jaw-steel.webp
+  name: 'Condition: Stuck'
+  origin: Item.0McK66FvDi42pjiu
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: SQzniFDNODQRLoNi
+  _key: '!items!SQzniFDNODQRLoNi'
+  effects:
+    - gbK3h5sv3mNm3v3R
+  folder: null
+  img: icons/magic/water/barrier-ice-water-cube.webp
+  name: 'Condition: Stupified'
+  system:
+    category: condition
+    description: <p>The character is stupified.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: gbK3h5sv3mNm3v3R
+  _key: '!items.effects!SQzniFDNODQRLoNi.gbK3h5sv3mNm3v3R'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/water/barrier-ice-water-cube.webp
+  name: 'Condition: Stupified'
+  origin: Item.SQzniFDNODQRLoNi
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 2UFWFSeffj7vrSSR
+  _key: '!items!2UFWFSeffj7vrSSR'
+  effects:
+    - iTrME6gdEDXnxloZ
+  folder: null
+  img: icons/magic/unholy/strike-body-life-soul-purple.webp
+  name: 'Condition: Unconscious'
+  system:
+    category: condition
+    description: <p>The character is unconscious.</p>
+    duration:
+      type: unlimited
+      value: -1
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iTrME6gdEDXnxloZ
+  _key: '!items.effects!2UFWFSeffj7vrSSR.iTrME6gdEDXnxloZ'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-body-life-soul-purple.webp
+  name: 'Condition: Unconscious'
+  origin: Item.2UFWFSeffj7vrSSR
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: MUNwczWej0Bo8x4S
+  _key: '!items!MUNwczWej0Bo8x4S'
+  effects:
+    - M044441XNDJq00mV
+  folder: null
+  img: icons/magic/perception/eye-tendrils-web-purple.webp
+  name: 'Effect: Stimulant'
+  system:
+    category: effect
+    description: <p>@UUID[Compendium.shadowdark.class-abilities.Item.EhaA5tBROfrws1Kx]{Stimulant}</p>
+    duration:
+      type: rounds
+      value: '10'
+    effectPanel:
+      show: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    source:
+      title: core-rules
+    start:
+      combatTime: null
+      value: 0
+    tokenIcon:
+      show: true
+  type: Effect
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: M044441XNDJq00mV
+  _key: '!items.effects!MUNwczWej0Bo8x4S.M044441XNDJq00mV'
+  changes: []
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: 10
+    seconds: null
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/perception/eye-tendrils-web-purple.webp
+  name: Perceiving Advantage
+  origin: Item.E9GhofNgwIJ7N2A4
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: F7lcubzHfIM4jQDu
+  _key: '!items.effects!XPk44UuWpkKBxyf3.F7lcubzHfIM4jQDu'
+  changes:
+    - key: system.abilities.cha.base
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: Permanent Ability (Cha)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: uBrDknMQigqBcbl0
+  _key: '!items.effects!fkb9HwrPEq9mlZbb.uBrDknMQigqBcbl0'
+  changes:
+    - key: system.abilities.con.base
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: Permanent Ability (Con)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: O8bVaWHv6gSA7mPq
+  _key: '!items.effects!lsVOr4eduzSNGkVY.O8bVaWHv6gSA7mPq'
+  changes:
+    - key: system.abilities.dex.base
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: Permanent Ability (Dex)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: niI5k5QCYV7npdse
+  _key: '!items.effects!dmEiJzqy55xVYfD2.niI5k5QCYV7npdse'
+  changes:
+    - key: system.abilities.int.base
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: Permanent Ability (Int)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: O8bVaWHv6gSA7mPq
+  _key: '!items.effects!ov1K3L3kuKj8hCUG.O8bVaWHv6gSA7mPq'
+  changes:
+    - key: system.abilities.str.base
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: Permanent Ability (Str)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 38EONK96mLJWmtGS
+  _key: '!items.effects!OvpXs6E4W6Ta6LJZ.38EONK96mLJWmtGS'
+  changes:
+    - key: system.abilities.wis.base
+      mode: 5
+      priority: null
+      value: '3'
+  description: ''
+  disabled: false
+  duration:
+    combat: null
+    rounds: null
+    seconds: 1
+    startRound: null
+    startTime: null
+    startTurn: null
+    turns: null
+  img: icons/magic/unholy/strike-hand-glow-pink.webp
+  name: Permanent Ability (Wis)
+  origin: null
+  statuses: []
+  system: {}
+  tint: '#ffffff'
+  transfer: true
+  type: base
+  game: ShadowDark
+  source: ShadowDark Core

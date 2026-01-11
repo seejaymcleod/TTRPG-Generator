@@ -1,0 +1,3012 @@
+- _id: np4FRJ73NRBEQKnS
+  _key: '!folders!np4FRJ73NRBEQKnS'
+  color: '#22252b'
+  description: ''
+  folder: null
+  name: Armor
+  sorting: a
+  type: Item
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: XXwA9ZWajYEDmcea
+  _key: '!items!XXwA9ZWajYEDmcea'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/weapons/ammunition/arrows-barbed-white.webp
+  name: Arrows
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    description: <p>Ammunition for shortbows or longbows.</p>
+    equipped: false
+    isAmmunition: true
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    quantity: 20
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 20
+      slots_used: 1
+    source:
+      title: ''
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: tDNafhuDDdiVNUMy
+  _key: '!items!tDNafhuDDdiVNUMy'
+  effects: []
+  folder: aDuF91SrY1z6oZoL
+  img: icons/weapons/ammunition/arrows-barbed-white.webp
+  name: Arrows
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    description: <p>Ammunition for shortbows or longbows.</p>
+    equipped: false
+    isAmmunition: true
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    quantity: 5
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 20
+      slots_used: 1
+    source:
+      title: ''
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: oSnfz4qcWlUL6cDZ
+  _key: '!items!oSnfz4qcWlUL6cDZ'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/containers/bags/pack-leather-red.webp
+  name: Backpack
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 2
+      sp: 0
+    description: <p>Holds all the gear you can carry. Don't lose it.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 0ws7y8D3IktigkiB
+  _key: '!folders!0ws7y8D3IktigkiB'
+  color: '#22252b'
+  description: ''
+  folder: null
+  name: Basic Gear
+  sorting: a
+  type: Item
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: zU6dopKBk3pKS9F9
+  _key: '!items!zU6dopKBk3pKS9F9'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/consumables/eggs/egg-spiked-brown.webp
+  name: Basilisk Egg
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>A loyal baby hatches in [[/r 1d4]] days.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-4
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 1T8oUkfkBtYTLNF3
+  _key: '!items!1T8oUkfkBtYTLNF3'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/sword-hilt-steel-green.webp
+  name: Bastard Sword
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d8
+      twoHanded: d10
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.qEIYaQ9j2EUmSrx6
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: FkcwP4cmpdM5pcOm
+  _key: '!items!FkcwP4cmpdM5pcOm'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/thrown/dart-feathered.webp
+  name: Blowgun
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 5
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: ''
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.vobaPJfoZ1e50eab
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iMu2tHuqGfJ7XjsS
+  _key: '!items!iMu2tHuqGfJ7XjsS'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/thrown/bolas-steel.webp
+  name: Bolas
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 2
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: ''
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.98zYioBHqik74KBV
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: dILnVh0uKk3lRjbH
+  _key: '!items!dILnVh0uKk3lRjbH'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/swords-short.webp
+  name: Boomerang
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 3
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.e5RpI0crHweCVt8B
+      - Compendium.shadowdark.properties.Item.R9rw4pKdIHfJJoyJ
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-4
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: bGrhQMkhE2qwjL4j
+  _key: '!items!bGrhQMkhE2qwjL4j'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/consumables/potions/bottle-bulb-empty-glass.webp
+  name: Bottle
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 3
+    description: <p>Glass containers that hold one draught of liquid.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: SzpjMuJrhF5nMJ7H
+  _key: '!items!SzpjMuJrhF5nMJ7H'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/commodities/metal/fragments-steel-barbed.webp
+  name: Caltrops
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>Tiny, triangle-shaped iron spikes. Living creatures who step on caltrops take 1 damage and can only move at half speed for 10 rounds.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: DeqtKQQzI6HTYvV0
+  _key: '!items!DeqtKQQzI6HTYvV0'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/chest/breastplate-scale-grey.webp
+  name: Chainmail
+  system:
+    ac:
+      attribute: dex
+      base: 13
+      modifier: 0
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 60
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.WhfSBiji8VG1mMzV
+      - Compendium.shadowdark.properties.Item.F4wv0ycualMPaoco
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: JM2XN855QYNhgtre
+  _key: '!items!JM2XN855QYNhgtre'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/clubs/club-banded-steel.webp
+  name: Club
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 5
+      gp: 0
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ZAWTt3ORcrZRXgfQ
+  _key: '!items!ZAWTt3ORcrZRXgfQ'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/clubs/club-simple-stone-black.webp
+  name: Club (Obsidian)
+  system:
+    ammoClass: ''
+    baseWeapon: club
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 5
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.e5RpI0crHweCVt8B
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-4
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: fJHwwn6TEfbdr8CM
+  _key: '!items!fJHwwn6TEfbdr8CM'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/containers/bags/satchel-worn-leather-brown.webp
+  name: Crawling Kit
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 7
+      sp: 0
+    description: <p>A crawling kit costs 7 gp. It uses 7 gear slots and contains the following items.</p><ul><li><p>@UUID[Compendium.shadowdark.gear.oSnfz4qcWlUL6cDZ]{Backpack}</p></li><li><p>@UUID[Compendium.shadowdark.gear.ERprfuTIFRFEix9G]{Flint and Steel}</p></li><li><p>2x @UUID[Compendium.shadowdark.gear.z3xc7HGysC4ZCU8e]{Torch}</p></li><li><p>@UUID[Compendium.shadowdark.gear.EPndk3DPOEOSvbga]{Iron Spikes}</p></li><li><p>@UUID[Compendium.shadowdark.gear.GX6OmWQiE7MzTmjX]{Rations}</p></li><li><p>@UUID[Compendium.shadowdark.gear.fqsLWV46NWH0L53l]{Grappling Hook}</p></li><li><p>@UUID[Compendium.shadowdark.gear.6ZRwVHFlh5QiyZWC]{Rope, 60'}</p></li></ul>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 7
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: eeVEJexfirwWzOVu
+  _key: '!items!eeVEJexfirwWzOVu'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/crossbows/crossbow-purple.webp
+  name: Crossbow
+  system:
+    ammoClass: crossbow-bolts
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 8
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d6
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.HyqHR9AhIDkm4La9
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: far
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iv8fMPiRYfsN8ICy
+  _key: '!items!iv8fMPiRYfsN8ICy'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/weapons/ammunition/arrow-broadhead-white.webp
+  name: Crossbow Bolts
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    description: <p>Ammunition for crossbows.</p>
+    equipped: false
+    isAmmunition: true
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    predefinedEffects: ''
+    quantity: 20
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 20
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: GbO6CggW71qMkgrG
+  _key: '!items!GbO6CggW71qMkgrG'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/tools/hand/wrench-steel-grey.webp
+  name: Crowbar
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>Grants advantage on checks to pry open stuck objects.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: VjFsjhM6CZjZ04RT
+  _key: '!items!VjFsjhM6CZjZ04RT'
+  effects: []
+  folder: iHOSxtXRWKd2vx1U
+  img: icons/commodities/flowers/lily-white.webp
+  name: Curative
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: '<p><strong>Benefit</strong>. The imbiber of this herb regains hit points based on its level.</p><p><strong>LV 1-3</strong>: [[/r 1d6]] hit points.</p><p><strong>LV 4-6</strong>: [[/r 2d8]] hit points.</p><p><strong>LV 7-9</strong>: [[/r 3d10]] hit points.</p><p><strong>LV 10+</strong>: [[/r 4d12]] hit points.</p>'
+    duration:
+      type: ''
+      value: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: C3mc5OlKPSJNMrng
+  _key: '!items!C3mc5OlKPSJNMrng'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/daggers/dagger-jeweled-purple.webp
+  name: Dagger
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.rqQwpoeWEqi0ZcYK
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: TQ0x7zmYfTCykZOh
+  _key: '!items!TQ0x7zmYfTCykZOh'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/daggers/dagger-straight-stone.webp
+  name: Dagger (Obsidian)
+  system:
+    ammoClass: ''
+    baseWeapon: dagger
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 3
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.e5RpI0crHweCVt8B
+      - Compendium.shadowdark.properties.Item.rqQwpoeWEqi0ZcYK
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-4
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: W2fFimb0y85wmOMb
+  _key: '!items!W2fFimb0y85wmOMb'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/consumables/potions/bottle-corked-empty.webp
+  name: Flask
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 3
+    description: <p>Glass containers that hold one draught of liquid.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ERprfuTIFRFEix9G
+  _key: '!items!ERprfuTIFRFEix9G'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/commodities/stone/paver-grey.webp
+  name: Flint and Steel
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>A small fire starter. With it, routine attempts to light a fire always succeed.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: FeoRamUTz5jakMJ8
+  _key: '!items!FeoRamUTz5jakMJ8'
+  effects: []
+  folder: iHOSxtXRWKd2vx1U
+  img: icons/creatures/invertebrates/tick-cross-glowing-purple.webp
+  name: Foebane
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>ADV on attacks and damage against one creature type you choose for [[/r 1d6]] rounds</p>
+    duration:
+      type: ''
+      value: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: fqsLWV46NWH0L53l
+  _key: '!items!fqsLWV46NWH0L53l'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/tools/fishing/hook-multi-steel-brown.webp
+  name: Grappling Hook
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    description: <p>A rope anchor with three, curved tines.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 9Pnhl6SOsbf6qDmt
+  _key: '!items!9Pnhl6SOsbf6qDmt'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/axes/axe-broad-engraved-chipped-blue.webp
+  name: Greataxe
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d8
+      twoHanded: d10
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.qEIYaQ9j2EUmSrx6
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: eqUuf9OGupuGPsBM
+  _key: '!items!eqUuf9OGupuGPsBM'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/greatsword-crossguard-flanged-purple.webp
+  name: Greatsword
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 12
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d12
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 3DxwBvjceq0FxcsC
+  _key: '!items!3DxwBvjceq0FxcsC'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/axes/axe-broad-purple.webp
+  name: Handaxe
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 2
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: <p><strong>Finesse (F).</strong> You can use your Strength or Dexterity when attacking with this weapon.</p><p><strong>Thrown (Th).</strong> You can throw this weapon to make a ranged attack with it using Strength.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.rqQwpoeWEqi0ZcYK
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-3
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: iHOSxtXRWKd2vx1U
+  _key: '!folders!iHOSxtXRWKd2vx1U'
+  color: '#22252b'
+  description: ''
+  folder: null
+  name: Herbal Remedies
+  sorting: a
+  type: Item
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: uS2iSw8NLx8V0jb7
+  _key: '!items!uS2iSw8NLx8V0jb7'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/commodities/treasure/token-gold-cross.webp
+  name: Holy Symbol
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: EPndk3DPOEOSvbga
+  _key: '!items!EPndk3DPOEOSvbga'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/tools/fasteners/pin-spiked.webp
+  name: Iron Spikes
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    description: <p>Strong spikes. Each has a hole for threading</p><p>rope. Can be hammered in with weapons or other iron spikes.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 10
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 10
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: B3ZPeUtbChN8lrDm
+  _key: '!items!B3ZPeUtbChN8lrDm'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/polearms/javelin.webp
+  name: Javelin
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: far
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: lCWOUkVp4N1geMRt
+  _key: '!items!lCWOUkVp4N1geMRt'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/sundries/lights/lantern-iron-yellow.webp
+  name: Lantern
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 5
+      sp: 0
+    description: <p>Casts light up to a double near distance (see Light, pg. 46). Requires oil. Has a shutter to hide the light.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: EoTEHXApVDS7rHfw
+  _key: '!items!EoTEHXApVDS7rHfw'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/chest/breastplate-layered-leather-brown-silver.webp
+  name: Leather Armor
+  system:
+    ac:
+      attribute: dex
+      base: 11
+      modifier: 0
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: PkQXG3AaHNMVwGTc
+  _key: '!items!PkQXG3AaHNMVwGTc'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/magic/light/explosion-star-glow-yellow.webp
+  name: Light Spell
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>Dummy item that acts like a light source cast by the @UUID[Compendium.shadowdark.spells.N4v17mtxJlVBbgpn]{Light} spell.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: true
+      longevityMins: 60
+      remainingSecs: 3600
+      template: lightSpellNear
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: BBDG7QpHOFXG6sKe
+  _key: '!items!BBDG7QpHOFXG6sKe'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/magic/light/explosion-star-glow-yellow.webp
+  name: Light Spell (Double Range)
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>Dummy item that acts like a light source cast by the double range @UUID[Compendium.shadowdark.spells.N4v17mtxJlVBbgpn]{Light} spell.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: true
+      longevityMins: 60
+      remainingSecs: 3600
+      template: lightSpellDouble
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: rjNBToTJCYLLdVcT
+  _key: '!items!rjNBToTJCYLLdVcT'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/magic/light/explosion-star-glow-yellow.webp
+  name: Light Spell (Double Time)
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>Dummy item that acts like a light source cast by the @UUID[Compendium.shadowdark.spells.N4v17mtxJlVBbgpn]{Light} spell.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: true
+      longevityMins: 120
+      remainingSecs: 7200
+      template: lightSpellNear
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: GzA5T0aewhouRsa3
+  _key: '!items!GzA5T0aewhouRsa3'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/bows/longbow-leather-green.webp
+  name: Longbow
+  system:
+    ammoClass: arrows
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 8
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d8
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: far
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: ZPUhNMmwXXrtbCXi
+  _key: '!items!ZPUhNMmwXXrtbCXi'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/sword-guard.webp
+  name: Longsword
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 9
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d8
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: jGZyVuFJnW7QcBFX
+  _key: '!items!jGZyVuFJnW7QcBFX'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/maces/mace-round-ornate-purple.webp
+  name: Mace
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 5
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: GUqtnSXkcytZnNiO
+  _key: '!items!GUqtnSXkcytZnNiO'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/sundries/survival/mirror-plain.webp
+  name: Mirror
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    description: <p>A small, polished mirror.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: UDyHeJCreIFZ9y2I
+  _key: '!items!UDyHeJCreIFZ9y2I'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/chest/breastplate-layered-leather-green.webp
+  name: Mithral Chainmail
+  system:
+    ac:
+      attribute: dex
+      base: 13
+      modifier: 0
+    baseArmor: chainmail
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 240
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: BAJQqFdkN9lGFAyZ
+  _key: '!items!BAJQqFdkN9lGFAyZ'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/chest/breastplate-layered-steel-blue-gold.webp
+  name: Mithral Plate Mail
+  system:
+    ac:
+      attribute: ''
+      base: 15
+      modifier: 0
+    baseArmor: plate-mail
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 520
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: BThyJ1NC6JcRXxeX
+  _key: '!items!BThyJ1NC6JcRXxeX'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/clubs/club-barbed-skull.webp
+  name: Morningstar
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 5
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: d8
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.qEIYaQ9j2EUmSrx6
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 80bCpXdZcj0Cz1fE
+  _key: '!items!80bCpXdZcj0Cz1fE'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/consumables/potions/potion-bottle-corked-blue.webp
+  name: Oil, flask
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>Fuels a lantern for one hour of real time. One flask covers a close area and burns for 4 rounds, dealing 1d4 damage each round.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: true
+      longevityMins: 60
+      remainingSecs: 3600
+      template: lantern
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 4nmzFv43ua8nZDS7
+  _key: '!items!4nmzFv43ua8nZDS7'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/polearms/pike-flared-brown.webp
+  name: Pike
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d10
+    description: <p><strong>Range.</strong> 2x Close</p><p>Requires 2 slots.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 2
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: o0261gnDqGC5hQB1
+  _key: '!items!o0261gnDqGC5hQB1'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/chest/breastplate-layered-steel.webp
+  name: Plate Mail
+  system:
+    ac:
+      attribute: ''
+      base: 15
+      modifier: 0
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 130
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.WhfSBiji8VG1mMzV
+      - Compendium.shadowdark.properties.Item.kBLs47xhX1snaDGA
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 3
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 15X5GTX96y339EKY
+  _key: '!items!15X5GTX96y339EKY'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/commodities/wood/wood-pole.webp
+  name: Pole
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>Wooden, 10' long.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: GX6OmWQiE7MzTmjX
+  _key: '!items!GX6OmWQiE7MzTmjX'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/consumables/food/berries-ration-round-red.webp
+  name: Rations
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>One day of food and water supply for one person.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 3
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 3
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: LW3MgxeOaEPPaiY2
+  _key: '!items!LW3MgxeOaEPPaiY2'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/tools/fasteners/chain-hook-grey.webp
+  name: Razor Chain
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 12
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.rqQwpoeWEqi0ZcYK
+      - Compendium.shadowdark.properties.Item.K5d1agm6gzaTLr1k
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: QV93CYmgcgJ3UCPf
+  _key: '!items!QV93CYmgcgJ3UCPf'
+  effects: []
+  folder: iHOSxtXRWKd2vx1U
+  img: icons/consumables/drinks/alcohol-spirits-bottle-green.webp
+  name: Restorative
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>Ends one poison or disease</p>
+    duration:
+      type: ''
+      value: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 6ZRwVHFlh5QiyZWC
+  _key: '!items!6ZRwVHFlh5QiyZWC'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/sundries/survival/rope-wrapped-brown.webp
+  name: Rope, 60'
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    description: <p>Hemp, 60’ long.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: RSNMsNqyV39N9C29
+  _key: '!items!RSNMsNqyV39N9C29'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/shield/round-wooden-boss-steel-yellow-blue.webp
+  name: Round Shield
+  system:
+    ac:
+      attribute: ''
+      base: 0
+      modifier: 2
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 15
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.bAzl6RH1PW95ZkFE
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-3
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: m857P6MI00wAONTp
+  _key: '!items!m857P6MI00wAONTp'
+  effects: []
+  folder: iHOSxtXRWKd2vx1U
+  img: icons/commodities/materials/bowl-liquid-white.webp
+  name: Salve
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>Heals 1 HP</p>
+    duration:
+      type: ''
+      value: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: DKBDkJ3LcRv8scLv
+  _key: '!items!DKBDkJ3LcRv8scLv'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/scimitar-guard-gold.webp
+  name: Scimitar
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 8
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.rqQwpoeWEqi0ZcYK
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: UWp4WkkiaBMSXYPE
+  _key: '!items!UWp4WkkiaBMSXYPE'
+  effects: []
+  folder: np4FRJ73NRBEQKnS
+  img: icons/equipment/shield/shield-round-boss-wood-brown.webp
+  name: Shield
+  system:
+    ac:
+      attribute: ''
+      base: 0
+      modifier: 2
+    baseArmor: ''
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.jq0m0lGb7QOCSJXL
+      - Compendium.shadowdark.properties.Item.61gM0DuJQwLbIBwu
+    quantity: 1
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+  type: Armor
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: UfHAWj5weH111Bea
+  _key: '!items!UfHAWj5weH111Bea'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/bows/shortbow-recurve-blue.webp
+  name: Shortbow
+  system:
+    ammoClass: arrows
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 6
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d4
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: far
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: KQTWQwznjK80gVEU
+  _key: '!items!KQTWQwznjK80gVEU'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/shortsword-guard-worn.webp
+  name: Shortsword
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 7
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: sDHZZx1xaCRPmhXY
+  _key: '!items!sDHZZx1xaCRPmhXY'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/thrown/shuriken-blue.webp
+  name: Shuriken
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 1
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.M5iKSTKd3UgtZT8K
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: FWgFPQDKkBiTMYhd
+  _key: '!items!FWgFPQDKkBiTMYhd'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/slings/slingshot-wood.webp
+  name: Sling
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 5
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties: []
+    quantity: 1
+    range: far
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: brIFMH0sOVmqX02N
+  _key: '!items!brIFMH0sOVmqX02N'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/polearms/spear-hooked-double.webp
+  name: Spear
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: true
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: NaoAGwkshXqkDyoV
+  _key: '!items!NaoAGwkshXqkDyoV'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/polearms/speartip-simple-stone.webp
+  name: Spear (Obsidian)
+  system:
+    ammoClass: ''
+    baseWeapon: spear
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 4
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d8
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: true
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.e5RpI0crHweCVt8B
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-4
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: YFoaXoW5JCM4z768
+  _key: '!items!YFoaXoW5JCM4z768'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/swords/swords-short.webp
+  name: Spear-thrower
+  system:
+    ammoClass: spear-(obsidian)
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 2
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d8
+      twoHanded: ''
+    description: <p>When used to throw a spear, increase the spear's range to far.</p>
+    equipped: true
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.c35ROL1nXwC840kC
+    quantity: 1
+    range: far
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-4
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: 9eTpsuEuzL3Vaxge
+  _key: '!items!9eTpsuEuzL3Vaxge'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/staves/staff-ornate-purple.webp
+  name: Staff
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d4
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: aDuF91SrY1z6oZoL
+  _key: '!folders!aDuF91SrY1z6oZoL'
+  color: '#22252b'
+  description: ''
+  folder: null
+  name: Starting Gear
+  sorting: a
+  type: Item
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: P4aAkDkgwR9zcATw
+  _key: '!items!P4aAkDkgwR9zcATw'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/staves/staff-animal-bird.webp
+  name: Stave
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 2
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d6
+      twoHanded: ''
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.Op1yKvM7uq5pdopr
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: cursed-scroll-3
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: dBQr9YPyhvwyPm0g
+  _key: '!items!dBQr9YPyhvwyPm0g'
+  effects: []
+  folder: iHOSxtXRWKd2vx1U
+  img: icons/commodities/materials/powder-grey.webp
+  name: Stimulant
+  system:
+    broken: false
+    canBeEquipped: false
+    class: []
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: '<p>You can''t be surprised for 10 rounds</p><p>@UUID[Compendium.shadowdark.conditions.MUNwczWej0Bo8x4S]{Effect: Stimulant}</p>'
+    duration:
+      type: ''
+      value: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: true
+    predefinedEffects: ''
+    quantity: 1
+    range: ''
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    spellName: ''
+    stashed: false
+    tier: 1
+  type: Potion
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: mSDuPGnQZA8ArsVP
+  _key: '!items!mSDuPGnQZA8ArsVP'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/tools/fasteners/nails-steel-brown.webp
+  name: Thieves' Tools
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 0
+    description: <p>ADV on checks to climb, sneak, hide, apply disguises, find and disable traps, and perform delicate tasks.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: false
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 1
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: z3xc7HGysC4ZCU8e
+  _key: '!items!z3xc7HGysC4ZCU8e'
+  effects: []
+  folder: 0ws7y8D3IktigkiB
+  img: icons/sundries/lights/torch-purple.webp
+  name: Torch
+  system:
+    broken: false
+    canBeEquipped: false
+    cost:
+      cp: 0
+      gp: 0
+      sp: 5
+    description: <p>Sheds light to a near distance (see Light Sources, pg. 46). Burns for one hour of real time.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    light:
+      active: false
+      hasBeenUsed: false
+      isSource: true
+      longevityMins: 60
+      remainingSecs: 3600
+      template: torch
+    magicItem: false
+    quantity: 1
+    scroll: false
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    treasure: false
+  type: Basic
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: z98LNu4yOIe1B1eg
+  _key: '!items!z98LNu4yOIe1B1eg'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/hammers/hammer-war-rounding.webp
+  name: Warhammer
+  system:
+    ammoClass: ''
+    attackBonus: 0
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    damage:
+      bonus: 0
+      numDice: 1
+      oneHanded: ''
+      twoHanded: d10
+    description: ''
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.b6Gm2ULKj2qyy2xJ
+    quantity: 1
+    range: close
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      title: core-rules
+    stashed: false
+    type: melee
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: LVzvIhYHieRT4O6q
+  _key: '!folders!LVzvIhYHieRT4O6q'
+  color: '#22252b'
+  description: ''
+  folder: null
+  name: Weapons
+  sorting: a
+  type: Item
+  game: ShadowDark
+  source: ShadowDark Core
+- _id: GgSheZNm2cOQYpZP
+  _key: '!items!GgSheZNm2cOQYpZP'
+  effects: []
+  folder: LVzvIhYHieRT4O6q
+  img: icons/weapons/misc/whip-red-yellow.webp
+  name: Whip
+  system:
+    ammoClass: ''
+    baseWeapon: ''
+    bonuses:
+      attackBonus: 0
+      critical:
+        failureThreshold: 1
+        multiplier: 2
+        successThreshold: 20
+      damageBonus: 0
+      damageMultiplier: 1
+    broken: false
+    canBeEquipped: true
+    cost:
+      cp: 0
+      gp: 10
+      sp: 0
+    damage:
+      numDice: 1
+      oneHanded: d4
+      twoHanded: ''
+    description: <p><strong>Type:</strong> Melee or Ranged.</p><p><strong>Range:</strong> Close or Near</p><p><strong>Finesse (F).</strong> You may use your STR or DEX when attacking with this weapon.</p><p><strong>Lash (La).</strong> When you make a ranged attack with this weapon, it does not leave your grasp.</p>
+    equipped: false
+    isAmmunition: false
+    isPhysical: true
+    magicItem: false
+    predefinedEffects: ''
+    properties:
+      - Compendium.shadowdark.properties.Item.K5d1agm6gzaTLr1k
+      - Compendium.shadowdark.properties.Item.rqQwpoeWEqi0ZcYK
+    quantity: 1
+    range: near
+    slots:
+      free_carry: 0
+      per_slot: 1
+      slots_used: 1
+    source:
+      page: 0
+      title: cursed-scroll-2
+    stashed: false
+    type: ranged
+    weaponMastery: false
+  type: Weapon
+  game: ShadowDark
+  source: ShadowDark Core
