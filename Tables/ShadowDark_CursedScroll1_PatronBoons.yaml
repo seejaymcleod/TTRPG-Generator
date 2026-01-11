@@ -3,7 +3,7 @@ game: ShadowDark
 source: Cursed Scroll 1
 page: 18
 tablename: PatronBoons
-type: Patron Boon
+type: Powers
 tables:
   - tablename: Almazzat
     results:

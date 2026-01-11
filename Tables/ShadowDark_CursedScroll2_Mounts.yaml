@@ -1,0 +1,55 @@
+filename: ShadowDark_CursedScroll2_Mounts.yaml
+game: ShadowDark
+source: Cursed Scroll 2
+page: 29
+tablename: Mounts
+type: Adventure, Stuff
+tables:
+  - tablename: List
+    headers:
+      - Name
+      - Details
+    results:
+      - - Camel
+        - 50 gp. Common. Spooks
+      - - Camel, silver
+        - 200 gp. Rare. Fearless
+      - - Donkey
+        - 40 gp. Common. Spooks
+      - - Elephant
+        - 400 gp. Rare. Fearless
+      - - Horse
+        - 50 gp. Common. Spooks. ADV on morale
+      - - Horse, war
+        - 100 gp. Uncommon. Fearless. Can wear armor
+      - - Scrag
+        - 150 gp. Uncommon. Spooks
+      - - Scrag, war
+        - 250 gp. Rare. Fearless. Can wear armor
+  - tablename: Personality
+    results:
+      - - 'Horrid: Rebellious, stubborn, malicious'
+        - 6
+      - - 'Ornery: Only likes owner, sassy, rude'
+        - 15
+      - - 'Reliable: Steadfast, obedient, protective'
+        - 9
+      - - 'Lovely: Loyal, sweet, affectionate'
+        - 6
+  - tablename: Gear
+    headers:
+      - Name
+      - Details
+    results:
+      - - Armor, leather
+        - 30 gp. AC 11 + DEX mod
+      - - Armor, chainmail
+        - 80 gp. AC 13 + DEX mod; DISADV swim and stealth; 2 slots
+      - - Armor, plate
+        - 150 gp. AC 15; no swim or stealth; 3 slots
+      - - Armor, mithral
+        - x5. Metal only; -1 slot; normal stealth/swim
+      - - Saddle
+        - 30 gp. Rider ADV on checks to stay mounted; 1 free for mount to carry
+      - - Wagon
+        - 120 gp. No rider on mount; move at half speed; +15 gear slots; limit 1 per mount

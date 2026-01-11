@@ -3,7 +3,7 @@ game: ShadowDark
 source: Cursed Scroll 1
 page: 20
 tablename: DiabolicalBackgrounds
-type: Background
+type: People
 headers:
   - Name
   - Description

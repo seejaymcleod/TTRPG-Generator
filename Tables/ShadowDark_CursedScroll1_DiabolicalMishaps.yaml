@@ -3,7 +3,7 @@ game: ShadowDark
 source: Cursed Scroll 1
 page: 22
 tablename: DiabolicalMishaps
-type: Mishap
+type: Adventure, Powers
 tables:
   - tablename: Tier1to3
     results:

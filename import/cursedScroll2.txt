@@ -1,0 +1,65 @@
+### FILE START: Poisons.yaml ###
+filename: Poisons.yaml
+game: ShadowDark
+source: Cursed Scroll 2
+page: 27
+tablename: Poisons
+type: Item
+headers: ["d8", "Name", "Rarity", "Use", "Effects"]
+results:
+  - {d8: "1", Name: "Aminiita root", Rarity: "Common", Use: "Eat", Effects: "DC 12 CON or 3d6 damage"}
+  - {d8: "2", Name: "Bluewort paste", Rarity: "Common", Use: "Injure", Effects: "DC 12 CON or paralyzed 1d4 rds"}
+  - {d8: "3", Name: "Drowsy dust", Rarity: "Uncommon", Use: "Touch (eyes)", Effects: "DC 12 CON or deep sleep for 1d4 hours"}
+  - {d8: "4", Name: "Ether of Idos", Rarity: "Uncommon", Use: "Inhale", Effects: "DC 12 CON or vivid, waking nightmares 1d4 rds"}
+  - {d8: "5", Name: "Kingslayer oil", Rarity: "Uncommon", Use: "Eat", Effects: "DC 18 CON or delayed onset (1 hour) go to 0 HP"}
+  - {d8: "6", Name: "Nuzule oil", Rarity: "Rare", Use: "Injure", Effects: "DC 15 CON or unconscious 3 rds"}
+  - {d8: "7", Name: "Truth-speak oil", Rarity: "Rare", Use: "Touch", Effects: "DC 18 CON or gibber truths 1 hr"}
+  - {d8: "8", Name: "Vapor of Leng", Rarity: "Rare", Use: "Inhale", Effects: "DC 15 CON or INT stat becomes 3 for 1d4 hours"}
+
+### FILE START: Mounts.yaml ###
+filename: Mounts.yaml
+game: ShadowDark
+source: Cursed Scroll 2
+page: 29
+tablename: Mounts
+type: Mount
+headers: ["Name", "Cost", "Spooks?", "Rarity", "Properties"]
+results:
+  - {Name: "Camel", Cost: "50 gp", Spooks?: "Yes", Rarity: "Common", Properties: "-"}
+  - {Name: "Camel, silver", Cost: "200 gp", Spooks?: "No", Rarity: "Rare", Properties: "-"}
+  - {Name: "Donkey", Cost: "40 gp", Spooks?: "Yes", Rarity: "Common", Properties: "-"}
+  - {Name: "Elephant", Cost: "400 gp", Spooks?: "No", Rarity: "Rare", Properties: "-"}
+  - {Name: "Horse", Cost: "50 gp", Spooks?: "Yes", Rarity: "Common", Properties: "ADV on morale"}
+  - {Name: "Horse, war", Cost: "100 gp", Spooks?: "No", Rarity: "Uncommon", Properties: "Can wear armor"}
+  - {Name: "Scrag", Cost: "150 gp", Spooks?: "Yes", Rarity: "Uncommon", Properties: "-"}
+  - {Name: "Scrag, war", Cost: "250 gp", Spooks?: "No", Rarity: "Rare", Properties: "Can wear armor"}
+
+### FILE START: Mount_Personality.yaml ###
+filename: Mount_Personality.yaml
+game: ShadowDark
+source: Cursed Scroll 2
+page: 29
+tablename: MountPersonality
+type: Mount
+dice: 2d6 + CHA mod
+results:
+  - {roll: "0-4", Demeanor: "Horrid", Behaviors: "Rebellious, stubborn, malicious"}
+  - {roll: "5-7", Demeanor: "Ornery", Behaviors: "Only likes owner, sassy, rude"}
+  - {roll: "8-9", Demeanor: "Reliable", Behaviors: "Steadfast, obedient, protective"}
+  - {roll: "10+", Demeanor: "Lovely", Behaviors: "Loyal, sweet, affectionate"}
+
+### FILE START: Mount_Gear.yaml ###
+filename: Mount_Gear.yaml
+game: ShadowDark
+source: Cursed Scroll 2
+page: 29
+tablename: MountGear
+type: Equipment
+headers: ["Name", "Cost", "Properties"]
+results:
+  - {Name: "Armor, leather", Cost: "30 gp", Properties: "AC 11 + DEX mod"}
+  - {Name: "Armor, chainmail", Cost: "80 gp", Properties: "AC 13 + DEX mod; DISADV swim and stealth; 2 slots"}
+  - {Name: "Armor, plate", Cost: "150 gp", Properties: "AC 15; no swim or stealth; 3 slots"}
+  - {Name: "Armor, mithral", Cost: "x5", Properties: "Metal only; -1 slot; normal stealth/swim"}
+  - {Name: "Saddle", Cost: "30 gp", Properties: "Rider ADV on checks to stay mounted; 1 free for mount to carry"}
+  - {Name: "Wagon", Cost: "120 gp", Properties: "No rider on mount; move at half speed; +15 gear slots; limit 1 per mount"}
