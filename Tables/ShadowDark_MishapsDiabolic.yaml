@@ -3,17 +3,12 @@ game: ShadowDark
 setting: Fantasy
 type: Adventure, Powers
 tablename: MishapsDiabolic
+description: Diabolic spell mishaps for ShadowDark.
 tables:
-  - tablename: SameRow
-    results: 
-      - ["MaelstromSameROW! ", {Roll_SameRow(2, Tier4-5)}] # Reroll twice on this table, display on same row
-  - tablename: DiffRow
-    results:
-      - ["Diablerie! ", {Roll_DiffRow(2, Tier1-3)}] # Reroll twice on this table, display on different rows
   - tablename: Tier1-3
+    description: Lower tier diabolic mishaps.
     results:
-      # Reverted to original separateRows syntax
-      - [{separateRows: ["Diablerie! ", "{Tier1-3}", "{Tier1-3}"]}] # Reroll twice on this table
+      - [{ separateRows: ["Diablerie! ", "{Tier1-3}", "{Tier1-3}"] }, 1]
       - "Wither! You take 1d6 damage per spell tier"
       - "Newt! You turn into a tiny, 1 hit point newt for 3 rounds. You can't cast spells in this form"
       - "Shune's baleful gaze! You can't cast this spell and another random spell again for a week"
@@ -26,9 +21,9 @@ tables:
       - "Salt! You're surrounded by a ring of salt and can't touch it or pass through it until something breaks the ring"
       - "Siphon! You have disadvantage on casting spells of the same tier or lower for the next 10 rounds"
   - tablename: Tier4-5
+    description: Higher tier diabolic mishaps.
     results:
-      # Reverted to original separateRows syntax (will handle "SameROW" in server logic)
-      - [{separateRows: ["MaelstromSameROW! ", "{Tier4-5}", "{Tier4-5}"]}] # Reroll twice on this table
+      - [{ separateRows: ["Maelstrom! ", "{Tier4-5}", "{Tier4-5}"] }, 1]
       - "Ruin! You take 1d8 damage per spell tier"
       - "Mind rot! You permanently forget one random spell"
       - "The Willowman! You summon The Willowman (who is angry with you) in a space near to you. He stays for 1d6 rounds before disappearing from whence he came"
@@ -40,5 +35,4 @@ tables:
       - "Tongue of dog! Your tongue lolls every time you try to cast a spell of a random tier, ruining the magic. This persists until you complete a rest"
       - "Fiddlesticks! You have disadvantage on casting all spells for the next 10 rounds"
       - "Nemesis! Somewhere, a child is born who will grow up to become a mighty, sworn enemy to you"
-      # Reverted to original separateRows syntax
-      - [{separateRows: ["MaelstromSameROW! ", "{Tier4-5}", "{Tier4-5}"]}] # Reroll twice on this table
+      - [{ separateRows: ["Maelstrom! ", "{Tier4-5}", "{Tier4-5}"] }, 1]

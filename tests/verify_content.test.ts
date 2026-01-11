@@ -60,10 +60,6 @@ describe('Comprehensive Content Verification', () => {
                 table.filename.startsWith('Master_Table_Reference');
             if (isTestTable) return;
 
-            // Skip tables with known pre-existing YAML syntax issues
-            const knownProblematicFiles = ['ShadowDark_MishapsDiabolic.yaml'];
-            if (knownProblematicFiles.includes(table.filename)) return;
-
             // checking 'tablename' used for lookup.
             const tableName = table.tablename || table.name || 'Unknown';
             const id = `${table.filename} :: ${tableName}`;
