@@ -1,6 +1,6 @@
 {
   "name": "ttrpg-generator",
-  "version": "0.1.44",
+  "version": "0.1.45",
   "description": "A TTRPG table generator engine with recursion support",
   "main": "server.js",
   "scripts": {

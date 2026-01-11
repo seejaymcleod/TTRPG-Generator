@@ -4,13 +4,16 @@
 A web-based Tabletop RPG generator using a "File System as CMS" architecture. Content is authored in YAML files, compiled into JSON, and served via an Express backend to a frontend.
 
 ## Folder Structure
-- **src/**: TypeScript source code containing the core engine and compiler logic.
+- **src/**: TypeScript source code containing the core engine, compiler, and UI logic.
 - **Tables/**: The definitions of all generator tables in YAML format (Source of Truth).
 - **tests/**: Unit and integration tests, including regression tests for bugs.
 - **dist/**: Compiled JavaScript output and the generated `tables.json`.
 - **ai/**: Documentation and context files for AI agents.
+- **js/**: Frontend JavaScript application logic.
+- **css/**: Stylesheets for the frontend.
+- **Documents/**: User guides and reference documentation.
+- **scripts/**: CLI tools and debug utilities.
 - **public/**: Static assets.
-- **utils/**: (Currently empty).
 
 ## Parser-Related Files
 The "Parser" logic is split between the **Compiler** (build-time validation) and the **Engine** (runtime generation).
@@ -29,24 +32,50 @@ The "Parser" logic is split between the **Compiler** (build-time validation) and
 - `expr.ts`: Expression evaluator (math logic).
 - `referenceTables.ts`: Handling of reference tables.
 
+### UI (`src/ui/`)
+- `connect_ui.ts`: Bridge between engine and frontend UI.
+- `layout.html`: HTML layout template.
+- `styles.css`: UI-specific styles.
+
+## Frontend (`js/`)
+- `app.js`: Main frontend application logic (search, filtering, rendering, admin functions).
+- `extractContext.js`: Context extraction utility.
+
+## Frontend Entry Points
+- `index.html`: Main frontend HTML.
+- `index.legacy.html`: Legacy frontend (deprecated).
+
+## Documents (`Documents/`)
+- `Creating_Tables_Guide.md`: User guide for authoring YAML tables.
+- `Master_Table_Reference.yaml`: Reference YAML showcasing all table features.
+
 ## Tests (`tests/`)
-- `engine.test.ts`: core unit tests.
-- `verify_content.test.ts`: integration test for all tables.
-- `debug_circular.test.ts`: Circular dependency debug tests.
+- `engine.test.ts`: Core unit tests.
+- `verify_content.test.ts`: Integration test for all tables.
+- `admin.test.ts`: Admin functionality tests.
+- `auth_integration.test.ts`: Authentication integration tests.
+- `BugFix_ShadowDark_v136.test.ts`: ShadowDark-specific bugfix regression.
 - `repro_recursion.test.ts`: Regression test for renderer recursion loops.
 - `repro_math_error.test.ts`: Regression test for math evaluation errors.
-- `repro_knave.test.ts`, `debug_knave_content.test.ts`: Specific content debug tests.
+- `repro_knave.test.ts`: Knave content debug tests.
+- `repro_cairn_bonds_columns.test.ts`: Cairn bonds column rendering test.
+- `repro_specific_refs.test.ts`: Specific reference resolution tests.
+
+## Scripts (`scripts/`)
+- `cli.ts`: Command-line interface for table generation.
+- `debug_dice.ts`: Dice rolling debug utility.
+- `debug_loop.ts`: Loop detection debug utility.
+- `fix_yaml_structure.ts`: YAML structure repair tool.
 
 ## Root Level Scripts
 - **Server**: `server.js` (Run via `npm start` or `npm run dev`).
+- **Legacy Server**: `server.legacy.js` (deprecated, kept for reference).
 - **Debug Tools**:
-    - `debug_index.ts`: entry point for debug scripts.
-    - `debug_keys.ts`, `debug_subtable.ts`: specific debug utilities.
+    - `debug_index.ts`: Entry point for debug scripts.
+    - `debug_keys.ts`, `debug_subtable.ts`: Specific debug utilities.
 
 ## Likely Entry Points
 - **Server API**: `server.js`.
 - **Compiler CLI**: `src/compiler/build.ts` (Run via `npm run build:tables`).
 - **Dev Server**: `npm run dev` (runs server with nodemon).
-
-## Open Questions
-- `server.legacy.js` exists in root; unclear if active.
+- **CLI Tool**: `scripts/cli.ts` (Run via `npm run cli`).
