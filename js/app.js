@@ -2876,10 +2876,10 @@ function initContentFilters() {
         alignments: new Set(),
         spellClasses: new Set(),
         ranges: {
-            level: { min: 99, max: 0 },
-            tier: { min: 99, max: 0 },
-            ac: { min: 99, max: 0 },
-            hp: { min: 9999, max: 0 }
+            level: { min: Number.MAX_SAFE_INTEGER, max: 0 },
+            tier: { min: Number.MAX_SAFE_INTEGER, max: 0 },
+            ac: { min: Number.MAX_SAFE_INTEGER, max: 0 },
+            hp: { min: Number.MAX_SAFE_INTEGER, max: 0 }
         }
     };
 
@@ -2889,11 +2889,13 @@ function initContentFilters() {
         if (item.type) meta.types.add(item.type);
         if (item.source) meta.sources.add(item.source);
 
+        const p = item.properties || {};
+
         if (item.type === 'Monster') {
-            const lvl = parseInt(item.properties.level) || 0;
-            const ac = parseInt(item.properties.ac) || 0;
-            const hp = parseInt(item.properties.hp) || 0;
-            const al = item.properties.alignment;
+            const lvl = parseInt(p.level) || 0;
+            const ac = parseInt(p.ac) || 0;
+            const hp = parseInt(p.hp) || 0;
+            const al = p.alignment;
 
             if (al) meta.alignments.add(al);
 
@@ -2904,8 +2906,8 @@ function initContentFilters() {
             meta.ranges.hp.min = Math.min(meta.ranges.hp.min, hp);
             meta.ranges.hp.max = Math.max(meta.ranges.hp.max, hp);
         } else if (item.type === 'Spell') {
-            const tier = parseInt(item.properties.tier) || 0;
-            const cls = item.properties.class;
+            const tier = parseInt(p.tier) || 0;
+            const cls = p.class;
 
             if (cls) {
                 // Handle comma-separated classes like "Priest, Wizard"
@@ -2918,6 +2920,10 @@ function initContentFilters() {
     });
 
     contentState.meta = meta;
+    console.log("DEBUG: initContentFilters META CALCULATED", {
+        metaRanges: JSON.parse(JSON.stringify(meta.ranges)),
+        itemsProcessed: contentData.filter(i => i.game === contentState.filters.game).length
+    });
 
     // Default: Monster selected
     if (!Object.keys(contentState.filters.type).length) {
@@ -2939,6 +2945,10 @@ function initContentFilters() {
     contentState.filters.props.tier = { ...meta.ranges.tier };
     contentState.filters.props.ac = { ...meta.ranges.ac };
     contentState.filters.props.hp = { ...meta.ranges.hp };
+
+    console.log("DEBUG: initContentFilters END", {
+        finalProps: JSON.parse(JSON.stringify(contentState.filters.props))
+    });
 }
 
 function renderContentUi() {
@@ -3128,6 +3138,10 @@ function dragSlider(e) {
     const { container, handleType, propKey, minVal, maxVal } = activeSlider;
     const rect = container.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+
+    // Safety check if element was detached (though we shouldn't detach it now)
+    if (rect.width === 0) return;
+
     let pct = (clientX - rect.left) / rect.width;
     pct = Math.max(0, Math.min(1, pct));
 
@@ -3140,9 +3154,38 @@ function dragSlider(e) {
         contentState.filters.props[propKey].max = Math.max(newVal, contentState.filters.props[propKey].min);
     }
 
-    // Re-render sliders and list
-    renderFilterSidebar();
+    // Update Visuals Directly (Performant)
+    updateSliderVisuals(container, propKey, minVal, maxVal);
+
+    // Re-render list content (filtering)
     renderContentList();
+}
+
+function updateSliderVisuals(container, propKey, minVal, maxVal) {
+    const current = contentState.filters.props[propKey];
+    const range = maxVal - minVal;
+    // Guard potential divide by zero if range is 0 (though unlikely to be dragged then)
+    if (range <= 0) return;
+
+    const minPct = ((current.min - minVal) / range) * 100;
+    const maxPct = ((current.max - minVal) / range) * 100;
+
+    const fill = container.querySelector('.range-slider-fill');
+    const handleMin = container.querySelector('.range-slider-handle[data-handle="min"]');
+    const handleMax = container.querySelector('.range-slider-handle[data-handle="max"]');
+
+    if (fill) {
+        fill.style.left = `${minPct}%`;
+        fill.style.width = `${maxPct - minPct}%`;
+    }
+    if (handleMin) handleMin.style.left = `${minPct}%`;
+    if (handleMax) handleMax.style.left = `${maxPct}%`;
+
+    // Update text label (previous sibling -> header div -> span)
+    const labelSpan = container.previousElementSibling?.querySelector('span');
+    if (labelSpan) {
+        labelSpan.textContent = `${current.min} – ${current.max}`;
+    }
 }
 
 function endSliderDrag() {
@@ -3151,6 +3194,9 @@ function endSliderDrag() {
     document.removeEventListener('mouseup', endSliderDrag);
     document.removeEventListener('touchmove', dragSlider);
     document.removeEventListener('touchend', endSliderDrag);
+
+    // Final re-render to ensure consistency
+    renderFilterSidebar();
 }
 
 function appendFilterSection(container, label, contentHtml) {
