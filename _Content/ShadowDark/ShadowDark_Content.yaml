@@ -1944,16 +1944,16 @@
       desc: "3 scimitar +8 (2d10) or 2 fire bolt +5 (2d6)"
   description: "Blood-red, towering humanoids formed of lava and ash. Short, black horns and snarling grins."
 
-- id: sd_monster_elemental_air
-  name: "Elemental, Air"
+- id: sd_monster_elemental_air_lesser
+  name: "Elemental, Air (Lesser)"
   type: Monster
   game: ShadowDark
   source: Core
   properties:
     ac: "16"
-    hp: "*"
+    hp: "29"
     mv: "double near (fly)"
-    level: "*"
+    level: "6"
     alignment: "N"
     stats:
       str: "3"
@@ -1970,19 +1970,48 @@
       desc: "All within close DC 15 DEX or flung 2d20 feet in random direction."
   actions:
     - name: "Attack"
-      desc: "3 slam +7 (*d6) or 1 whirlwind"
+      desc: "3 slam +7 (2d6) or 1 whirlwind"
   description: "A howling tornado of wind."
 
-- id: sd_monster_elemental_earth
-  name: "Elemental, Earth"
+- id: sd_monster_elemental_air_greater
+  name: "Elemental, Air (Greater)"
+  type: Monster
+  game: ShadowDark
+  source: Core
+  properties:
+    ac: "16"
+    hp: "42"
+    mv: "double near (fly)"
+    level: "9"
+    alignment: "N"
+    stats:
+      str: "3"
+      dex: "5"
+      con: "2"
+      int: "-2"
+      wis: "1"
+      cha: "-2"
+    flavor: "A howling tornado of wind."
+  abilities:
+    - name: "Impervious"
+      desc: "Only damaged by magical sources."
+    - name: "Whirlwind"
+      desc: "All within close DC 15 DEX or flung 2d20 feet in random direction."
+  actions:
+    - name: "Attack"
+      desc: "3 slam +7 (3d6) or 1 whirlwind"
+  description: "A howling tornado of wind."
+
+- id: sd_monster_elemental_earth_lesser
+  name: "Elemental, Earth (Lesser)"
   type: Monster
   game: ShadowDark
   source: Core
   properties:
     ac: "17"
-    hp: "*"
+    hp: "31"
     mv: "near (burrow)"
-    level: "*"
+    level: "6"
     alignment: "N"
     stats:
       str: "5"
@@ -1999,19 +2028,48 @@
       desc: "All within close DC 15 STR or entombed for 1d4 rounds under mounds of earth."
   actions:
     - name: "Attack"
-      desc: "3 slam +7 (*d8) or 1 avalanche"
+      desc: "3 slam +7 (2d8) or 1 avalanche"
   description: "A thundering pillar of earth."
 
-- id: sd_monster_elemental_fire
-  name: "Elemental, Fire"
+- id: sd_monster_elemental_earth_greater
+  name: "Elemental, Earth (Greater)"
+  type: Monster
+  game: ShadowDark
+  source: Core
+  properties:
+    ac: "17"
+    hp: "44"
+    mv: "near (burrow)"
+    level: "9"
+    alignment: "N"
+    stats:
+      str: "5"
+      dex: "0"
+      con: "4"
+      int: "-2"
+      wis: "1"
+      cha: "-2"
+    flavor: "A thundering pillar of earth."
+  abilities:
+    - name: "Impervious"
+      desc: "Only damaged by magical sources."
+    - name: "Avalanche"
+      desc: "All within close DC 15 STR or entombed for 1d4 rounds under mounds of earth."
+  actions:
+    - name: "Attack"
+      desc: "3 slam +7 (3d8) or 1 avalanche"
+  description: "A thundering pillar of earth."
+
+- id: sd_monster_elemental_fire_lesser
+  name: "Elemental, Fire (Lesser)"
   type: Monster
   game: ShadowDark
   source: Core
   properties:
     ac: "15"
-    hp: "*"
+    hp: "30"
     mv: "near (fly)"
-    level: "*"
+    level: "6"
     alignment: "N"
     stats:
       str: "4"
@@ -2028,19 +2086,48 @@
       desc: "All within near DC 15 DEX or 3d8 damage."
   actions:
     - name: "Attack"
-      desc: "3 slam +6 (*d10) or 1 inferno"
+      desc: "3 slam +6 (2d10) or 1 inferno"
   description: "A roaring column of flames."
 
-- id: sd_monster_elemental_water
-  name: "Elemental, Water"
+- id: sd_monster_elemental_fire_greater
+  name: "Elemental, Fire (Greater)"
   type: Monster
   game: ShadowDark
   source: Core
   properties:
     ac: "15"
-    hp: "*"
+    hp: "43"
+    mv: "near (fly)"
+    level: "9"
+    alignment: "N"
+    stats:
+      str: "4"
+      dex: "3"
+      con: "3"
+      int: "-2"
+      wis: "1"
+      cha: "-2"
+    flavor: "A roaring column of flames."
+  abilities:
+    - name: "Impervious"
+      desc: "Only damaged by magical sources. Fire immune."
+    - name: "Inferno"
+      desc: "All within near DC 15 DEX or 3d8 damage."
+  actions:
+    - name: "Attack"
+      desc: "3 slam +6 (3d10) or 1 inferno"
+  description: "A roaring column of flames."
+
+- id: sd_monster_elemental_water_lesser
+  name: "Elemental, Water (Lesser)"
+  type: Monster
+  game: ShadowDark
+  source: Core
+  properties:
+    ac: "15"
+    hp: "29"
     mv: "double near (swim)"
-    level: "*"
+    level: "6"
     alignment: "N"
     stats:
       str: "4"
@@ -2057,7 +2144,36 @@
       desc: "All within close DC 15 STR or immobilized inside water elemental (treat as underwater). DC 15 STR to escape on turn."
   actions:
     - name: "Attack"
-      desc: "3 slam +6 (*d6) or 1 whirlpool"
+      desc: "3 slam +6 (2d6) or 1 whirlpool"
+  description: "A crashing vortex of water."
+
+- id: sd_monster_elemental_water_greater
+  name: "Elemental, Water (Greater)"
+  type: Monster
+  game: ShadowDark
+  source: Core
+  properties:
+    ac: "15"
+    hp: "42"
+    mv: "double near (swim)"
+    level: "9"
+    alignment: "N"
+    stats:
+      str: "4"
+      dex: "2"
+      con: "2"
+      int: "-2"
+      wis: "1"
+      cha: "-2"
+    flavor: "A crashing vortex of water."
+  abilities:
+    - name: "Impervious"
+      desc: "Only damaged by magical sources."
+    - name: "Whirlpool"
+      desc: "All within close DC 15 STR or immobilized inside water elemental (treat as underwater). DC 15 STR to escape on turn."
+  actions:
+    - name: "Attack"
+      desc: "3 slam +6 (3d6) or 1 whirlpool"
   description: "A crashing vortex of water."
 
 - id: sd_monster_elephant
@@ -3277,9 +3393,9 @@
   source: Core
   properties:
     ac: "15"
-    hp: "*"
+    hp: "15"
     mv: "near (swim)"
-    level: "*"
+    level: "2"
     alignment: "N"
     stats:
       str: "5"
