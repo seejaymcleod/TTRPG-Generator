@@ -84,6 +84,64 @@ app.get('/api/tables', (req, res) => {
   }
 });
 
+// GET /api/content
+app.get('/api/content', (req, res) => {
+  try {
+    // Try to load js-yaml
+    let yaml;
+    try {
+      yaml = require('js-yaml');
+    } catch (e) {
+      console.error("js-yaml not found, cannot serve YAML content");
+      return res.status(500).json({ error: "Server missing js-yaml dependency" });
+    }
+
+    const contentDir = path.join(__dirname, '_Content');
+    const contentData = [];
+
+    // For now, explicitly load ShadowDark content
+    // In future, this should walk the directory
+    const sdContentPath = path.join(contentDir, 'ShadowDark', 'ShadowDark_Content.yaml');
+
+    if (fs.existsSync(sdContentPath)) {
+      const fileContent = fs.readFileSync(sdContentPath, 'utf8');
+      const data = yaml.load(fileContent);
+      if (Array.isArray(data)) {
+        contentData.push(...data);
+      }
+    }
+
+    res.json({ content: contentData });
+  } catch (e) {
+    console.error("Error serving content:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /api/templates
+app.get('/api/templates', (req, res) => {
+  try {
+    let yaml;
+    try {
+      yaml = require('js-yaml');
+    } catch (e) {
+      return res.status(500).json({ error: "Server missing js-yaml dependency" });
+    }
+
+    const templatePath = path.join(__dirname, '_Content', 'display_templates.yaml');
+    if (fs.existsSync(templatePath)) {
+      const fileContent = fs.readFileSync(templatePath, 'utf8');
+      const data = yaml.load(fileContent);
+      res.json(data);
+    } else {
+      res.json({}); // Return empty if no config
+    }
+  } catch (e) {
+    console.error("Error serving templates:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // POST /api/generate
 app.post('/api/generate', (req, res) => {
   const { table, number, inputValues } = req.body;

@@ -2621,3 +2621,1209 @@ function copyTableToMarkdown(container) {
 }
 
 
+// ==========================================
+// CONTENT BROWSER LOGIC
+// ==========================================
+
+let contentData = [];
+let displayTemplates = {};
+
+// Refined Filter & Sort State
+let contentState = {
+    filters: {
+        game: 'ShadowDark',
+        type: {}, // e.g. { 'Monster': true }
+        source: 'all', // 'all' or specific source name (legacy)
+        sources: {}, // e.g. { 'Core': true, 'Cursed Scroll 1': true }
+        search: '',
+        alignment: {}, // e.g. { 'L': true, 'N': true, 'C': true }
+        spellClass: {}, // e.g. { 'Wizard': true }
+        props: {} // numeric ranges { level: {min, max} }
+    },
+    sort: {
+        field: 'name',
+        direction: 'asc'
+    },
+    meta: {
+        types: new Set(),
+        sources: new Set(),
+        alignments: new Set(),
+        spellClasses: new Set(),
+        ranges: {}
+    }
+};
+
+function initContentBrowser() {
+    const savedArea = document.getElementById('contentSavedArea');
+    if (savedArea) {
+        savedArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            savedArea.classList.add('border-primary', 'bg-primary/5');
+            e.dataTransfer.dropEffect = 'copy';
+        });
+        savedArea.addEventListener('dragleave', e => {
+            savedArea.classList.remove('border-primary', 'bg-primary/5');
+        });
+        savedArea.addEventListener('drop', handleContentDrop);
+    }
+
+    // Initialize sidebar resizer
+    setupContentSidebarResizer();
+}
+
+function setupContentSidebarResizer() {
+    const divider = document.getElementById('contentVerticalDivider');
+    const sidebar = document.getElementById('contentSavedSidebar');
+
+    if (!divider || !sidebar) return;
+
+    let isResizing = false;
+
+    divider.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        divider.classList.add('bg-primary');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        sidebar.style.transition = 'none';
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+
+        const newWidth = window.innerWidth - e.clientX;
+        const maxWidth = Math.min(800, window.innerWidth * 0.6);
+
+        if (newWidth >= 200 && newWidth <= maxWidth) {
+            sidebar.style.width = `${newWidth}px`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            divider.classList.remove('bg-primary');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+}
+
+function handleContentDrop(e) {
+    e.preventDefault();
+    const savedArea = document.getElementById('contentSavedArea');
+    savedArea.classList.remove('border-primary', 'bg-primary/5');
+
+    const source = e.dataTransfer.getData('application/ttrpg-source');
+
+    // Handle Reordering (Source is Saved Area)
+    if (source === 'saved') {
+        const id = e.dataTransfer.getData('application/ttrpg-id');
+        const draggedEl = savedArea.querySelector(`[data-saved-id="${id}"]`);
+        if (!draggedEl) return;
+
+        // Find drop target
+        const targetEl = e.target.closest('[data-saved-id]');
+
+        // If dropped on empty space, append to end
+        if (!targetEl) {
+            savedArea.appendChild(draggedEl);
+            return;
+        }
+
+        // Calculate position relative to target
+        const rect = targetEl.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+
+        if (e.clientY < midY) {
+            savedArea.insertBefore(draggedEl, targetEl);
+        } else {
+            savedArea.insertBefore(draggedEl, targetEl.nextSibling);
+        }
+        return;
+    }
+
+    // Handle New Save (Source is Content List)
+    const data = e.dataTransfer.getData('application/ttrpg-content');
+    if (!data) return;
+
+    try {
+        const item = JSON.parse(data);
+        saveContentItem(item);
+    } catch (err) {
+        console.error("Invalid drop data", err);
+    }
+}
+
+function handleSavedDragStart(e) {
+    const row = e.target.closest('[data-saved-id]');
+    e.dataTransfer.setData('application/ttrpg-source', 'saved');
+    e.dataTransfer.setData('application/ttrpg-id', row.dataset.savedId);
+    e.dataTransfer.effectAllowed = 'move';
+    row.classList.add('opacity-50');
+}
+
+function handleSavedDragEnd(e) {
+    const row = e.target.closest('[data-saved-id]');
+    if (row) row.classList.remove('opacity-50');
+}
+
+function saveContentItem(item) {
+    const savedArea = document.getElementById('contentSavedArea');
+    const existing = savedArea.querySelector(`[data-saved-id="${item.id}"]`);
+    if (existing) {
+        showToast("Item already saved");
+        return;
+    }
+
+    const p = item.properties || {};
+
+    // Build summary details using helper
+    const summaryDetails = getCardSummaryHtml(item);
+
+    // Create row with IDENTICAL structure to content list
+    const wrapper = document.createElement('div');
+    wrapper.dataset.savedId = item.id;
+    wrapper.className = "content-row mb-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg overflow-hidden transition-all hover:border-primary/50 cursor-pointer group";
+    wrapper.dataset.id = item.id;
+
+    // Make Draggable for Reordering
+    wrapper.setAttribute('draggable', 'true');
+    wrapper.addEventListener('dragstart', handleSavedDragStart);
+    wrapper.addEventListener('dragend', handleSavedDragEnd);
+
+    wrapper.innerHTML = `
+        <div class="content-row-header p-3 flex items-center justify-between" onclick="toggleSavedCard(this)">
+            <div class="flex items-center gap-3 flex-wrap">
+                <span class="material-symbols-outlined text-text-muted-light dark:text-text-muted-dark cursor-grab text-lg opacity-50 group-hover:opacity-100" title="Drag to reorder">drag_indicator</span>
+                <span class="font-semibold text-sm">${item.name}</span>
+                <div class="flex items-center">${summaryDetails}</div>
+            </div>
+            <div class="flex items-center gap-1">
+                <button class="delete-saved-btn p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600" 
+                        onclick="event.stopPropagation(); this.closest('[data-saved-id]').remove(); showToast('Removed from Saved');">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+                <span class="material-symbols-outlined text-text-muted-light dark:text-text-muted-dark expand-icon shrink-0">expand_more</span>
+            </div>
+        </div>
+        <div class="content-details hidden border-t border-border-light dark:border-border-dark bg-gray-50/50 dark:bg-[#131b2e]/50 p-4" onclick="event.stopPropagation()">
+        </div>
+    `;
+
+    savedArea.appendChild(wrapper);
+    showToast("Content Saved!");
+
+    const hint = savedArea.querySelector('.border-dashed');
+    if (hint) hint.style.display = 'none';
+}
+
+function toggleSavedCard(headerEl) {
+    const row = headerEl.closest('[data-saved-id]');
+    const details = row.querySelector('.content-details');
+    const icon = row.querySelector('.expand-icon');
+    const id = row.dataset.savedId;
+    const item = contentData.find(i => i.id === id);
+
+    if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        icon.textContent = 'expand_less';
+        row.classList.add('ring-1', 'ring-primary');
+
+        // Render content if not already rendered
+        if (!details.innerHTML.trim() && item) {
+            renderContentCard(item, details, { isEmbedded: true });
+        }
+    } else {
+        details.classList.add('hidden');
+        icon.textContent = 'expand_more';
+        row.classList.remove('ring-1', 'ring-primary');
+    }
+}
+
+async function loadContent() {
+    try {
+        // Load Templates
+        try {
+            const tmplRes = await fetch('/api/templates');
+            const tmplData = await tmplRes.json();
+            if (tmplData && tmplData.types) {
+                displayTemplates = tmplData.types;
+                console.log("Loaded display templates for:", Object.keys(displayTemplates));
+            }
+        } catch (e) {
+            console.warn("Failed to load templates, using defaults", e);
+        }
+
+        const response = await fetch('/api/content');
+        const data = await response.json();
+        if (data.content) {
+            contentData = data.content;
+            console.log(`Loaded ${contentData.length} content items`);
+            initContentFilters();
+            renderContentUi();
+        }
+    } catch (e) {
+        console.error("Failed to load content:", e);
+        showToast("Error loading content");
+    }
+}
+
+function initContentFilters() {
+    const meta = {
+        types: new Set(),
+        sources: new Set(),
+        alignments: new Set(),
+        spellClasses: new Set(),
+        ranges: {
+            level: { min: 99, max: 0 },
+            tier: { min: 99, max: 0 },
+            ac: { min: 99, max: 0 },
+            hp: { min: 9999, max: 0 }
+        }
+    };
+
+    contentData.forEach(item => {
+        if (item.game !== contentState.filters.game) return;
+
+        if (item.type) meta.types.add(item.type);
+        if (item.source) meta.sources.add(item.source);
+
+        if (item.type === 'Monster') {
+            const lvl = parseInt(item.properties.level) || 0;
+            const ac = parseInt(item.properties.ac) || 0;
+            const hp = parseInt(item.properties.hp) || 0;
+            const al = item.properties.alignment;
+
+            if (al) meta.alignments.add(al);
+
+            meta.ranges.level.min = Math.min(meta.ranges.level.min, lvl);
+            meta.ranges.level.max = Math.max(meta.ranges.level.max, lvl);
+            meta.ranges.ac.min = Math.min(meta.ranges.ac.min, ac);
+            meta.ranges.ac.max = Math.max(meta.ranges.ac.max, ac);
+            meta.ranges.hp.min = Math.min(meta.ranges.hp.min, hp);
+            meta.ranges.hp.max = Math.max(meta.ranges.hp.max, hp);
+        } else if (item.type === 'Spell') {
+            const tier = parseInt(item.properties.tier) || 0;
+            const cls = item.properties.class;
+
+            if (cls) {
+                // Handle comma-separated classes like "Priest, Wizard"
+                cls.split(',').map(c => c.trim()).forEach(c => meta.spellClasses.add(c));
+            }
+
+            meta.ranges.tier.min = Math.min(meta.ranges.tier.min, tier);
+            meta.ranges.tier.max = Math.max(meta.ranges.tier.max, tier);
+        }
+    });
+
+    contentState.meta = meta;
+
+    // Default: Monster selected
+    if (!Object.keys(contentState.filters.type).length) {
+        contentState.filters.type = { 'Monster': true };
+    }
+
+    // Default: All sources enabled (multi-select)
+    contentState.filters.source = 'all';
+    meta.sources.forEach(s => contentState.filters.sources[s] = true);
+
+    // Default: All alignments enabled
+    meta.alignments.forEach(a => contentState.filters.alignment[a] = true);
+
+    // Default: All spell classes enabled
+    meta.spellClasses.forEach(c => contentState.filters.spellClass[c] = true);
+
+    // Default ranges
+    contentState.filters.props.level = { ...meta.ranges.level };
+    contentState.filters.props.tier = { ...meta.ranges.tier };
+    contentState.filters.props.ac = { ...meta.ranges.ac };
+    contentState.filters.props.hp = { ...meta.ranges.hp };
+}
+
+function renderContentUi() {
+    renderFilterSidebar();
+    renderSortControls();
+    renderContentList();
+}
+
+// --- FILTER UI ---
+function renderFilterSidebar() {
+    const container = document.getElementById('contentFilterContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // 1. GAME - Single-select pill buttons
+    const gameSection = document.createElement('div');
+    gameSection.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Game</label>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="selectContentGame('ShadowDark')" 
+                class="filter-btn ${contentState.filters.game === 'ShadowDark' ? 'selected' : ''}">ShadowDark</button>
+        </div>
+    `;
+    container.appendChild(gameSection);
+
+    // 2. SOURCE - Dropdown popup (like Tables page)
+    renderSourceDropdown(container);
+
+    // 3. TYPE - Single-select pill buttons (exclusive)
+    const typeSection = document.createElement('div');
+    typeSection.className = 'mt-4';
+    const selectedType = Object.keys(contentState.filters.type).find(t => contentState.filters.type[t]) || '';
+    typeSection.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Type</label>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="selectContentType('Monster')" 
+                class="filter-btn ${selectedType === 'Monster' ? 'selected' : ''}">Monsters</button>
+            <button onclick="selectContentType('Spell')" 
+                class="filter-btn ${selectedType === 'Spell' ? 'selected' : ''}">Spells</button>
+        </div>
+    `;
+    container.appendChild(typeSection);
+
+    // 4. MONSTER-SPECIFIC FILTERS
+    if (contentState.filters.type['Monster']) {
+        // Level Range - Dual-handle slider
+        renderDualSlider(container, 'Level', 'level', contentState.meta.ranges.level);
+        // AC Range
+        renderDualSlider(container, 'AC', 'ac', contentState.meta.ranges.ac);
+        // HP Range
+        renderDualSlider(container, 'HP', 'hp', contentState.meta.ranges.hp);
+
+        // Alignment Multi-select pill buttons
+        const alSection = document.createElement('div');
+        alSection.className = 'mt-4';
+        const alLabels = { 'L': 'Lawful', 'N': 'Neutral', 'C': 'Chaotic' };
+        let alButtons = '';
+        Array.from(contentState.meta.alignments).sort().forEach(al => {
+            const selected = contentState.filters.alignment[al] ? 'selected' : '';
+            alButtons += `<button onclick="toggleAlignment('${al}')" class="filter-btn ${selected}">${alLabels[al] || al}</button>`;
+        });
+        if (alButtons) {
+            alSection.innerHTML = `
+                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Alignment</label>
+                <div class="flex flex-wrap gap-2">${alButtons}</div>
+            `;
+            container.appendChild(alSection);
+        }
+    }
+
+    // 5. SPELL-SPECIFIC FILTERS
+    if (contentState.filters.type['Spell']) {
+        // Tier Range
+        renderDualSlider(container, 'Tier', 'tier', contentState.meta.ranges.tier);
+
+        // Class Multi-select pill buttons
+        const clsSection = document.createElement('div');
+        clsSection.className = 'mt-4';
+        let clsButtons = '';
+        Array.from(contentState.meta.spellClasses).sort().forEach(cls => {
+            const selected = contentState.filters.spellClass[cls] ? 'selected' : '';
+            clsButtons += `<button onclick="toggleSpellClass('${cls}')" class="filter-btn ${selected}">${cls}</button>`;
+        });
+        if (clsButtons) {
+            clsSection.innerHTML = `
+                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Class</label>
+                <div class="flex flex-wrap gap-2">${clsButtons}</div>
+            `;
+            container.appendChild(clsSection);
+        }
+    }
+}
+
+function renderSourceDropdown(container) {
+    const section = document.createElement('div');
+    section.className = 'mt-4 relative';
+
+    const sources = Array.from(contentState.meta.sources).sort();
+    const allSelected = Object.values(contentState.filters.sources).every(v => v);
+    const selectedCount = Object.values(contentState.filters.sources).filter(v => v).length;
+    const btnLabel = contentState.filters.source === 'all' ? 'All Sources' :
+        (selectedCount === sources.length ? 'All Sources' : `${selectedCount} Selected`);
+
+    section.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Source</label>
+        <button onclick="toggleContentSourceDropdown(event)" 
+            class="filter-btn selected flex items-center gap-1 w-full justify-between">
+            <span>${btnLabel}</span>
+            <span class="material-symbols-outlined text-sm">expand_more</span>
+        </button>
+        <div id="contentSourceDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg shadow-lg z-50 p-3">
+            <div class="flex justify-between mb-2 text-xs font-bold uppercase">
+                <button onclick="selectAllContentSources()" class="text-primary hover:underline">Select All</button>
+                <button onclick="clearAllContentSources()" class="text-red-500 hover:underline">Clear</button>
+            </div>
+            <div class="space-y-1 max-h-40 overflow-y-auto">
+                ${sources.map(s => `
+                    <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-primary">
+                        <input type="checkbox" onchange="toggleContentSourceItem('${s}')" ${contentState.filters.sources[s] ? 'checked' : ''} 
+                            class="rounded text-primary focus:ring-primary">
+                        <span>${s}</span>
+                    </label>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    container.appendChild(section);
+}
+
+function renderDualSlider(container, label, propKey, metaRange) {
+    if (!metaRange || metaRange.min >= metaRange.max) return;
+
+    const current = contentState.filters.props[propKey] || metaRange;
+    const range = metaRange.max - metaRange.min;
+    const minPct = ((current.min - metaRange.min) / range) * 100;
+    const maxPct = ((current.max - metaRange.min) / range) * 100;
+
+    const section = document.createElement('div');
+    section.className = 'mt-4';
+    section.innerHTML = `
+        <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider">${label}</label>
+            <span class="text-xs text-primary font-mono">${current.min} – ${current.max}</span>
+        </div>
+        <div class="range-slider-container" data-prop="${propKey}" data-min="${metaRange.min}" data-max="${metaRange.max}">
+            <div class="range-slider-track"></div>
+            <div class="range-slider-fill" style="left: ${minPct}%; width: ${maxPct - minPct}%"></div>
+            <div class="range-slider-handle" data-handle="min" style="left: ${minPct}%"></div>
+            <div class="range-slider-handle" data-handle="max" style="left: ${maxPct}%"></div>
+        </div>
+    `;
+    container.appendChild(section);
+
+    // Add drag listeners
+    const sliderContainer = section.querySelector('.range-slider-container');
+    const handles = sliderContainer.querySelectorAll('.range-slider-handle');
+    handles.forEach(handle => {
+        handle.addEventListener('mousedown', startSliderDrag);
+        handle.addEventListener('touchstart', startSliderDrag, { passive: false });
+    });
+}
+
+let activeSlider = null;
+
+function startSliderDrag(e) {
+    e.preventDefault();
+    const handle = e.target;
+    const container = handle.closest('.range-slider-container');
+    const handleType = handle.dataset.handle; // 'min' or 'max'
+    const propKey = container.dataset.prop;
+    const minVal = parseInt(container.dataset.min);
+    const maxVal = parseInt(container.dataset.max);
+
+    activeSlider = { handle, container, handleType, propKey, minVal, maxVal };
+
+    document.addEventListener('mousemove', dragSlider);
+    document.addEventListener('mouseup', endSliderDrag);
+    document.addEventListener('touchmove', dragSlider, { passive: false });
+    document.addEventListener('touchend', endSliderDrag);
+}
+
+function dragSlider(e) {
+    if (!activeSlider) return;
+    e.preventDefault();
+
+    const { container, handleType, propKey, minVal, maxVal } = activeSlider;
+    const rect = container.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    let pct = (clientX - rect.left) / rect.width;
+    pct = Math.max(0, Math.min(1, pct));
+
+    const newVal = Math.round(minVal + pct * (maxVal - minVal));
+
+    // Update state
+    if (handleType === 'min') {
+        contentState.filters.props[propKey].min = Math.min(newVal, contentState.filters.props[propKey].max);
+    } else {
+        contentState.filters.props[propKey].max = Math.max(newVal, contentState.filters.props[propKey].min);
+    }
+
+    // Re-render sliders and list
+    renderFilterSidebar();
+    renderContentList();
+}
+
+function endSliderDrag() {
+    activeSlider = null;
+    document.removeEventListener('mousemove', dragSlider);
+    document.removeEventListener('mouseup', endSliderDrag);
+    document.removeEventListener('touchmove', dragSlider);
+    document.removeEventListener('touchend', endSliderDrag);
+}
+
+function appendFilterSection(container, label, contentHtml) {
+    const section = document.createElement('div');
+    section.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
+        ${contentHtml}
+    `;
+    container.appendChild(section);
+}
+
+function renderRangeInputs(container, label, propKey, metaRange) {
+    if (!metaRange || metaRange.min > metaRange.max) return;
+
+    const current = contentState.filters.props[propKey] || metaRange;
+
+    const section = document.createElement('div');
+    section.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
+        <div class="flex gap-2 items-center">
+            <input type="number" min="${metaRange.min}" max="${metaRange.max}" value="${current.min}"
+                onchange="updateRangeInput('${propKey}', 'min', this.value)"
+                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded p-1.5 text-sm text-center">
+            <span class="text-text-muted-light dark:text-text-muted-dark">to</span>
+            <input type="number" min="${metaRange.min}" max="${metaRange.max}" value="${current.max}"
+                onchange="updateRangeInput('${propKey}', 'max', this.value)"
+                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded p-1.5 text-sm text-center">
+        </div>
+    `;
+    container.appendChild(section);
+}
+
+function appendFilterSection(container, label, contentHtml) {
+    const section = document.createElement('div');
+    section.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
+        ${contentHtml}
+    `;
+    container.appendChild(section);
+}
+
+function renderRangeInputs(container, label, propKey, metaRange) {
+    if (!metaRange || metaRange.min > metaRange.max) return;
+
+    const current = contentState.filters.props[propKey] || metaRange;
+
+    const section = document.createElement('div');
+    section.innerHTML = `
+        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
+        <div class="flex gap-2 items-center">
+            <input type="number" min="${metaRange.min}" max="${metaRange.max}" value="${current.min}"
+                onchange="updateRangeInput('${propKey}', 'min', this.value)"
+                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded p-1.5 text-sm text-center">
+            <span class="text-text-muted-light dark:text-text-muted-dark">to</span>
+            <input type="number" min="${metaRange.min}" max="${metaRange.max}" value="${current.max}"
+                onchange="updateRangeInput('${propKey}', 'max', this.value)"
+                class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded p-1.5 text-sm text-center">
+        </div>
+    `;
+    container.appendChild(section);
+}
+
+function renderSortControls() {
+    const header = document.querySelector('#contentBrowser .py-3.px-6');
+    if (!header) return;
+
+    // Check if sort already exists
+    let sortContainer = header.querySelector('#contentSortContainer');
+    if (!sortContainer) {
+        sortContainer = document.createElement('div');
+        sortContainer.id = 'contentSortContainer';
+        sortContainer.className = 'flex items-center gap-2';
+
+        const searchInput = header.querySelector('#contentSearchInput');
+        if (searchInput) {
+            searchInput.parentElement.insertBefore(sortContainer, searchInput);
+        }
+    }
+
+    // Build sort options based on active types
+    let options = '<option value="name">Name</option>';
+    if (contentState.filters.type['Monster']) {
+        options += '<option value="level">Level</option>';
+        options += '<option value="ac">AC</option>';
+        options += '<option value="hp">HP</option>';
+    }
+    if (contentState.filters.type['Spell']) {
+        options += '<option value="tier">Tier</option>';
+    }
+
+    sortContainer.innerHTML = `
+        <select id="contentSortField" onchange="updateSort(this.value, contentState.sort.direction)"
+            class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded py-1.5 px-2 text-sm">
+            ${options}
+        </select>
+        <button onclick="toggleSortDirection()" class="p-1.5 rounded hover:bg-surface-highlight-light dark:hover:bg-surface-highlight-dark transition-colors"
+            title="Toggle Sort Direction">
+            <span class="material-symbols-outlined text-lg">${contentState.sort.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>
+        </button>
+    `;
+
+    // Set current selection
+    const select = sortContainer.querySelector('#contentSortField');
+    if (select) select.value = contentState.sort.field;
+}
+
+// --- FILTER ACTIONS ---
+function selectContentGame(game) {
+    contentState.filters.game = game;
+    initContentFilters();
+    renderContentUi();
+}
+
+function updateContentGame(game) {
+    selectContentGame(game);
+}
+
+function selectContentType(type) {
+    // Single-select: clear all, then select this one
+    contentState.filters.type = {};
+    contentState.filters.type[type] = true;
+    renderFilterSidebar();
+    renderSortControls();
+    renderContentList();
+}
+
+function toggleContentType(type) {
+    contentState.filters.type[type] = !contentState.filters.type[type];
+    renderFilterSidebar();
+    renderSortControls();
+    renderContentList();
+}
+
+function toggleContentSourceDropdown(e) {
+    e.stopPropagation();
+    const dropdown = document.getElementById('contentSourceDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+}
+
+function selectAllContentSources() {
+    Array.from(contentState.meta.sources).forEach(s => {
+        contentState.filters.sources[s] = true;
+    });
+    renderFilterSidebar();
+    renderContentList();
+}
+
+function clearAllContentSources() {
+    Object.keys(contentState.filters.sources).forEach(s => {
+        contentState.filters.sources[s] = false;
+    });
+    renderFilterSidebar();
+    renderContentList();
+}
+
+function toggleContentSourceItem(source) {
+    contentState.filters.sources[source] = !contentState.filters.sources[source];
+    renderFilterSidebar();
+    renderContentList();
+}
+
+function updateContentSource(source) {
+    contentState.filters.source = source;
+    renderContentList();
+}
+
+function toggleAlignment(al) {
+    contentState.filters.alignment[al] = !contentState.filters.alignment[al];
+    renderContentList();
+}
+
+function toggleSpellClass(cls) {
+    contentState.filters.spellClass[cls] = !contentState.filters.spellClass[cls];
+    renderContentList();
+}
+
+function updateRangeInput(prop, bound, value) {
+    const val = parseInt(value) || 0;
+    contentState.filters.props[prop][bound] = val;
+    renderContentList();
+}
+
+function updateSort(field, direction) {
+    contentState.sort.field = field;
+    contentState.sort.direction = direction;
+    renderContentList();
+}
+
+function toggleSortDirection() {
+    contentState.sort.direction = contentState.sort.direction === 'asc' ? 'desc' : 'asc';
+    renderSortControls();
+    renderContentList();
+}
+
+function resetContentFilters() {
+    contentState.filters.type = {};
+    contentState.filters.source = 'all';
+    contentState.filters.sources = {};
+    contentState.filters.alignment = {};
+    contentState.filters.spellClass = {};
+    contentState.filters.props = {};
+    contentState.sort = { field: 'name', direction: 'asc' };
+    initContentFilters();
+    renderContentUi();
+    showToast("Filters Reset");
+}
+
+// Helper to render summary based on templates
+function getCardSummaryHtml(item) {
+    const p = item.properties || {};
+    const tmpl = displayTemplates[item.type];
+
+    if (tmpl && tmpl.header) {
+        return tmpl.header.map(field => {
+            const val = p[field.key] || (field.key === 'alignment' && p.alignment ? p.alignment : '');
+            if (!val && !field.label) return '';
+
+            const label = field.label ? `${field.label} ` : '';
+            if (field.badge) {
+                // Map logical colors to classes
+                let colorClass = 'text-primary bg-primary/10'; // Default
+                const c = field.color || tmpl.colorAccent;
+                if (c === 'purple') colorClass = 'text-purple-600 dark:text-purple-400 bg-purple-500/10';
+                else if (c === 'amber') colorClass = 'text-amber-600 dark:text-amber-400 bg-amber-500/10';
+
+                return `<span class="text-xs ${colorClass} px-2 py-0.5 rounded font-bold">${label}${val}</span>`;
+            }
+            return `<span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2">${label}${val}</span>`;
+        }).join('');
+    }
+
+    // Fallback Defaults
+    if (item.type === 'Monster') {
+        const lvl = p.level || '?';
+        const ac = p.ac || '-';
+        const hp = p.hp || '-';
+        const al = p.alignment || '';
+        return `
+            <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded font-bold">LV ${lvl}</span>
+            <span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2">AC ${ac} • HP ${hp} • ${al}</span>
+        `;
+    } else if (item.type === 'Spell') {
+        const tier = p.tier || 0;
+        const cls = p.class || '';
+        return `
+            <span class="text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded font-bold">Tier ${tier}</span>
+            <span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2">${cls}</span>
+        `;
+    }
+    return '';
+}
+
+// --- CONTENT LIST RENDERER ---
+function renderContentList() {
+    const listContainer = document.getElementById('contentListContainer');
+    const searchInput = document.getElementById('contentSearchInput');
+    const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    // Filter
+    let filtered = contentData.filter(item => {
+        if (item.game !== contentState.filters.game) return false;
+        if (!contentState.filters.type[item.type]) return false;
+
+        // Multi-select source filter
+        const anySourceSelected = Object.values(contentState.filters.sources).some(v => v);
+        if (anySourceSelected && !contentState.filters.sources[item.source]) return false;
+
+
+        if (search) {
+            const inName = item.name.toLowerCase().includes(search);
+            const inDesc = item.description && item.description.toLowerCase().includes(search);
+            if (!inName && !inDesc) return false;
+        }
+
+        const props = item.properties;
+        const r = contentState.filters.props;
+
+        if (item.type === 'Monster') {
+            const lvl = parseInt(props.level) || 0;
+            const ac = parseInt(props.ac) || 0;
+            const hp = parseInt(props.hp) || 0;
+            const al = props.alignment;
+
+            if (lvl < r.level.min || lvl > r.level.max) return false;
+            if (ac < r.ac.min || ac > r.ac.max) return false;
+            if (hp < r.hp.min || hp > r.hp.max) return false;
+            if (al && !contentState.filters.alignment[al]) return false;
+        } else if (item.type === 'Spell') {
+            const tier = parseInt(props.tier) || 0;
+            const cls = props.class;
+
+            if (tier < r.tier.min || tier > r.tier.max) return false;
+
+            // Check if any of the spell's classes are enabled
+            if (cls) {
+                const classes = cls.split(',').map(c => c.trim());
+                const anyEnabled = classes.some(c => contentState.filters.spellClass[c]);
+                if (!anyEnabled) return false;
+            }
+        }
+
+        return true;
+    });
+
+    // Sort
+    const sortField = contentState.sort.field;
+    const sortDir = contentState.sort.direction === 'asc' ? 1 : -1;
+
+    filtered.sort((a, b) => {
+        let aVal, bVal;
+
+        if (sortField === 'name') {
+            aVal = a.name.toLowerCase();
+            bVal = b.name.toLowerCase();
+        } else {
+            aVal = parseInt(a.properties[sortField]) || 0;
+            bVal = parseInt(b.properties[sortField]) || 0;
+        }
+
+        if (aVal < bVal) return -1 * sortDir;
+        if (aVal > bVal) return 1 * sortDir;
+        return 0;
+    });
+
+    listContainer.innerHTML = '';
+
+    // Update header
+    const title = document.getElementById('contentHeaderTitle');
+    const activeTypes = Object.keys(contentState.filters.type).filter(k => contentState.filters.type[k]);
+    if (title) {
+        title.textContent = activeTypes.length === 1 ? activeTypes[0] + 's' : 'Content';
+        title.textContent += ` (${filtered.length})`;
+    }
+
+    if (filtered.length === 0) {
+        listContainer.innerHTML = `<div class="text-center text-text-muted-light dark:text-text-muted-dark p-8">No matching content found.</div>`;
+        return;
+    }
+
+    filtered.forEach(item => {
+        const row = document.createElement('div');
+        row.className = "content-row mb-2 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg overflow-hidden transition-all hover:border-primary/50 cursor-pointer group";
+        row.dataset.id = item.id;
+        row.setAttribute('draggable', 'true');
+        row.addEventListener('dragstart', handleContentDragStart);
+
+        const summaryDetails = getCardSummaryHtml(item);
+
+        row.innerHTML = `
+            <div class="content-row-header p-3 flex items-center justify-between" onclick="toggleContentRow(this)">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <span class="material-symbols-outlined text-text-muted-light dark:text-text-muted-dark cursor-grab text-lg opacity-50 group-hover:opacity-100" title="Drag to Save">drag_indicator</span>
+                    <span class="font-semibold text-sm">${item.name}</span>
+                    <div class="flex items-center">${summaryDetails}</div>
+                </div>
+                <span class="material-symbols-outlined text-text-muted-light dark:text-text-muted-dark expand-icon shrink-0">expand_more</span>
+            </div>
+            <div class="content-details hidden border-t border-border-light dark:border-border-dark bg-gray-50/50 dark:bg-[#131b2e]/50 p-4" onclick="event.stopPropagation()">
+            </div>
+        `;
+
+        listContainer.appendChild(row);
+    });
+}
+
+function toggleContentRow(headerEl) {
+    const row = headerEl.parentElement;
+    const details = row.querySelector('.content-details');
+    const icon = row.querySelector('.expand-icon');
+
+    if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        icon.textContent = 'expand_less';
+        row.classList.add('ring-1', 'ring-primary');
+
+        if (!details.innerHTML.trim()) {
+            const id = row.dataset.id;
+            const item = contentData.find(i => i.id === id);
+            if (item) renderContentCard(item, details, { isEmbedded: true });
+        }
+    } else {
+        details.classList.add('hidden');
+        icon.textContent = 'expand_more';
+        row.classList.remove('ring-1', 'ring-primary');
+    }
+}
+
+function renderConfigurableBody(item, container, tmpl, options) {
+    const p = item.properties || {};
+    const color = tmpl.colorAccent || 'primary';
+    const colorClass = color === 'amber' ? 'text-amber-500 dark:text-amber-400'
+        : color === 'purple' ? 'text-purple-500 dark:text-purple-400'
+            : 'text-primary';
+
+    let contentHtml = '';
+
+    if (tmpl.layout) {
+        tmpl.layout.forEach(section => {
+            if (section.type === 'flavor' && p.flavor) {
+                contentHtml += `<div class="italic text-sm text-text-muted-light dark:text-text-muted-dark mb-3 border-l-2 border-${color}-500/40 pl-3">${p.flavor}</div>`;
+            }
+            else if (section.type === 'properties') {
+                const keys = section.keys || [];
+                if (keys.length > 0) {
+                    const fields = keys.map(k => {
+                        let val = p[k] || 'N/A';
+                        let label = k.toUpperCase();
+
+                        // Helper: Handle alignment specifically? or generic?
+                        if (k === 'level') label = 'LV';
+                        if (k === 'alignment') label = 'AL';
+
+                        return `<div><strong class="${colorClass}">${label}</strong> ${val}</div>`;
+                    }).join('');
+                    contentHtml += `<div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mb-3">${fields}</div>`;
+                }
+            }
+            else if (section.type === 'actions' && item.actions && item.actions.length > 0) {
+                const title = section.title || 'Actions';
+                contentHtml += `
+                    <div class="mb-3">
+                        <h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark mb-1">${title}</h4>
+                        ${item.actions.map(a => `<div class="text-sm"><strong class="text-red-500 dark:text-red-400">${a.name || 'Action'}.</strong> ${formatAttacks(a.desc)}</div>`).join('')}
+                    </div>`;
+            }
+            else if (section.type === 'stats' && p.stats) {
+                const s = p.stats;
+                contentHtml += `
+                    <div class="grid grid-cols-6 gap-0 text-center my-2 text-xs bg-background-light dark:bg-background-dark p-1.5 rounded border border-border-light dark:border-border-dark">
+                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">STR</div><div class="font-semibold">${s.str || '0'}</div></div>
+                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">DEX</div><div class="font-semibold">${s.dex || '0'}</div></div>
+                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">CON</div><div class="font-semibold">${s.con || '0'}</div></div>
+                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">INT</div><div class="font-semibold">${s.int || '0'}</div></div>
+                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">WIS</div><div class="font-semibold">${s.wis || '0'}</div></div>
+                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">CHA</div><div class="font-semibold">${s.cha || '0'}</div></div>
+                    </div>`;
+            }
+            else if (section.type === 'abilities' && item.abilities && item.abilities.length > 0) {
+                contentHtml += `
+                <div class="space-y-1 mt-2">
+                    <h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark">Abilities</h4>
+                    ${item.abilities.map(a => `<div class="text-sm"><strong class="${colorClass}">${a.name || 'Ability'}.</strong> ${a.desc || ''}</div>`).join('')}
+                </div>`;
+            }
+            else if (section.type === 'description' && item.description) {
+                contentHtml += `<div class="text-sm text-text-muted-light dark:text-text-muted-dark mb-3">${item.description}</div>`;
+            }
+        });
+    }
+
+    // Footer
+    contentHtml += `
+        <div class="mt-3 pt-2 border-t border-border-light dark:border-border-dark flex justify-between text-xs text-text-muted-light dark:text-text-muted-dark uppercase">
+            <span>${item.game}</span>
+            <span>${item.source}</span>
+        </div>
+    `;
+
+    container.innerHTML = `
+        <div class="content-card rounded-lg bg-surface-light dark:bg-surface-dark p-4"
+                data-id="${item.id}" data-type="${item.type}">
+            ${contentHtml}
+        </div>
+    `;
+}
+
+function renderContentCard(item, container, options = {}) {
+    const { isEmbedded = true, isStandalone = false } = options;
+
+    // Check for display template
+    const tmpl = displayTemplates[item.type];
+    if (tmpl && tmpl.layout) {
+        renderConfigurableBody(item, container, tmpl, options);
+        return;
+    }
+
+    // Fallback: Dispatch to type-specific renderer
+    if (item.type === 'Monster') {
+        renderMonsterCard(item, container, options);
+    } else if (item.type === 'Spell') {
+        renderSpellCard(item, container, options);
+    } else {
+        // Generic fallback
+        renderGenericCard(item, container, options);
+    }
+}
+
+// Attack formatter helper
+function formatAttacks(desc) {
+    if (!desc) return '';
+    let formatted = desc.replace(/^(\d+)\s+/g, '$1 × ');
+    formatted = formatted.replace(/\b(or|and)\s+(\d+)\s+/gi, (match, conj, num) => {
+        return `<strong class="text-white/90 mx-1">${conj.toUpperCase()}</strong> ${num} × `;
+    });
+    return formatted;
+}
+
+function renderMonsterCard(item, container, options = {}) {
+    const { isEmbedded = true } = options;
+    const p = item.properties || {};
+
+    // Props line (AC, HP, MV, AL)
+    const propsHtml = `
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mb-3">
+            <div><strong class="text-amber-500 dark:text-amber-400">AC</strong> ${p.ac || 'N/A'}</div>
+            <div><strong class="text-amber-500 dark:text-amber-400">HP</strong> ${p.hp || 'N/A'}</div>
+            <div><strong class="text-amber-500 dark:text-amber-400">MV</strong> ${p.mv || 'N/A'}</div>
+            <div><strong class="text-amber-500 dark:text-amber-400">AL</strong> ${p.alignment || 'N/A'}</div>
+        </div>
+    `;
+
+    // Flavor text
+    let flavorHtml = '';
+    if (p.flavor) {
+        flavorHtml = `<div class="italic text-sm text-text-muted-light dark:text-text-muted-dark mb-3 border-l-2 border-amber-500/40 pl-3">${p.flavor}</div>`;
+    }
+
+    // Actions with formatted attacks (MOVED UP)
+    let actionsHtml = '';
+    if (item.actions && item.actions.length > 0) {
+        actionsHtml = `
+            <div class="mb-3">
+                <h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark mb-1">Actions</h4>
+                ${item.actions.map(a => `<div class="text-sm"><strong class="text-red-500 dark:text-red-400">${a.name || 'Action'}.</strong> ${formatAttacks(a.desc)}</div>`).join('')}
+            </div>
+        `;
+    }
+
+    // Compact stats block (MOVED DOWN)
+    let statsBlock = '';
+    if (p.stats) {
+        const s = p.stats;
+        statsBlock = `
+            <div class="grid grid-cols-6 gap-0 text-center my-2 text-xs bg-background-light dark:bg-background-dark p-1.5 rounded border border-border-light dark:border-border-dark">
+                <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">STR</div><div class="font-semibold">${s.str || '0'}</div></div>
+                <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">DEX</div><div class="font-semibold">${s.dex || '0'}</div></div>
+                <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">CON</div><div class="font-semibold">${s.con || '0'}</div></div>
+                <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">INT</div><div class="font-semibold">${s.int || '0'}</div></div>
+                <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">WIS</div><div class="font-semibold">${s.wis || '0'}</div></div>
+                <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">CHA</div><div class="font-semibold">${s.cha || '0'}</div></div>
+            </div>
+        `;
+    }
+
+    // Abilities
+    let abilitiesHtml = '';
+    if (item.abilities && item.abilities.length > 0) {
+        abilitiesHtml = `
+            <div class="space-y-1 mt-2">
+                <h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark">Abilities</h4>
+                ${item.abilities.map(a => `<div class="text-sm"><strong class="text-amber-500 dark:text-amber-400">${a.name || 'Ability'}.</strong> ${a.desc || ''}</div>`).join('')}
+            </div>
+        `;
+    }
+
+    // Layout: Flavor → Props → Actions → Stats → Abilities → Footer
+    container.innerHTML = `
+        <div class="content-card rounded-lg bg-surface-light dark:bg-surface-dark p-4"
+             data-id="${item.id}" data-type="${item.type}">
+            ${flavorHtml}
+            ${propsHtml}
+            ${actionsHtml}
+            ${statsBlock}
+            ${abilitiesHtml}
+            <div class="mt-3 pt-2 border-t border-border-light dark:border-border-dark flex justify-between text-xs text-text-muted-light dark:text-text-muted-dark uppercase">
+                <span>${item.game}</span>
+                <span>${item.source}</span>
+            </div>
+        </div>
+    `;
+}
+
+function renderSpellCard(item, container, options = {}) {
+    const p = item.properties || {};
+
+    // Spell props
+    const propsHtml = `
+        <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mb-3">
+            <div><strong class="text-purple-500 dark:text-purple-400">Tier</strong> ${p.tier || 'N/A'}</div>
+            <div><strong class="text-purple-500 dark:text-purple-400">Class</strong> ${p.class || 'N/A'}</div>
+            <div><strong class="text-purple-500 dark:text-purple-400">Duration</strong> ${p.duration || 'N/A'}</div>
+            <div><strong class="text-purple-500 dark:text-purple-400">Range</strong> ${p.range || 'N/A'}</div>
+        </div>
+    `;
+
+    // Description
+    let descHtml = '';
+    if (item.description) {
+        descHtml = `<div class="text-sm mb-3">${item.description}</div>`;
+    }
+
+    container.innerHTML = `
+        <div class="content-card rounded-lg bg-surface-light dark:bg-surface-dark p-4"
+             data-id="${item.id}" data-type="${item.type}">
+            ${propsHtml}
+            ${descHtml}
+            <div class="mt-3 pt-2 border-t border-border-light dark:border-border-dark flex justify-between text-xs text-text-muted-light dark:text-text-muted-dark uppercase">
+                <span>${item.game}</span>
+                <span>${item.source}</span>
+            </div>
+        </div>
+    `;
+}
+
+function renderGenericCard(item, container, options = {}) {
+    const p = item.properties || {};
+
+    let descHtml = '';
+    if (item.description) {
+        descHtml = `<div class="text-sm mb-3">${item.description}</div>`;
+    }
+
+    container.innerHTML = `
+        <div class="content-card rounded-lg bg-surface-light dark:bg-surface-dark p-4"
+             data-id="${item.id}" data-type="${item.type}">
+            ${descHtml}
+            <div class="mt-3 pt-2 border-t border-border-light dark:border-border-dark flex justify-between text-xs text-text-muted-light dark:text-text-muted-dark uppercase">
+                <span>${item.game}</span>
+                <span>${item.source}</span>
+            </div>
+        </div>
+    `;
+}
+
+function handleContentDragStart(e) {
+    const target = e.currentTarget;
+    const id = target.dataset.id;
+    const item = contentData.find(i => i.id === id);
+    if (item) {
+        e.dataTransfer.setData('text/plain', id);
+        e.dataTransfer.setData('application/ttrpg-content', JSON.stringify(item));
+        e.dataTransfer.effectAllowed = 'copy';
+    }
+}
+
+function downloadSavedContent() {
+    const savedIds = Array.from(document.querySelectorAll('#contentSavedArea [data-saved-id]')).map(el => el.dataset.savedId);
+    console.log("Saving IDs:", savedIds);
+    showToast("Download feature coming soon!");
+}
+
+function switchMode(mode) {
+    const generatorView = document.getElementById('generatorView');
+    const contentBrowser = document.getElementById('contentBrowser');
+    const btnGen = document.getElementById('nav-btn-generator');
+    const btnContent = document.getElementById('nav-btn-content');
+
+    if (mode === 'generator') {
+        generatorView.style.display = 'flex';
+        contentBrowser.style.display = 'none';
+        btnGen.classList.add('active', 'bg-primary/10', 'text-primary', 'shadow-md');
+        btnGen.classList.remove('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
+        btnContent.classList.remove('active', 'bg-primary/10', 'text-primary', 'shadow-md');
+        btnContent.classList.add('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
+    } else {
+        generatorView.style.display = 'none';
+        contentBrowser.style.display = 'flex';
+        btnContent.classList.add('active', 'bg-primary/10', 'text-primary', 'shadow-md');
+        btnContent.classList.remove('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
+        btnGen.classList.remove('active', 'bg-primary/10', 'text-primary', 'shadow-md');
+        btnGen.classList.add('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
+
+        if (contentData.length === 0) {
+            loadContent();
+        }
+
+        // Ensure resizer is setup after DOM is visible
+        setupContentSidebarResizer();
+    }
+}
+
+// Initialize
+initContentBrowser();
+

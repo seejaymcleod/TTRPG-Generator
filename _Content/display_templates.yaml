@@ -1,0 +1,40 @@
+# Display Configuration v1
+types:
+  Monster:
+    colorAccent: "amber"
+    header:
+      - key: "level"
+        label: "LV"
+        badge: true
+      - key: "ac"
+        label: "AC"
+      - key: "hp"
+        label: "HP"
+      - key: "alignment"
+        label: ""
+    layout:
+      - type: "flavor"
+        italic: true
+      - type: "properties"
+        keys: ["ac", "hp", "mv", "alignment"]
+        color: "amber"
+      - type: "actions"
+        title: "ACTIONS"
+      - type: "stats"
+        style: "compact"
+      - type: "abilities"
+        color: "amber"
+
+  Spell:
+    colorAccent: "purple"
+    header:
+      - key: "tier"
+        label: "Tier"
+        badge: true
+      - key: "class"
+        label: ""
+    layout:
+      - type: "properties"
+        keys: ["tier", "class", "duration", "range"]
+        color: "purple"
+      - type: "description"
