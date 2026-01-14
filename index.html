@@ -1574,6 +1574,7 @@
                     <div class="flex gap-2 mb-4">
                       <div class="relative flex-1">
                         <input type="text" id="forgeLocalPath" placeholder="Paste local path..."
+                          onkeydown="if(event.key === 'Enter') window.ForgeApp.handleLoadPath()"
                           class="w-full bg-slate-900/50 border border-slate-700 rounded-lg pl-3 pr-10 py-2.5 text-sm focus:ring-1 focus:ring-primary outline-none transition-all text-gray-200 placeholder-gray-600">
                         <button id="forgeBrowseBtn" onclick="document.getElementById('forgeFileInput').click()"
                           class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors p-1 rounded">
@@ -1581,7 +1582,7 @@
                         </button>
                       </div>
                       <input type="file" id="forgeFileInput" class="hidden" accept=".pdf,.md,.txt">
-                      <button id="forgeLoadBtn" onclick="window.ForgeApp.handleLoadPath()"
+                      <button id="forgeLoadBtn"
                         class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-all shadow-lg shadow-indigo-900/20">
                         Load
                       </button>

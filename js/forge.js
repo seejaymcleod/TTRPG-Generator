@@ -554,6 +554,9 @@ class ForgeController {
     }
 
     async handleLoadPath(fileOrEvent) {
+        if (fileOrEvent instanceof Event) {
+            fileOrEvent.preventDefault();
+        }
         console.log("handleLoadPath triggered", fileOrEvent);
         let filePath = '';
         let fileObj = null;
@@ -1046,6 +1049,12 @@ class ForgeController {
         } catch (e) {
             alert("Error saving: " + e.message);
         }
+    }
+
+    skipImport() {
+        this.state.text = '';
+        this.state.contentExtracted = true; // Allow moving forward
+        this.goToStep(2);
     }
 }
 
