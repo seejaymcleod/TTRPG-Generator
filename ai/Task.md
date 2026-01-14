@@ -4,20 +4,9 @@ ai/REPO_MAP.md
 ai/STATE.md
 
 TASK: 
-1) Each card needs an undo stack and button. I'm not sure what a resonable memory limit is, but let's start with 100. Clear that memory whenever makes sense. 
-2) Card rows need to be able to be deleted.
-3) Card rows need each field to be editable.
-Edits will have autocomplete based on the table underneath (but only for that same column). For example, if the header is Race and the value is Elf. I should be able to type Human and it will autocomplete to Human. Since that's a VALID entry on the table, the row will not be locked. Otherwise, it becomes locked. 
-4) Each row needs a reset button which rerolls and unlocks the row.
-5) Each card needs a reset button which rerolls and unlocks all rows.
-I'm not sure if there are other features that need to be with this, so design YOLO, but ask for my approval before you implementing anything I didn't ask for. 
-6) These features need to work regardless of where the card is (table generator or saved cards)
-7) The Title should also be editable.
-8) Delete card icon is missing. 
-9) lock and reroll icons are kind of crap, you can do better than what i chose. Any icons in there that I chose you can replace as desired. 
 
-Show off your skills and make it look good.
-/thorough_test at the end
+1. Separate the elementals into two, with a lesser and greater version. They each have separate HP and LVL and Attack values. 
+2. Make the Hydra have 15HP and LVL 2. The abilities note is sufficient for people to understand the mechanics.
 
 
 CONTEXT:

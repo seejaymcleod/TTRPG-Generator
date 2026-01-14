@@ -236,6 +236,264 @@ app.post('/api/reroll', (req, res) => {
   }
 });
 
+// --- Forge Mode Endpoints ---
+const multer = require('multer');
+// Memory storage for immediate processing
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Lazy load ForgeService to avoid startup crash if not built yet
+let forgeService;
+const getForgeService = () => {
+  if (!forgeService) {
+    try {
+      const { ForgeService } = require('./dist/src/services/ForgeService');
+      forgeService = new ForgeService();
+    } catch (e) {
+      console.error("Failed to load ForgeService. Is the project built?", e);
+      throw new Error("Forge Service not available. Run npm run build.");
+    }
+  }
+  return forgeService;
+};
+
+// POST /api/forge/upload
+app.post('/api/forge/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  try {
+    const forge = getForgeService();
+    const text = await forge.extractText(req.file.buffer);
+    res.json({ text });
+  } catch (e) {
+    console.error("Forge Upload Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/forge/load-path - Load file from local filesystem path
+app.post('/api/forge/load-path', async (req, res) => {
+  const { path: filePath } = req.body;
+  if (!filePath) {
+    return res.status(400).json({ error: 'No path provided' });
+  }
+
+  try {
+    const fs = require('fs');
+    const path = require('path');
+
+    // Security: Only allow files within the project directory or common safe locations
+    const resolvedPath = path.resolve(filePath);
+    const projectRoot = path.resolve(__dirname);
+
+    // Allow files in project dir, or absolute paths that end with allowed extensions
+    const allowedExtensions = ['.pdf', '.txt', '.md', '.json', '.yaml', '.yml'];
+    const ext = path.extname(resolvedPath).toLowerCase();
+
+    if (!allowedExtensions.includes(ext)) {
+      return res.status(400).json({ error: `File type not allowed: ${ext}` });
+    }
+
+    if (!fs.existsSync(resolvedPath)) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    const buffer = fs.readFileSync(resolvedPath);
+    const forge = getForgeService();
+    const text = await forge.extractText(buffer);
+
+    res.json({ text, filename: path.basename(resolvedPath) });
+  } catch (e) {
+    console.error("Forge Load Path Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Forge - List Ollama Models
+app.get('/api/llm/models', async (req, res) => {
+  try {
+    const forge = getForgeService();
+    const models = await forge.listLocalModels();
+    res.json({ models });
+  } catch (e) {
+    console.error("Model fetch error:", e);
+    // Return fallback list on error
+    res.json({ models: ['llama3', 'mistral'] });
+  }
+});
+
+// Forge - List Gemini Models (requires API key)
+app.get('/api/llm/gemini-models', async (req, res) => {
+  const apiKey = req.headers['x-api-key'] || req.query.apiKey;
+
+  if (!apiKey) {
+    // Return defaults if no key
+    return res.json({
+      models: [
+        { name: 'gemini-2.0-flash', displayName: 'Gemini 2.0 Flash', description: 'Fast and cost-effective' },
+        { name: 'gemini-2.5-flash', displayName: 'Gemini 2.5 Flash', description: 'Latest fast model' },
+        { name: 'gemini-2.5-pro', displayName: 'Gemini 2.5 Pro', description: 'Best quality reasoning' }
+      ]
+    });
+  }
+
+  try {
+    const forge = getForgeService();
+    const models = await forge.listGeminiModels(apiKey);
+    res.json({ models });
+  } catch (e) {
+    console.error("Gemini model fetch error:", e);
+    res.json({
+      models: [
+        { name: 'gemini-2.0-flash', displayName: 'Gemini 2.0 Flash', description: 'Fast and cost-effective' }
+      ]
+    });
+  }
+});
+
+// GET /api/forge/metadata - Get unique games, sources, types from content database
+app.get('/api/forge/metadata', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const yaml = require('js-yaml');
+
+    const contentDir = path.join(__dirname, '_Content');
+    const games = new Set();
+    const sources = new Set();
+    const types = new Set();
+
+    // Recursively scan _Content for YAML files
+    function scanDir(dir) {
+      if (!fs.existsSync(dir)) return;
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+      items.forEach(item => {
+        if (item.isDirectory()) {
+          // Use directory name as game if it's a direct child of _Content
+          if (dir === contentDir) {
+            games.add(item.name);
+          }
+          scanDir(path.join(dir, item.name));
+        } else if (item.name.endsWith('.yaml') || item.name.endsWith('.yml')) {
+          try {
+            const content = fs.readFileSync(path.join(dir, item.name), 'utf8');
+            const doc = yaml.load(content);
+            if (doc) {
+              if (doc.game) games.add(doc.game);
+              if (doc.source) sources.add(doc.source);
+              if (doc.type) types.add(doc.type);
+            }
+          } catch (e) { /* Skip invalid YAML */ }
+        }
+      });
+    }
+
+    scanDir(contentDir);
+
+    res.json({
+      games: Array.from(games).sort(),
+      sources: Array.from(sources).sort(),
+      types: Array.from(types).sort()
+    });
+  } catch (e) {
+    console.error('Forge metadata error:', e);
+    res.json({ games: [], sources: [], types: [] });
+  }
+});
+
+// POST /api/forge/analyze
+app.post('/api/forge/analyze', async (req, res) => {
+  const { text, provider, apiKey, model } = req.body;
+  if (!text) return res.status(400).json({ error: "Text required" });
+
+  try {
+    const forge = getForgeService();
+    const analysis = await forge.analyzeText(text, provider, apiKey, model);
+    res.json({ analysis });
+  } catch (e) {
+    console.error("Analysis Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /api/forge/sources/:game - Get available sources for a game
+app.get('/api/forge/sources/:game', (req, res) => {
+  const game = req.params.game;
+  try {
+    const forge = getForgeService();
+    const sources = forge.getSourcesForGame(game);
+    res.json({ sources });
+  } catch (e) {
+    res.json({ sources: ['Core', '3rdParty'] });
+  }
+});
+
+// POST /api/forge/process
+app.post('/api/forge/process', async (req, res) => {
+  const { text, type, game, source, provider, apiKey, model } = req.body;
+  if (!text || !type) {
+    return res.status(400).json({ error: 'Text and Type required' });
+  }
+  try {
+    const forge = getForgeService();
+    // Pass game and source to the service for template loading
+    const yaml = await forge.processContent(text, type, game || '', source || '', provider, apiKey, model);
+    res.json({ yaml });
+  } catch (e) {
+    console.error("Forge Process Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/forge/save
+// POST /api/forge/save
+app.post('/api/forge/save', async (req, res) => {
+  const { content, type } = req.body;
+
+  if (!content) return res.status(400).json({ error: 'No content provided' });
+
+  let yamlParser;
+  try {
+    yamlParser = require('js-yaml');
+  } catch (e) {
+    return res.status(500).json({ error: 'Server missing js-yaml dependency' });
+  }
+
+  try {
+    // Validation: Ensure it's valid YAML
+    const data = yamlParser.load(content);
+
+    // Extract Name and Game for filename
+    const name = data.name || 'Untitled';
+    const game = data.game || 'Generic';
+    const sanitizedName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const sanitizedGame = game.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    // Construct Path
+    // Saved to: _Content/Imported/{Game}/{Type}/filename.yaml
+    const baseDir = path.join(__dirname, '_Content', 'Imported');
+    const targetDir = path.join(baseDir, sanitizedGame, type + 's'); // e.g. _Content/Imported/shadowdark/monsters
+
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const filename = `${sanitizedName}.yaml`;
+    const filePath = path.join(targetDir, filename);
+
+    // Write File
+    fs.writeFileSync(filePath, content, 'utf8');
+
+    console.log(`[Forge] Saved ${filename} to ${targetDir}`);
+    res.json({ message: 'Saved successfully', path: filePath });
+
+  } catch (e) {
+    console.error("Forge Save Error:", e);
+    res.status(500).json({ error: 'Invalid YAML or Save Failed: ' + e.message });
+  }
+});
+
+
 // POST /api/table-contents (Matching Legacy Structure)
 app.post('/api/table-contents', (req, res) => {
   const { table } = req.body;
@@ -356,36 +614,30 @@ app.listen(PORT, () => {
 // --- User System Implementation ---
 
 const crypto = require('crypto');
-const USERS_FILE = path.join(__dirname, 'data', 'users.json');
 
-// Ensure data directory exists
-if (!fs.existsSync(path.join(__dirname, 'data'))) {
-  fs.mkdirSync(path.join(__dirname, 'data'));
-}
+// Import UserService from compiled TypeScript
+const UserService = require('./dist/src/services/UserService');
+const Encryption = require('./dist/src/services/Encryption');
 
-// User Data Helper Functions
+// Initialize encryption on startup
+Encryption.initEncryption();
+
+// Legacy compatibility wrappers
 function loadUsers() {
-  if (!fs.existsSync(USERS_FILE)) {
-    return [];
-  }
-  try {
-    return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
-  } catch (e) {
-    console.error("Error loading users:", e);
-    return [];
-  }
+  // Return array of all users for legacy endpoints
+  const usernames = UserService.listUsers();
+  return usernames.map(u => UserService.loadUser(u)).filter(Boolean);
 }
 
 function saveUsers(users) {
-  try {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-  } catch (e) {
-    console.error("Error saving users:", e);
+  // Save each user individually
+  for (const user of users) {
+    UserService.saveUser(user);
   }
 }
 
 function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
+  return UserService.hashPassword(password);
 }
 
 // POST /api/register
@@ -395,39 +647,26 @@ app.post('/api/register', (req, res) => {
     return res.status(400).json({ error: 'Username and password required' });
   }
 
-  const users = loadUsers();
-  if (users.find(u => u.username === username)) {
-    return res.status(409).json({ error: 'Username already exists' });
+  try {
+    const newUser = UserService.createUser(username, password, email, false);
+    // Return user without sensitive data
+    const { passwordHash, secrets, ...safeUser } = newUser;
+    res.json({ user: safeUser });
+  } catch (e) {
+    res.status(409).json({ error: e.message });
   }
-
-  const newUser = {
-    username,
-    email: email || '', // Optional for now to support old users, but UI should require it
-    passwordHash: hashPassword(password),
-    favorites: [],
-    resetToken: null,
-    resetTokenExpiry: null
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  // Return user without password
-  const { passwordHash, ...safeUser } = newUser;
-  res.json({ user: safeUser });
 });
 
 // POST /api/login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  const users = loadUsers();
-  const user = users.find(u => u.username === username);
+  const user = UserService.verifyCredentials(username, password);
 
-  if (!user || user.passwordHash !== hashPassword(password)) {
+  if (!user) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const { passwordHash, ...safeUser } = user;
+  const { passwordHash, secrets, ...safeUser } = user;
   res.json({ user: safeUser });
 });
 
@@ -435,35 +674,93 @@ app.post('/api/login', (req, res) => {
 app.post('/api/user/favorites/toggle', (req, res) => {
   const { username, tableFilename } = req.body;
 
-  // In a real app we'd verify a session token here. 
-  // For this simple local tool, we trust the client provided username for now, 
-  // or we could require password again (too annoying).
-  // Implicit trust for local tool context.
-
-  const users = loadUsers();
-  const userIndex = users.findIndex(u => u.username === username);
-
-  if (userIndex === -1) {
+  const user = UserService.loadUser(username);
+  if (!user) {
     return res.status(404).json({ error: 'User not found' });
   }
 
-  const user = users[userIndex];
-  if (!user.favorites) user.favorites = [];
+  // Ensure favorites structure exists
+  if (!user.favorites) user.favorites = { tables: [], cards: [] };
+  if (Array.isArray(user.favorites)) {
+    // Migrate old format
+    user.favorites = { tables: user.favorites, cards: [] };
+  }
 
-  const favIndex = user.favorites.indexOf(tableFilename);
+  const favIndex = user.favorites.tables.indexOf(tableFilename);
   let isFavorite = false;
 
   if (favIndex === -1) {
-    user.favorites.push(tableFilename);
+    user.favorites.tables.push(tableFilename);
     isFavorite = true;
   } else {
-    user.favorites.splice(favIndex, 1);
+    user.favorites.tables.splice(favIndex, 1);
     isFavorite = false;
   }
 
-  saveUsers(users);
+  UserService.saveUser(user);
 
-  res.json({ favorites: user.favorites, isFavorite });
+  res.json({ favorites: user.favorites.tables, isFavorite });
+});
+
+// GET /api/user/secrets - Get decrypted secrets for current user
+app.get('/api/user/secrets', (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const secrets = UserService.getUserSecrets(username);
+  res.json({ secrets: secrets || {} });
+});
+
+// POST /api/user/secrets - Set encrypted secrets
+app.post('/api/user/secrets', (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const { geminiApiKey } = req.body;
+
+  try {
+    UserService.setUserSecrets(username, { geminiApiKey });
+    res.json({ message: 'Secrets saved' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// GET /api/user/preferences - Get user preferences
+app.get('/api/user/preferences', (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const user = UserService.loadUser(username);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  res.json({ preferences: user.preferences || {} });
+});
+
+// POST /api/user/preferences - Update user preferences
+app.post('/api/user/preferences', (req, res) => {
+  const username = req.headers['x-username'];
+  if (!username) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const user = UserService.loadUser(username);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  user.preferences = { ...user.preferences, ...req.body };
+  UserService.saveUser(user);
+
+  res.json({ preferences: user.preferences });
 });
 
 // --- Password Recovery ---

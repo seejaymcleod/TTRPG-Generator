@@ -1,0 +1,286 @@
+# ShadowDark Content Templates v1.0
+# These templates define the expected schema for each content type.
+# The AI parser uses these to convert raw PDF text to valid YAML.
+# 
+# HOW TO USE:
+# - Each template shows required fields, optional fields, and examples
+# - The "conventions" section maps PDF abbreviations to our schema
+# - Follow the exact structure shown in examples
+
+game: ShadowDark
+version: "1.0"
+
+# ============================================================================
+# GAME-SPECIFIC CONVENTIONS
+# ============================================================================
+# ShadowDark uses specific abbreviations in the official books.
+# Map these to our standardized property names.
+
+conventions:
+  # Ability Score Abbreviations (often shown as bold letters in PDFs)
+  stats:
+    S: "str"      # Strength - often shown as bold 'S' in stat blocks
+    D: "dex"      # Dexterity
+    C: "con"      # Constitution
+    I: "int"      # Intelligence
+    W: "wis"      # Wisdom
+    Ch: "cha"     # Charisma
+    STR: "str"
+    DEX: "dex"
+    CON: "con"
+    INT: "int"
+    WIS: "wis"
+    CHA: "cha"
+  
+  # Alignment Codes
+  alignments:
+    L: "Lawful"
+    N: "Neutral"
+    C: "Chaotic"
+  
+  # Movement Keywords
+  movement_types:
+    - "near"          # Standard movement (30ft equivalent)
+    - "close"         # Adjacent/5ft
+    - "far"           # Long range (60ft+)
+    - "double near"   # Double speed
+    - "(swim)"        # Can swim
+    - "(fly)"         # Can fly
+    - "(climb)"       # Can climb
+    - "(burrow)"      # Can burrow underground
+  
+  # Attack Format Pattern
+  # Example: "2 claw +4 (1d8)" = 2 attacks, claw, +4 to hit, 1d8 damage
+  attack_pattern: "[count] [weapon] +[bonus] ([damage])"
+
+# ============================================================================
+# MONSTER TEMPLATE
+# ============================================================================
+templates:
+  Monster:
+    description: |
+      A creature stat block for ShadowDark RPG.
+      Monsters have stats, abilities, and attack actions.
+      Level determines difficulty (1 = easy, 10+ = boss).
+    
+    id_format: "sd_monster_{snake_case_name}"
+    
+    required_fields:
+      id:
+        description: "Unique identifier"
+        format: "sd_monster_lowercase_with_underscores"
+        example: "sd_monster_goblin_archer"
+      name:
+        description: "Display name as shown in the book"
+        example: "Goblin Archer"
+      type:
+        description: "Always 'Monster' for this template"
+        value: "Monster"
+      game:
+        description: "Always 'ShadowDark'"
+        value: "ShadowDark"
+      source:
+        description: "Which book or supplement"
+        examples: ["Core", "Cursed Scroll 1", "Cursed Scroll 2", "Cursed Scroll 3"]
+    
+    properties:
+      ac:
+        description: "Armor Class - number, optionally with armor type"
+        examples:
+          - "14"
+          - "16 (plate mail)"
+          - "12 (leather armor)"
+      hp:
+        description: "Hit Points - single number"
+        examples: ["5", "25", "100"]
+      mv:
+        description: "Movement type and range"
+        examples:
+          - "near"
+          - "near (fly)"
+          - "double near (swim)"
+          - "near (climb, burrow)"
+      level:
+        description: "Creature level (determines XP and difficulty)"
+        range: "1-20+"
+        examples: ["1", "5", "10", "16"]
+      alignment:
+        description: "Single letter: L=Lawful, N=Neutral, C=Chaotic"
+        examples: ["L", "N", "C"]
+      stats:
+        description: "Six ability score MODIFIERS (not scores)"
+        note: "These are modifiers (-4 to +5), NOT the 3-18 scores"
+        format:
+          str: "modifier"
+          dex: "modifier"
+          con: "modifier"
+          int: "modifier"
+          wis: "modifier"
+          cha: "modifier"
+        example:
+          str: "3"
+          dex: "1"
+          con: "2"
+          int: "-2"
+          wis: "1"
+          cha: "0"
+      flavor:
+        description: "Short italicized description (1-2 sentences)"
+        example: "A hulking, fur-covered beast with razor claws."
+    
+    abilities:
+      description: "Special abilities beyond basic attacks"
+      format:
+        - name: "Ability Name"
+          desc: "What the ability does"
+      examples:
+        - name: "Rage"
+          desc: "1/day, immune to morale checks, +1d4 damage (3 rounds)."
+        - name: "Darkvision"
+          desc: "Can see in complete darkness."
+        - name: "Poison"
+          desc: "DC 12 CON or paralyzed 1d4 rounds."
+    
+    actions:
+      description: "Attack and combat actions"
+      format:
+        - name: "Attack"
+          desc: "[count] [weapon] +[bonus] ([damage])"
+      examples:
+        - name: "Attack"
+          desc: "2 claw +4 (1d8)"
+        - name: "Attack"
+          desc: "1 longsword +3 (1d8) or 1 shortbow (far) +2 (1d6)"
+        - name: "Attack"
+          desc: "3 bite +5 (2d6) or 1 breath weapon"
+    
+    full_example: |
+      - id: sd_monster_orc_warrior
+        name: "Orc Warrior"
+        type: Monster
+        game: ShadowDark
+        source: Core
+        properties:
+          ac: "13 (leather)"
+          hp: "9"
+          mv: "near"
+          level: "2"
+          alignment: "C"
+          stats:
+            str: "2"
+            dex: "0"
+            con: "1"
+            int: "-1"
+            wis: "0"
+            cha: "-1"
+          flavor: "Green-skinned brutes with tusked jaws and crude weapons."
+        abilities:
+          - name: "Bloodlust"
+            desc: "+1 damage when HP below half."
+        actions:
+          - name: "Attack"
+            desc: "1 greataxe +2 (1d10) or 1 javelin (far) +0 (1d6)"
+        description: "Green-skinned brutes with tusked jaws and crude weapons."
+
+  # ==========================================================================
+  # SPELL TEMPLATE
+  # ==========================================================================
+  Spell:
+    description: |
+      A spell entry for ShadowDark RPG.
+      Spells have tiers, classes, and effect descriptions.
+    
+    id_format: "sd_spell_{snake_case_name}"
+    
+    required_fields:
+      id:
+        description: "Unique identifier"
+        format: "sd_spell_lowercase_with_underscores"
+        example: "sd_spell_fireball"
+      name:
+        description: "Spell name as shown in the book"
+        example: "Fireball"
+      type:
+        description: "Always 'Spell' for this template"
+        value: "Spell"
+      game:
+        description: "Always 'ShadowDark'"
+        value: "ShadowDark"
+      source:
+        description: "Which book or supplement"
+        examples: ["Core", "Cursed Scroll 1"]
+    
+    properties:
+      tier:
+        description: "Spell tier (1-5)"
+        range: "1-5"
+        note: "Tier 1 = basic, Tier 5 = powerful"
+      class:
+        description: "Which class can cast this spell"
+        options: ["Wizard", "Priest", "Wizard/Priest"]
+      duration:
+        description: "How long the spell lasts"
+        examples: ["Instant", "Focus", "1 round", "1d4 rounds", "Permanent"]
+      range:
+        description: "Casting range"
+        examples: ["Self", "Close", "Near", "Far"]
+    
+    description:
+      description: "Full spell effect text"
+      note: "Include all mechanical details"
+    
+    full_example: |
+      - id: sd_spell_magic_missile
+        name: "Magic Missile"
+        type: Spell
+        game: ShadowDark
+        source: Core
+        properties:
+          tier: "1"
+          class: "Wizard"
+          duration: "Instant"
+          range: "Far"
+        description: "You fire three glowing darts that automatically hit targets you can see within range. Each dart deals 1d4+1 damage."
+
+  # ==========================================================================
+  # ITEM TEMPLATE
+  # ==========================================================================
+  Item:
+    description: |
+      An item, weapon, or piece of equipment for ShadowDark RPG.
+    
+    id_format: "sd_item_{snake_case_name}"
+    
+    required_fields:
+      id:
+        description: "Unique identifier"
+        example: "sd_item_longsword"
+      name:
+        description: "Item name"
+        example: "Longsword"
+      type:
+        description: "Always 'Item' for this template"
+        value: "Item"
+      game:
+        description: "Always 'ShadowDark'"
+        value: "ShadowDark"
+      source:
+        description: "Which book"
+        examples: ["Core", "Cursed Scroll 1"]
+    
+    properties:
+      category:
+        description: "Item category"
+        options: ["Weapon", "Armor", "Gear", "Magic Item", "Treasure"]
+      cost:
+        description: "Price in gold pieces"
+        example: "10 gp"
+      damage:
+        description: "For weapons only"
+        example: "1d8"
+      properties:
+        description: "Special properties"
+        examples: ["two-handed", "finesse", "versatile"]
+    
+    description:
+      description: "Item description and effects"

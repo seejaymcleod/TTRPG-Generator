@@ -1,0 +1,21 @@
+{
+  "username": "SeeJayMac",
+  "email": "",
+  "passwordHash": "c6984fb99d3adf8b768509bfebaa493d4d8d38f7415c506050fe76adfcee3cc0",
+  "isAdmin": true,
+  "secrets": {
+    "geminiApiKey": "yGelPiiVuBVEMyp//vZDcULYGn3a+fsrF3XML94otZVm1YxdkvT/TITEQ73l8x/ZjSH9gaYNGVvkyOD5kFC3E67PIX4pAVA="
+  },
+  "favorites": {
+    "tables": [
+      "ATest_AllFeatures.yaml"
+    ],
+    "cards": []
+  },
+  "preferences": {
+    "theme": "dark",
+    "defaultLLMProvider": "gemini"
+  },
+  "resetToken": null,
+  "resetTokenExpiry": null
+}

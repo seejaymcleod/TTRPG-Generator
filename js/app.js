@@ -3843,30 +3843,56 @@ function downloadSavedContent() {
 function switchMode(mode) {
     const generatorView = document.getElementById('generatorView');
     const contentBrowser = document.getElementById('contentBrowser');
+    const forgeContainer = document.getElementById('forgeContainer');
+
+    // Buttons
     const btnGen = document.getElementById('nav-btn-generator');
     const btnContent = document.getElementById('nav-btn-content');
+    const btnForge = document.getElementById('navForge');
 
+    // Helper to set active state
+    const setActive = (btn, active) => {
+        if (!btn) return;
+        if (active) {
+            btn.classList.add('active', 'bg-primary/10', 'text-primary', 'shadow-md');
+            btn.classList.remove('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light', 'dark:hover:bg-surface-highlight-dark');
+        } else {
+            btn.classList.remove('active', 'bg-primary/10', 'text-primary', 'shadow-md');
+            btn.classList.add('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light', 'dark:hover:bg-surface-highlight-dark');
+        }
+    };
+
+    // Hide all first
+    if (generatorView) generatorView.style.display = 'none';
+    if (contentBrowser) contentBrowser.style.display = 'none';
+    if (forgeContainer) {
+        forgeContainer.style.display = 'none';
+        forgeContainer.classList.add('hidden'); // Ensure class logic (from forge.js) is respected if used elsewhere
+    }
+
+    // Reset Buttons
+    setActive(btnGen, false);
+    setActive(btnContent, false);
+    setActive(btnForge, false);
+
+    // Show Selected
     if (mode === 'generator') {
-        generatorView.style.display = 'flex';
-        contentBrowser.style.display = 'none';
-        btnGen.classList.add('active', 'bg-primary/10', 'text-primary', 'shadow-md');
-        btnGen.classList.remove('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
-        btnContent.classList.remove('active', 'bg-primary/10', 'text-primary', 'shadow-md');
-        btnContent.classList.add('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
-    } else {
-        generatorView.style.display = 'none';
-        contentBrowser.style.display = 'flex';
-        btnContent.classList.add('active', 'bg-primary/10', 'text-primary', 'shadow-md');
-        btnContent.classList.remove('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
-        btnGen.classList.remove('active', 'bg-primary/10', 'text-primary', 'shadow-md');
-        btnGen.classList.add('text-text-muted-light', 'dark:text-text-muted-dark', 'hover:bg-surface-highlight-light');
+        if (generatorView) generatorView.style.display = 'flex';
+        setActive(btnGen, true);
+    } else if (mode === 'content') {
+        if (contentBrowser) contentBrowser.style.display = 'flex';
+        setActive(btnContent, true);
 
-        if (contentData.length === 0) {
+        if (typeof contentData !== 'undefined' && contentData.length === 0) {
             loadContent();
         }
-
-        // Ensure resizer is setup after DOM is visible
         setupContentSidebarResizer();
+    } else if (mode === 'forge') {
+        if (forgeContainer) {
+            forgeContainer.style.display = 'flex';
+            forgeContainer.classList.remove('hidden');
+        }
+        setActive(btnForge, true);
     }
 }
 
