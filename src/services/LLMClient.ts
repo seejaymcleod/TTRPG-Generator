@@ -85,6 +85,66 @@ export class LLMClient {
         }
     }
 
+    /**
+     * Generate with images (multimodal) - Gemini only
+     * @param prompt Text prompt
+     * @param images Array of image buffers (PNG/JPEG)
+     * @param systemPrompt Optional system context
+     * @param apiKey Gemini API key
+     * @param modelName Model to use (default: gemini-2.0-flash)
+     */
+    async generateWithImages(
+        prompt: string,
+        images: Buffer[],
+        systemPrompt?: string,
+        apiKey?: string,
+        modelName = 'gemini-2.0-flash'
+    ): Promise<string> {
+        if (!apiKey) throw new Error("API Key required for multimodal generation");
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+        // Build parts array: system prompt + images + user prompt
+        const parts: any[] = [];
+
+        if (systemPrompt) {
+            parts.push({ text: systemPrompt + '\n\n' });
+        }
+
+        // Add images as inline_data
+        for (const img of images) {
+            parts.push({
+                inline_data: {
+                    mime_type: 'image/png',
+                    data: img.toString('base64')
+                }
+            });
+        }
+
+        parts.push({ text: prompt });
+
+        try {
+            const response = await axios.post(url, {
+                contents: [{ parts }],
+                generationConfig: {
+                    temperature: 0.1,
+                    responseMimeType: "text/plain"
+                }
+            });
+
+            const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (!text) throw new Error("Empty response from Gemini multimodal");
+
+            return text.replace(/```yaml\n/g, '').replace(/```/g, '').trim();
+        } catch (error) {
+            console.error('Gemini Multimodal Error:', error);
+            if (axios.isAxiosError(error)) {
+                throw new Error(`Gemini multimodal API failed: ${error.response?.data?.error?.message || error.message}`);
+            }
+            throw error;
+        }
+    }
+
     private async generateGemini(prompt: string, systemPrompt?: string, apiKey?: string, modelName = 'gemini-2.0-flash'): Promise<string> {
         if (!apiKey) throw new Error("API Key required for Gemini");
 

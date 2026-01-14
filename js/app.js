@@ -3668,17 +3668,20 @@ function renderConfigurableBody(item, container, tmpl, options) {
 function renderContentCard(item, container, options = {}) {
     const { isEmbedded = true, isStandalone = false } = options;
 
-    // Check for display template
-    const tmpl = displayTemplates[item.type];
+    // Check for display template (Case-insensitive)
+    const typeKey = Object.keys(displayTemplates).find(k => k.toLowerCase() === (item.type || '').toLowerCase());
+    const tmpl = typeKey ? displayTemplates[typeKey] : null;
+
     if (tmpl && tmpl.layout) {
         renderConfigurableBody(item, container, tmpl, options);
         return;
     }
 
-    // Fallback: Dispatch to type-specific renderer
-    if (item.type === 'Monster') {
+    // Fallback: Dispatch to type-specific renderer (Case-insensitive)
+    const normType = (item.type || '').toLowerCase();
+    if (normType === 'monster') {
         renderMonsterCard(item, container, options);
-    } else if (item.type === 'Spell') {
+    } else if (normType === 'spell') {
         renderSpellCard(item, container, options);
     } else {
         // Generic fallback
@@ -3898,4 +3901,6 @@ function switchMode(mode) {
 
 // Initialize
 initContentBrowser();
+
+window.renderContentCard = renderContentCard;
 

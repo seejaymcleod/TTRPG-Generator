@@ -494,6 +494,71 @@ app.post('/api/forge/save', async (req, res) => {
 });
 
 
+// POST /api/forge/extract-multimodal - Combine Docling text + Vision for entity extraction
+app.post('/api/forge/extract-multimodal', upload.single('file'), async (req, res) => {
+  const { doclingText, type, game, source, apiKey, model } = req.body;
+
+  if (!req.file && !doclingText) {
+    return res.status(400).json({ error: 'PDF file or docling text required' });
+  }
+  if (!type || !game || !source) {
+    return res.status(400).json({ error: 'Type, game, and source are required' });
+  }
+  if (!apiKey) {
+    return res.status(400).json({ error: 'API key required for multimodal extraction' });
+  }
+
+  try {
+    const forge = getForgeService();
+
+    // If file provided, we use it for both text extraction and vision
+    let text = doclingText;
+    let pdfBuffer = req.file?.buffer;
+
+    if (req.file && !doclingText) {
+      text = await forge.extractText(req.file.buffer);
+    }
+
+    // Perform multimodal extraction
+    const cards = await forge.extractMultiModal(
+      text,
+      pdfBuffer,
+      type,
+      game,
+      source,
+      apiKey,
+      model || 'gemini-2.0-flash'
+    );
+
+    res.json({ cards, count: cards.length });
+  } catch (e) {
+    console.error("Multimodal Extraction Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/forge/save-cards - Save verified cards to content YAML
+app.post('/api/forge/save-cards', async (req, res) => {
+  const { cards, game, contentType } = req.body;
+
+  if (!cards || !Array.isArray(cards) || cards.length === 0) {
+    return res.status(400).json({ error: 'Cards array required' });
+  }
+  if (!game) {
+    return res.status(400).json({ error: 'Game is required' });
+  }
+
+  try {
+    const forge = getForgeService();
+    const result = await forge.saveCards(cards, game, contentType || 'content');
+    res.json(result);
+  } catch (e) {
+    console.error("Save Cards Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
 // POST /api/table-contents (Matching Legacy Structure)
 app.post('/api/table-contents', (req, res) => {
   const { table } = req.body;

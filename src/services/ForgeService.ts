@@ -241,6 +241,108 @@ CRITICAL RULES:
     async listGeminiModels(apiKey: string): Promise<{ name: string, displayName: string, description: string }[]> {
         return this.llm.listGeminiModels(apiKey);
     }
+
+    /**
+     * Multi-modal extraction: Combines Docling text + Vision for accurate entity extraction.
+     * Uses source_schema patterns to identify and separate entities.
+     */
+    async extractMultiModal(
+        doclingText: string,
+        pdfBuffer: Buffer,
+        type: 'monster' | 'spell' | 'item',
+        game: string,
+        source: string,
+        apiKey: string,
+        model: string = 'gemini-2.0-flash'
+    ): Promise<any[]> {
+        const template = this.loadTemplateForGame(game);
+
+        // Build the extraction prompt using source_schema
+        const systemPrompt = `You are a TTRPG Content Extractor.
+Your task is to identify and extract ${type} entries from the provided content.
+
+CRITICAL RULES:
+1. Return ONLY a valid JSON array of ${type} objects
+2. Each object must have: id, name, type, game, source, properties, abilities (for monsters), actions (for monsters), description
+3. Use the source_schema patterns to identify entity boundaries
+4. Do NOT invent content - only extract what is explicitly present
+5. Preserve exact stat values, ability names, and descriptions
+
+Game: ${game}
+Source: ${source}
+Content Type: ${type}
+
+--- TEMPLATE AND SOURCE SCHEMA ---
+${template}
+
+--- DOCLING EXTRACTED TEXT ---
+${doclingText}
+
+Now examine the PDF image(s) to verify and enhance the extraction.
+Return a JSON array with all ${type} entries found.`;
+
+        const userPrompt = `Extract all ${type} entries from this content. Return as JSON array.`;
+
+        try {
+            // Use multimodal with PDF buffer as image
+            const result = await this.llm.generateWithImages(
+                userPrompt,
+                [pdfBuffer],
+                systemPrompt,
+                apiKey,
+                model
+            );
+
+            // Parse JSON response
+            const cleaned = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            return JSON.parse(cleaned);
+        } catch (error) {
+            console.error('Multi-modal extraction failed:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Save extracted cards to the game's content YAML file.
+     */
+    async saveCards(
+        cards: any[],
+        game: string,
+        contentType: string
+    ): Promise<{ saved: number, path: string }> {
+        const yaml = require('js-yaml');
+        const contentPath = path.resolve(process.cwd(), '_Content', game, `${game}_Content.yaml`);
+
+        let existingContent: any[] = [];
+
+        // Load existing content if file exists
+        if (fs.existsSync(contentPath)) {
+            const fileContent = fs.readFileSync(contentPath, 'utf-8');
+            existingContent = yaml.load(fileContent) || [];
+        }
+
+        // Get existing IDs to prevent duplicates
+        const existingIds = new Set(existingContent.map((c: any) => c.id));
+
+        // Filter out duplicates and add new cards
+        const newCards = cards.filter((card: any) => !existingIds.has(card.id));
+        const updatedContent = [...existingContent, ...newCards];
+
+        // Sort by type, then by name
+        updatedContent.sort((a: any, b: any) => {
+            if (a.type !== b.type) return a.type.localeCompare(b.type);
+            return a.name.localeCompare(b.name);
+        });
+
+        // Write back to file
+        fs.writeFileSync(contentPath, yaml.dump(updatedContent, {
+            lineWidth: -1,
+            quotingType: '"',
+            forceQuotes: false
+        }));
+
+        return { saved: newCards.length, path: contentPath };
+    }
 }
 
 

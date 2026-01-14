@@ -195,6 +195,33 @@ const ForgeAPI = {
             body: JSON.stringify({ content, type })
         });
         return res.json();
+    },
+
+    /**
+     * Multi-modal extraction: Combines Docling text + Vision for entity extraction.
+     * @param {FormData} formData - Must include: file (PDF), doclingText, type, game, source, apiKey, model
+     */
+    async extractMultiModal(formData) {
+        const res = await fetch('/api/forge/extract-multimodal', {
+            method: 'POST',
+            body: formData
+        });
+        return res.json();
+    },
+
+    /**
+     * Save verified cards to content YAML file.
+     * @param {Array} cards - Array of card objects
+     * @param {string} game - Game system (e.g., "ShadowDark")
+     * @param {string} contentType - Content type (e.g., "Monster")
+     */
+    async saveCards(cards, game, contentType) {
+        const res = await fetch('/api/forge/save-cards', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cards, game, contentType })
+        });
+        return res.json();
     }
 };
 
@@ -395,15 +422,37 @@ class ForgeController {
         if (prevBtn) prevBtn.addEventListener('click', () => this.goToStep(this.state.currentStep - 1));
         if (nextBtn) nextBtn.addEventListener('click', () => this.goToStep(this.state.currentStep + 1));
 
+        // Clickable Steps (Skip functionality)
+        const indicators = document.querySelectorAll('.forge-step-indicator');
+        indicators.forEach(el => {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', () => {
+                const step = parseInt(el.dataset.step);
+                if (step) this.goToStep(step, true); // Force navigation
+            });
+        });
+
         this.updateWizardUI();
     }
 
-    goToStep(step) {
+    goToStep(step, force = false) {
         if (step < 1 || step > this.state.totalSteps) return;
 
-        // Validation before advancing
-        if (step > this.state.currentStep) {
+        // Validation (skipped if force is true)
+        if (!force && step > this.state.currentStep) {
             if (!this.validateStep(this.state.currentStep)) return;
+        }
+
+        // Auto-Process when entering Step 5 (YAML -> Cards)
+        if (step === 5) {
+            try {
+                this.processCardsFromYaml();
+            } catch (e) {
+                // If forcing, we might warn but proceed, or block. 
+                // Blocking is safer as Step 5 is empty otherwise.
+                alert('YAML Error: ' + e.message);
+                return;
+            }
         }
 
         this.state.currentStep = step;
@@ -443,6 +492,12 @@ class ForgeController {
             if (panel) {
                 panel.classList.toggle('hidden', i !== step);
             }
+        }
+
+        // Toggle visibility of Steps 1-4 container vs Step 5
+        const steps1to4Container = document.getElementById('forgeSteps1to4Container');
+        if (steps1to4Container) {
+            steps1to4Container.classList.toggle('hidden', step === 5);
         }
 
         // Update step indicators
@@ -833,33 +888,34 @@ class ForgeController {
     }
 
     handleGenerateCards() {
-        try {
-            const yaml = document.getElementById('forgeEditor').value;
-            // Basic lenient parsing
-            const parsed = jsyaml.load(yaml);
+        this.goToStep(5);
+    }
 
-            // Normalize to array
-            let content = [];
-            if (Array.isArray(parsed)) content = parsed;
-            else if (parsed && typeof parsed === 'object') content = [parsed];
+    processCardsFromYaml() {
+        const editor = document.getElementById('forgeEditor');
+        if (!editor || !editor.value.trim()) throw new Error("No YAML content found");
 
-            // Assign IDs if missing
-            content.forEach(item => {
-                if (!item.id) item.id = 'gen-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-            });
+        const yaml = editor.value;
+        // Basic lenient parsing
+        const parsed = jsyaml.load(yaml);
 
-            this.state.parsed = content;
+        // Normalize to array
+        let content = [];
+        if (Array.isArray(parsed)) content = parsed;
+        else if (parsed && typeof parsed === 'object') content = [parsed];
 
-            // Init filters based on content
-            this.initCardFilters();
+        // Assign IDs if missing
+        content.forEach(item => {
+            if (!item.id) item.id = 'gen-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        });
 
-            // Render List
-            this.renderCardList();
+        this.state.parsed = content;
 
-            this.goToStep(5);
-        } catch (e) {
-            alert('YAML Error: ' + e.message);
-        }
+        // Init filters based on content
+        this.initCardFilters();
+
+        // Render List
+        this.renderCardList();
     }
 
     initCardFilters() {
@@ -989,20 +1045,69 @@ class ForgeController {
         });
     }
 
-    saveAllCards() {
+    async saveAllCards() {
         const content = this.state.parsed || [];
         if (content.length === 0) return;
 
-        // Add to global contentData
-        if (window.contentData) {
-            content.forEach(item => {
-                // Check duplicate ID
-                if (!window.contentData.find(i => i.id === item.id)) {
-                    window.contentData.push(item);
+        // Group by Game & Content Type for efficiency
+        // (Assuming most imports are processing one type at a time, but handling mixed is safer)
+        const batches = {};
+        content.forEach(item => {
+            const key = `${item.game}|${item.type}`;
+            if (!batches[key]) batches[key] = [];
+            batches[key].push(item);
+        });
+
+        let successCount = 0;
+        let failCount = 0;
+
+        // Process batches
+        // We use a simple loop to await each save
+        for (const key of Object.keys(batches)) {
+            const [game, type] = key.split('|');
+            const items = batches[key];
+
+            try {
+                // 1. Server Persistence
+                const result = await ForgeAPI.saveCards(items, game, type);
+
+                if (result && result.saved) {
+                    successCount += items.length;
+
+                    // 2. Client-Side Update (for immediate UI feedback)
+                    if (window.contentData) {
+                        items.forEach(item => {
+                            // Avoid duplicates in memory
+                            if (!window.contentData.find(i => i.id === item.id)) {
+                                window.contentData.push(item);
+                            }
+                        });
+                    }
+                } else {
+                    failCount += items.length;
+                    console.error("Failed to save batch:", result);
                 }
-            });
-            window.saveContentData(); // Persist
-            window.showToast(`${content.length} items saved to Library.`);
+            } catch (e) {
+                failCount += items.length;
+                console.error("Error saving batch:", e);
+            }
+        }
+
+        if (successCount > 0) {
+            window.showToast(`${successCount} items saved to Library!`);
+            if (window.saveContentData) {
+                // Try to call legacy save if it exists, just in case (though we likely don't need it if API handled it)
+                // Actually, saveContentData usually writes to file from memory. 
+                // Since we already wrote to file via API, we DO NOT need to call it.
+                // Just refreshing the UI filter might be good.
+                if (typeof window.applyFilters === 'function') window.applyFilters();
+            } else if (typeof window.applyFilters === 'function') {
+                window.applyFilters();
+            }
+        }
+
+        if (failCount > 0) {
+            alert(`Failed to save ${failCount} items. Check console for details.`);
         }
     }
     updatePreview(yamlText) {

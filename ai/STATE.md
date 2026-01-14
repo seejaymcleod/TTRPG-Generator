@@ -1,7 +1,7 @@
 # Project State (keep under 40 lines if possible)
 
 Project: Tabletop RPG table generator (File System as CMS)
-Version: 0.1.51
+Version: 0.1.70
 
 Current focus:
 - Multi-column table rendering
