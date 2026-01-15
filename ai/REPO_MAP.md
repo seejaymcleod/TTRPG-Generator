@@ -1,11 +1,12 @@
 # Repository Map
 
 ## Overview
-A web-based Tabletop RPG generator using a "File System as CMS" architecture. Content is authored in YAML files, compiled into JSON, and served via an Express backend to a frontend.
+A web-based Tabletop RPG generator using a "File System as CMS" architecture. Content is authored in YAML files, compiled into JSON, and served via an Express backend to a frontend. Includes a Forge workflow for PDF content extraction and a Content browser for managing game content.
 
 ## Folder Structure
-- **src/**: TypeScript source code containing the core engine, compiler, and UI logic.
+- **src/**: TypeScript source code containing the core engine, compiler, services, and UI logic.
 - **Tables/**: The definitions of all generator tables in YAML format (Source of Truth).
+- **_Content/**: Game content storage (monsters, spells, items) and display templates.
 - **tests/**: Unit and integration tests, including regression tests for bugs.
 - **dist/**: Compiled JavaScript output and the generated `tables.json`.
 - **ai/**: Documentation and context files for AI agents.
@@ -14,6 +15,8 @@ A web-based Tabletop RPG generator using a "File System as CMS" architecture. Co
 - **Documents/**: User guides and reference documentation.
 - **scripts/**: CLI tools and debug utilities.
 - **public/**: Static assets.
+- **data/**: User data storage (individual user folders).
+- **import/**: PDF source materials for content extraction.
 
 ## Parser-Related Files
 The "Parser" logic is split between the **Compiler** (build-time validation) and the **Engine** (runtime generation).
@@ -32,14 +35,26 @@ The "Parser" logic is split between the **Compiler** (build-time validation) and
 - `expr.ts`: Expression evaluator (math logic).
 - `referenceTables.ts`: Handling of reference tables.
 
+### Services (`src/services/`)
+- `ForgeService.ts`: PDF content extraction and YAML generation workflow.
+- `LLMClient.ts`: LLM integration for content extraction from PDFs.
+- `UserService.ts`: User management and authentication.
+- `Encryption.ts`: Encryption utilities for sensitive data.
+
 ### UI (`src/ui/`)
 - `connect_ui.ts`: Bridge between engine and frontend UI.
 - `layout.html`: HTML layout template.
 - `styles.css`: UI-specific styles.
 
 ## Frontend (`js/`)
-- `app.js`: Main frontend application logic (search, filtering, rendering, admin functions).
+- `app.js`: Main frontend application logic (search, filtering, rendering, admin functions, content browser).
+- `forge.js`: Forge workflow UI for multi-step PDF import and content extraction.
 - `extractContext.js`: Context extraction utility.
+
+## Content Storage (`_Content/`)
+- `display_templates.yaml`: Card display configuration templates for different content types.
+- `ShadowDark/`: ShadowDark game-specific content (monsters, spells, items).
+- `Imported/`: User-imported content storage.
 
 ## Frontend Entry Points
 - `index.html`: Main frontend HTML.
@@ -66,6 +81,9 @@ The "Parser" logic is split between the **Compiler** (build-time validation) and
 - `debug_dice.ts`: Dice rolling debug utility.
 - `debug_loop.ts`: Loop detection debug utility.
 - `fix_yaml_structure.ts`: YAML structure repair tool.
+- `import_content.ts`: Content import utility for external sources.
+- `migrate-users.ts`: User data migration script.
+- `organize_tables.ts`: Table organization and restructuring utility.
 
 ## Root Level Scripts
 - **Server**: `server.js` (Run via `npm start` or `npm run dev`).

@@ -1,16 +1,19 @@
 # Project State (keep under 40 lines if possible)
 
 Project: Tabletop RPG table generator (File System as CMS)
-Version: 0.1.70
+Version: 0.1.72
 
 Current focus:
-- Multi-column table rendering
-- Object rendering failsafes ([object Object] prevention)
-- Documentation audit and test coverage improvement
+- Forge workflow for PDF content extraction (multi-type import)
+- Content browser with source filtering and sorting
+- Card display templates for different content types
+- Item and Spell display in Content mode
 
 Core paths:
 - src/engine/ (Renderer, Loader, Expressions)
-- Tables/ (Content)
+- src/services/ (Forge, LLM, User services)
+- Tables/ (Generator tables)
+- _Content/ (Game content YAML)
 - tests/ (Unit & Regression tests)
 
 Parsing rules snapshot:
