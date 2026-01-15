@@ -162,18 +162,21 @@ Example: {"game": "ShadowDark", "source": "Cursed Scroll 1", "contentType": "mon
 
     async processContent(
         text: string,
-        type: 'monster' | 'spell' | 'item' | 'table',
+        types: string | string[], // Accept single type (legacy) or array (new)
         game: string = '',
         source: string = '',
         provider: 'local' | 'gemini' = 'local',
         apiKey?: string,
         model?: string
     ): Promise<string> {
+        // Normalize to array
+        const typeArray = Array.isArray(types) ? types : [types];
+
         // Load game-specific template
         const template = this.loadTemplateForGame(game);
 
-        // Clean up the raw text
-        const cleanedText = this.cleanupRawText(text, type);
+        // Clean up the raw text (use first type for cleanup hints)
+        const cleanedText = this.cleanupRawText(text, typeArray[0] || 'monster');
 
         // Build system prompt with template context
         let systemPrompt = `You are a TTRPG Content Converter. 
@@ -184,7 +187,8 @@ CRITICAL RULES:
 - Do not include ANY conversational text, preambles, or postscripts.
 - The output (even if single) must be a YAML array of objects (start with -).
 - Ensure all keys match the schema exactly.
-- Use the template conventions for abbreviations (e.g., 'S' means 'str').`;
+- Use the template conventions for abbreviations (e.g., 'S' means 'str').
+- Extract ALL entities matching the requested types from the text.`;
 
         if (game) {
             systemPrompt += `\n\nGame: ${game}`;
@@ -193,13 +197,30 @@ CRITICAL RULES:
             systemPrompt += `\nSource: ${source}`;
         }
 
+        // Build type descriptions
+        const typeNames = typeArray.map(t => {
+            switch (t) {
+                case 'monster': return 'Monster/NPC';
+                case 'spell': return 'Spell';
+                case 'item': return 'Item/Equipment';
+                case 'table': return 'Random Table';
+                default: return t;
+            }
+        }).join(', ');
+        systemPrompt += `\nContent Types to Extract: ${typeNames}`;
+
         if (template) {
             systemPrompt += `\n\n--- TEMPLATE REFERENCE ---\n${template}`;
         } else {
             // Fallback schema for when no template exists
-            systemPrompt += `\n\n--- FALLBACK SCHEMA ---`;
-            if (type === 'monster') {
-                systemPrompt += `
+            systemPrompt += `\n\n--- FALLBACK SCHEMAS ---`;
+
+            // Add schema for each selected type
+            for (const type of typeArray) {
+                if (type === 'monster') {
+                    systemPrompt += `
+
+## Monster Schema:
 - id: "game_monster_name"
   name: "Name"
   type: Monster
@@ -226,12 +247,74 @@ CRITICAL RULES:
     - name: "Attack"
       desc: "1 weapon +0 (1d6)"
   description: "Full description"`;
+                } else if (type === 'spell') {
+                    systemPrompt += `
+
+## Spell Schema:
+- id: "game_spell_name"
+  name: "Name"
+  type: Spell
+  game: "${game || 'Unknown'}"
+  source: "${source || 'Unknown'}"
+  properties:
+    tier: "1"
+    class: "Wizard"
+    duration: "Instant"
+    range: "Near"
+  description: "Full spell description"`;
+                } else if (type === 'item') {
+                    systemPrompt += `
+
+## Item Schema:
+- id: "game_item_name"
+  name: "Name"
+  type: Item
+  game: "${game || 'Unknown'}"
+  source: "${source || 'Unknown'}"
+  properties:
+    category: "Magic Item"
+    cost: "10 gp"
+    benefit: "Effect description"
+  description: "Full item description"`;
+                } else if (type === 'table') {
+                    systemPrompt += `
+
+## Table Schema:
+- filename: "game_table_name"
+  tablename: "Table Name"
+  game: "${game || 'Unknown'}"
+  source: "${source || 'Unknown'}"
+  type: "Table"
+  results:
+    - "Result 1"
+    - "Result 2"`;
+                }
             }
         }
 
-        const userPrompt = `Convert the following text into ${type} YAML entries:\n\n${cleanedText}`;
+        const userPrompt = `Convert the following text into YAML entries for these content types: ${typeNames}\n\n${cleanedText}`;
 
-        return this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model);
+        const response = await this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model);
+
+        // Robust cleanup: Remove conversational text and combine multiple YAML blocks
+        let cleanYaml = response;
+
+        // 1. Extract content from code blocks if present
+        const codeBlockRegex = /```(?:yaml)?([\s\S]*?)```/g;
+        const matches = [...response.matchAll(codeBlockRegex)];
+
+        if (matches.length > 0) {
+            // Join all code blocks
+            cleanYaml = matches.map(m => m[1].trim()).join('\n');
+        } else {
+            // Fallback: Remove potential non-YAML text
+            // Strip lines starting with ** or valid-looking sentence text not part of YAML
+            // (Simple heuristic: if it doesn't look like a list item or property, ignore it? Too risky.)
+            // Instead, try to strip leading/trailing non-yaml garbage
+            cleanYaml = cleanYaml.replace(/```yaml/g, '').replace(/```/g, '').trim();
+        }
+
+        return cleanYaml;
     }
 
     async listLocalModels(): Promise<string[]> {
@@ -311,14 +394,28 @@ Return a JSON array with all ${type} entries found.`;
         contentType: string
     ): Promise<{ saved: number, path: string }> {
         const yaml = require('js-yaml');
-        const contentPath = path.resolve(process.cwd(), '_Content', game, `${game}_Content.yaml`);
+        const officialSources = ['ShadowDark Core', 'Core', 'Cursed Scroll 1', 'Cursed Scroll 2', 'Cursed Scroll 3'];
+
+        // Determine target file
+        // Default to 3rd Party unless source is explicitly official
+        // We check the first card's source (assuming batch is same source)
+        const source = cards[0]?.source || 'Unknown';
+        const isOfficial = officialSources.includes(source) || source.includes('Core');
+
+        const fileName = isOfficial ? `${game}_Official_Content.yaml` : `${game}_3rdParty_Content.yaml`;
+        const contentPath = path.resolve(process.cwd(), '_Content', game, fileName);
+
+        if (!fs.existsSync(path.dirname(contentPath))) {
+            fs.mkdirSync(path.dirname(contentPath), { recursive: true });
+        }
 
         let existingContent: any[] = [];
 
         // Load existing content if file exists
         if (fs.existsSync(contentPath)) {
             const fileContent = fs.readFileSync(contentPath, 'utf-8');
-            existingContent = yaml.load(fileContent) || [];
+            const loaded = yaml.load(fileContent);
+            existingContent = Array.isArray(loaded) ? loaded : [];
         }
 
         // Get existing IDs to prevent duplicates

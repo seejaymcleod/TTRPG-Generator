@@ -170,7 +170,7 @@ function main() {
     const contentDir = path.join(rootDir, '_Content', 'ShadowDark');
     const monsterCsvPath = path.join(contentDir, 'Shadowdark Monster Database - All.csv');
     const spellCsvPath = path.join(contentDir, 'Shadowdark Spell List - Spells List.csv');
-    const outputPath = path.join(contentDir, 'ShadowDark_Content.yaml');
+    const outputPath = path.join(contentDir, 'ShadowDark_Official_Content.yaml');
 
     let allContent: ContentItem[] = [];
 

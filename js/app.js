@@ -2638,6 +2638,7 @@ let contentState = {
         search: '',
         alignment: {}, // e.g. { 'L': true, 'N': true, 'C': true }
         spellClass: {}, // e.g. { 'Wizard': true }
+        itemCategory: {}, // e.g. { 'Weapon': true, 'Armor': true }
         props: {} // numeric ranges { level: {min, max} }
     },
     sort: {
@@ -2841,19 +2842,29 @@ function toggleSavedCard(headerEl) {
     }
 }
 
+// Shared function to load display templates (used by Content browser and Forge)
+async function loadDisplayTemplates() {
+    if (Object.keys(displayTemplates).length > 0) {
+        // Already loaded
+        return displayTemplates;
+    }
+    try {
+        const tmplRes = await fetch('/api/templates');
+        const tmplData = await tmplRes.json();
+        if (tmplData && tmplData.types) {
+            displayTemplates = tmplData.types;
+            console.log("Loaded display templates for:", Object.keys(displayTemplates));
+        }
+    } catch (e) {
+        console.warn("Failed to load templates, using defaults", e);
+    }
+    return displayTemplates;
+}
+
 async function loadContent() {
     try {
         // Load Templates
-        try {
-            const tmplRes = await fetch('/api/templates');
-            const tmplData = await tmplRes.json();
-            if (tmplData && tmplData.types) {
-                displayTemplates = tmplData.types;
-                console.log("Loaded display templates for:", Object.keys(displayTemplates));
-            }
-        } catch (e) {
-            console.warn("Failed to load templates, using defaults", e);
-        }
+        await loadDisplayTemplates();
 
         const response = await fetch('/api/content');
         const data = await response.json();
@@ -2880,7 +2891,8 @@ function initContentFilters() {
             tier: { min: Number.MAX_SAFE_INTEGER, max: 0 },
             ac: { min: Number.MAX_SAFE_INTEGER, max: 0 },
             hp: { min: Number.MAX_SAFE_INTEGER, max: 0 }
-        }
+        },
+        itemCategories: new Set()  // For Item type filtering
     };
 
     contentData.forEach(item => {
@@ -2916,6 +2928,9 @@ function initContentFilters() {
 
             meta.ranges.tier.min = Math.min(meta.ranges.tier.min, tier);
             meta.ranges.tier.max = Math.max(meta.ranges.tier.max, tier);
+        } else if (item.type === 'Item') {
+            const cat = p.category;
+            if (cat) meta.itemCategories.add(cat);
         }
     });
 
@@ -2939,6 +2954,9 @@ function initContentFilters() {
 
     // Default: All spell classes enabled
     meta.spellClasses.forEach(c => contentState.filters.spellClass[c] = true);
+
+    // Default: All item categories enabled
+    meta.itemCategories.forEach(cat => contentState.filters.itemCategory[cat] = true);
 
     // Default ranges
     contentState.filters.props.level = { ...meta.ranges.level };
@@ -2989,6 +3007,8 @@ function renderFilterSidebar() {
                 class="filter-btn ${selectedType === 'Monster' ? 'selected' : ''}">Monsters</button>
             <button onclick="selectContentType('Spell')" 
                 class="filter-btn ${selectedType === 'Spell' ? 'selected' : ''}">Spells</button>
+            <button onclick="selectContentType('Item')" 
+                class="filter-btn ${selectedType === 'Item' ? 'selected' : ''}">Items</button>
         </div>
     `;
     container.appendChild(typeSection);
@@ -3039,6 +3059,25 @@ function renderFilterSidebar() {
                 <div class="flex flex-wrap gap-2">${clsButtons}</div>
             `;
             container.appendChild(clsSection);
+        }
+    }
+
+    // 6. ITEM-SPECIFIC FILTERS
+    if (contentState.filters.type['Item']) {
+        // Category Multi-select pill buttons
+        const catSection = document.createElement('div');
+        catSection.className = 'mt-4';
+        let catButtons = '';
+        Array.from(contentState.meta.itemCategories).sort().forEach(cat => {
+            const selected = contentState.filters.itemCategory?.[cat] ? 'selected' : '';
+            catButtons += `<button onclick="toggleItemCategory('${cat}')" class="filter-btn ${selected}">${cat}</button>`;
+        });
+        if (catButtons) {
+            catSection.innerHTML = `
+                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Category</label>
+                <div class="flex flex-wrap gap-2">${catButtons}</div>
+            `;
+            container.appendChild(catSection);
         }
     }
 }
@@ -3375,6 +3414,11 @@ function toggleSpellClass(cls) {
     renderContentList();
 }
 
+function toggleItemCategory(cat) {
+    contentState.filters.itemCategory[cat] = !contentState.filters.itemCategory[cat];
+    renderContentList();
+}
+
 function updateRangeInput(prop, bound, value) {
     const val = parseInt(value) || 0;
     contentState.filters.props[prop][bound] = val;
@@ -3423,6 +3467,7 @@ function getCardSummaryHtml(item) {
                 const c = field.color || tmpl.colorAccent;
                 if (c === 'purple') colorClass = 'text-purple-600 dark:text-purple-400 bg-purple-500/10';
                 else if (c === 'amber') colorClass = 'text-amber-600 dark:text-amber-400 bg-amber-500/10';
+                else if (c === 'emerald') colorClass = 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10';
 
                 return `<span class="text-xs ${colorClass} px-2 py-0.5 rounded font-bold">${label}${val}</span>`;
             }
@@ -3446,6 +3491,11 @@ function getCardSummaryHtml(item) {
         return `
             <span class="text-xs bg-purple-500/10 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded font-bold">Tier ${tier}</span>
             <span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2">${cls}</span>
+        `;
+    } else if (item.type === 'Item') {
+        const cat = p.category || 'Item';
+        return `
+            <span class="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded font-bold">${cat}</span>
         `;
     }
     return '';
@@ -3498,6 +3548,11 @@ function renderContentList() {
                 const anyEnabled = classes.some(c => contentState.filters.spellClass[c]);
                 if (!anyEnabled) return false;
             }
+        } else if (item.type === 'Item') {
+            const cat = props.category;
+            // Check if any categories are selected and if this item's category is enabled
+            const anySelected = Object.values(contentState.filters.itemCategory).some(v => v);
+            if (anySelected && cat && !contentState.filters.itemCategory[cat]) return false;
         }
 
         return true;
@@ -3591,7 +3646,8 @@ function renderConfigurableBody(item, container, tmpl, options) {
     const color = tmpl.colorAccent || 'primary';
     const colorClass = color === 'amber' ? 'text-amber-500 dark:text-amber-400'
         : color === 'purple' ? 'text-purple-500 dark:text-purple-400'
-            : 'text-primary';
+            : color === 'emerald' ? 'text-emerald-500 dark:text-emerald-400'
+                : 'text-primary';
 
     let contentHtml = '';
 
@@ -3602,9 +3658,11 @@ function renderConfigurableBody(item, container, tmpl, options) {
             }
             else if (section.type === 'properties') {
                 const keys = section.keys || [];
-                if (keys.length > 0) {
-                    const fields = keys.map(k => {
-                        let val = p[k] || 'N/A';
+                // Filter out keys that have no value to keep the display clean
+                const filteredKeys = keys.filter(k => p[k] && p[k] !== 'N/A');
+                if (filteredKeys.length > 0) {
+                    const fields = filteredKeys.map(k => {
+                        let val = p[k];
                         let label = k.toUpperCase();
 
                         // Helper: Handle alignment specifically? or generic?
@@ -3615,6 +3673,24 @@ function renderConfigurableBody(item, container, tmpl, options) {
                     }).join('');
                     contentHtml += `<div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mb-3">${fields}</div>`;
                 }
+            }
+            else if (section.type === 'benefit' && p.benefit) {
+                const sectionColor = section.color || color;
+                const sectionColorClass = sectionColor === 'emerald' ? 'text-emerald-500 dark:text-emerald-400'
+                    : sectionColor === 'amber' ? 'text-amber-500 dark:text-amber-400'
+                        : 'text-primary';
+                contentHtml += `
+                    <div class="mb-3">
+                        <h4 class="font-bold text-xs uppercase tracking-wide ${sectionColorClass} mb-1">${section.title || 'Benefit'}</h4>
+                        <div class="text-sm">${p.benefit}</div>
+                    </div>`;
+            }
+            else if (section.type === 'curse' && p.curse) {
+                contentHtml += `
+                    <div class="mb-3">
+                        <h4 class="font-bold text-xs uppercase tracking-wide text-red-500 dark:text-red-400 mb-1">${section.title || 'Curse'}</h4>
+                        <div class="text-sm text-red-400/80">${p.curse}</div>
+                    </div>`;
             }
             else if (section.type === 'actions' && item.actions && item.actions.length > 0) {
                 const title = section.title || 'Actions';
@@ -3903,4 +3979,5 @@ function switchMode(mode) {
 initContentBrowser();
 
 window.renderContentCard = renderContentCard;
+window.loadDisplayTemplates = loadDisplayTemplates;
 

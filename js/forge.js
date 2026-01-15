@@ -237,7 +237,8 @@ class ForgeController {
             analysis: null,
             origin: 'official',
             currentStep: 1,
-            totalSteps: 5
+            totalSteps: 5,
+            contentTypes: ['monster'] // Default to monster, supports multi-select
         };
 
         // Initialize UI Components
@@ -245,7 +246,12 @@ class ForgeController {
         this.cardFilters = {
             search: '',
             game: {},
-            type: {}
+            type: {},
+            source: {}  // Source filter
+        };
+        this.cardSort = {
+            field: 'name',
+            direction: 'asc'
         };
 
         // Define filters specifically for generated content
@@ -255,9 +261,15 @@ class ForgeController {
         this.saveAllCards = this.saveAllCards.bind(this);
 
         this.initUI();
+        this.initContentTypeButtons();
         this.initWizardNav();
         this.setupProviderToggle(); // Restored
         this.loadUserConfig();
+
+        // Ensure display templates are loaded for card rendering
+        if (typeof window.loadDisplayTemplates === 'function') {
+            window.loadDisplayTemplates();
+        }
 
         console.log('ForgeController Initialized');
     }
@@ -295,6 +307,44 @@ class ForgeController {
                 console.warn('Failed to update sources:', e);
             }
         });
+    }
+
+    initContentTypeButtons() {
+        const container = document.getElementById('forgeContentTypes');
+        if (!container) return;
+
+        const buttons = container.querySelectorAll('.forge-type-btn');
+
+        // Set initial state (monster selected by default)
+        buttons.forEach(btn => {
+            const type = btn.dataset.type;
+            if (this.state.contentTypes.includes(type)) {
+                btn.classList.add('bg-purple-600', 'text-white', 'border-purple-500');
+                btn.classList.remove('text-gray-400', 'border-slate-600');
+            }
+
+            btn.addEventListener('click', () => {
+                this.toggleContentType(type, btn);
+            });
+        });
+    }
+
+    toggleContentType(type, btn) {
+        const idx = this.state.contentTypes.indexOf(type);
+        if (idx >= 0) {
+            // Already selected - remove it (unless it's the last one)
+            if (this.state.contentTypes.length > 1) {
+                this.state.contentTypes.splice(idx, 1);
+                btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-500');
+                btn.classList.add('text-gray-400', 'border-slate-600');
+            }
+        } else {
+            // Not selected - add it
+            this.state.contentTypes.push(type);
+            btn.classList.add('bg-purple-600', 'text-white', 'border-purple-500');
+            btn.classList.remove('text-gray-400', 'border-slate-600');
+        }
+        console.log('Selected content types:', this.state.contentTypes);
     }
 
     initUI() {
@@ -553,9 +603,9 @@ class ForgeController {
                 // Default options if no key yet
                 if (modelSelect.options.length === 0 || !modelSelect.innerHTML.includes('gemini')) {
                     modelSelect.innerHTML = `
-                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fast & Cheap) ⭐</option>
-                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (New Standard)</option>
-                        <option value="gemini-2.5-pro">Gemini 2.5 Pro (Best Quality)</option>
+                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (Preview) ⚡</option>
+                        <option value="gemini-1.5-flash">Gemini 1.5 Flash (Fast)</option>
+                        <option value="gemini-1.5-pro">Gemini 1.5 Pro (Best Quality)</option>
                     `;
                 }
 
@@ -842,10 +892,13 @@ class ForgeController {
         if (analysis.source) this.sourceCombo.setValue(analysis.source);
 
         if (analysis.contentType) {
-            const select = document.getElementById('forgeContentType');
             const map = { 'monster': 'monster', 'spell': 'spell', 'item': 'item', 'table': 'table' };
             const found = Object.keys(map).find(k => analysis.contentType.toLowerCase().includes(k));
-            if (found) select.value = map[found];
+            if (found && !this.state.contentTypes.includes(found)) {
+                // Add the detected type to selection
+                const btn = document.querySelector(`.forge-type-btn[data-type="${found}"]`);
+                if (btn) this.toggleContentType(found, btn);
+            }
         }
     }
 
@@ -853,37 +906,85 @@ class ForgeController {
         const text = document.getElementById('forgeRawText').value;
         if (!text) return alert("Please enter or upload text first.");
 
+        const types = this.state.contentTypes;
+        if (types.length === 0) return alert("Please select at least one content type.");
+
         const btn = document.getElementById('forgeProcessBtn');
         const originals = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = `<span class="material-symbols-outlined animate-spin">sync</span> Generating...`;
+
+        // Clear editor initially if it's a fresh run, or append? 
+        // Let's prompt user or just overwrite? Standard behavior is overwrite.
+        // User might want to accumulate. Let's start empty.
+        const editor = document.getElementById('forgeEditor');
+        editor.value = '';
+        this.updatePreview('');
+
+        console.log(`[Forge] Starting multi-type extraction for ${types.length} types:`, types);
 
         try {
-            const payload = {
-                text,
-                game: this.gameCombo.getValue(),
-                source: this.sourceCombo.getValue(),
-                type: document.getElementById('forgeContentType').value,
-                provider: document.getElementById('forgeProvider')?.value || 'local',
-                apiKey: document.getElementById('forgeApiKey')?.value || '',
-                model: document.getElementById('forgeModelSelect')?.value || ''
-            };
+            for (let i = 0; i < types.length; i++) {
+                const type = types[i];
+                // Update UI Progress
+                const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
+                btn.innerHTML = `<span class="material-symbols-outlined animate-spin">sync</span> Generating ${typeLabel}s (${i + 1}/${types.length})...`;
+                console.log(`[Forge] Processing type ${i + 1}/${types.length}: ${type}`);
 
-            const data = await ForgeAPI.process(payload);
+                const payload = {
+                    text,
+                    game: this.gameCombo.getValue(),
+                    source: this.sourceCombo.getValue(),
+                    type: type, // Send single type per request for granular progress
+                    provider: document.getElementById('forgeProvider')?.value || 'local',
+                    apiKey: document.getElementById('forgeApiKey')?.value || '',
+                    model: document.getElementById('forgeModelSelect')?.value || ''
+                };
 
-            if (data.yaml) {
-                const editor = document.getElementById('forgeEditor');
-                editor.value = data.yaml;
-                this.updatePreview(data.yaml);
-            } else if (data.error) {
-                alert("Error: " + data.error);
+                try {
+                    const data = await ForgeAPI.process(payload);
+                    console.log(`[Forge] Received response for ${type}:`, data);
+
+                    // Check for valid, non-empty YAML content
+                    // Ignore empty arrays like "[]" or just whitespace
+                    const yamlContent = data.yaml?.trim() || '';
+                    const isEmptyResult = !yamlContent || yamlContent === '[]' || yamlContent === '[ ]';
+
+                    if (yamlContent && !isEmptyResult) {
+                        // Append to editor
+                        const currentVal = editor.value.trim();
+                        const newVal = yamlContent;
+
+                        if (currentVal) {
+                            editor.value = currentVal + '\n\n' + newVal;
+                        } else {
+                            editor.value = newVal;
+                        }
+
+                        // Update preview with accumulated content
+                        this.updatePreview(editor.value);
+                        console.log(`[Forge] Appended ${newVal.length} chars for ${type}`);
+                    } else if (data.error) {
+                        console.error(`[Forge] Error generating ${type}:`, data.error);
+                        // Continue to next type instead of crashing entire flow
+                        // Don't add error comments to YAML to avoid parse issues
+                        console.warn(`Skipping error comment for ${type} to keep YAML valid`);
+                    } else {
+                        console.warn(`[Forge] Empty result for ${type} - source may not contain this type`);
+                        // Don't add comments - they can break YAML parsing
+                    }
+                } catch (innerError) {
+                    console.error(`[Forge] Network/parse error for ${type}:`, innerError);
+                    editor.value += `\n# Failed to process ${type}: ${innerError.message}\n`;
+                    // Continue to next type
+                }
             }
         } catch (e) {
-            console.error(e);
+            console.error('[Forge] Fatal error in handleProcess:', e);
             alert("Processing failed. See console.");
         } finally {
             btn.disabled = false;
             btn.innerHTML = originals;
+            console.log('[Forge] Multi-type extraction complete');
         }
     }
 
@@ -928,10 +1029,12 @@ class ForgeController {
         // Populate available options
         const games = new Set();
         const types = new Set();
+        const sources = new Set();
 
         content.forEach(item => {
             if (item.game) games.add(item.game);
             if (item.type) types.add(item.type);
+            if (item.source) sources.add(item.source);
         });
 
         // Render Filter Buttons
@@ -958,10 +1061,59 @@ class ForgeController {
 
         renderFilterGroup('forgeGameFilter', Array.from(games), 'game');
         renderFilterGroup('forgeTypeFilter', Array.from(types), 'type');
+        renderFilterGroup('forgeSourceFilter', Array.from(sources).sort(), 'source');
+
+        // Render Sort Controls
+        this.renderSortControls();
+    }
+
+    renderSortControls() {
+        const container = document.getElementById('forgeSortContainer');
+        if (!container) return;
+
+        // Build options based on types present
+        let options = '<option value="name">Name</option>';
+        const hasMonster = Object.keys(this.cardFilters.type).some(t => t === 'Monster');
+        const hasSpell = Object.keys(this.cardFilters.type).some(t => t === 'Spell');
+
+        if (hasMonster || this.state.parsed?.some(i => i.type === 'Monster')) {
+            options += '<option value="level">Level</option>';
+            options += '<option value="ac">AC</option>';
+            options += '<option value="hp">HP</option>';
+        }
+        if (hasSpell || this.state.parsed?.some(i => i.type === 'Spell')) {
+            options += '<option value="tier">Tier</option>';
+        }
+
+        container.innerHTML = `
+            <select id="forgeSortField" onchange="window.ForgeApp.updateSort(this.value)"
+                class="bg-slate-800 border border-slate-700 rounded py-1 px-2 text-xs text-gray-300">
+                ${options}
+            </select>
+            <button onclick="window.ForgeApp.toggleSortDirection()" 
+                class="p-1 rounded hover:bg-slate-700 transition-colors" title="Toggle Sort Direction">
+                <span class="material-symbols-outlined text-sm">${this.cardSort.direction === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>
+            </button>
+        `;
+
+        const select = container.querySelector('#forgeSortField');
+        if (select) select.value = this.cardSort.field;
+    }
+
+    updateSort(field) {
+        this.cardSort.field = field;
+        this.renderCardList();
+    }
+
+    toggleSortDirection() {
+        this.cardSort.direction = this.cardSort.direction === 'asc' ? 'desc' : 'asc';
+        this.renderSortControls();
+        this.renderCardList();
     }
 
     resetCardFilters() {
-        this.cardFilters = { search: '', game: {}, type: {} };
+        this.cardFilters = { search: '', game: {}, type: {}, source: {} };
+        this.cardSort = { field: 'name', direction: 'asc' };
         const searchInput = document.getElementById('forgeCardSearch');
         if (searchInput) searchInput.value = '';
         this.initCardFilters(); // Re-render buttons cleared
@@ -994,7 +1146,30 @@ class ForgeController {
             const selectedTypes = Object.keys(this.cardFilters.type).filter(k => this.cardFilters.type[k]);
             if (selectedTypes.length > 0 && !selectedTypes.includes(item.type)) return false;
 
+            // Source
+            const selectedSources = Object.keys(this.cardFilters.source).filter(k => this.cardFilters.source[k]);
+            if (selectedSources.length > 0 && !selectedSources.includes(item.source)) return false;
+
             return true;
+        });
+
+        // Sort
+        const sortField = this.cardSort.field;
+        const sortDir = this.cardSort.direction === 'asc' ? 1 : -1;
+
+        filtered.sort((a, b) => {
+            let aVal, bVal;
+            if (sortField === 'name') {
+                aVal = (a.name || '').toLowerCase();
+                bVal = (b.name || '').toLowerCase();
+            } else {
+                // Numeric property
+                aVal = parseInt(a.properties?.[sortField]) || 0;
+                bVal = parseInt(b.properties?.[sortField]) || 0;
+            }
+            if (aVal < bVal) return -1 * sortDir;
+            if (aVal > bVal) return 1 * sortDir;
+            return 0;
         });
 
         // Update Header

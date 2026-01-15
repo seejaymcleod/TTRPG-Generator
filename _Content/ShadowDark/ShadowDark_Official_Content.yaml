@@ -1,3 +1,588 @@
+- id: shadowdark_aminiita_root
+  name: Aminiita Root
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Common
+    use: Eat
+    benefit: DC 12 CON or 3d6 damage.
+  description: A toxic root that causes severe internal distress when ingested.
+- id: sd_item_diabolical_bag_of_teeth
+  name: Bag of Teeth
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Object cannot be crushed by anything.
+- id: sd_item_diabolical_black_candle
+  name: Black Candle
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Causes pain and disgust in fey creatures.
+- id: shadowdark_blowgun
+  name: Blowgun
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 5 gp
+    benefit: Ranged (N), 1 damage. Firing this weapon from hiding doesn't reveal your position.
+  description: A hollow tube used to fire small darts, favored by assassins for stealthy attacks.
+- id: shadowdark_bluewort_paste
+  name: Bluewort Paste
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Common
+    use: Injure
+    benefit: DC 12 CON or paralyzed 1d4 rds.
+  description: A thick paste applied to weapons to freeze the muscles of a target.
+- id: shadowdark_bolas
+  name: Bolas
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 2 gp
+    benefit: Ranged (N). When you hit a legged creature the size of a horse or smaller, the target's speed is reduced to close until it frees itself (DC 15 STR or DEX check).
+  description: Weighted cords designed to entangle the legs of prey or enemies.
+- id: sd_item_diabolical_brain_in_a_jar
+  name: Brain in a Jar
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Causes doubt and hesitation in demons.
+- id: shadowdark_brass_wine_cup
+  name: Brass Wine Cup
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: Contains a secret reservoir that dispenses poison.
+  description: A deceptive vessel used for assassinations during toasts.
+- id: sd_item_diabolical_bundle_of_sage
+  name: Bundle of Sage
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: A creature holding it can't knowingly lie.
+- id: sd_item_diabolical_carved_bone
+  name: Carved Bone
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Ignites in flames once/day for 1d4 rounds.
+- id: sd_item_cloven_heart
+  name: Cloven Heart
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Magic Item
+    flavor: A heart-shaped, glittering ruby with a crack down the center.
+    benefit: Grants owner immunity to fire, +2 Strength, and +2 Charisma.
+    curse: Grants the enmity of the dralech, Tzakoru, who wants it back.
+- id: sd_item_diabolical_cold_iron_spike
+  name: Cold Iron Spike
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: You can smell if something is poisonous.
+- id: sd_item_diabolical_cracked_mirror
+  name: Cracked Mirror
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Sings a haunting lullaby when rattled.
+- id: sd_item_diabolical_dried_rose
+  name: Dried Rose
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Turns toward due north when untouched.
+- id: shadowdark_drowsy_dust
+  name: Drowsy Dust
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Uncommon
+    use: Touch (eyes)
+    benefit: DC 12 CON or deep sleep for 1d4 hours.
+  description: A fine powder that induces a heavy slumber if it makes contact with the eyes.
+- id: sd_item_emerald_blade
+  name: Emerald Blade
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Weapon
+    flavor: A bastard sword with a green hue.
+    benefit: Allows its wielder to speak to wild animals.
+    bonus: +2 bastard sword
+- id: shadowdark_ether_of_idos
+  name: Ether of Idos
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Uncommon
+    use: Inhale
+    benefit: DC 12 CON or vivid, waking nightmares 1d4 rds.
+  description: A gaseous substance that causes terrifying hallucinations.
+- id: sd_item_diabolical_eyeball
+  name: Eyeball
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Repels insects and spiders to arm's length.
+- id: sd_item_diabolical_faded_locket
+  name: Faded Locket
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Once/day, briefly read one creature's mind.
+- id: sd_item_gold_hummingbird_charm_necklace
+  name: Gold Hummingbird Charm Necklace
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Magic Item
+    benefit: Grants advantage once per day on a Dexterity check.
+- id: shadowdark_gold_signet_ring
+  name: Gold Signet Ring
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: Belongs to a noble family in Alkesh.
+  description: A ring used to seal documents and prove noble lineage.
+- id: shadowdark_iron_orange
+  name: Iron Orange
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Magic Item
+    benefit: Cure injury (2d8 HP, once/day). Tastes of copper.
+  description: A metallic fruit from the magical iron trees in the duergar mines.
+- id: shadowdark_jade_comb
+  name: Jade Comb
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: By law, forgives its bearer of one crime.
+  description: A legal token of pardon recognized in certain desert jurisdictions.
+- id: shadowdark_kingslayer_oil
+  name: Kingslayer Oil
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Uncommon
+    use: Eat
+    benefit: DC 18 CON or delayed onset (1 hour) go to 0 HP.
+  description: A lethal, slow-acting oil often used in political assassinations.
+- id: shadowdark_magic_sesame_seeds
+  name: Magic Sesame Seeds
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Magic Item
+    benefit: Sprinkle on a door to unlock it.
+  description: Enchanted seeds that can bypass locks when used correctly.
+- id: sd_item_mithral_chainmail
+  name: Mithral Chainmail
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Armor
+- id: sd_item_mithral_plate_mail
+  name: Mithral Plate Mail
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Armor
+    flavor: Green-hued mithral plate mail etched with leaves.
+- id: shadowdark_morningstar
+  name: Morningstar
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 5 gp
+    benefit: Melee (C), 1d6/1d8 damage. Versatile (V).
+  description: A spiked club that can be used with one or two hands for increased impact.
+- id: shadowdark_mount_armor_chainmail
+  name: Mount Armor, Chainmail
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Mount Gear
+    cost: 80 gp
+    benefit: AC 13 + DEX mod; DISADV swim and stealth; 2 slots.
+  description: Interlocking metal rings providing solid protection for a mount.
+- id: shadowdark_mount_armor_leather
+  name: Mount Armor, Leather
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Mount Gear
+    cost: 30 gp
+    benefit: AC 11 + DEX mod.
+  description: Lightweight leather barding for mounts.
+- id: shadowdark_mount_armor_plate
+  name: Mount Armor, Plate
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Mount Gear
+    cost: 150 gp
+    benefit: AC 15; no swim or stealth; 3 slots.
+  description: Heavy metal plates for maximum mount protection.
+- id: shadowdark_murgazi_wine
+  name: Murgazi Wine
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: Exceptionally potent alcohol.
+  description: A strong desert wine known for its intoxicating effects.
+- id: shadowdark_nuzule_oil
+  name: Nuzule Oil
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Rare
+    use: Injure
+    benefit: DC 15 CON or unconscious 3 rds.
+  description: A potent oil that renders a wounded target unconscious almost instantly.
+- id: sd_item_diabolical_pan_pipe
+  name: Pan Pipe
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: As heavy as an anvil when not carried.
+- id: shadowdark_phoenix_plumes
+  name: Phoenix Plumes
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: Work as waterproof matches.
+  description: Fiery feathers that can ignite even in damp conditions.
+- id: sd_item_diabolical_pickled_imp
+  name: Pickled Imp
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Attracts demonic creatures to its location.
+- id: shadowdark_pike
+  name: Pike
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 10 gp
+    benefit: Melee (2x C), 1d10 damage. Two-handed (2H), 2 slots.
+  description: A very long polearm that allows the wielder to strike from a significant distance.
+- id: shadowdark_razor_chain
+  name: Razor Chain
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 12 gp
+    benefit: Melee/Ranged (N), 1d6 damage. Finesse (F), Lash (La).
+  description: A chain with bladed links that can be used in close combat or lashed out at nearby foes without leaving the wielder's grasp.
+- id: sd_item_diabolical_ring_of_daisies
+  name: Ring of Daisies
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Allows you to hold your breath for an hour.
+- id: sd_item_rot_ruin
+  name: Rot-Ruin
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Weapon
+    flavor: A green-hued longsword etched with leaves.
+    benefit: Can rust one door-sized piece of metal it touches into powder once a day.
+    bonus: +1 longsword
+- id: sd_item_diabolical_rusty_key
+  name: Rusty Key
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Once/day, fire immunity 1d4 rounds.
+- id: shadowdark_saddle
+  name: Saddle
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Mount Gear
+    cost: 30 gp
+    benefit: Rider ADV on checks to stay mounted; 1 free for mount to carry.
+  description: A standard riding saddle that helps the rider maintain their seat.
+- id: shadowdark_scimitar
+  name: Scimitar
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 8 gp
+    benefit: Melee (C), 1d6 damage. Finesse (F).
+  description: A curved, single-edged blade common in the desert wastes.
+- id: shadowdark_screamer
+  name: Screamer
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Magic Weapon
+    benefit: +1 spear. Shrieks hideously when thrown.
+  description: A black iron spear wielded by the salamander captain Isshak.
+- id: sd_item_diabolical_severed_finger
+  name: Severed Finger
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Belongs to a witch who wants it back.
+- id: sd_item_diabolical_shrunken_head
+  name: Shrunken Head
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Can open a one-way gate to hell once.
+- id: shadowdark_shuriken
+  name: Shuriken
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 1 gp
+    benefit: Ranged (N), 1d4 damage. Can be thrown into the ground; living creatures who step on it take 1 damage and can only move at half speed for 10 rounds.
+  description: Small, sharpened metal stars that can be used as projectiles or caltrops.
+- id: shadowdark_skinlasher
+  name: Skinlasher
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Magic Weapon
+    benefit: +2 razor chain. Wielder is immune to poison.
+  description: A holy relic of the Ras-Godai found in the Worm Trench spawning grounds.
+- id: shadowdark_sling
+  name: Sling
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 5 sp
+    benefit: Ranged (F), 1d4 damage.
+  description: A simple leather strap used to hurl stones or lead bullets.
+- id: shadowdark_sunscorch
+  name: Sunscorch
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Magic Weapon
+    benefit: +1 scimitar. Once per day, it can emit a flash of white-hot light that blinds all who see it for 1 round.
+  description: A magical blade found at the bottom of the Magani Oasis.
+- id: shadowdark_sweet_dates
+  name: Sweet Dates
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: Bag of 1d4 dates that each heal 1 HP when eaten.
+  description: Nutritious and slightly magical fruit from a desert oasis.
+- id: shadowdark_thorgol_the_anvil
+  name: Thorgol the Anvil
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Magic Weapon
+    benefit: +2 warhammer. Can instantly fuse together two metal objects it strikes at the same time. Duergar immediately rally around anyone wielding it.
+  description: A heavy, black iron warhammer with triangular knots on each face, found in a hidden cave.
+- id: shadowdark_truth_speak_oil
+  name: Truth-speak Oil
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Rare
+    use: Touch
+    benefit: DC 18 CON or gibber truths 1 hr.
+  description: A rare oil that forces the subject to speak only the truth for a duration.
+- id: sd_item_diabolical_unholy_symbol
+  name: Unholy Symbol
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: A demon owes the item's owner a favor.
+- id: shadowdark_vapor_of_leng
+  name: Vapor of Leng
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Poison
+    rarity: Rare
+    use: Inhale
+    benefit: DC 15 CON or INT stat becomes 3 for 1d4 hours.
+  description: A mind-numbing gas that reduces the victim to a near-mindless state.
+- id: sd_item_diabolical_vial_of_blood
+  name: Vial of Blood
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Slowly rolls away on its own if released.
+- id: shadowdark_wagon
+  name: Wagon
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Mount Gear
+    cost: 120 gp
+    benefit: No rider on mount; move at half speed; +15 gear slots; limit 1 per mount.
+  description: A large vehicle pulled by a mount to carry heavy loads.
+- id: sd_item_wand_of_moonbeam
+  name: Wand of Moonbeam
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Magic Item
+    benefit: Any spellcaster can wield this wand to cast the Moonbeam spell. The wand begins twitching whenever a lycanthrope is within near distance of it.
+- id: sd_item_diabolical_warped_skull
+  name: Warped Skull
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Drips blood in the presence of undead.
+- id: shadowdark_whip
+  name: Whip
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Weapon
+    cost: 10 gp
+    benefit: Melee/Ranged (N), 1d4 damage. Finesse (F), Lash (La).
+  description: A long, flexible lash used for control and stinging strikes.
+- id: sd_item_diabolical_wolf_idol
+  name: Wolf Idol
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Treasure
+    benefit: Floats in the air wherever it's placed.
+- id: shadowdark_worm_oil
+  name: Worm Oil
+  type: Item
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    category: Item
+    benefit: Pour in sand to attract a purple worm in 1d4 rds.
+  description: A pungent oil used to lure massive desert worms.
+- id: sd_item_wrath_bolt
+  name: Wrath Bolt
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Weapon
+    benefit: Deals 1d100 damage to anyone who tries to take it from the previous possessor (dead or alive).
+    bonus: +1 dagger
+- id: sd_item_ynnith
+  name: Ynnith
+  type: Item
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    category: Weapon
+    flavor: A staff of knotted oak.
+    benefit: Once a day, the wielder can summon an obedient giant owl for 5 rounds.
+    bonus: +1 staff
 - id: sd_monster_aboleth
   name: Aboleth
   type: Monster
@@ -580,6 +1165,31 @@
     - name: Attack
       desc: 1 spear (close/near) +2 (1d6 + 1)
   description: A cave hominid with scraggly fur and a stone-tipped spear.
+- id: sd_monster_bittermold
+  name: Bittermold
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "12"
+    hp: "5"
+    mv: near
+    level: "1"
+    alignment: C
+    stats:
+      str: "+1"
+      dex: "+2"
+      con: "+1"
+      int: "+0"
+      wis: "+0"
+      cha: "+0"
+    flavor: A staring, stooped human that scuttles along. Pale, wet skin.
+  abilities:
+    - name: Rubbery
+      desc: Half damage from stabbing weapons.
+  actions:
+    - name: Attack
+      desc: 1 shortsword +1 (1d6) or 1 sling (far) +2 (1d4)
 - id: sd_monster_black_pudding
   name: Black Pudding
   type: Monster
@@ -634,6 +1244,31 @@
     - name: Attack
       desc: 2 tusk +3 (1d6)
   description: Ornery wild pig with bristly, russet hair and yellowed tusks.
+- id: sd_monster_bogthorn
+  name: Bogthorn
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "13"
+    hp: "11"
+    mv: near (climb)
+    level: "2"
+    alignment: C
+    stats:
+      str: "+0"
+      dex: "+2"
+      con: "+2"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: A skittering nest of nettles and thorns with marshlights for eyes.
+  abilities:
+    - name: Poison
+      desc: DC 12 CON or paralyzed for 1d4 rounds.
+  actions:
+    - name: Attack
+      desc: 1 stab +0 (1d4) or 1 thorn hail (near) +2 (1d4 + poison)
 - id: sd_monster_bugbear
   name: Bugbear
   type: Monster
@@ -709,6 +1344,57 @@
     - name: Attack
       desc: 1 hoof +3 (1d6) or 1 spit
   description: Ornery, tan-furred desert beasts.
+- id: shadowdark_monster_camel_silver
+  name: Camel, Silver
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "10"
+    hp: "13"
+    mv: double near
+    level: "2"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "0"
+      con: "+4"
+      int: "-2"
+      wis: "+1"
+      cha: "0"
+    flavor: Rare camels with soft, silvery hair and affable dispositions.
+  actions:
+    - name: Attack
+      desc: 1 hoof +3 (1d6) or 1 spit (near) +0 (1d4)
+  description: Rare camels with soft, silvery hair and affable dispositions.
+- id: shadowdark_monster_canyon_ape
+  name: Canyon Ape
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "13"
+    hp: "29"
+    mv: near (climb)
+    level: "6"
+    alignment: "N"
+    stats:
+      str: "+4"
+      dex: "+3"
+      con: "+2"
+      int: "-1"
+      wis: "+1"
+      cha: "-1"
+    flavor: Clawed apes with sandy, matted hair and reflective eyes. Carnivorous ambush hunters.
+  abilities:
+    - name: Ambush
+      desc: Deals double damage against surprised foes.
+    - name: Stalk
+      desc: ADV on DEX checks while in mountains and canyons.
+  actions:
+    - name: Attack
+      desc: 3 rend +6 (2d6)
+  description: Clawed apes with sandy, matted hair and reflective eyes. Carnivorous ambush hunters.
 - id: sd_monster_centipede_giant
   name: Centipede, Giant
   type: Monster
@@ -1474,6 +2160,29 @@
     - name: Attack
       desc: 3 scimitar +7 (1d12) or 1 whirlwind
   description: Azure-blue, jovial humanoids made of air and wind
+- id: shadowdark_monster_donkey
+  name: Donkey
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "10"
+    hp: "6"
+    mv: near
+    level: "1"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "0"
+      con: "+2"
+      int: "-2"
+      wis: "+1"
+      cha: "-2"
+    flavor: Stocky, long-eared cousins of horses that are capable haulers.
+  actions:
+    - name: Attack
+      desc: 1 hoof +3 (1d4)
+  description: Stocky, long-eared cousins of horses that are capable haulers.
 - id: sd_monster_doppelganger
   name: Doppelganger
   type: Monster
@@ -1670,6 +2379,31 @@
     - name: Attack
       desc: 3 rend +8 (2d10) or 1 smog breath
   description: This black, wingless beast slithers through dank swamps.
+- id: sd_monster_dralech
+  name: Dralech
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "13"
+    hp: "29"
+    mv: near
+    level: "6"
+    alignment: C
+    stats:
+      str: "+4"
+      dex: "+1"
+      con: "+2"
+      int: "+0"
+      wis: "+0"
+      cha: "+1"
+    flavor: As tall as two humans with a pair of curved horns, a shark's grin, and an axe of white bone.
+  abilities:
+    - name: Shatter
+      desc: Destroy one non-magic gear instead of dealing damage.
+  actions:
+    - name: Attack
+      desc: 3 bone axe +5 (2d6)
 - id: sd_monster_drow
   name: Drow
   type: Monster
@@ -1818,6 +2552,32 @@
     - name: Attack
       desc: 1 war pick +2 (1d6)
   description: Gray-skinned, greedy dwarves with bald pates and white beards. They dwell in somber castles deep within the earth filled with stolen treasures and enslaved prisoners.
+- id: shadowdark_monster_dunefiend
+  name: Dunefiend
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "14"
+    hp: "20"
+    mv: near
+    level: "4"
+    alignment: C
+    stats:
+      str: "+3"
+      dex: "+4"
+      con: "+2"
+      int: "0"
+      wis: "+1"
+      cha: "0"
+    flavor: Demons that appear as claylike elves with jagged mouths and no other facial features.
+  abilities:
+    - name: Howl
+      desc: Resting creatures who hear in far DC 12 CHA or no benefit from rest (immune 1 day if pass).
+  actions:
+    - name: Attack
+      desc: 2 tear +4 (1d8) or 1 howl
+  description: Demons that appear as claylike elves with jagged mouths and no other facial features.
 - id: sd_monster_dung_beetle_giant
   name: Dung Beetle, Giant
   type: Monster
@@ -1844,6 +2604,34 @@
     - name: Attack
       desc: 1 horn +1 (1d4 + knock)
   description: A trundling, barrel-sized beetle with a T-shaped horn.
+- id: shadowdark_monster_dust_devil
+  name: Dust Devil
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "16"
+    hp: "36"
+    mv: double near
+    level: "8"
+    alignment: C
+    stats:
+      str: "+4"
+      dex: "+4"
+      con: "0"
+      int: "-2"
+      wis: "0"
+      cha: "-2"
+    flavor: Whirling elementals of sand.
+  abilities:
+    - name: Impervious
+      desc: Only damaged by magical sources.
+    - name: Fling
+      desc: In place of attacks, all within close DC 15 DEX or flung 1d100 feet in random direction.
+  actions:
+    - name: Attack
+      desc: 2 lacerate +5 (2d8)
+  description: Whirling elementals of sand.
 - id: sd_monster_efreeti
   name: Efreeti
   type: Monster
@@ -2849,6 +3637,31 @@
     - name: Attack
       desc: 3 slam +6 (1d10)
   description: A wide-limbed, lumbering statue that shakes the ground.
+- id: sd_monster_gordock_breeg
+  name: Gordock Breeg
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: 15 (chainmail)
+    hp: "19"
+    mv: near
+    level: "4"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+2"
+      con: "+1"
+      int: "+1"
+      wis: "+2"
+      cha: "+2"
+    flavor: A halfling with a distant gaze and black veins around his lips.
+  abilities:
+    - name: Algae-Eater
+      desc: Lose 1d4 HP to gain advantage on next check/attack.
+  actions:
+    - name: Attack
+      desc: 1 bastard sword +3 (1d10) or 1 sling (far) +2 (1d4)
 - id: sd_monster_gorgon
   name: Gorgon
   type: Monster
@@ -3195,6 +4008,54 @@
     - name: Attack
       desc: 2 bite +4 (1d8) or 1 fire breath
   description: Black wolfhounds with red eyes and jaws dripping with flames.
+- id: shadowdark_monster_hero
+  name: Hero
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "16"
+    hp: "25"
+    mv: near
+    level: "5"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+3"
+      int: "0"
+      wis: "+1"
+      cha: "+1"
+    flavor: High-ranked gladiators who have attained widespread fame.
+  actions:
+    - name: Attack
+      desc: 3 bastard sword +5 (1d8) or 1 spear (close/near) +5 (1d6)
+  description: High-ranked gladiators who have attained widespread fame.
+- id: sd_monster_hexling
+  name: Hexling
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "12"
+    hp: "11"
+    mv: near
+    level: "2"
+    alignment: C
+    stats:
+      str: "+0"
+      dex: "+2"
+      con: "+2"
+      int: "+0"
+      wis: "+1"
+      cha: "+0"
+    flavor: A whispering, writhing shadow that coils and snaps like a whip.
+  abilities:
+    - name: Energy Drain
+      desc: 1d4 CON damage. If reduced to 0, become hexling.
+  actions:
+    - name: Attack
+      desc: 1 chill touch +2 (1d6 + energy drain)
 - id: sd_monster_hippogriff
   name: Hippogriff
   type: Monster
@@ -3293,6 +4154,54 @@
     - name: Attack
       desc: 1 hooves +3 (1d6)
   description: Powerful, swift herd animals that roam open plains.
+- id: shadowdark_monster_horse_war
+  name: Horse, War
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "11"
+    hp: "15"
+    mv: double near
+    level: "3"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+2"
+      int: "-3"
+      wis: "+1"
+      cha: "-1"
+    flavor: Muscular destriers trained to carry warriors into combat.
+  actions:
+    - name: Attack
+      desc: 1 hooves +4 (1d6)
+  description: Muscular destriers trained to carry warriors into combat.
+- id: sd_monster_howler
+  name: Howler
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: 15 (leather + shield)
+    hp: "5"
+    mv: near
+    level: "1"
+    alignment: "N"
+    stats:
+      str: "+2"
+      dex: "+2"
+      con: "+1"
+      int: "+0"
+      wis: "+0"
+      cha: "+0"
+    flavor: A lunging halfling with sharpened teeth wearing a cloak of coyote pelts.
+  abilities:
+    - name: Mob
+      desc: Deal +1 damage in melee when beside an ally.
+  actions:
+    - name: Attack
+      desc: 1 club +2 (1d4) or 1 sling (far) +2 (1d4)
 - id: sd_monster_hydra
   name: Hydra
   type: Monster
@@ -3319,6 +4228,33 @@
     - name: Attack
       desc: 1 bite (near) +6 (1d8)
   description: A towering, amphibious reptile with a bouquet of snake heads writhing on long necks.
+- id: sd_monster_ichor_ooze
+  name: Ichor Ooze
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "12"
+    hp: "15"
+    mv: near (climb)
+    level: "3"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+2"
+      con: "+2"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: A trembling mass of filmy bile that slurps toward warmth.
+  abilities:
+    - name: Rubbery
+      desc: Half damage from stabbing weapons.
+    - name: Corrosive
+      desc: Metal or wood that touches the ooze is destroyed on a d6 roll of 1.
+  actions:
+    - name: Attack
+      desc: 2 tendril +3 (1d6)
 - id: sd_monster_invisible_stalker
   name: Invisible Stalker
   type: Monster
@@ -3778,6 +4714,33 @@
     - name: Attack
       desc: 2 rend +6 (2d6) or 2 tail spike (far) +4 (1d8)
   description: Human-faced lions with bat
+- id: sd_monster_marrow_fiend
+  name: Marrow Fiend
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "15"
+    hp: "39"
+    mv: near (climb)
+    level: "8"
+    alignment: C
+    stats:
+      str: "+4"
+      dex: "+4"
+      con: "+3"
+      int: "+2"
+      wis: "+3"
+      cha: "+3"
+    flavor: A wolfish hulk of razor bone and sinewy muscle. Black marrow tree sap drips from its jaws and the gaps in its bony plating.
+  abilities:
+    - name: Devour
+      desc: Use turn to devour a humanoid body to regain 3d8 HP.
+    - name: Sap
+      desc: DC 15 DEX check or stuck in place. Repeat check on turn to escape.
+  actions:
+    - name: Attack
+      desc: 2 claws +7 (1d10) and 1 sap gout (near line) +5 (2d6 + sap)
 - id: sd_monster_mastiff
   name: Mastiff
   type: Monster
@@ -3906,6 +4869,32 @@
     - name: Attack
       desc: 2 greataxe +6 (1d10) and 1 horns +6 (1d12)
   description: Ferocious bull-men with hooves and curved horns. They live in mazelike tunnels.
+- id: shadowdark_monster_mirage
+  name: Mirage
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "6"
+    hp: "32"
+    mv: near
+    level: "8"
+    alignment: C
+    stats:
+      str: "-4"
+      dex: "-4"
+      con: "-4"
+      int: "+2"
+      wis: "+1"
+      cha: "+4"
+    flavor: Sinister illusions made manifest by fever dreams and futile hope.
+  abilities:
+    - name: Delude
+      desc: Has the illusory look and feel of what its viewers expect or want it to be (creature or small location). DC 18 INT to notice it's an illusion.
+  actions:
+    - name: Leech
+      desc: One target in near, DC 18 CHA or 3d6 damage. Mirage creates plausible illusion to explain the injury.
+  description: Sinister illusions made manifest by fever dreams and futile hope.
 - id: sd_monster_moose
   name: Moose
   type: Monster
@@ -3973,6 +4962,35 @@
     - name: Attack
       desc: 1 rot touch +8 (1d10 + necrosis) and 3 spell +8
   description: "A skinless mummy-lich wearing a crown set with nine bright gems. Once the head of the ancient, wizardly order of Gehemna, Mordanticus now lives in secret within the sanctum of Gehemna's reigning archmage. He has served as an advisor and historian for centuries, but an enduring enchantment prevents him from speaking of two topics: his origins, and The Ten-Eyed Oracle."
+- id: sd_monster_mugdulblub
+  name: Mugdulblub
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "16"
+    hp: "58"
+    mv: near (climb, swim)
+    level: "12"
+    alignment: C
+    stats:
+      str: "+5"
+      dex: "+3"
+      con: "+4"
+      int: "+2"
+      wis: "+3"
+      cha: "+4"
+    flavor: A roiling mass of stars floating in a whirlpool of purple goo.
+  abilities:
+    - name: Rubbery
+      desc: Half damage from stabbing weapons.
+    - name: Mutagenic
+      desc: "Creatures within near 1:6 chance on their turn of a mutation. 1d4: 1. Extra eye, 2-3. Lost bone, 4. Extra finger"
+    - name: Dissolve
+      desc: One creature in far DC 15 CON or 1d4 CON damage. If reduced to 0, become ichor ooze under Mugdulblub's control.
+  actions:
+    - name: Attack
+      desc: 3 tendril (near) +8 (2d8) and 1 dissolve
 - id: sd_monster_mummy
   name: Mummy
   type: Monster
@@ -4031,6 +5049,31 @@
     - name: Attack
       desc: 2 slam +2 (1d6)
   description: Lumbering humanoids with spongy, elongated bodies.
+- id: sd_monster_mutant_catfish
+  name: Mutant Catfish
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "11"
+    hp: "11"
+    mv: near (swim)
+    level: "2"
+    alignment: "N"
+    stats:
+      str: "+2"
+      dex: "+1"
+      con: "+2"
+      int: "-2"
+      wis: "+0"
+      cha: "-2"
+    flavor: A slimy, enormous catfish with four limbs and webbed claws. Amphibious and dimly intelligent.
+  abilities:
+    - name: Poison
+      desc: DC 12 CON or paralyzed 1d4 rounds.
+  actions:
+    - name: Attack
+      desc: 1 claw +2 (1d6) or 1 barb (near) +2 (1d4 + poison)
 - id: sd_monster_naga
   name: Naga
   type: Monster
@@ -4631,6 +5674,33 @@
     - name: Attack
       desc: 1 cutlass +1 (1d6) or 1 dagger (close/near) +1 (1d4)
   description: Seafaring scoundrels who live to steal and hoard treasure.
+- id: sd_monster_plogrina_b
+  name: Plogrina B.
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "14"
+    hp: "25"
+    mv: near
+    level: "5"
+    alignment: C
+    stats:
+      str: "+0"
+      dex: "+4"
+      con: "+3"
+      int: "+1"
+      wis: "+1"
+      cha: "+3"
+    flavor: Lank-haired and moon-eyed. Purple ichor dribbles from the corners of her trembling mouth.
+  abilities:
+    - name: Rubbery
+      desc: Half damage from stabbing weapons.
+    - name: Slime Form
+      desc: Turn into a puddle of slime that can climb walls for 1d4 rounds (does not use action).
+  actions:
+    - name: Attack
+      desc: 2 tendril (near) +4 (1d6)
 - id: sd_monster_priest
   name: Priest
   type: Monster
@@ -4721,6 +5791,32 @@
     - name: Attack
       desc: 2 claw +6 (1d8)
   description: Demonic illusionists whose true form is of a humanlike great cat with backwards hands.
+- id: shadowdark_monster_ras_godai
+  name: Ras-Godai
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "13"
+    hp: "13"
+    mv: near (teleport)
+    level: "3"
+    alignment: C
+    stats:
+      str: "+1"
+      dex: "+2"
+      con: "0"
+      int: "0"
+      wis: "+1"
+      cha: "0"
+    flavor: Black-garbed assassins in demon masks. They move swiftly in bursts of smoke.
+  abilities:
+    - name: Assassinate
+      desc: Deals double damage against surprised foes.
+  actions:
+    - name: Attack
+      desc: 1 razor chain (near) +4 (1d6)
+  description: Black-garbed assassins in demon masks. They move swiftly in bursts of smoke.
 - id: sd_monster_rat
   name: Rat
   type: Monster
@@ -4933,6 +6029,29 @@
     - name: Attack
       desc: 4 rend +9 (2d10 + grab)
   description: Dragon-sized hawks that nest in remote mountains.
+- id: shadowdark_monster_rookie
+  name: Rookie
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "14"
+    hp: "5"
+    mv: near
+    level: "1"
+    alignment: "N"
+    stats:
+      str: "+1"
+      dex: "+1"
+      con: "+1"
+      int: "0"
+      wis: "0"
+      cha: "0"
+    flavor: Inexperienced pit fighters.
+  actions:
+    - name: Attack
+      desc: 1 shortsword +1 (1d6) or 1 javelin (close/far) +1 (1d4)
+  description: Inexperienced pit fighters.
 - id: sd_monster_roper
   name: Roper
   type: Monster
@@ -5170,6 +6289,47 @@
     - name: Attack
       desc: 1 claw +2 (1d6 + grab) and 1 sting +2 (1d4 + poison)
   description: Chitin-plated scorpions as big as camels.
+- id: shadowdark_monster_scrag
+  name: Scrag
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "12"
+    hp: "11"
+    mv: near (climb)
+    level: "2"
+    alignment: "N"
+    stats:
+      str: "+2"
+      dex: "+2"
+      con: "+2"
+      int: "-2"
+      wis: "+1"
+      cha: "-3"
+    flavor: Tan monitor lizards as large as cows. They scamper low to the ground on wall-clinging feet.
+  actions:
+    - name: Attack
+      desc: 1 claw +2 (1d6)
+  description: Tan monitor lizards as large as cows. They scamper low to the ground on wall-clinging feet.
+- id: shadowdark_monster_scrag_war
+  name: Scrag, War
+  type: Monster
+  game: Shadowdark
+  source: Cursed Scroll 2
+  properties:
+    ac: "12"
+    hp: "15"
+    mv: near (climb)
+    level: "3"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+2"
+      con: "+2"
+      int: "-2"
+      wis: "+1"
+      cha: "-3"
 - id: sd_monster_shadow
   name: Shadow
   type: Monster
@@ -5325,6 +6485,31 @@
     - name: Attack
       desc: 1 shortsword +1 (1d6) or 1 shortbow (far) +0 (1d4)
   description: A bleach-boned skeleton with red pinpoints of light in its eyes.
+- id: sd_monster_skrell
+  name: Skrell
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "13"
+    hp: "5"
+    mv: double near
+    level: "1"
+    alignment: C
+    stats:
+      str: "+2"
+      dex: "+3"
+      con: "+1"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: A gobbling, scabby raptor with rolling eyes and hooked claws.
+  abilities:
+    - name: Clever
+      desc: Advantage on checks to do the same action on a consecutive turn.
+  actions:
+    - name: Attack
+      desc: 1 claw +2 (1d6)
 - id: sd_monster_smilodon
   name: Smilodon
   type: Monster
@@ -5617,6 +6802,38 @@
     - name: Attack
       desc: 2 claws +2 (1d6)
   description: A gray-skinned, gaunt creature with four ropy limbs tipped in sucker-lined claws.
+- id: sd_monster_tar_bat
+  name: Tar Bat
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "13"
+    hp: "4"
+    mv: near (fly)
+    level: "1"
+    alignment: "N"
+    stats:
+      str: "-3"
+      dex: "+3"
+      con: "+0"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: A pinwheeling bat that smells of sulfur. Excretes a black, tarry oil.
+  abilities:
+    - name: Pyro
+      desc: Seeks open flames, ignites on contact with them to deal +1d4 damage. Immune to fire.
+  actions:
+    - name: Attack
+      desc: 1 bite +3 (1d4)
+- id: test-official-1
+  name: Test Official
+  type: Monster
+  game: ShadowDark
+  source: Core
+  properties: {}
+  description: Test
 - id: sd_monster_the_tarrasque
   name: The Tarrasque
   type: Monster
@@ -5695,6 +6912,35 @@
     - name: Attack
       desc: 4 +3 vorpal bastard sword +9 (1d10 + lop)
   description: A cheerful merchant who appears to be a hale, middle-aged human man with a handlebar mustache. He wears a white shirt, breeches, and leather apron, and he hauls a towering backpack bursting at the seams. Few know the merchant's true nature and origins, though some theorize he is an immortal being or a god (they are not entirely incorrect). The Wandering Merchant always has something useful, far-flung, or incredible to sell at a reasonable price, and there's no telling when or where he'll show up next...
+- id: sd_monster_the_willowman
+  name: The Willowman
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    ac: "17"
+    hp: "61"
+    mv: near (teleport)
+    level: "13"
+    alignment: C
+    stats:
+      str: "+5"
+      dex: "+7"
+      con: "+3"
+      int: "+4"
+      wis: "+4"
+      cha: "+5"
+    flavor: A pale, faceless man with elongated limbs and curved talons that rake the ground. Moves in quick stutters during each eyeblink.
+  abilities:
+    - name: Fearless
+      desc: Immune to morale checks.
+    - name: Terrify
+      desc: One target in near DC 15 CHA or paralyzed 1d4 rounds.
+    - name: Waking Nightmare
+      desc: In place of attacks, all creatures within near DC 15 CHA or flee in a random direction for 1d4 rounds.
+  actions:
+    - name: Attack
+      desc: 3 finger needle +9 (2d10) and 1 terrify
 - id: sd_monster_thief
   name: Thief
   type: Monster
@@ -6398,10 +7644,21 @@
   source: Core
   properties:
     tier: "2"
-    class: Wizard
+    class: Wizard, Witch
     duration: 5 rounds
     range: Self
   description: You magically change your physical form, gaining one feature that modifies your existing anatomy. For example, you can grow functional gills on your neck or bear claws on your fingers. This spell can’t grow wings or limbs.
+- id: sd_spell_anathema
+  name: Anathema
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "5"
+    class: Witch
+    duration: Instant
+    range: Close
+  description: All allies revile and abandon the creature you touch for 1 day. Each time you or your allies harm the target, its former allies may pass a DC 15 Wisdom check to end the effects of the spell.
 - id: sd_spell_animate_dead
   name: Animate Dead
   type: Spell
@@ -6442,10 +7699,23 @@
   source: Core
   properties:
     tier: "2"
-    class: Priest
+    class: Priest, Witch
     duration: Instant
     range: Self
   description: You interpret the meaning of supernatural portents and omens. Ask the GM one question about a specific course of action. The GM says whether the action will lead to “weal” or “woe.”
+- id: sd_spell_beguile
+  name: Beguile
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "4"
+    class: Witch
+    duration: Focus
+    range: Near
+  description: |
+    You conjure a convincing visible and audible illusion within range. Creatures who perceive the illusion react to it as though it were real, although it can't cause actual harm. Touching the illusion instantly reveals its false nature.
+    You may force a creature who interacts with the illusion to make a DC 15 Wisdom check. If the creature fails, it is enchanted by the illusion for the spell's duration and seeks to protect it.
 - id: sd_spell_bless
   name: Bless
   type: Spell
@@ -6468,6 +7738,28 @@
     duration: Focus
     range: Near
   description: You utter a divine censure, blinding or deafening one creature you can see in range. The creature has disadvantage on tasks requiring the lost sense.
+- id: sd_spell_bogboil
+  name: Bogboil
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: 5 rounds
+    range: Far
+  description: You turn a near-sized cube of ground within range into a muddy, boiling bog of quicksand. A creature stuck in the bog can't move and must succeed on a Dexterity check vs. your spellcasting check to free itself.
+- id: sd_spell_broomstick
+  name: Broomstick
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Focus
+    range: Self
+  description: You conjure a flying broomstick in your hand. The broomstick's rider can fly a near distance each round and can hover in place.
 - id: sd_spell_burning_hands
   name: Burning Hands
   type: Spell
@@ -6479,6 +7771,43 @@
     duration: Instant
     range: Close
   description: You spread your fingers with thumbs touching, unleashing a circle of flame that roars out to a close area around where you stand. Creatures within the area of effect take 1d6 damage, and flammable objects catch fire.
+- id: sd_spell_cacklerot
+  name: Cacklerot
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: Focus
+    range: Close
+  description: One target you touch of LV 4 or less collapses helplessly with disturbing, pained laughter for the spell's duration.
+- id: sd_spell_cat_s_eye
+  name: Cat's Eye
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: Focus
+    range: Self
+  description: Your irises grow to fill your eyes and your pupils turn into black, vertical slits. You can see invisible creatures and secret doors for the spell's duration.
+- id: sd_spell_cauldron
+  name: Cauldron
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: 1 round
+    range: Close
+  description: |
+    You conjure a bubbling cauldron next to you. It can produce one of the following effects:
+    - Any broken mundane item placed inside the cauldron is repaired.
+    - A fat, croaking toad leaps out and follows your instructions for the next 3 rounds.
+    - You can place up to 3 item slots of items inside the cauldron. The cauldron expels these items the next time you cast this spell (expelling items counts as the cauldron's single effect).
 - id: sd_spell_charm_person
   name: Charm Person
   type: Spell
@@ -6486,7 +7815,7 @@
   source: Core
   properties:
     tier: "1"
-    class: Wizard
+    class: Wizard, Witch
     duration: 1d8 days
     range: Near
   description: You magically beguile one humanoid of LV 2 or less within near range, who regards you as a friend for the duration. The spell ends if you or your allies do anything harmful to the target. The target knows it was magically charmed after the spell ends.
@@ -6501,6 +7830,17 @@
     duration: 5 rounds
     range: Close
   description: One weapon you touch is wreathed in purifying flames. It deals an additional 1d4 damage (1d6 vs. undead) for the duration.
+- id: sd_spell_cloak_of_night
+  name: Cloak of Night
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "4"
+    class: Witch
+    duration: 8 rounds
+    range: Self
+  description: Your wrap yourself in a swirling cloak of shadows. For the spell's duration, your armor class becomes 17 (20 on a critical spellcasting check). You have advantage on Dexterity checks to sneak and hide for the spell's duration.
 - id: sd_spell_cloudkill
   name: Cloudkill
   type: Spell
@@ -6556,6 +7896,17 @@
     duration: Focus
     range: Far
   description: You move and shape water. You can cause a section of water up to 100 feet in width and depth to change shape, defy gravity, or flow in a different direction.
+- id: sd_spell_coven
+  name: Coven
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Instant
+    range: Self
+  description: You call upon the magic you share with your fellow witches. You regain the use of one tier 3 spell or lower that you can no longer cast for the day. After successfully casting this spell, you can't do so again until you complete a rest.
 - id: sd_spell_create_undead
   name: Create Undead
   type: Spell
@@ -6578,6 +7929,25 @@
     duration: Instant
     range: Close
   description: Your touch restores ebbing life. Roll a number of d6s equal to 1 + half your level (rounded down). One target you touch regains that many hit points.
+- id: sd_spell_curse
+  name: Curse
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "4"
+    class: Witch
+    duration: Permanent
+    range: Close
+  description: |
+    A creature you touch is afflicted by one of the following curses:
+    - Hideous boils and warts
+    - All food tastes of ash
+    - Voice becomes shrill
+    - Disturbing nightmares
+    - Always lose at gambling
+    - An ally turns into an enemy
+    - Fear of something ordinary
 - id: sd_spell_detect_magic
   name: Detect Magic
   type: Spell
@@ -6607,7 +7977,7 @@
   source: Core
   properties:
     tier: "4"
-    class: Wizard
+    class: Wizard, Witch
     duration: Instant
     range: Self
   description: You teleport yourself and up to one other willing creature to any point you can see.
@@ -6640,7 +8010,7 @@
   source: Core
   properties:
     tier: "4"
-    class: Wizard
+    class: Wizard, Witch
     duration: Instant
     range: Self
   description: You throw the divining bones or peer into the blackness between the stars, seeking a portent. You can ask the GM one yes or no question. The GM truthfully answers "yes" or "no." If you cast this spell more than once in 24 hours, treat a failed spellcasting check for it as a critical failure, instead.
@@ -6666,6 +8036,39 @@
     duration: 10 rounds
     range: Near
   description: Mighty beings come to your aid. The beings must have a combined total of 16 levels or less. Chaotic PCs summon demons/devils, and lawful or neutral PCs summon angels. The beings act of free will to aid you on your turn. After 10 rounds, they return to their realms. You cannot cast this spell again until you complete penance.
+- id: sd_spell_dreamwalk
+  name: Dreamwalk
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "5"
+    class: Witch
+    duration: Instant
+    range: Close
+  description: You and any willing creatures you choose within close range step into the dream of a sleeping creature you name that is on your same plane. You and anyone traveling with you can step out of the creature, appearing next to it as if having teleported there.
+- id: sd_spell_enfeeble
+  name: Enfeeble
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "5"
+    class: Witch
+    duration: Instant
+    range: Close
+  description: "A creature you touch has a random stat reduced to 3 (-4) for one week. Roll a d6 to determine which stat: 1. Strength, 2. Dexterity, 3. Constitution, 4. Intelligence, 5. Wisdom, 6. Charisma. If you fail the spellcasting check, you have a random stat reduced to 3 for a week instead."
+- id: sd_spell_eyebite
+  name: Eyebite
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Instant
+    range: Near
+  description: One creature you target takes 1d4 damage, and it can't see you until the end of its next turn.
 - id: sd_spell_fabricate
   name: Fabricate
   type: Spell
@@ -6688,6 +8091,17 @@
     duration: Instant
     range: Self
   description: You may make an attempt to cast this spell when you fall. Your rate of descent slows so that you land safely on your feet.
+- id: sd_spell_finger_of_death
+  name: Finger of Death
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "5"
+    class: Witch
+    duration: Instant
+    range: Close
+  description: One creature you touch of LV 9 or less dies. Treat a failed spellcasting check for this spell as a critical failure, and roll the mishap with disadvantage.
 - id: sd_spell_fireball
   name: Fireball
   type: Spell
@@ -6743,6 +8157,28 @@
     duration: 5 rounds
     range: Self
   description: Your feet lift from the ground, and you take to the air like a hummingbird. You can fly near for the spell's duration and are able to hover in place.
+- id: sd_spell_fog
+  name: Fog
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Focus
+    range: Close
+  description: A thick cloud of fog blooms in a close area around you, making you hard to see. The cloud moves with you. Attacks against creatures in the cloud have disadvantage.
+- id: sd_spell_frog_rain
+  name: Frog Rain
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: Instant
+    range: Far
+  description: A rain of indignant frogs pelts a near-sized cube around a point you can see within range. All creatures within the frog rain take 1d6 damage. Any surviving frogs hop away and disappear.
 - id: sd_spell_gaseous_form
   name: Gaseous Form
   type: Spell
@@ -6754,6 +8190,17 @@
     duration: 10 rounds
     range: Self
   description: You and your gear turn into a cloud of smoke for the spell's duration. You can fly and pass through any gap that smoke could. You can sense the terrain and any movement around you out to a near distance. You can't cast spells while in this form.
+- id: sd_spell_glassbones
+  name: Glassbones
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "4"
+    class: Witch
+    duration: Focus
+    range: Close
+  description: A creature you touch becomes fragile. It takes double damage for the spell's duration.
 - id: sd_spell_heal
   name: Heal
   type: Spell
@@ -6809,6 +8256,28 @@
     duration: 5 rounds
     range: Close
   description: One weapon you touch is imbued with a sacred blessing. The weapon becomes magical and has +1 to attack and damage rolls for the duration.
+- id: sd_spell_howl
+  name: Howl
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Instant
+    range: Near
+  description: All enemies within near range of you must immediately make a morale check. This spell does not affect creatures that are immune to morale checks.
+- id: sd_spell_hypnotize
+  name: Hypnotize
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Focus
+    range: Near
+  description: One creature of LV 3 or less that can see you is rendered stupefied. Breaking the creature's line of sight to you allows it to make a DC 15 Charisma check. On a success, the spell ends.
 - id: sd_spell_illusion
   name: Illusion
   type: Spell
@@ -6827,7 +8296,7 @@
   source: Core
   properties:
     tier: "2"
-    class: Wizard
+    class: Wizard, Witch
     duration: 10 rounds
     range: Close
   description: A creature you touch becomes invisible for the spell’s duration. The spell ends if the target attacks or casts a spell.
@@ -6941,6 +8410,17 @@
     duration: 5 rounds
     range: Self
   description: Create a number of illusory duplicates of yourself equal to half your level rounded down (minimum 1). Each time a creature attacks you, the attack misses and causes one of the duplicates to evaporate. If all the illusions have disappeared, the spell ends.
+- id: sd_spell_mistletoe
+  name: Mistletoe
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: 1d8 days
+    range: Near
+  description: Two creatures you can see within near of you become enchanted with each other for 1d8 days. Each time one of the affected creatures takes damage, it may make a DC 15 Charisma check. On a success, the spell ends.
 - id: sd_spell_misty_step
   name: Misty Step
   type: Spell
@@ -6952,6 +8432,50 @@
     duration: Instant
     range: Self
   description: In a puff of smoke, you teleport a near distance to an area you can see.
+- id: sd_spell_moonbeam
+  name: Moonbeam
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "4"
+    class: Witch
+    duration: Instant
+    range: Far
+  description: A wavering ray of silvery moonlight strikes one creature within far. It takes 3d6 damage.
+- id: sd_spell_mother_of_night
+  name: Mother of Night
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "5"
+    class: Witch
+    duration: Instant
+    range: Self
+  description: You beseech the Mother of Night to lend you power. Make a single wish, stating it as exactly as possible. Your wish occurs, as interpreted by the GM. If you fail this spellcasting check, the Mother of Night pulls you into The Nightfall for judgment. You can't cast this spell again until you appease her demands.
+- id: sd_spell_nightmare
+  name: Nightmare
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "4"
+    class: Witch
+    duration: Focus
+    range: On the same plane
+  description: You visit the dreams of one sleeping creature, sending it heart-stopping nightmares. You can target a creature whose level is less than or equal to half your level rounded down (minimum 1). The target must be sleeping, and you must have seen it before in person. If you successfully focus on this spell for 3 rounds in a row, the creature dies of fright.
+- id: sd_spell_oak_ash_thorn
+  name: Oak, Ash, Thorn
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Focus
+    range: Self
+  description: For the spell's duration, faeries, demons, and devils can't attack you. These beings also can't possess, compel, or beguile you.
 - id: sd_spell_passwall
   name: Passwall
   type: Spell
@@ -6974,6 +8498,17 @@
     duration: Focus
     range: Near
   description: A creature you target turns into a statue made of hardened salt. You can target a creature you can see of LV 5 or less. If you focus on this spell for 3 rounds in a row, the transformation becomes permanent.
+- id: sd_spell_pin_doll
+  name: Pin Doll
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Focus
+    range: On the same plane
+  description: You pin a piece of hair or flesh taken from one creature to a small, burlap doll the spell conjures. On your turn while focusing on this spell, you can push a pin into the doll. Each time you do this, the creature who the hair or flesh belonged to takes 2d6 damage. After this spell ends, the piece of hair or flesh burns to ash.
 - id: sd_spell_plane_shift
   name: Plane Shift
   type: Spell
@@ -6985,6 +8520,17 @@
     duration: Instant
     range: Close
   description: You fold space and time, transporting yourself and all willing creatures within close range to a location on another plane of your choice. Unless you have been to your intended location before, you appear in a random place on the destination plane.
+- id: sd_spell_poison
+  name: Poison
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: 5 rounds
+    range: Close
+  description: One worn or carried object you touch becomes toxic for the spell's duration. Any creature in contact with the object at the start of its turn takes 1d6 damage.
 - id: sd_spell_polymorph
   name: Polymorph
   type: Spell
@@ -6992,7 +8538,7 @@
   source: Core
   properties:
     tier: "4"
-    class: Wizard
+    class: Wizard, Witch
     duration: 10 rounds
     range: Touch
   description: You transform a creature you touch into another natural creature you choose of equal or smaller size. Any gear the target carries melds into its new form. The target gains the creature's hit points, armor class, and attacks, but retains its intellect. If the target goes to 0 hit points, it reverts to its true form at half its prior hit points. You can target any willing creature with this spell, or an unwilling creature whose level is less than or equal to half your level rounded down (minimum 1).
@@ -7051,6 +8597,17 @@
     duration: Focus
     range: Close
   description: For the spell's duration, chaotic beings have disadvantage on attack rolls and hostile spellcasting checks against the target. These beings also can't possess, compel, or beguile it. When cast on an already-possessed target, the possessing entity makes a CHA check vs. the last spellcasting check. On a failure, the entity is expelled.
+- id: sd_spell_puppet
+  name: Puppet
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Focus
+    range: Close
+  description: One humanoid creature of LV 2 or less you touch becomes ensnared by your movements. On your turn, the creature mimics all your movements. If mimicking you would cause the creature to directly harm itself or an ally, it can make a DC 15 Charisma check. On a success, it resists mimicking you.
 - id: sd_spell_rebuke_unholy
   name: Rebuke Unholy
   type: Spell
@@ -7102,7 +8659,7 @@
   source: Core
   properties:
     tier: "5"
-    class: Wizard
+    class: Wizard, Witch
     duration: Focus
     range: Self
   description: You look into a crystal ball or reflecting pool, calling up images of a distant place. For the spell's duration, you can see and hear a creature or location you choose that is on the same plane. This spell is DC 18 to cast if you try to scry on a creature or location that is unfamiliar to you. Each round, creatures you view may make a Wisdom check vs. your last spellcasting check. On a success, they become aware of your magical observation.
@@ -7117,6 +8674,17 @@
     duration: Instant
     range: Unlimited
   description: You send a brief, mental message to any creature with whom you are familiar who is on the same plane.
+- id: sd_spell_shadowdance
+  name: Shadowdance
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: 3 rounds
+    range: Near
+  description: You spin shadowstuff into a convincing visible and audible illusion at a point within near. The illusion can be as big as a person and can move within a near range of where it appeared. The illusion can't affect physical objects. Touching the illusion reveals its false nature.
 - id: sd_spell_shapechange
   name: Shapechange
   type: Spell
@@ -7124,7 +8692,7 @@
   source: Core
   properties:
     tier: "5"
-    class: Wizard
+    class: Wizard, Witch
     duration: Focus
     range: Self
   description: You transform yourself and any gear you carry into another natural creature you've seen of level 10 or less. You gain the creature's hit points, armor class, and attacks, but retain your intellect. If you go to 0 hit points while under the effects of this spell, you revert to your true form at 1 hit point.
@@ -7172,6 +8740,17 @@
     duration: Instant
     range: Near
   description: You call down punishing flames on a creature you can see within range. It takes 1d6 damage.
+- id: sd_spell_soul_jar
+  name: Soul Jar
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "5"
+    class: Witch
+    duration: Permanent
+    range: Close
+  description: You transfer the soul of one creature you touch of LV 9 or less into a vessel, such as a jar. The creature's body becomes comatose, but it doesn't die. If the vessel opens or breaks, the creature's soul returns to its body. You can possess the empty body with your own spirit, taking control of it. Your body becomes comatose during this time. If the body dies while you possess it, your soul returns to your body.
 - id: sd_spell_speak_with_dead
   name: Speak With Dead
   type: Spell
@@ -7179,10 +8758,21 @@
   source: Core
   properties:
     tier: "3"
-    class: Priest, Wizard
+    class: Priest, Wizard, Witch
     duration: Instant
     range: Close
   description: A dead body you touch answers your questions in a distant, wheezing voice. You can ask the dead body up to three yes or no questions (one at a time). The GM truthfully answers "yes" or "no" to each. If you cast this spell more than once in 24 hours, treat a failed spellcasting check for it as a critical failure, instead.
+- id: sd_spell_spidersilk
+  name: Spidersilk
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: Focus
+    range: Self
+  description: Sticky spidersilk covers your hands and feet. For the spell's duration, you can walk on vertical surfaces as easily as if it were flat ground.
 - id: sd_spell_stoneskin
   name: Stoneskin
   type: Spell
@@ -7205,6 +8795,17 @@
     duration: Focus
     range: Near
   description: Reach into the outer planes and summon an elemental or outsider of LV 7 or less under your control. If you lose focus, you lose control and the creature becomes hostile towards you and your allies. A spellcasting check is required to return the creature to the outer planes.
+- id: sd_spell_swarm
+  name: Swarm
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Focus
+    range: Far
+  description: A dense swarm of biting bats, rats, or locusts appears in a nearsized cube around a point you can see within range. All creatures that start their turn within the swarm take 2d6 damage and are blinded.
 - id: sd_spell_telekinesis
   name: Telekinesis
   type: Spell
@@ -7227,6 +8828,28 @@
     duration: Instant
     range: Close
   description: Teleport yourself and willing creatures within close range to a specified location on your same plane with a 50% chance of arriving off-target if the location is unknown.
+- id: sd_spell_toadstool
+  name: Toadstool
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "2"
+    class: Witch
+    duration: Instant
+    range: Self
+  description: You conjure a plump, speckled toadstool in your hand. It disappears at the end of your next turn. A creature that eats the toadstool regains 1d6 hit points.
+- id: sd_spell_void_stare
+  name: Void Stare
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Focus
+    range: Far
+  description: Your eyes turn black as you look into the dark between the stars. One creature of LV 6 or less you can see falls under your control. You decide its actions during its turn.
 - id: sd_spell_wall_of_force
   name: Wall Of Force
   type: Spell
@@ -7249,6 +8872,28 @@
     duration: 5 rounds
     range: Far
   description: Creates a near-sized cube of sticky spider web within range. Creatures stuck in the web must succeed on a Strength check vs. your spellcasting check to free themselves.
+- id: sd_spell_whisper
+  name: Whisper
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "3"
+    class: Witch
+    duration: Instant
+    range: Close
+  description: You whisper into another creature's ear, planting a false memory in its mind. You describe one brief, false memory that the target believes is true going forward. If you fail this spellcasting check, the GM chooses a short, false memory to plant in your mind instead.
+- id: sd_spell_willowman
+  name: Willowman
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Instant
+    range: Near
+  description: You call upon the Willowman to appear in one creature's mind, filling it with supernatural terror. Choose one creature of LV 2 or less within range. That creature must immediately make a morale check. Even creatures that are not normally subject to morale checks (such as undead) must do so.
 - id: sd_spell_wish
   name: Wish
   type: Spell
@@ -7260,6 +8905,17 @@
     duration: Instant
     range: Self
   description: Alter reality with a single wish, interpreted by the GM. A failed spellcasting check is treated as a critical failure and rolls the mishap with disadvantage.
+- id: sd_spell_witchlight
+  name: Witchlight
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 1
+  properties:
+    tier: "1"
+    class: Witch
+    duration: Focus
+    range: Near
+  description: You summon a floating marsh light that bobs in the air and casts light out to a close radius around it. The light can change colors and take on vague shapes. It can float up to a near distance on your turn.
 - id: sd_spell_wrath
   name: Wrath
   type: Spell

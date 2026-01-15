@@ -38,3 +38,23 @@ types:
         keys: ["tier", "class", "duration", "range"]
         color: "purple"
       - type: "description"
+
+  Item:
+    colorAccent: "emerald"
+    header:
+      - key: "category"
+        label: ""
+        badge: true
+    layout:
+      - type: "flavor"
+        italic: true
+      - type: "properties"
+        keys: ["category", "cost", "bonus"]
+        color: "emerald"
+      - type: "benefit"
+        title: "BENEFIT"
+        color: "emerald"
+      - type: "curse"
+        title: "CURSE"
+        color: "red"
+      - type: "description"

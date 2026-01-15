@@ -87,7 +87,6 @@ app.get('/api/tables', (req, res) => {
 // GET /api/content
 app.get('/api/content', (req, res) => {
   try {
-    // Try to load js-yaml
     let yaml;
     try {
       yaml = require('js-yaml');
@@ -99,17 +98,36 @@ app.get('/api/content', (req, res) => {
     const contentDir = path.join(__dirname, '_Content');
     const contentData = [];
 
-    // For now, explicitly load ShadowDark content
-    // In future, this should walk the directory
-    const sdContentPath = path.join(contentDir, 'ShadowDark', 'ShadowDark_Content.yaml');
+    // Recursively scan for `*_Content.yaml` files
+    function scanForContent(dir) {
+      if (!fs.existsSync(dir)) return;
 
-    if (fs.existsSync(sdContentPath)) {
-      const fileContent = fs.readFileSync(sdContentPath, 'utf8');
-      const data = yaml.load(fileContent);
-      if (Array.isArray(data)) {
-        contentData.push(...data);
-      }
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+
+      items.forEach(item => {
+        const fullPath = path.join(dir, item.name);
+
+        if (item.isDirectory()) {
+          scanForContent(fullPath);
+        } else if (item.name.endsWith('_Content.yaml') || item.name.endsWith('_Content.yml')) {
+          try {
+            const fileContent = fs.readFileSync(fullPath, 'utf8');
+            const data = yaml.load(fileContent);
+
+            if (Array.isArray(data)) {
+              console.log(`[Content] Loaded ${data.length} items from ${item.name}`);
+              contentData.push(...data);
+            }
+          } catch (e) {
+            console.warn(`[Content] Failed to load ${item.name}: ${e.message}`);
+          }
+        }
+      });
     }
+
+    // Start scan from ShadowDark directory (or root content dir if desired)
+    // For now, let's scan the whole _Content dir to be future-proof
+    scanForContent(contentDir);
 
     res.json({ content: contentData });
   } catch (e) {
@@ -330,9 +348,9 @@ app.get('/api/llm/gemini-models', async (req, res) => {
     // Return defaults if no key
     return res.json({
       models: [
-        { name: 'gemini-2.0-flash', displayName: 'Gemini 2.0 Flash', description: 'Fast and cost-effective' },
-        { name: 'gemini-2.5-flash', displayName: 'Gemini 2.5 Flash', description: 'Latest fast model' },
-        { name: 'gemini-2.5-pro', displayName: 'Gemini 2.5 Pro', description: 'Best quality reasoning' }
+        { name: 'gemini-2.0-flash', displayName: 'Gemini 2.0 Flash (Preview)', description: 'Fast and smart' },
+        { name: 'gemini-1.5-flash', displayName: 'Gemini 1.5 Flash', description: 'Production ready speed' },
+        { name: 'gemini-1.5-pro', displayName: 'Gemini 1.5 Pro', description: 'Reasoning expert' }
       ]
     });
   }
@@ -430,14 +448,18 @@ app.get('/api/forge/sources/:game', (req, res) => {
 
 // POST /api/forge/process
 app.post('/api/forge/process', async (req, res) => {
-  const { text, type, game, source, provider, apiKey, model } = req.body;
-  if (!text || !type) {
-    return res.status(400).json({ error: 'Text and Type required' });
+  const { text, type, types, game, source, provider, apiKey, model } = req.body;
+
+  // Support both single type (legacy) and types array (new)
+  const contentTypes = types || (type ? [type] : []);
+
+  if (!text || contentTypes.length === 0) {
+    return res.status(400).json({ error: 'Text and at least one content type required' });
   }
   try {
     const forge = getForgeService();
-    // Pass game and source to the service for template loading
-    const yaml = await forge.processContent(text, type, game || '', source || '', provider, apiKey, model);
+    // Process all selected content types
+    const yaml = await forge.processContent(text, contentTypes, game || '', source || '', provider, apiKey, model);
     res.json({ yaml });
   } catch (e) {
     console.error("Forge Process Error:", e);
@@ -448,7 +470,7 @@ app.post('/api/forge/process', async (req, res) => {
 // POST /api/forge/save
 // POST /api/forge/save
 app.post('/api/forge/save', async (req, res) => {
-  const { content, type } = req.body;
+  const { content, type } = req.body; // type is legacy default fall back
 
   if (!content) return res.status(400).json({ error: 'No content provided' });
 
@@ -461,31 +483,64 @@ app.post('/api/forge/save', async (req, res) => {
 
   try {
     // Validation: Ensure it's valid YAML
-    const data = yamlParser.load(content);
-
-    // Extract Name and Game for filename
-    const name = data.name || 'Untitled';
-    const game = data.game || 'Generic';
-    const sanitizedName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    const sanitizedGame = game.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-    // Construct Path
-    // Saved to: _Content/Imported/{Game}/{Type}/filename.yaml
-    const baseDir = path.join(__dirname, '_Content', 'Imported');
-    const targetDir = path.join(baseDir, sanitizedGame, type + 's'); // e.g. _Content/Imported/shadowdark/monsters
-
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
+    // content can be a string (multiline) or maybe already parsed? usually string from client.
+    let data;
+    if (typeof content === 'string') {
+      data = yamlParser.load(content);
+    } else {
+      data = content;
     }
 
-    const filename = `${sanitizedName}.yaml`;
-    const filePath = path.join(targetDir, filename);
+    if (!data) throw new Error("Empty YAML content");
 
-    // Write File
-    fs.writeFileSync(filePath, content, 'utf8');
+    // Force array
+    const items = Array.isArray(data) ? data : [data];
+    const savedPaths = [];
 
-    console.log(`[Forge] Saved ${filename} to ${targetDir}`);
-    res.json({ message: 'Saved successfully', path: filePath });
+    // Helper to determine subfolder based on type
+    const getFolderForType = (itemType, defaultType) => {
+      const t = (itemType || defaultType || 'unknown').toLowerCase();
+      if (t.includes('monster') || t.includes('npc')) return 'monsters';
+      if (t.includes('spell')) return 'spells';
+      if (t.includes('item') || t.includes('equipment')) return 'items';
+      if (t.includes('table')) return 'tables';
+      // Fallback: pluralize
+      return t + 's';
+    };
+
+    items.forEach(item => {
+      const itemName = item.name || 'Untitled';
+      const itemGame = item.game || 'Generic';
+      const itemType = item.type; // e.g. 'Monster', 'Spell'
+
+      const sanitizedName = itemName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const sanitizedGame = itemGame.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+      // Determine destination
+      // Use item's own type if available, else fall back to request type
+      const folderName = getFolderForType(itemType, type);
+
+      const baseDir = path.join(__dirname, '_Content', 'Imported');
+      const targetDir = path.join(baseDir, sanitizedGame, folderName);
+
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
+
+      const filename = `${sanitizedName}.yaml`;
+      const filePath = path.join(targetDir, filename);
+
+      // Serialize just this item back to YAML
+      // Note: we're splitting the mixed array into individual files per item.
+      // This is generally cleaner for file-based CMS.
+      const itemYaml = yamlParser.dump([item]); // Wrap in array to maintain list format expected by loader
+
+      fs.writeFileSync(filePath, itemYaml, 'utf8');
+      savedPaths.push(filePath);
+      console.log(`[Forge] Saved ${filename} to ${targetDir}`);
+    });
+
+    res.json({ message: `Saved ${savedPaths.length} items successfully`, paths: savedPaths });
 
   } catch (e) {
     console.error("Forge Save Error:", e);

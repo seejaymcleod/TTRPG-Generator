@@ -1,0 +1,51 @@
+- id: test-3rd-1
+  name: Test 3rd Party
+  type: Monster
+  game: ShadowDark
+  source: My Homebrew
+  properties: {}
+  description: Test
+- id: shadowdark_cs2_cloak_of_flame
+  name: Cloak of Flame
+  type: Spell
+  game: Shadowdark
+  source: "Cursed Scroll 2: Red Sands"
+  properties:
+    tier: "1"
+    class: Efreeti
+    duration: 5 rounds
+    range: Self
+  description: The caster's AC becomes 17 for 5 rounds.
+- id: shadowdark_cs2_convoke_greater_elemental
+  name: Convoke Greater Elemental
+  type: Spell
+  game: Shadowdark
+  source: "Cursed Scroll 2: Red Sands"
+  properties:
+    tier: "5"
+    class: Efreeti
+    duration: Focus
+    range: Near
+  description: As the convoke entity spell, but summons elementals of LV 9 only.
+- id: shadowdark_cs2_enslave
+  name: Enslave
+  type: Spell
+  game: Shadowdark
+  source: "Cursed Scroll 2: Red Sands"
+  properties:
+    tier: "1"
+    class: Efreeti
+    duration: 1d6 days
+    range: Close
+  description: One humanoid target becomes fervently loyal to the caster for 1d6 days.
+- id: shadowdark_cs2_whitefire
+  name: Whitefire
+  type: Spell
+  game: Shadowdark
+  source: "Cursed Scroll 2: Red Sands"
+  properties:
+    tier: "3"
+    class: Efreeti
+    duration: Instant
+    range: Near
+  description: As the fireball spell, but the damage ignores fire immunity.
