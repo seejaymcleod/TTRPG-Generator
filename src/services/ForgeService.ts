@@ -2,6 +2,7 @@ import { LLMClient } from './LLMClient';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as yaml from 'js-yaml';
 const pdf = require('pdf-parse');
 
 export class ForgeService {
@@ -188,7 +189,20 @@ CRITICAL RULES:
 - The output (even if single) must be a YAML array of objects (start with -).
 - Ensure all keys match the schema exactly.
 - Use the template conventions for abbreviations (e.g., 'S' means 'str').
-- Extract ALL entities matching the requested types from the text.`;
+- Extract ALL entities matching the requested types from the text.
+
+SECTION AWARENESS:
+- ONLY extract items that have their own dedicated header/stat block (black banner style or ALL CAPS header).
+- Do NOT extract items that are merely mentioned in descriptions, adventure text, room keys, or flavor text.
+- For Spells: Only extract from sections titled "Spells", "Spell List", "Seer Spells", or similar dedicated spell sections.
+- For Items: Only extract from sections titled "Magic Items", "Treasure", "Gear", or similar dedicated item sections. Do NOT extract treasure mentioned in adventure room descriptions.
+- For Monsters: Only extract from sections with proper stat blocks (AC, HP, ATK, MV line format).
+
+SOURCE SCHEMA USAGE:
+- Use the source_schema patterns in the template to identify entity boundaries.
+- A valid entity has: a black banner header (ALL CAPS name), followed by flavor text, followed by stat/property lines.
+- If text does not match the source_schema pattern, it is NOT a valid entity.`;
+
 
         if (game) {
             systemPrompt += `\n\nGame: ${game}`;
@@ -300,7 +314,7 @@ CRITICAL RULES:
         let cleanYaml = response;
 
         // 1. Extract content from code blocks if present
-        const codeBlockRegex = /```(?:yaml)?([\s\S]*?)```/g;
+        const codeBlockRegex = /```(?:yaml)?([\\s\\S]*?)```/g;
         const matches = [...response.matchAll(codeBlockRegex)];
 
         if (matches.length > 0) {
@@ -308,9 +322,6 @@ CRITICAL RULES:
             cleanYaml = matches.map(m => m[1].trim()).join('\n');
         } else {
             // Fallback: Remove potential non-YAML text
-            // Strip lines starting with ** or valid-looking sentence text not part of YAML
-            // (Simple heuristic: if it doesn't look like a list item or property, ignore it? Too risky.)
-            // Instead, try to strip leading/trailing non-yaml garbage
             cleanYaml = cleanYaml.replace(/```yaml/g, '').replace(/```/g, '').trim();
         }
 

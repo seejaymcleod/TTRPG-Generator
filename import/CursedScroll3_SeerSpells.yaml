@@ -1,0 +1,304 @@
+
+- id: sd_cs3_spell_chant
+  name: "Chant"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "1"
+    class: "Seer"
+    duration: "Focus"
+    range: "Self"
+  description: |
+    You begin an unearthly chant that lifts your vision beyond its ordinary limitations. 
+    
+    For the spell's duration, you can see all invisible and hidden things as though they were plainly visible. This spell does not allow you to see in a way that you could not normally, such as in darkness or through walls.
+
+- id: sd_cs3_spell_evoke_rage
+  name: "Evoke Rage"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "1"
+    class: "Seer"
+    duration: "1d4 rounds"
+    range: "Close"
+  description: |
+    You call out the berserk rage locked inside someone.
+    
+    One willing humanoid you touch enters a berserk state. The target is immune to morale checks, has ADV on STR checks and melee attacks, and deals +1d4 damage for the spell's duration.
+    
+    If the target does not attack another creature on its turn, the spell ends.
+
+- id: sd_cs3_spell_potion
+  name: "Potion"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "1"
+    class: "Seer"
+    duration: "Instant"
+    range: "Close"
+  description: |
+    As a part of casting this spell, you must bless a single drink of any liquid.
+    
+    The liquid gains healing properties for 1 day. A creature who imbibes it may end the effects of one poison or may immediately stop dying (the creature remains at 0 HP).
+
+- id: sd_cs3_spell_trance
+  name: "Trance"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "1"
+    class: "Seer"
+    duration: "Instant"
+    range: "Close"
+  description: |
+    You enter a trance, catching small glimpses of a creature's fate. One humanoid creature you touch (you can't target yourself) gains a luck token. It can't have more than one luck token at once.
+
+- id: sd_cs3_spell_fate
+  name: "Fate"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "2"
+    class: "Seer"
+    duration: "Instant"
+    range: "Near"
+  description: |
+    You painfully twist the golden threads of a creature's fate.
+    
+    One creature you target in range takes 1d10 damage and loses any luck tokens it has.
+
+- id: sd_cs3_spell_read_the_runes
+  name: "Read The Runes"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "2"
+    class: "Seer"
+    duration: "Instant"
+    range: "Self"
+  description: |
+    You ask the gods a question and cast the runestones, interpreting the meaning of the results.
+    
+    Ask the Game Master one yes or no question. The Game Master truthfully answers "yes" or "no."
+
+- id: sd_cs3_spell_sacrifice
+  name: "Sacrifice"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "2"
+    class: "Seer"
+    duration: "Instant"
+    range: "Close"
+  description: |
+    As a part of casting this spell, you must ritually sacrifice a living creature of LV 2 or higher.
+    
+    The target you touch gains a bonus to their next check or attack roll equal to the sacrificed creature's level.
+
+- id: sd_cs3_spell_soulbind
+  name: "Soulbind"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "2"
+    class: "Seer"
+    duration: "Focus"
+    range: "Close"
+  description: |
+    You seal the soul of a living creature, preventing magic from leeching into it.
+    
+    One creature you touch becomes nearly impervious to all magic. For the spell's duration, all other spells targeting the creature (harmful or helpful) are DC 18 to cast.
+    
+    This spell ends as soon as the target is affected by another spell.
+
+- id: sd_cs3_spell_raven
+  name: "Raven"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "2"
+    class: "Seer"
+    duration: "Instant"
+    range: "Unlimited"
+  description: |
+    You whisper a message to Odin's own ravens, and they carry it across all worlds to its recipient.
+    
+    Speak a short sentence, and the name of its recipient, dead or alive. That creature hears your utterance whispered in its mind.
+
+- id: sd_cs3_spell_cast_out
+  name: "Cast Out"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "3"
+    class: "Seer"
+    duration: "Focus"
+    range: "Far"
+  description: |
+    You turn a creature aside, throwing it out of your presence.
+    
+    Choose a creature you can see. For the spell's duration, that creature can't come within near range of you. It can still attack you from outside of near range.
+
+- id: sd_cs3_spell_hallucinate
+  name: "Hallucinate"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "3"
+    class: "Seer"
+    duration: "Focus"
+    range: "Near"
+  description: |
+    One creature you target in near whose level is less than or equal to your own is overcome by visions of what might yet come to pass.
+    
+    For the spell's duration, the target cannot act on its turn unless it passes a Wisdom check equal to your last spellcasting check.
+
+- id: sd_cs3_spell_wolfshape
+  name: "Wolfshape"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "3"
+    class: "Seer"
+    duration: "Focus"
+    range: "Self"
+  description: |
+    You and your gear transform into a wolf for the spell's duration. You assume the wolf's STR, DEX, CON, HP, AC, speed, attacks, and physical characteristics, but retain your INT, WIS, and CHA.
+    
+    You can cast spells in this form. If you go to 0 HP, you revert to your true shape at 0 HP.
+    
+    If you are level 5+, you can transform into a dire wolf or a winter wolf instead.
+
+- id: sd_cs3_spell_freyas_omen
+  name: "Freya's Omen"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "4"
+    class: "Seer"
+    duration: "1d6 rounds"
+    range: "Self"
+  description: |
+    For the spell's duration, you do not lose the ability to cast a spell if you fail its spellcasting check.
+    
+    If you critically fail a spellcasting check, you may reroll your check once. You must use the new result.
+
+- id: sd_cs3_spell_lokis_trickery
+  name: "Loki's Trickery"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "4"
+    class: "Seer"
+    duration: "Instant"
+    range: "Near"
+  description: |
+    You are filled with Loki's hypnotic guile. Creatures who hear you speak will alter their own beliefs and memories to match your suggestion.
+    
+    Target one creature who can hear and understand you within range. You make one plausible statement, true or not.
+    
+    The target must make a Wisdom check vs. your spellcasting check. If it fails, it now believes what you stated as though it were fact, regardless of what it knows.
+
+- id: sd_cs3_spell_odins_wisdom
+  name: "Odin's Wisdom"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "4"
+    class: "Seer"
+    duration: "1d6 rounds"
+    range: "Self"
+  description: |
+    For the spell's duration, add your level as an additional bonus to your Wisdom checks and spellcasting checks.
+
+- id: sd_cs3_spell_thors_thunder
+  name: "Thor's Thunder"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "4"
+    class: "Seer"
+    duration: "Instant"
+    range: "Far"
+  description: |
+    Thor casts down a bolt of lightning to strike one target. The target takes 3d6 damage.
+
+- id: sd_cs3_spell_ragnarok
+  name: "Ragnarok"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "5"
+    class: "Seer"
+    duration: "Instant"
+    range: "Far"
+  description: |
+    You look deep into the strands of fate, learning the final destiny of one soul after the battle of Ragnarok. Do they live, or die?
+    
+    Choose one creature in range. You can only target the same creature with this spell one time.
+    
+    That creature must pass a CON check equal to your spellcasting check or die instantly.
+
+- id: sd_cs3_spell_valkyrie
+  name: "Valkyrie"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "5"
+    class: "Seer"
+    duration: "10 rounds"
+    range: "Near"
+  description: |
+    You summon a valkyrie to your aid. She appears in a location within near and acts of her own free will to help you. She returns to Valhalla when the spell ends.
+    
+    You can't cast this again until you complete penance.
+
+- id: sd_cs3_spell_world_serpent
+  name: "World Serpent"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "5"
+    class: "Seer"
+    duration: "Focus"
+    range: "Close"
+  description: |
+    The torturous venom of the World Serpent drips from the weapons of a creature you touch.
+    
+    The target deals x2 damage with each attack (x4 on a critical hit) for the spell's duration.
+
+- id: sd_cs3_spell_world_tree
+  name: "World Tree"
+  type: Spell
+  game: ShadowDark
+  source: "Cursed Scroll 3"
+  properties:
+    tier: "5"
+    class: "Seer"
+    duration: "Focus"
+    range: "Close"
+  description: |
+    The roots of the life-giving World Tree wrap around the soul of a creature you touch.
+    
+    For the spell's duration, the target can't be brought below 1 HP.

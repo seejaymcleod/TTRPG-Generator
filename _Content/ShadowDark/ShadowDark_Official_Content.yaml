@@ -2379,6 +2379,60 @@
     - name: Attack
       desc: 3 rend +8 (2d10) or 1 smog breath
   description: This black, wingless beast slithers through dank swamps.
+- id: sd_monster_drake_greater
+  name: Drake, Greater
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "15"
+    hp: "38"
+    mv: double near (fly)
+    level: "8"
+    alignment: "N"
+    stats:
+      str: "+4"
+      dex: "+3"
+      con: "+2"
+      int: "-2"
+      wis: "+2"
+      cha: "+0"
+    flavor: Mountainous, fire-breathing dragon-kin who are as fierce and wild as birds of prey. Tiny, round scales cover their scintillating, purple hide.
+  abilities:
+    - name: Fireblood
+      desc: Fire immune.
+    - name: Fire Gout
+      desc: Fills a near-sized cube extending from drake. DC 12 DEX or 4d6 damage.
+  actions:
+    - name: Attack
+      desc: 2 claw +7 (1d12) or 1 fire gout
+- id: sd_monster_drake_lesser
+  name: Drake, Lesser
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "13"
+    hp: "28"
+    mv: double near (fly)
+    level: "6"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+2"
+      con: "+1"
+      int: "-2"
+      wis: "+1"
+      cha: "+0"
+    flavor: Juvenile drakes whose dull, purple scales have not yet condensed into bright armor. They can't breathe full gouts of fire, but can spit bolts of flame.
+  abilities:
+    - name: Fireblood
+      desc: Fire immune.
+    - name: Fire Spit
+      desc: One target in double near DC 12 DEX or 3d6 damage.
+  actions:
+    - name: Attack
+      desc: 2 claw +5 (1d10) or 1 fire spit
 - id: sd_monster_dralech
   name: Dralech
   type: Monster
@@ -2404,6 +2458,35 @@
   actions:
     - name: Attack
       desc: 3 bone axe +5 (2d6)
+- id: sd_monster_draugr
+  name: Draugr
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: 16 (chainmail + shield)
+    hp: "25"
+    mv: near
+    level: "5"
+    alignment: C
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+3"
+      int: "+0"
+      wis: "+0"
+      cha: "+3"
+    flavor: Ragged, undead warriors dripping with blue-black grave rot. A chill follows them, and they can swim through stone.
+  abilities:
+    - name: Greater Undead
+      desc: Immune to morale checks. Only damaged by silver or magical sources.
+    - name: Death Chill
+      desc: Checks to stabilize dying creatures within near of the draugr are DC 18.
+    - name: Stone Swim
+      desc: Draugr can pass through stone as if it were water.
+  actions:
+    - name: Attack
+      desc: 2 bastard sword +4 (1d8)
 - id: sd_monster_drow
   name: Drow
   type: Monster
@@ -2632,6 +2715,31 @@
     - name: Attack
       desc: 2 lacerate +5 (2d8)
   description: Whirling elementals of sand.
+- id: sd_monster_dverg
+  name: Dverg
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: 13 (chainmail)
+    hp: "14"
+    mv: near
+    level: "3"
+    alignment: L
+    stats:
+      str: "+2"
+      dex: "+0"
+      con: "+1"
+      int: "+1"
+      wis: "+1"
+      cha: "+0"
+    flavor: Stocky gnomes who dwell in mountain halls shaped by their peerless craftsmanship. They have rosy cheeks, sparkling eyes, and prodigious beards.
+  abilities:
+    - name: Shapeshift
+      desc: In place of attacks, turn into a small animal, or back into original form.
+  actions:
+    - name: Attack
+      desc: 1 greataxe +2 (1d10)
 - id: sd_monster_efreeti
   name: Efreeti
   type: Monster
@@ -5189,6 +5297,31 @@
     - name: Attack
       desc: 2 hooves +5
   description: Black warhorses with flaming manes, hooves, and eyes.
+- id: sd_monster_nord
+  name: Nord
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: 15 (chainmail + shield)
+    hp: "10"
+    mv: near
+    level: "2"
+    alignment: "N"
+    stats:
+      str: "+2"
+      dex: "+0"
+      con: "+1"
+      int: "+0"
+      wis: "+0"
+      cha: "+0"
+    flavor: A powerful warrior used to the hardships of the stark north.
+  abilities:
+    - name: Shield Wall
+      desc: AC becomes 20 for 1 round.
+  actions:
+    - name: Attack
+      desc: 1 greataxe +2 (1d8) or 1 shield wall
 - id: sd_monster_obe_ixx_of_azarumme
   name: Obe-Ixx Of Azarumme
   type: Monster
@@ -5332,6 +5465,37 @@
     - name: Attack
       desc: 1 glaive (near) +6 (1d10) or 1 spell +5
   description: Cunning and sorcerous ogre-demons with shaggy white hair, blue skin, and yellow eyes.
+- id: sd_monster_oracle
+  name: Oracle
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "10"
+    hp: "19"
+    mv: near
+    level: "4"
+    alignment: "N"
+    stats:
+      str: "+1"
+      dex: "+0"
+      con: "+1"
+      int: "+0"
+      wis: "+2"
+      cha: "+1"
+    flavor: A far-eyed nord blessed with the gift of clairvoyant magic.
+  abilities:
+    - name: Berserk (WIS Spell)
+      desc: DC 13. Focus. All allies within near of oracle deal +1d4 damage on each attack.
+    - name: Fate (WIS Spell)
+      desc: DC 12. One target in near gains or loses a luck token.
+    - name: Mjolnir (WIS Spell)
+      desc: DC 13. Deal 2d6 damage to one target in near.
+    - name: Strike Blind (WIS Spell)
+      desc: DC 11. One target in near stricken blind for 1d4 rounds.
+  actions:
+    - name: Attack
+      desc: 1 stave +2 (1d4) or 1 spell +3
 - id: sd_monster_orc
   name: Orc
   type: Monster
@@ -5384,6 +5548,31 @@
     - name: Attack
       desc: 2 greataxe +4 (1d10)
   description: An imposing orc with scars crisscrossing its body.
+- id: sd_monster_orca
+  name: Orca
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "12"
+    hp: "39"
+    mv: double near (swim)
+    level: "8"
+    alignment: "N"
+    stats:
+      str: "+4"
+      dex: "+0"
+      con: "+3"
+      int: "-2"
+      wis: "+1"
+      cha: "-2"
+    flavor: Carnivorous whales with sleek, black hide and white bellies. They attack in small pods.
+  abilities:
+    - name: Pod Hunter
+      desc: Deals +2 damage when an ally is within near.
+  actions:
+    - name: Attack
+      desc: 2 bite +5 (1d10)
 - id: sd_monster_outsider_primordial_slime
   name: Outsider, Primordial Slime
   type: Monster
@@ -6330,6 +6519,53 @@
       int: "-2"
       wis: "+1"
       cha: "-3"
+- id: sd_monster_sea_nymph
+  name: Sea Nymph
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "13"
+    hp: "13"
+    mv: near (swim)
+    level: "3"
+    alignment: "N"
+    stats:
+      str: "+0"
+      dex: "+3"
+      con: "+0"
+      int: "+1"
+      wis: "+1"
+      cha: "+2"
+    flavor: Blue-skinned elves with sleek fins on their arms and faces. They gather in desolate ocean bays to sing haunting melodies.
+  abilities:
+    - name: Sing
+      desc: All creatures who hear in double near, DC 12 CHA or transfixed in place 1d4 rounds.
+  actions:
+    - name: Attack
+      desc: 1 slash +2 (1d6) or 1 sing
+- id: sd_monster_sea_serpent
+  name: Sea Serpent
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "14"
+    hp: "58"
+    mv: double near (swim)
+    level: "12"
+    alignment: "N"
+    stats:
+      str: "+5"
+      dex: "+0"
+      con: "+4"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: Massive sea snakes with gauzy fins, scales, and serrated fangs.
+  actions:
+    - name: Attack
+      desc: 3 bite +8 (2d12)
 - id: sd_monster_shadow
   name: Shadow
   type: Monster
@@ -7044,6 +7280,31 @@
     - name: Attack
       desc: 2 claw +4 (1d6) and 1 bite +4 (1d10)
   description: Green, lanky giants with warty skin and territorial rage. Lair in deep forests and swamps.
+- id: sd_monster_troll_deep
+  name: Troll, Deep
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "13"
+    hp: "39"
+    mv: near
+    level: "8"
+    alignment: C
+    stats:
+      str: "+4"
+      dex: "+2"
+      con: "+3"
+      int: "-1"
+      wis: "+1"
+      cha: "+1"
+    flavor: Wretched, subterranean trolls with inky hide and fiery eyes.
+  abilities:
+    - name: Regenerate
+      desc: Regains 2d6 HP on its turn unless injured by a cold iron weapon the prior round.
+  actions:
+    - name: Attack
+      desc: 2 claw +7 (1d10)
 - id: sd_monster_troll_frost
   name: Troll, Frost
   type: Monster
@@ -7098,6 +7359,33 @@
     - name: Attack
       desc: 1 hooves +3 (1d6)
   description: A silvery horse with a flowing mane and a single spiral horn.
+- id: sd_monster_valkyrie
+  name: Valkyrie
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: 17 (plate mail + shield)
+    hp: "66"
+    mv: double near (fly)
+    level: "14"
+    alignment: L
+    stats:
+      str: "+4"
+      dex: "+3"
+      con: "+3"
+      int: "+3"
+      wis: "+4"
+      cha: "+5"
+    flavor: Angelic warrior-women who Freya sends to carry the souls of worthy warriors who fall in battle to the halls of Valhalla.
+  abilities:
+    - name: Impervious
+      desc: Can only be injured by magical sources.
+    - name: Divine Courage
+      desc: Immune to morale checks. Hostile spells targeting valkyrie are DC 18 to cast.
+  actions:
+    - name: Attack
+      desc: 3 blessed spear (near) +9 (3d6)
 - id: sd_monster_vampire
   name: Vampire
   type: Monster
@@ -7318,6 +7606,35 @@
     - name: Attack
       desc: 1 sting +3 (1d6+venom)
   description: Man-sized wasps with glossy, yellow-striped abdomens.
+- id: sd_monster_werebear
+  name: Werebear
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    ac: "11"
+    hp: "34"
+    mv: near
+    level: "7"
+    alignment: L
+    stats:
+      str: "+4"
+      dex: "+1"
+      con: "+3"
+      int: "+0"
+      wis: "+2"
+      cha: "-1"
+    flavor: A mighty, long-haired humanoid that walks with a rolling gait.
+  abilities:
+    - name: Impervious
+      desc: Only damaged by silver or magic sources.
+    - name: Crush
+      desc: Deals an extra die of damage if it hits the same target with both claws.
+    - name: Lycanthropy
+      desc: If 15 or more damage from the same werebear, contract lycanthropy.
+  actions:
+    - name: Attack
+      desc: 2 claw +6 (1d8)
 - id: sd_monster_wererat
   name: Wererat
   type: Monster
@@ -7782,6 +8099,20 @@
     duration: Focus
     range: Close
   description: One target you touch of LV 4 or less collapses helplessly with disturbing, pained laughter for the spell's duration.
+- id: sd_spell_cast_out
+  name: Cast Out
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "3"
+    class: Seer
+    duration: Focus
+    range: Far
+  description: |
+    You turn a creature aside, throwing it out of your presence.
+
+    Choose a creature you can see. For the spell's duration, that creature can't come within near range of you. It can still attack you from outside of near range.
 - id: sd_spell_cat_s_eye
   name: Cat's Eye
   type: Spell
@@ -7808,6 +8139,20 @@
     - Any broken mundane item placed inside the cauldron is repaired.
     - A fat, croaking toad leaps out and follows your instructions for the next 3 rounds.
     - You can place up to 3 item slots of items inside the cauldron. The cauldron expels these items the next time you cast this spell (expelling items counts as the cauldron's single effect).
+- id: sd_spell_chant
+  name: Chant
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "1"
+    class: Seer
+    duration: Focus
+    range: Self
+  description: |
+    You begin an unearthly chant that lifts your vision beyond its ordinary limitations.
+
+    For the spell's duration, you can see all invisible and hidden things as though they were plainly visible. This spell does not allow you to see in a way that you could not normally, such as in darkness or through walls.
 - id: sd_spell_charm_person
   name: Charm Person
   type: Spell
@@ -8058,6 +8403,22 @@
     duration: Instant
     range: Close
   description: "A creature you touch has a random stat reduced to 3 (-4) for one week. Roll a d6 to determine which stat: 1. Strength, 2. Dexterity, 3. Constitution, 4. Intelligence, 5. Wisdom, 6. Charisma. If you fail the spellcasting check, you have a random stat reduced to 3 for a week instead."
+- id: sd_spell_evoke_rage
+  name: Evoke Rage
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "1"
+    class: Seer
+    duration: 1d4 rounds
+    range: Close
+  description: |
+    You call out the berserk rage locked inside someone.
+
+    One willing humanoid you touch enters a berserk state. The target is immune to morale checks, has ADV on STR checks and melee attacks, and deals +1d4 damage for the spell's duration.
+
+    If the target does not attack another creature on its turn, the spell ends.
 - id: sd_spell_eyebite
   name: Eyebite
   type: Spell
@@ -8080,6 +8441,20 @@
     duration: 10 rounds
     range: Near
   description: This spell can't target creatures. You turn a tree-sized collection of raw materials into a finished work. For example, you convert a pile of bricks or rocks into a bridge. The finished work converts back to raw materials when the spell ends.
+- id: sd_spell_fate
+  name: Fate
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "2"
+    class: Seer
+    duration: Instant
+    range: Near
+  description: |
+    You painfully twist the golden threads of a creature's fate.
+
+    One creature you target in range takes 1d10 damage and loses any luck tokens it has.
 - id: sd_spell_feather_fall
   name: Feather Fall
   type: Spell
@@ -8168,6 +8543,20 @@
     duration: Focus
     range: Close
   description: A thick cloud of fog blooms in a close area around you, making you hard to see. The cloud moves with you. Attacks against creatures in the cloud have disadvantage.
+- id: sd_spell_freyas_omen
+  name: Freya's Omen
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "4"
+    class: Seer
+    duration: 1d6 rounds
+    range: Self
+  description: |
+    For the spell's duration, you do not lose the ability to cast a spell if you fail its spellcasting check.
+
+    If you critically fail a spellcasting check, you may reroll your check once. You must use the new result.
 - id: sd_spell_frog_rain
   name: Frog Rain
   type: Spell
@@ -8201,6 +8590,20 @@
     duration: Focus
     range: Close
   description: A creature you touch becomes fragile. It takes double damage for the spell's duration.
+- id: sd_spell_hallucinate
+  name: Hallucinate
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "3"
+    class: Seer
+    duration: Focus
+    range: Near
+  description: |
+    One creature you target in near whose level is less than or equal to your own is overcome by visions of what might yet come to pass.
+
+    For the spell's duration, the target cannot act on its turn unless it passes a Wisdom check equal to your last spellcasting check.
 - id: sd_spell_heal
   name: Heal
   type: Spell
@@ -8355,6 +8758,22 @@
     duration: Instant
     range: Far
   description: You shoot a blue-white ray of lightning from your hands, hitting all creatures in a straight line out to a far distance. Creatures struck by the lightning take 3d6 damage.
+- id: sd_spell_lokis_trickery
+  name: Loki's Trickery
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "4"
+    class: Seer
+    duration: Instant
+    range: Near
+  description: |
+    You are filled with Loki's hypnotic guile. Creatures who hear you speak will alter their own beliefs and memories to match your suggestion.
+
+    Target one creature who can hear and understand you within range. You make one plausible statement, true or not.
+
+    The target must make a Wisdom check vs. your spellcasting check. If it fails, it now believes what you stated as though it were fact, regardless of what it knows.
 - id: sd_spell_mage_armor
   name: Mage Armor
   type: Spell
@@ -8476,6 +8895,18 @@
     duration: Focus
     range: Self
   description: For the spell's duration, faeries, demons, and devils can't attack you. These beings also can't possess, compel, or beguile you.
+- id: sd_spell_odins_wisdom
+  name: Odin's Wisdom
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "4"
+    class: Seer
+    duration: 1d6 rounds
+    range: Self
+  description: |
+    For the spell's duration, add your level as an additional bonus to your Wisdom checks and spellcasting checks.
 - id: sd_spell_passwall
   name: Passwall
   type: Spell
@@ -8542,6 +8973,20 @@
     duration: 10 rounds
     range: Touch
   description: You transform a creature you touch into another natural creature you choose of equal or smaller size. Any gear the target carries melds into its new form. The target gains the creature's hit points, armor class, and attacks, but retains its intellect. If the target goes to 0 hit points, it reverts to its true form at half its prior hit points. You can target any willing creature with this spell, or an unwilling creature whose level is less than or equal to half your level rounded down (minimum 1).
+- id: sd_spell_potion
+  name: Potion
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "1"
+    class: Seer
+    duration: Instant
+    range: Close
+  description: |
+    As a part of casting this spell, you must bless a single drink of any liquid.
+
+    The liquid gains healing properties for 1 day. A creature who imbibes it may end the effects of one poison or may immediately stop dying (the creature remains at 0 HP).
 - id: sd_spell_power_word_kill
   name: Power Word Kill
   type: Spell
@@ -8608,6 +9053,50 @@
     duration: Focus
     range: Close
   description: One humanoid creature of LV 2 or less you touch becomes ensnared by your movements. On your turn, the creature mimics all your movements. If mimicking you would cause the creature to directly harm itself or an ally, it can make a DC 15 Charisma check. On a success, it resists mimicking you.
+- id: sd_spell_ragnarok
+  name: Ragnarok
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "5"
+    class: Seer
+    duration: Instant
+    range: Far
+  description: |
+    You look deep into the strands of fate, learning the final destiny of one soul after the battle of Ragnarok. Do they live, or die?
+
+    Choose one creature in range. You can only target the same creature with this spell one time.
+
+    That creature must pass a CON check equal to your spellcasting check or die instantly.
+- id: sd_spell_raven
+  name: Raven
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "2"
+    class: Seer
+    duration: Instant
+    range: Unlimited
+  description: |
+    You whisper a message to Odin's own ravens, and they carry it across all worlds to its recipient.
+
+    Speak a short sentence, and the name of its recipient, dead or alive. That creature hears your utterance whispered in its mind.
+- id: sd_spell_read_the_runes
+  name: Read The Runes
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "2"
+    class: Seer
+    duration: Instant
+    range: Self
+  description: |
+    You ask the gods a question and cast the runestones, interpreting the meaning of the results.
+
+    Ask the Game Master one yes or no question. The Game Master truthfully answers "yes" or "no."
 - id: sd_spell_rebuke_unholy
   name: Rebuke Unholy
   type: Spell
@@ -8652,6 +9141,20 @@
     duration: Instant
     range: Close
   description: With the touch of your hands, you expunge curses and illnesses. One curse, illness, or affliction of your choice affecting the target creature ends.
+- id: sd_spell_sacrifice
+  name: Sacrifice
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "2"
+    class: Seer
+    duration: Instant
+    range: Close
+  description: |
+    As a part of casting this spell, you must ritually sacrifice a living creature of LV 2 or higher.
+
+    The target you touch gains a bonus to their next check or attack roll equal to the sacrificed creature's level.
 - id: sd_spell_scrying
   name: Scrying
   type: Spell
@@ -8751,6 +9254,22 @@
     duration: Permanent
     range: Close
   description: You transfer the soul of one creature you touch of LV 9 or less into a vessel, such as a jar. The creature's body becomes comatose, but it doesn't die. If the vessel opens or breaks, the creature's soul returns to its body. You can possess the empty body with your own spirit, taking control of it. Your body becomes comatose during this time. If the body dies while you possess it, your soul returns to your body.
+- id: sd_spell_soulbind
+  name: Soulbind
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "2"
+    class: Seer
+    duration: Focus
+    range: Close
+  description: |
+    You seal the soul of a living creature, preventing magic from leeching into it.
+
+    One creature you touch becomes nearly impervious to all magic. For the spell's duration, all other spells targeting the creature (harmful or helpful) are DC 18 to cast.
+
+    This spell ends as soon as the target is affected by another spell.
 - id: sd_spell_speak_with_dead
   name: Speak With Dead
   type: Spell
@@ -8828,6 +9347,18 @@
     duration: Instant
     range: Close
   description: Teleport yourself and willing creatures within close range to a specified location on your same plane with a 50% chance of arriving off-target if the location is unknown.
+- id: sd_spell_thors_thunder
+  name: Thor's Thunder
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "4"
+    class: Seer
+    duration: Instant
+    range: Far
+  description: |
+    Thor casts down a bolt of lightning to strike one target. The target takes 3d6 damage.
 - id: sd_spell_toadstool
   name: Toadstool
   type: Spell
@@ -8839,6 +9370,32 @@
     duration: Instant
     range: Self
   description: You conjure a plump, speckled toadstool in your hand. It disappears at the end of your next turn. A creature that eats the toadstool regains 1d6 hit points.
+- id: sd_spell_trance
+  name: Trance
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "1"
+    class: Seer
+    duration: Instant
+    range: Close
+  description: |
+    You enter a trance, catching small glimpses of a creature's fate. One humanoid creature you touch (you can't target yourself) gains a luck token. It can't have more than one luck token at once.
+- id: sd_spell_valkyrie
+  name: Valkyrie
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "5"
+    class: Seer
+    duration: 10 rounds
+    range: Near
+  description: |
+    You summon a valkyrie to your aid. She appears in a location within near and acts of her own free will to help you. She returns to Valhalla when the spell ends.
+
+    You can't cast this again until you complete penance.
 - id: sd_spell_void_stare
   name: Void Stare
   type: Spell
@@ -8916,6 +9473,48 @@
     duration: Focus
     range: Near
   description: You summon a floating marsh light that bobs in the air and casts light out to a close radius around it. The light can change colors and take on vague shapes. It can float up to a near distance on your turn.
+- id: sd_spell_wolfshape
+  name: Wolfshape
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "3"
+    class: Seer
+    duration: Focus
+    range: Self
+  description: |
+    You and your gear transform into a wolf for the spell's duration. You assume the wolf's STR, DEX, CON, HP, AC, speed, attacks, and physical characteristics, but retain your INT, WIS, and CHA.
+
+    You can cast spells in this form. If you go to 0 HP, you revert to your true shape at 0 HP.
+
+    If you are level 5+, you can transform into a dire wolf or a winter wolf instead.
+- id: sd_spell_world_serpent
+  name: World Serpent
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "5"
+    class: Seer
+    duration: Focus
+    range: Close
+  description: |
+    The torturous venom of the World
+- id: sd_spell_world_tree
+  name: World Tree
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 3
+  properties:
+    tier: "5"
+    class: Seer
+    duration: Focus
+    range: Close
+  description: |
+    The roots of the life-giving World Tree wrap around the soul of a creature you touch.
+
+    For the spell's duration, the target can't be brought below 1 HP.
 - id: sd_spell_wrath
   name: Wrath
   type: Spell
