@@ -1,0 +1,17 @@
+{
+  "username": "user_1768425466022",
+  "email": "user_1768425466022@example.com",
+  "passwordHash": "9f735e0df9a1ddc702bf0a1a7b83033f9f7153a00c29de82cedadc9957289b05",
+  "isAdmin": false,
+  "secrets": {},
+  "favorites": {
+    "tables": [],
+    "cards": []
+  },
+  "preferences": {
+    "theme": "dark",
+    "defaultLLMProvider": "local"
+  },
+  "resetToken": null,
+  "resetTokenExpiry": null
+}
