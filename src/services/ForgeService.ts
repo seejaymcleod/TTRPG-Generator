@@ -5,33 +5,109 @@ import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 const pdf = require('pdf-parse');
 
+interface DocumentSection {
+    header: string;
+    // Semantic tags instead of rigid types. Expanded 10-point taxonomy.
+    tags: ('STAT_BLOCK_MONSTER' | 'STAT_BLOCK_NPC' | 'STAT_BLOCK_ITEM' | 'STAT_BLOCK_SPELL' | 'STAT_BLOCK_CLASS' | 'STAT_BLOCK_FEATURE' | 'STRUCTURED_DUNGEON_KEY' | 'CONTENT_TABLE' | 'CONTENT_RULES' | 'NARRATIVE_ADVENTURE')[];
+    start_snippet: string;
+    end_snippet: string;
+}
+
 export class ForgeService {
     private llm: LLMClient;
+    private logger?: any;
+    private activeTasks: Map<string, { controller: AbortController, pid?: number }> = new Map();
 
     constructor() {
         const ollamaHost = process.env.OLLAMA_HOST || 'http://localhost:11434';
         this.llm = new LLMClient(ollamaHost);
     }
 
-    async extractText(fileBuffer: Buffer): Promise<string> {
-        // Try Python Docling first
+    setLogger(logger: any) {
+        this.logger = logger;
+    }
+
+    startTask(taskId: string): AbortSignal {
+        const controller = new AbortController();
+        this.activeTasks.set(taskId, { controller });
+        return controller.signal;
+    }
+
+    finishTask(taskId: string) {
+        this.activeTasks.delete(taskId);
+    }
+
+    cancelTask(taskId: string) {
+        const task = this.activeTasks.get(taskId);
+        if (task) {
+            task.controller.abort();
+            if (task.pid) {
+                try {
+                    process.kill(task.pid);
+                    this.log(`Killed process ${task.pid} for task ${taskId}`);
+                } catch (e) {
+                    this.warn(`Failed to kill process ${task.pid}: ${e}`);
+                }
+            }
+            this.activeTasks.delete(taskId);
+            this.log(`Cancelled task ${taskId}`);
+            return true;
+        }
+        return false;
+    }
+
+    private log(message: string) {
+        console.log(`[Forge] ${message}`);
+        if (this.logger?.log) this.logger.log(message);
+    }
+
+    private warn(message: string) {
+        console.warn(`[Forge] ${message}`);
+        if (this.logger?.warn) this.logger.warn(message);
+    }
+
+    private error(message: string) {
+        console.error(`[Forge] ${message}`);
+        if (this.logger?.error) this.logger.error(message);
+    }
+
+    async extractText(fileBuffer: Buffer, filename?: string, taskId?: string): Promise<string> {
+        // Handle non-PDF files directly
+        if (filename) {
+            const ext = path.extname(filename).toLowerCase();
+            const textExtensions = ['.md', '.txt', '.yaml', '.yml', '.json'];
+            if (textExtensions.includes(ext)) {
+                return fileBuffer.toString('utf-8');
+            }
+        }
+
+        // Try Python Docling first for PDFs
         try {
-            return await this.extractWithDocling(fileBuffer);
+            return await this.extractWithDocling(fileBuffer, taskId);
         } catch (error) {
-            console.warn("Docling failed or not installed, falling back to pdf-parse:", error);
-            // Fallback to pdf-parse
+            this.warn(`Docling failed or not installed, falling back to pdf-parse: ${error}`);
             try {
-                const data = await pdf(fileBuffer);
+                // Robust detection of pdf-parse function
+                let pdfParser: any = pdf;
+                if (typeof pdfParser !== 'function' && pdf && typeof pdf.default === 'function') {
+                    pdfParser = pdf.default;
+                }
+
+                if (typeof pdfParser !== 'function') {
+                    // One last attempt: Check if it's the mehmet-kozan version which is an object with PDFParse class
+                    // or other common patterns. For now, we prefer the function approach.
+                    throw new Error("pdf-parse library not loaded correctly. Expected a function.");
+                }
+                const data = await pdfParser(fileBuffer);
                 return data.text;
-            } catch (pdfError) {
-                console.error("Critical: Both Docling and pdf-parse failed.", pdfError);
-                throw new Error("Failed to parse PDF.");
+            } catch (pdfError: any) {
+                this.error(`Critical: Both Docling and pdf-parse failed. ${pdfError}`);
+                throw new Error(`Failed to parse PDF: ${pdfError.message}`);
             }
         }
     }
 
-    private async extractWithDocling(fileBuffer: Buffer): Promise<string> {
-        // 1. Write buffer to temp file
+    private async extractWithDocling(fileBuffer: Buffer, taskId?: string): Promise<string> {
         const tempPath = path.resolve(process.cwd(), `temp_${Date.now()}.pdf`);
         fs.writeFileSync(tempPath, fileBuffer);
 
@@ -40,417 +116,474 @@ export class ForgeService {
             const venvPython = path.resolve(process.cwd(), '.venv/bin/python');
             const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
 
-            console.log(`[Forge] Spawning Docling: ${pythonCmd} ${pythonScript}`);
+            this.log(`Spawning Docling: ${pythonCmd} ${pythonScript}`);
 
             const pythonProcess = spawn(pythonCmd, [pythonScript, tempPath]);
+
+            // Store PID for cancellation
+            if (taskId && this.activeTasks.has(taskId)) {
+                this.activeTasks.get(taskId)!.pid = pythonProcess.pid;
+            }
+
+            const timeout = setTimeout(() => {
+                pythonProcess.kill();
+                reject(new Error("Docling process timed out after 10 minutes"));
+            }, 600000);
 
             let output = '';
             let errorOutput = '';
 
-            pythonProcess.stdout.on('data', (data) => {
-                output += data.toString();
-            });
-
-            pythonProcess.stderr.on('data', (data) => {
-                errorOutput += data.toString();
-            });
+            pythonProcess.stdout.on('data', (data) => output += data.toString());
+            pythonProcess.stderr.on('data', (data) => errorOutput += data.toString());
 
             pythonProcess.on('close', (code) => {
+                clearTimeout(timeout);
                 if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
 
-                if (code !== 0) {
+                if (code !== 0 && code !== null) {
                     reject(new Error(`Docling process exited with code ${code}: ${errorOutput}`));
+                } else if (code === null) {
+                    reject(new Error("Docling process was killed (timeout)"));
                 } else {
                     resolve(output);
                 }
             });
 
             pythonProcess.on('error', (err) => {
+                clearTimeout(timeout);
                 if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
                 reject(err);
             });
         });
     }
 
-    /**
-     * Load the template file for a specific game.
-     */
     private loadTemplateForGame(game: string): string {
         if (!game) return '';
-
         const templatePath = path.resolve(process.cwd(), '_Content', game, `${game}_Templates.yaml`);
-
         if (fs.existsSync(templatePath)) {
-            console.log(`[Forge] Loading template: ${templatePath}`);
+            this.log(`Loading template: ${templatePath}`);
             return fs.readFileSync(templatePath, 'utf-8');
         }
-
-        console.log(`[Forge] No template found for game: ${game}`);
         return '';
     }
 
-    /**
-     * Clean up raw text before AI processing.
-     * Removes common PDF artifacts and irrelevant content.
-     */
     private cleanupRawText(rawText: string, contentType: string): string {
         let cleaned = rawText
-            // Remove form feeds
             .replace(/\f/g, '\n')
-            // Remove standalone page numbers
             .replace(/^\s*\d+\s*$/gm, '')
-            // Remove table of contents dot leaders
             .replace(/\.{3,}\s*\d+/g, '')
-            // Remove common PDF headers/footers
             .replace(/^\s*(Table of Contents|Index|Appendix)\s*$/gim, '')
-            // Normalize multiple newlines
             .replace(/\n{3,}/g, '\n\n')
-            // Trim whitespace from lines
             .split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0)
             .join('\n');
 
-        // Content-type specific cleanup
         if (contentType === 'monster') {
-            // Remove common non-stat-block sections
             cleaned = cleaned
                 .replace(/^\s*Introduction\s*$/gim, '')
                 .replace(/^\s*Overview\s*$/gim, '')
                 .replace(/^\s*Credits?\s*$/gim, '');
         }
-
         return cleaned.trim();
     }
 
-    /**
-     * Get available source options for a game.
-     */
     getSourcesForGame(game: string): string[] {
-        const baseSources = ['Core', '3rdParty'];
-
-        // Game-specific sources
         const gameSources: Record<string, string[]> = {
             'ShadowDark': ['Core', 'Cursed Scroll 1', 'Cursed Scroll 2', 'Cursed Scroll 3', '3rdParty'],
             '5e': ['Core', "Player's Handbook", "Monster Manual", "Dungeon Master's Guide", '3rdParty'],
             'Knave': ['Core', '3rdParty'],
             'Cairn': ['Core', '3rdParty']
         };
-
-        return gameSources[game] || baseSources;
+        return gameSources[game] || ['Core', '3rdParty'];
     }
 
-    async analyzeText(text: string, provider: 'local' | 'gemini' = 'local', apiKey?: string, model?: string): Promise<any> {
-        const systemPrompt = `You are an expert TTRPG Librarian.
-Your goal is to analyze the provided text chunk (from a RPG book) and identify:
-1. The Game System (e.g. D&D 5e, ShadowDark, Pathfinder, etc).
-2. The Source Book Title (e.g. Cursed Scroll 1, Core Rulebook).
-3. The Primary Content Type (e.g. Bestiary, Spells, Items, Tables, Adventure).
-
-Return ONLY a JSON object. No markdown formatting.
-Example: {"game": "ShadowDark", "source": "Cursed Scroll 1", "contentType": "monster"}`;
-
-        const userPrompt = `Analyze this text snippet:\n\n${text.slice(0, 2000)}`; // Analyze first 2k chars
-
+    async analyzeText(text: string, provider: 'local' | 'gemini' = 'local', apiKey?: string, model?: string, taskId?: string): Promise<any> {
+        const systemPrompt = `You are an expert TTRPG Librarian. Analyze text and identify Game System, Source, and Content Type. Return ONLY JSON.`;
+        const userPrompt = `Analyze this text snippet:\n\n${text.slice(0, 2000)}`;
+        const signal = taskId ? this.activeTasks.get(taskId)?.controller.signal : undefined;
         try {
-            const result = await this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model);
+            const result = await this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model, this.logger, signal);
             return JSON.parse(result.replace(/```json/g, '').replace(/```/g, '').trim());
         } catch (e) {
-            console.error("Analysis failed:", e);
+            this.error(`Analysis failed: ${e}`);
             return { game: "Unknown", source: "Unknown", contentType: "unknown" };
         }
     }
 
+    /**
+     * Extract all headers from a markdown/text document.
+     * Looks for patterns like "## HEADER" or "ALL CAPS LINES" or bold headers.
+     */
+    private extractHeaders(text: string): { header: string, startIndex: number, endIndex: number, content: string }[] {
+        const headers: { header: string, startIndex: number, endIndex: number, content: string }[] = [];
+        const lines = text.split('\n');
+
+        let currentHeader: string | null = null;
+        let headerStart = 0;
+        let contentLines: string[] = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const trimmed = line.trim();
+
+            // Check for markdown headers (## Header)
+            const mdHeaderMatch = trimmed.match(/^##\s+(.+)$/);
+            // Check for ALL CAPS headers (at least 3 chars, mostly uppercase)
+            const isCapsHeader = trimmed.length >= 3 &&
+                trimmed.length <= 50 &&
+                trimmed === trimmed.toUpperCase() &&
+                /^[A-Z][A-Z\s\-']+$/.test(trimmed);
+
+            if (mdHeaderMatch || isCapsHeader) {
+                // Save previous section
+                if (currentHeader && contentLines.length > 0) {
+                    const content = contentLines.join('\n').trim();
+                    if (content.length > 10) { // Keep even small sections for batching, was 50
+                        headers.push({
+                            header: currentHeader,
+                            startIndex: headerStart,
+                            endIndex: i - 1,
+                            content: content
+                        });
+                    }
+                }
+
+                // Start new section
+                currentHeader = mdHeaderMatch ? mdHeaderMatch[1] : trimmed;
+                headerStart = i;
+                contentLines = [];
+            } else if (currentHeader) {
+                contentLines.push(line);
+            }
+        }
+
+        // Don't forget the last section
+        if (currentHeader && contentLines.length > 0) {
+            const content = contentLines.join('\n').trim();
+            if (content.length > 10) {
+                headers.push({
+                    header: currentHeader,
+                    startIndex: headerStart,
+                    endIndex: lines.length - 1,
+                    content: content
+                });
+            }
+        }
+
+        return headers;
+    }
+
+    /**
+     * Filter headers to find ones likely matching the requested content type/subtype.
+     */
+    private filterHeadersByType(headers: { header: string, content: string }[], contentType: string): { header: string, content: string }[] {
+        const searchTerms: string[] = [];
+
+        // General Type Mapping
+        const typeMap: Record<string, string[]> = {
+            'item': ['ITEM', 'OBJECT', 'GEAR', 'EQUIPMENT', 'TREASURE', 'ARTIFACT'],
+            'monster': ['MONSTER', 'NPC', 'BEAST', 'CREATURE', 'ADVERSARY'],
+            'spell': ['SPELL', 'MAGIC', 'RITUAL', 'PRAYER'],
+            'table': ['TABLE', 'D20', 'D100', 'D6', 'D12']
+        };
+        searchTerms.push(...(typeMap[contentType.toLowerCase()] || []));
+
+        // Subtypes (User might ask for "Magic Item" or "Weapon" specifically)
+        // If content type passed is "Magic Item" (not just "item")
+        if (contentType.toLowerCase().includes('magic')) searchTerms.push('MAGIC', 'WAND', 'POTION', 'SCROLL', 'RING', 'STAFF');
+        if (contentType.toLowerCase().includes('weapon')) searchTerms.push('WEAPON', 'SWORD', 'AXE', 'BOW', 'DAGGER', 'MACE');
+        if (contentType.toLowerCase().includes('armor')) searchTerms.push('ARMOR', 'SHIELD', 'MAIL', 'HELM', 'PLATE');
+        if (contentType.toLowerCase().includes('potion')) searchTerms.push('POTION', 'FLASK', 'VIAL', 'PHILTER');
+
+        // Content Patterns (Regex)
+        const patterns: RegExp[] = [];
+        if (contentType.toLowerCase().includes('item')) {
+            patterns.push(/Benefit\./i, /Curse\./i, /Bonus\./i, /Cost[\s:|]/i, /gp|sp|cp/i);
+        }
+        if (contentType.toLowerCase().includes('monster')) {
+            patterns.push(/AC\s+\d/i, /HP\s+\d/i, /ATK\s+/i);
+        }
+        if (contentType.toLowerCase().includes('spell')) {
+            patterns.push(/Tier\s+\d/i, /Duration:/i, /Range:/i);
+        }
+
+        return headers.filter(h => {
+            const headerUpper = h.header.toUpperCase();
+
+            // 1. Direct Keyword Match in Header
+            const keywordMatch = searchTerms.some(term => headerUpper.includes(term));
+            if (keywordMatch) return true;
+
+            // 2. Pattern Match in Content
+            const contentMatch = patterns.some(p => p.test(h.content));
+
+            // 3. Special Case: If searching for "Item", include specific sub-headers
+            // (Heuristic: If content has "Benefit." it is likely a magic item)
+            if (contentType === 'item' && /Benefit\./.test(h.content)) {
+                return true;
+            }
+
+            return contentMatch;
+        });
+    }
+
+    /**
+     * Load the template for a specific content type from the game's templates file.
+     */
+    private loadTypeTemplate(game: string, contentType: string): string {
+        if (!game) return '';
+
+        const templatePath = path.resolve(process.cwd(), '_Content', game, `${game}_Templates.yaml`);
+        if (!fs.existsSync(templatePath)) {
+            this.warn(`No templates found for game: ${game}`);
+            return '';
+        }
+
+        try {
+            const templateContent = fs.readFileSync(templatePath, 'utf-8');
+            const parsed = yaml.load(templateContent) as any;
+
+            if (parsed?.templates) {
+                // Find the matching template (Item, Monster, Spell, etc.)
+                const typeName = contentType.charAt(0).toUpperCase() + contentType.slice(1).toLowerCase();
+                const template = parsed.templates[typeName];
+
+                if (template) {
+                    this.log(`Loaded ${typeName} template for ${game}`);
+                    // Return just the relevant parts for the prompt
+                    return yaml.dump({
+                        template_name: typeName,
+                        required_fields: template.required_fields,
+                        properties: template.properties,
+                        full_example: template.full_example,
+                        source_schema: template.source_schema
+                    });
+                }
+            }
+        } catch (e) {
+            this.warn(`Failed to parse templates: ${e}`);
+        }
+
+        return '';
+    }
+
     async processContent(
         text: string,
-        types: string | string[], // Accept single type (legacy) or array (new)
+        types: string | string[],
         game: string = '',
         source: string = '',
         provider: 'local' | 'gemini' = 'local',
         apiKey?: string,
-        model?: string
+        model?: string,
+        taskId?: string
     ): Promise<string> {
-        // Normalize to array
         const typeArray = Array.isArray(types) ? types : [types];
-
-        // Load game-specific template
-        const template = this.loadTemplateForGame(game);
-
-        // Clean up the raw text (use first type for cleanup hints)
         const cleanedText = this.cleanupRawText(text, typeArray[0] || 'monster');
 
-        // Build system prompt with template context
-        let systemPrompt = `You are a TTRPG Content Converter. 
-Your goal is to extract structured data from the provided text and format it as valid YAML.
+        this.log(`Starting Batch Extraction for types: ${typeArray.join(', ')}`);
 
-CRITICAL RULES:
-- Return ONLY valid YAML. No markdown code blocks (no \`\`\`yaml).
-- Do not include ANY conversational text, preambles, or postscripts.
-- The output (even if single) must be a YAML array of objects (start with -).
-- Ensure all keys match the schema exactly.
-- Use the template conventions for abbreviations (e.g., 'S' means 'str').
-- Extract ALL entities matching the requested types from the text.
+        // Step 1: Index based on Headers (RAG-lite)
+        this.log("Step 1: Indexing document sections...");
+        const allSections = this.extractHeaders(cleanedText);
+        this.log(`Indexed ${allSections.length} sections.`);
 
-SECTION AWARENESS:
-- ONLY extract items that have their own dedicated header/stat block (black banner style or ALL CAPS header).
-- Do NOT extract items that are merely mentioned in descriptions, adventure text, room keys, or flavor text.
-- For Spells: Only extract from sections titled "Spells", "Spell List", "Seer Spells", or similar dedicated spell sections.
-- For Items: Only extract from sections titled "Magic Items", "Treasure", "Gear", or similar dedicated item sections. Do NOT extract treasure mentioned in adventure room descriptions.
-- For Monsters: Only extract from sections with proper stat blocks (AC, HP, ATK, MV line format).
+        const allResults: any[] = [];
+        // Max characters per batch (Gemini has huge context, local has less)
+        const BATCH_SIZE = provider === 'gemini' ? 100000 : 15000;
 
-SOURCE SCHEMA USAGE:
-- Use the source_schema patterns in the template to identify entity boundaries.
-- A valid entity has: a black banner header (ALL CAPS name), followed by flavor text, followed by stat/property lines.
-- If text does not match the source_schema pattern, it is NOT a valid entity.`;
+        // Process each requested content type
+        for (const contentType of typeArray) {
+            this.log(`\nProcessing content type: ${contentType}`);
 
+            // Step 2: Filter sections by content type & subtype keywords
+            const relevantSections = this.filterHeadersByType(allSections, contentType);
+            this.log(`Found ${relevantSections.length} sections matching "${contentType}"`);
 
-        if (game) {
-            systemPrompt += `\n\nGame: ${game}`;
-        }
-        if (source) {
-            systemPrompt += `\nSource: ${source}`;
-        }
-
-        // Build type descriptions
-        const typeNames = typeArray.map(t => {
-            switch (t) {
-                case 'monster': return 'Monster/NPC';
-                case 'spell': return 'Spell';
-                case 'item': return 'Item/Equipment';
-                case 'table': return 'Random Table';
-                default: return t;
+            if (relevantSections.length === 0) {
+                this.warn(`No sections found matching type: ${contentType}`);
+                continue;
             }
-        }).join(', ');
-        systemPrompt += `\nContent Types to Extract: ${typeNames}`;
 
-        if (template) {
-            systemPrompt += `\n\n--- TEMPLATE REFERENCE ---\n${template}`;
-        } else {
-            // Fallback schema for when no template exists
-            systemPrompt += `\n\n--- FALLBACK SCHEMAS ---`;
+            // Step 3: Load template
+            const template = this.loadTypeTemplate(game, contentType);
 
-            // Add schema for each selected type
-            for (const type of typeArray) {
-                if (type === 'monster') {
-                    systemPrompt += `
+            // Step 4: Batch relevant sections
+            const batches: string[] = [];
+            let currentBatch = "";
 
-## Monster Schema:
-- id: "game_monster_name"
-  name: "Name"
-  type: Monster
-  game: "${game || 'Unknown'}"
-  source: "${source || 'Unknown'}"
-  properties:
-    ac: "10"
-    hp: "10"
-    mv: "near"
-    level: "1"
-    alignment: "N"
-    stats:
-      str: "0"
-      dex: "0"
-      con: "0"
-      int: "0"
-      wis: "0"
-      cha: "0"
-    flavor: "Description"
-  abilities:
-    - name: "Ability Name"
-      desc: "Description"
-  actions:
-    - name: "Attack"
-      desc: "1 weapon +0 (1d6)"
-  description: "Full description"`;
-                } else if (type === 'spell') {
-                    systemPrompt += `
+            for (const section of relevantSections) {
+                const sectionText = `\n\n--- SECTION: ${section.header} ---\n${section.content}`;
 
-## Spell Schema:
-- id: "game_spell_name"
-  name: "Name"
-  type: Spell
-  game: "${game || 'Unknown'}"
-  source: "${source || 'Unknown'}"
-  properties:
-    tier: "1"
-    class: "Wizard"
-    duration: "Instant"
-    range: "Near"
-  description: "Full spell description"`;
-                } else if (type === 'item') {
-                    systemPrompt += `
+                if (currentBatch.length + sectionText.length > BATCH_SIZE) {
+                    batches.push(currentBatch);
+                    currentBatch = sectionText;
+                } else {
+                    currentBatch += sectionText;
+                }
+            }
+            if (currentBatch) batches.push(currentBatch);
 
-## Item Schema:
-- id: "game_item_name"
-  name: "Name"
-  type: Item
-  game: "${game || 'Unknown'}"
-  source: "${source || 'Unknown'}"
-  properties:
-    category: "Magic Item"
-    cost: "10 gp"
-    benefit: "Effect description"
-  description: "Full item description"`;
-                } else if (type === 'table') {
-                    systemPrompt += `
+            this.log(`Created ${batches.length} batches for processing.`);
 
-## Table Schema:
-- filename: "game_table_name"
-  tablename: "Table Name"
-  game: "${game || 'Unknown'}"
-  source: "${source || 'Unknown'}"
-  type: "Table"
-  results:
-    - "Result 1"
-    - "Result 2"`;
+            // Step 5: Process Batches
+            for (let i = 0; i < batches.length; i++) {
+                this.log(`Processing Batch ${i + 1}/${batches.length} (${batches[i].length} chars)...`);
+
+                if (this.logger?.progress) {
+                    this.logger.progress(i + 1, batches.length, `Batch ${i + 1}/${batches.length} (${contentType})`);
+                }
+
+                try {
+                    const yamlString = await this.extractBatchWithTemplate(
+                        batches[i],
+                        contentType,
+                        game,
+                        source,
+                        template,
+                        provider,
+                        apiKey,
+                        model,
+                        taskId
+                    );
+
+                    const parsed = yaml.load(yamlString);
+                    if (Array.isArray(parsed)) {
+                        allResults.push(...parsed);
+                        this.log(`Extracted ${parsed.length} entries from Batch ${i + 1}`);
+                    } else if (parsed) {
+                        allResults.push(parsed);
+                        this.log(`Extracted 1 entry from Batch ${i + 1}`);
+                    }
+                } catch (err: any) {
+                    this.error(`Failed to process Batch ${i + 1}: ${err.message}`);
                 }
             }
         }
 
-        const userPrompt = `Convert the following text into YAML entries for these content types: ${typeNames}\n\n${cleanedText}`;
+        this.log(`\nExtraction complete. Total entries: ${allResults.length}`);
+        return allResults.length > 0 ? yaml.dump(allResults) : "[]";
+    }
 
-        const response = await this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model);
+    /**
+     * Extract multiple entries from a large batch of text.
+     */
+    private async extractBatchWithTemplate(
+        batchText: string,
+        contentType: string,
+        game: string,
+        source: string,
+        template: string,
+        provider: 'local' | 'gemini',
+        apiKey?: string,
+        model?: string,
+        taskId?: string
+    ): Promise<string> {
+        const typeName = contentType.charAt(0).toUpperCase() + contentType.slice(1).toLowerCase();
 
-        // Robust cleanup: Remove conversational text and combine multiple YAML blocks
-        let cleanYaml = response;
+        // Handle subtypes mapping for the prompt
+        let specificType = typeName;
+        if (batchText.includes("Weapon")) specificType = "Weapon";
+        if (batchText.includes("Armor")) specificType = "Armor";
+        if (batchText.includes("Potion")) specificType = "Potion";
+        if (batchText.includes("Scroll")) specificType = "Scroll";
 
-        // 1. Extract content from code blocks if present
-        const codeBlockRegex = /```(?:yaml)?([\\s\\S]*?)```/g;
-        const matches = [...response.matchAll(codeBlockRegex)];
+        let systemPrompt = `You are a TTRPG Content Parser. You are processing a batch of text containing multiple ${typeName} entries (specifically: ${specificType}).
 
-        if (matches.length > 0) {
-            // Join all code blocks
-            cleanYaml = matches.map(m => m[1].trim()).join('\n');
-        } else {
-            // Fallback: Remove potential non-YAML text
-            cleanYaml = cleanYaml.replace(/```yaml/g, '').replace(/```/g, '').trim();
+CRITICAL RULES:
+1. You MUST extract EVERY single entry provided in the text.
+2. The input text contains multiple sections clearly marked with --- SECTION: Header ---.
+3. Count the sections. If there are 10 sections, your output array MUST have 10 items.
+4. Do NOT summarize or skip any entries.
+5. Return ONLY a valid YAML array.
+
+Entry Schema:
+  - id: sd_${contentType}_{snake_case_name}
+  - name: (Name from header)
+  - type: "${typeName}"
+  - game: "${game || 'ShadowDark'}"
+  - source: "${source || 'Core'}"
+  - properties: { key: value }`;
+
+        if (template) {
+            systemPrompt += `\n\nTEMPLATE REFERENCE:\n${template}`;
         }
 
-        return cleanYaml;
+        const userPrompt = `Batch Content to Process:
+${batchText}
+
+Output YAML Array of ALL ${specificType}s:`;
+
+        const signal = taskId ? this.activeTasks.get(taskId)?.controller.signal : undefined;
+        // Increase timeout/retries for large batches
+        const response = await this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model, this.logger, signal);
+
+        // Clean up response
+        const codeBlockMatch = response.match(/```(?:yaml)?([\s\S]*?)```/);
+        return codeBlockMatch ? codeBlockMatch[1].trim() : response.replace(/```yaml/g, '').replace(/```/g, '').trim();
+    }
+
+    private mapTypesToTags(types: string[]): string[] {
+        const map: Record<string, string[]> = {
+            'monster': ['STAT_BLOCK_MONSTER', 'STAT_BLOCK_NPC'],
+            'spell': ['STAT_BLOCK_SPELL'],
+            'item': ['STAT_BLOCK_ITEM'],
+            'table': ['CONTENT_TABLE']
+        };
+        return types.flatMap(t => map[t] || []);
     }
 
     async listLocalModels(): Promise<string[]> {
         return this.llm.listOllamaModels();
     }
 
-    async listGeminiModels(apiKey: string): Promise<{ name: string, displayName: string, description: string }[]> {
+    async listGeminiModels(apiKey: string): Promise<any[]> {
         return this.llm.listGeminiModels(apiKey);
     }
 
-    /**
-     * Multi-modal extraction: Combines Docling text + Vision for accurate entity extraction.
-     * Uses source_schema patterns to identify and separate entities.
-     */
-    async extractMultiModal(
-        doclingText: string,
-        pdfBuffer: Buffer,
-        type: 'monster' | 'spell' | 'item',
-        game: string,
-        source: string,
-        apiKey: string,
-        model: string = 'gemini-2.0-flash'
-    ): Promise<any[]> {
+    async extractMultiModal(doclingText: string, pdfBuffer: Buffer, type: string, game: string, source: string, apiKey: string, model: string = 'gemini-2.0-flash'): Promise<any[]> {
         const template = this.loadTemplateForGame(game);
-
-        // Build the extraction prompt using source_schema
-        const systemPrompt = `You are a TTRPG Content Extractor.
-Your task is to identify and extract ${type} entries from the provided content.
-
-CRITICAL RULES:
-1. Return ONLY a valid JSON array of ${type} objects
-2. Each object must have: id, name, type, game, source, properties, abilities (for monsters), actions (for monsters), description
-3. Use the source_schema patterns to identify entity boundaries
-4. Do NOT invent content - only extract what is explicitly present
-5. Preserve exact stat values, ability names, and descriptions
-
-Game: ${game}
-Source: ${source}
-Content Type: ${type}
-
---- TEMPLATE AND SOURCE SCHEMA ---
-${template}
-
---- DOCLING EXTRACTED TEXT ---
-${doclingText}
-
-Now examine the PDF image(s) to verify and enhance the extraction.
-Return a JSON array with all ${type} entries found.`;
-
-        const userPrompt = `Extract all ${type} entries from this content. Return as JSON array.`;
-
+        const systemPrompt = `Multimodal extractor for ${type}. Return JSON array. \nTemplate:\n${template}`;
+        const userPrompt = `Extract ${type} from this content. Text:\n${doclingText}`;
         try {
-            // Use multimodal with PDF buffer as image
-            const result = await this.llm.generateWithImages(
-                userPrompt,
-                [pdfBuffer],
-                systemPrompt,
-                apiKey,
-                model
-            );
-
-            // Parse JSON response
+            const result = await this.llm.generateWithImages(userPrompt, [pdfBuffer], systemPrompt, apiKey, model);
             const cleaned = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
             return JSON.parse(cleaned);
         } catch (error) {
-            console.error('Multi-modal extraction failed:', error);
+            this.error(`Multi-modal extraction failed: ${error}`);
             throw error;
         }
     }
 
-    /**
-     * Save extracted cards to the game's content YAML file.
-     */
-    async saveCards(
-        cards: any[],
-        game: string,
-        contentType: string
-    ): Promise<{ saved: number, path: string }> {
-        const yaml = require('js-yaml');
-        const officialSources = ['ShadowDark Core', 'Core', 'Cursed Scroll 1', 'Cursed Scroll 2', 'Cursed Scroll 3'];
-
-        // Determine target file
-        // Default to 3rd Party unless source is explicitly official
-        // We check the first card's source (assuming batch is same source)
-        const source = cards[0]?.source || 'Unknown';
-        const isOfficial = officialSources.includes(source) || source.includes('Core');
-
-        const fileName = isOfficial ? `${game}_Official_Content.yaml` : `${game}_3rdParty_Content.yaml`;
+    async saveCards(cards: any[], game: string, contentType: string, origin?: string): Promise<{ saved: number, path: string }> {
+        const fileName = origin === 'official' ? `${game}_Official_Content.yaml` :
+            origin === 'custom' ? `${game}_Custom_Content.yaml` : `${game}_3rdParty_Content.yaml`;
         const contentPath = path.resolve(process.cwd(), '_Content', game, fileName);
 
-        if (!fs.existsSync(path.dirname(contentPath))) {
-            fs.mkdirSync(path.dirname(contentPath), { recursive: true });
-        }
+        if (!fs.existsSync(path.dirname(contentPath))) fs.mkdirSync(path.dirname(contentPath), { recursive: true });
 
         let existingContent: any[] = [];
-
-        // Load existing content if file exists
         if (fs.existsSync(contentPath)) {
-            const fileContent = fs.readFileSync(contentPath, 'utf-8');
-            const loaded = yaml.load(fileContent);
+            const loaded = yaml.load(fs.readFileSync(contentPath, 'utf-8'));
             existingContent = Array.isArray(loaded) ? loaded : [];
         }
 
-        // Get existing IDs to prevent duplicates
-        const existingIds = new Set(existingContent.map((c: any) => c.id));
+        const cardMap = new Map(existingContent.map((c: any) => [c.id, c]));
+        let savedCount = 0;
 
-        // Filter out duplicates and add new cards
-        const newCards = cards.filter((card: any) => !existingIds.has(card.id));
-        const updatedContent = [...existingContent, ...newCards];
+        for (const newCard of cards) {
+            if (!cardMap.has(newCard.id)) {
+                cardMap.set(newCard.id, newCard);
+                savedCount++;
+            }
+        }
 
-        // Sort by type, then by name
-        updatedContent.sort((a: any, b: any) => {
-            if (a.type !== b.type) return a.type.localeCompare(b.type);
-            return a.name.localeCompare(b.name);
+        const updatedContent = Array.from(cardMap.values()).sort((a: any, b: any) => {
+            if (a.type !== b.type) return (a.type || '').localeCompare(b.type || '');
+            return (a.name || '').localeCompare(b.name || '');
         });
 
-        // Write back to file
-        fs.writeFileSync(contentPath, yaml.dump(updatedContent, {
-            lineWidth: -1,
-            quotingType: '"',
-            forceQuotes: false
-        }));
-
-        return { saved: newCards.length, path: contentPath };
+        fs.writeFileSync(contentPath, yaml.dump(updatedContent, { lineWidth: -1, quotingType: '"' }));
+        return { saved: savedCount, path: contentPath };
     }
 }
-
-

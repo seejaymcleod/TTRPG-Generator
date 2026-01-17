@@ -10,13 +10,13 @@ export class LLMClient {
     }
 
 
-    async generate(prompt: string, systemPrompt?: string, provider: 'local' | 'gemini' = 'local', apiKey?: string, model?: string): Promise<string> {
+    async generate(prompt: string, systemPrompt?: string, provider: 'local' | 'gemini' = 'local', apiKey?: string, model?: string, logger?: any, signal?: AbortSignal): Promise<string> {
         if (provider === 'gemini') {
-            return this.generateGemini(prompt, systemPrompt, apiKey, model);
+            return this.generateGemini(prompt, systemPrompt, apiKey, model, logger, signal);
         }
         // For local, use the passed model or fall back to constructor model
         if (model) this.model = model;
-        return this.generateOllama(prompt, systemPrompt);
+        return this.generateOllama(prompt, systemPrompt, signal);
     }
 
     async listOllamaModels(): Promise<string[]> {
@@ -64,7 +64,7 @@ export class LLMClient {
         }
     }
 
-    private async generateOllama(prompt: string, systemPrompt?: string): Promise<string> {
+    private async generateOllama(prompt: string, systemPrompt?: string, signal?: AbortSignal): Promise<string> {
         try {
             const response = await axios.post(`${this.baseUrl}/api/generate`, {
                 model: this.model,
@@ -74,9 +74,10 @@ export class LLMClient {
                 options: {
                     temperature: 0.1
                 }
-            });
+            }, { signal });
             return response.data.response;
         } catch (error) {
+            if (axios.isCancel(error)) throw new Error("Ollama request cancelled");
             console.error('Ollama Generation Error:', error);
             if (axios.isAxiosError(error)) {
                 throw new Error(`Failed to connect to Local LLM at ${this.baseUrl}. details: ${error.message}`);
@@ -98,7 +99,8 @@ export class LLMClient {
         images: Buffer[],
         systemPrompt?: string,
         apiKey?: string,
-        modelName = 'gemini-2.0-flash'
+        modelName = 'gemini-2.0-flash',
+        signal?: AbortSignal
     ): Promise<string> {
         if (!apiKey) throw new Error("API Key required for multimodal generation");
 
@@ -130,13 +132,14 @@ export class LLMClient {
                     temperature: 0.1,
                     responseMimeType: "text/plain"
                 }
-            });
+            }, { signal });
 
             const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
             if (!text) throw new Error("Empty response from Gemini multimodal");
 
             return text.replace(/```yaml\n/g, '').replace(/```/g, '').trim();
         } catch (error) {
+            if (axios.isCancel(error)) throw new Error("Gemini request cancelled");
             console.error('Gemini Multimodal Error:', error);
             if (axios.isAxiosError(error)) {
                 throw new Error(`Gemini multimodal API failed: ${error.response?.data?.error?.message || error.message}`);
@@ -145,39 +148,139 @@ export class LLMClient {
         }
     }
 
-    private async generateGemini(prompt: string, systemPrompt?: string, apiKey?: string, modelName = 'gemini-2.0-flash'): Promise<string> {
+    private async retryWithBackoff<T>(fn: () => Promise<T>, retries = 10, initialDelay = 5000, logger?: any, signal?: AbortSignal): Promise<T> {
+        let attempt = 0;
+        while (attempt < retries) {
+            if (signal?.aborted) throw new Error("Operation cancelled");
+            try {
+                return await fn();
+            } catch (error: any) {
+                if (axios.isCancel(error)) throw error;
+                if (axios.isAxiosError(error) && error.response?.status === 429) {
+                    attempt++;
+                    let delay = initialDelay * Math.pow(2, attempt - 1); // Exponential: 5s, 10s, 20s...
+
+                    // Try to parse delay from message "Please retry in 14.12s"
+                    const message = error.response?.data?.error?.message || "";
+                    const match = message.match(/retry in (\d+(\.\d+)?)s/);
+                    if (match && match[1]) {
+                        delay = Math.ceil(parseFloat(match[1]) * 1000) + 1000; // Add 1s buffer
+                    }
+
+                    const retryMsg = `Rate limited. Retrying in ${(delay / 1000).toFixed(1)}s... (Attempt ${attempt}/${retries})`;
+                    console.warn(`[LLMClient] ${retryMsg}`);
+                    if (logger?.warn) {
+                        logger.warn(`[Gemini] ${retryMsg}`);
+                        if (attempt >= 3) {
+                            logger.log(`[Tip] If you are frequently hitting rate limits, consider switching to "Local (Ollama)" in the AI Settings.`);
+                        }
+                    }
+
+                    // Await with signal awareness
+                    if (signal) {
+                        await new Promise((resolve, reject) => {
+                            const timer = setTimeout(resolve, delay);
+                            signal.addEventListener('abort', () => {
+                                clearTimeout(timer);
+                                reject(new Error("Operation cancelled"));
+                            }, { once: true });
+                        });
+                    } else {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                } else {
+                    throw error;
+                }
+            }
+        }
+        throw new Error("Max retries exceeded for Gemini API");
+    }
+
+    private async generateGemini(prompt: string, systemPrompt?: string, apiKey?: string, modelName = 'gemini-2.0-flash', logger?: any, signal?: AbortSignal): Promise<string> {
         if (!apiKey) throw new Error("API Key required for Gemini");
 
-        // Use v1beta endpoint with the model name
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        // List of models to try in order if the primary fails
+        const fallbackModels = [
+            'gemini-2.5-flash',
+            'gemini-2.0-flash-lite',
+            'gemini-2.0-flash-001'
+        ];
 
-        const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
+        // Ensure we don't retry the primary model immediately if it's already in the list
+        const modelsToTry = [modelName, ...fallbackModels.filter(m => m !== modelName)];
 
-        try {
-            const response = await axios.post(url, {
-                contents: [{
-                    parts: [{ text: fullPrompt }]
-                }],
-                generationConfig: {
-                    temperature: 0.1,
-                    responseMimeType: "text/plain"
+        let lastError: any = null;
+
+        for (const model of modelsToTry) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
+
+            try {
+                if (logger?.log && model !== modelName) {
+                    logger.log(`[Gemini] Falling back to model: ${model}`);
                 }
-            });
 
-            // Extract text from Gemini response structure
-            const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!text) throw new Error("Empty response from Gemini");
+                return await this.retryWithBackoff(async () => {
+                    try {
+                        const response = await axios.post(url, {
+                            contents: [{
+                                parts: [{ text: fullPrompt }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.1,
+                                responseMimeType: "text/plain"
+                            }
+                        }, { signal });
 
-            // Cleanup markdown code blocks if present
-            return text.replace(/```yaml\n/g, '').replace(/```/g, '').trim();
+                        const text = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                        if (!text) throw new Error("Empty response from Gemini");
 
-        } catch (error) {
-            console.error('Gemini Generation Error:', error);
-            if (axios.isAxiosError(error)) {
-                throw new Error(`Gemini API connection failed: ${error.response?.data?.error?.message || error.message}`);
+                        return text.replace(/```yaml\n/g, '').replace(/```/g, '').trim();
+
+                    } catch (error: any) {
+                        if (axios.isCancel(error)) throw error;
+
+                        // If it's a 429, rethrow to trigger retryWithBackoff
+                        if (axios.isAxiosError(error) && error.response?.status === 429) {
+                            throw error;
+                        }
+
+                        // If 404 (Model not found), allow breaking out of retryWithBackoff to try next model
+                        if (axios.isAxiosError(error) && error.response?.status === 404) {
+                            throw new Error(`MODEL_NOT_FOUND`);
+                        }
+
+                        // Log real error
+                        // console.error('Gemini Generation Error:', error);
+                        if (axios.isAxiosError(error)) {
+                            throw new Error(`Gemini API connection failed: ${error.response?.data?.error?.message || error.message}`);
+                        }
+                        throw error;
+                    }
+                }, 3, 2000, logger, signal); // Reduced retries per model to allow fallbacks faster
+
+            } catch (error: any) {
+                lastError = error;
+                if (error.message === 'MODEL_NOT_FOUND' || error.message.includes('404')) {
+                    continue; // Try next model
+                }
+
+                // If it was a rate limit that exhausted retries, try next model which might have different quota
+                if (error.message.includes('Rate limited') || error.message.includes('429')) {
+                    continue;
+                }
+
+                // If cancelled, stop
+                if (axios.isCancel(error) || error.message === 'Operation cancelled') {
+                    throw error;
+                }
+
+                // Other errors, continue to next model just in case (e.g. 500s)
+                continue;
             }
-            throw error;
         }
+
+        throw lastError || new Error("All Gemini models failed");
     }
 }
 

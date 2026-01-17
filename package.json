@@ -4,7 +4,7 @@
   "description": "A TTRPG table generator engine with recursion support",
   "main": "server.js",
   "scripts": {
-    "start": "npm run build:tables && node server.js",
+    "start": "npx tsc && npm run build:tables && node server.js",
     "build": "npx tsc && npm run build:tables",
     "build:tables": "npx ts-node src/compiler/build.ts",
     "cli": "npx ts-node scripts/cli.ts",
@@ -27,6 +27,7 @@
   "eslintConfig": {},
   "dependencies": {
     "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
     "express": "^4.21.1",
     "multer": "^2.0.2",
     "pdf-parse": "^2.4.5",

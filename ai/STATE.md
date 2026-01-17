@@ -1,7 +1,7 @@
 # Project State (keep under 40 lines if possible)
 
 Project: Tabletop RPG table generator (File System as CMS)
-Version: 0.1.72
+Version: 0.1.73
 
 Current focus:
 - Forge workflow for PDF content extraction (multi-type import)

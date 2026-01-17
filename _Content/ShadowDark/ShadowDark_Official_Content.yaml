@@ -639,6 +639,31 @@
     - name: Attack
       desc: 1 mace +1 (1d6) or 1 spell +2
   description: A religious trainee who knows basic rites and rituals.
+- id: sd_monster_anaconda_giant
+  name: Anaconda, Giant
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "12"
+    hp: "33"
+    mv: near (climb, swim)
+    level: "7"
+    alignment: "N"
+    stats:
+      str: "+4"
+      dex: "+2"
+      con: "+2"
+      int: "-2"
+      wis: "+1"
+      cha: "-2"
+    flavor: A 20-foot long, amphibious snake with red stripes and piercing, yellow eyes.
+  abilities:
+    - name: Swallow
+      desc: DC 12 STR or target is swallowed. Total darkness inside and 1d8 damage per round. Anaconda regurgitates all swallowed if dealt at least 15 damage in one round to the inside of its gullet.
+  actions:
+    - name: Attack
+      desc: 2 bite +6 (1d10 + swallow)
 - id: sd_monster_angel_archangel
   name: Angel, Archangel
   type: Monster
@@ -796,6 +821,33 @@
     - name: Attack
       desc: 1 bite +4 (1d6) or 1 acid spray (near) +4 (2d6)
   description: Horse-sized, rust-brown insects. They burrow vast, underground warrens into the bedrock.
+- id: sd_monster_ant_giant
+  name: Ant, Giant
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "12"
+    hp: "5"
+    mv: near (climb)
+    level: "1"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+1"
+      int: "-3"
+      wis: "+0"
+      cha: "-3"
+    flavor: Red, ox-sized ants with hooked mandibles. They attack in swarms and carry live prey off to their colonies to be devoured.
+  abilities:
+    - name: Grab
+      desc: DC 12 STR or pinned in ant's mandibles. DC 12 STR on turn to break free. The ant can carry grabbed targets when it moves.
+    - name: Mighty
+      desc: ADV on STR checks to move objects.
+  actions:
+    - name: Attack
+      desc: 1 bite +3 (1d6 + grab)
 - id: sd_monster_ape
   name: Ape
   type: Monster
@@ -1039,6 +1091,31 @@
     - name: Attack
       desc: 2 bite +4 (2d6 + petrify)
   description: Massive, muscled lizards with six legs and gray, tough hide.
+- id: sd_monster_basilisk_hatchling
+  name: Basilisk Hatchling
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "13"
+    hp: "6"
+    mv: near
+    level: "1"
+    alignment: "N"
+    stats:
+      str: "+1"
+      dex: "+0"
+      con: "+2"
+      int: "-3"
+      wis: "+1"
+      cha: "-2"
+    flavor: Fledgling, six-legged basilisks the size of iguanas. They can partially petrify creatures for a short time.
+  abilities:
+    - name: Petrify
+      desc: Any creature that touches the basilisk or meets its gaze, DC 9 CON or one of its limbs (determine randomly) is petrified for a day.
+  actions:
+    - name: Attack
+      desc: 1 bite +1 (1d4 + petrify)
 - id: sd_monster_bat_giant
   name: Bat, Giant
   type: Monster
@@ -1218,6 +1295,31 @@
     - name: Attack
       desc: 3 tentacle +4 (2d6)
   description: A black, ice-cold mass of sludge.
+- id: sd_monster_blue_dart_frog
+  name: Blue Dart Frog
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "12"
+    hp: "1"
+    mv: near (climb)
+    level: "0"
+    alignment: "N"
+    stats:
+      str: "-3"
+      dex: "+2"
+      con: "+0"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: Elusive, neon-blue treefrogs that carry a potent toxin.
+  abilities:
+    - name: Toxin
+      desc: DC 15 CON or go to 0 HP with a death timer of 1. During this time, you cannot be magically healed. If you survive, end all diseases afflicting you.
+  actions:
+    - name: Attack
+      desc: 1 touch +2 (toxin)
 - id: sd_monster_boar
   name: Boar
   type: Monster
@@ -1395,6 +1497,31 @@
     - name: Attack
       desc: 3 rend +6 (2d6)
   description: Clawed apes with sandy, matted hair and reflective eyes. Carnivorous ambush hunters.
+- id: sd_monster_catfish_giant
+  name: Catfish, Giant
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "13"
+    hp: "56"
+    mv: double near (swim)
+    level: "12"
+    alignment: "N"
+    stats:
+      str: "+4"
+      dex: "+0"
+      con: "+2"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: A whiskered, gaping catfish as big as a whale. Streaks of minerals collect in its skin, giving it tiger stripes that flash silver and copper in the sun.
+  abilities:
+    - name: Swallow
+      desc: On a natural attack roll of 18-20, target is swallowed into giant catfish's stomach. Total darkness inside stomach and 2d8 damage per round. Giant catfish regurgitates all swallowed creatures if dealt at least 15 damage in one round to the inside of its gullet.
+  actions:
+    - name: Attack
+      desc: 2 bite +9 (2d10 + swallow)
 - id: sd_monster_centipede_giant
   name: Centipede, Giant
   type: Monster
@@ -1527,6 +1654,37 @@
     - name: Attack
       desc: 3 lash +4 (1d8) or 1 screech
   description: A midnight blue manta ray with a bony tail and crescent-shaped maw above its belly. It swoops through deep, lightless caverns.
+- id: sd_monster_cobra_statue
+  name: Cobra Statue
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "14"
+    hp: "27"
+    mv: near
+    level: "6"
+    alignment: C
+    stats:
+      str: "+4"
+      dex: "+1"
+      con: "+3"
+      int: "-3"
+      wis: "+0"
+      cha: "-3"
+    flavor: A rearing statue of a hooded cobra that looms 20 feet high. Its ruby eyes are pointed down, watching what passes below.
+  abilities:
+    - name: Impervious
+      desc: Only damaged by magical sources.
+    - name: Hypnotize
+      desc: One creature in near who can see cobra statue, DC 12 CHA or become helplessly stupefied for 1 round.
+    - name: Poison
+      desc: DC 18 CON or go to 0 HP with a death timer of 1.
+  actions:
+    - name: Attack
+      desc: 1 bite +4 (1d8 + poison)
+    - name: Hypnotize
+      desc: 1 hypnotize
 - id: sd_monster_cockatrice
   name: Cockatrice
   type: Monster
@@ -1553,6 +1711,31 @@
     - name: Attack
       desc: 1 bite +1 (1d4 + petrify)
   description: A molting, lizard-chicken hybrid with a crimson, razorlike crest.
+- id: sd_monster_condor_dire
+  name: Condor, Dire
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "11"
+    hp: "16"
+    mv: double near (fly)
+    level: "3"
+    alignment: "N"
+    stats:
+      str: "+2"
+      dex: "+1"
+      con: "+3"
+      int: "-2"
+      wis: "+1"
+      cha: "-3"
+    flavor: Wagon-sized, bald-faced vultures with barbed hooks of bone growing from their flesh.
+  abilities:
+    - name: Grab
+      desc: Steal 1 random piece of target's carried gear.
+  actions:
+    - name: Attack
+      desc: 2 beak +3 (1d8 + grab)
 - id: sd_monster_couatl
   name: Couatl
   type: Monster
@@ -1709,6 +1892,31 @@
     - name: Attack
       desc: 1 bite +3 (1d4) or 1 darkness
   description: A floating, black octopus with rows of red eyes and a webbed skirt of tentacles.
+- id: sd_monster_death_slug
+  name: Death Slug
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "12"
+    hp: "1"
+    mv: close (climb)
+    level: "0"
+    alignment: "N"
+    stats:
+      str: "-3"
+      dex: "+2"
+      con: "+0"
+      int: "-3"
+      wis: "-2"
+      cha: "-3"
+    flavor: A palm-sized, pale slug with a spinning mouth lined in hundreds of needle-like teeth.
+  abilities:
+    - name: Burrow
+      desc: Death slug plunges under target's skin. Its AC becomes 18 and it begins tunneling toward target's heart. A living humanoid creature dies of this in 1d4 rounds unless the death slug is killed first.
+  actions:
+    - name: Attack
+      desc: 1 bite +0 (1 + burrow)
 - id: sd_monster_deep_one
   name: Deep One
   type: Monster
@@ -4063,7 +4271,7 @@
   name: Heal Cube
   type: Monster
   game: ShadowDark
-  source: Monster of the Month
+  source: Monster of the Month, 3 - Ooze Cubes
   properties:
     ac: "11"
     hp: "24"
@@ -4393,6 +4601,83 @@
     - name: Attack
       desc: 3 pummel +4 (1d6)
   description: Intelligent creatures made of flowing air. Often bound to the bidding of evil sorcerers.
+- id: sd_monster_jaguar_king
+  name: Jaguar King
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: 16 (shield)
+    hp: "56"
+    mv: near (climb)
+    level: "12"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+4"
+      con: "+2"
+      int: "+0"
+      wis: "+3"
+      cha: "+3"
+    flavor: A regal man with a black jaguar head and vivid yellow eyes. He wears gold and gem-studded regalia and bears a round shield with a snarling jaguar face.
+  abilities:
+    - name: Pounce
+      desc: Jump up to a near distance. If landing within close range of an enemy, make one melee attack with ADV.
+  actions:
+    - name: Attack
+      desc: 2 obsidian spear (close/near) +7 (1d8) and 1 pounce
+- id: sd_monster_javelina
+  name: Javelina
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "10"
+    hp: "5"
+    mv: near
+    level: "1"
+    alignment: C
+    stats:
+      str: "+0"
+      dex: "+0"
+      con: "+1"
+      int: "-3"
+      wis: "+0"
+      cha: "-2"
+    flavor: A sharp-hooved pig with russet fur dusted in white spots.
+  abilities:
+    - name: Rage
+      desc: If injured, tusk attacks deal d8 damage instead of d6.
+  actions:
+    - name: Attack
+      desc: 1 tusk +1 (1d6)
+- id: sd_monster_javelina_diseased
+  name: Javelina, Diseased
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "10"
+    hp: "10"
+    mv: near
+    level: "2"
+    alignment: C
+    stats:
+      str: "+1"
+      dex: "+0"
+      con: "+1"
+      int: "-3"
+      wis: "+0"
+      cha: "-3"
+    flavor: A sharp-hooved pig with russet fur dusted in white spots. Crusted lines of black ichor runs from its eyes and mouth.
+  abilities:
+    - name: Undead
+      desc: Immune to morale checks.
+    - name: Rage
+      desc: If injured, tusk attacks deal d8 damage instead of d6.
+  actions:
+    - name: Attack
+      desc: 1 tusk +2 (1d6)
 - id: sd_monster_jellyfish
   name: Jellyfish
   type: Monster
@@ -4419,6 +4704,33 @@
     - name: Attack
       desc: 1 sting +1 (1 + toxin)
   description: Hand-sized, purple sea jellies with stinging tentacles.
+- id: sd_monster_kawitzek
+  name: Kawitzek
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "13"
+    hp: "44"
+    mv: double near
+    level: "9"
+    alignment: "N"
+    stats:
+      str: "+5"
+      dex: "+1"
+      con: "+4"
+      int: "-3"
+      wis: "+3"
+      cha: "-3"
+    flavor: A horned snapping turtle as large as an elephant covered in muck, vines, and debris.
+  abilities:
+    - name: Whirlpool (WIS spell)
+      desc: DC 12. Focus. Cause a near-sized cube of water within a near distance to change shape, defy gravity, or flow in a different direction.
+  actions:
+    - name: Attack
+      desc: 3 bite +8 (2d12)
+    - name: Spell
+      desc: 1 spell
 - id: sd_monster_knight
   name: Knight
   type: Monster
@@ -4717,7 +5029,7 @@
   name: Magnetic Cube
   type: Monster
   game: ShadowDark
-  source: Monster of the Month
+  source: Monster of the Month, 3 - Ooze Cubes
   properties:
     ac: "11"
     hp: "24"
@@ -5244,7 +5556,7 @@
   name: Necrotic Cube
   type: Monster
   game: ShadowDark
-  source: Monster of the Month
+  source: Monster of the Month, 3 - Ooze Cubes
   properties:
     ac: "11"
     hp: "24"
@@ -5270,6 +5582,37 @@
       desc: Necrotic cubes have 1d6 skeletons inside them. Each round, one escapes to attack the cube's enemies on a d6 roll of 1-3.
   actions:
     - name: Touch
+      desc: 1 touch +4 (1d8 + engulf)
+- id: sd_monster_necrotic_ooze_cube
+  name: Necrotic Ooze Cube
+  type: Monster
+  game: ShadowDark
+  source: 3 - Ooze Cubes
+  properties:
+    ac: "11"
+    hp: "24"
+    mv: near
+    level: "5"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+2"
+      int: "-4"
+      wis: "+1"
+      cha: "-4"
+    flavor: A green-tinted cube of clear jelly with bleached skeletons adrift inside.
+  abilities:
+    - name: Engulf
+      desc: DC 12 STR or trapped inside cube. Touch attack auto-hits engulfed targets each round. DC 12 STR on turn to escape.
+    - name: Necrotic
+      desc: A creature who dies while engulfed becomes a skeleton.
+    - name: Rubbery
+      desc: Half damage from stabbing weapons.
+    - name: Skeletons
+      desc: Necrotic cubes have 1d6 skeletons inside them. Each round, one escapes to attack the cube's enemies on a d6 roll of 1-3.
+  actions:
+    - name: Attack
       desc: 1 touch +4 (1d8 + engulf)
 - id: sd_monster_nightmare
   name: Nightmare
@@ -5465,6 +5808,35 @@
     - name: Attack
       desc: 1 glaive (near) +6 (1d10) or 1 spell +5
   description: Cunning and sorcerous ogre-demons with shaggy white hair, blue skin, and yellow eyes.
+- id: sd_monster_ooze_cube
+  name: Ooze Cube
+  type: Monster
+  game: ShadowDark
+  source: 3 - Ooze Cubes
+  properties:
+    ac: "11"
+    hp: "24"
+    mv: near
+    level: "5"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+2"
+      int: "-4"
+      wis: "+1"
+      cha: "-4"
+    flavor: A massive cube of clear slime with a faint, pink color. Plump mice and centipedes drift around inside.
+  abilities:
+    - name: Engulf
+      desc: DC 12 STR or trapped inside cube. DC 12 STR on turn to escape.
+    - name: Heal
+      desc: Creatures in cube heal 1 HP per round. Treat as if underwater.
+    - name: Rubbery
+      desc: Half damage from stabbing weapons.
+  actions:
+    - name: Attack
+      desc: 1 touch +4 (engulf + heal)
 - id: sd_monster_oracle
   name: Oracle
   type: Monster
@@ -6695,6 +7067,64 @@
     - name: Attack
       desc: 2 claw +2 (1d6) or 1 song
   description: Baleful fey with dove wings and iridescent fish scales. Their singing entrances listeners.
+- id: sd_monster_skandrill
+  name: Skandrill
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "13"
+    hp: "14"
+    mv: double near
+    level: "3"
+    alignment: "N"
+    stats:
+      str: "+2"
+      dex: "+1"
+      con: "+1"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: Crocodile-lizards as tall as humans and covered in bright orange feathers. They run on two powerful legs, greedily chasing down shining objects.
+  abilities:
+    - name: Fireblood
+      desc: Fire immune.
+    - name: Greedy
+      desc: In place of dealing damage, steal one metallic object target carries.
+  actions:
+    - name: Attack
+      desc: 2 bite +3 (1d8 + greedy)
+- id: sd_monster_skandrill_rex
+  name: Skandrill, Rex
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "13"
+    hp: "19"
+    mv: double near
+    level: "4"
+    alignment: "N"
+    stats:
+      str: "+3"
+      dex: "+1"
+      con: "+1"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: This massive skandrill has an extra long wattle and a row of blue feathers down its spine.
+  abilities:
+    - name: Fireblood
+      desc: Fire immune.
+    - name: Greedy
+      desc: In place of dealing damage, steal one metallic object target carries.
+    - name: Scream
+      desc: 1/day, hideous cawscream summons 1d4 loyal skandrill. They arrive in 2 rounds.
+  actions:
+    - name: Attack
+      desc: 2 bite +4 (1d8 + greedy)
+    - name: Scream
+      desc: 1 scream
 - id: sd_monster_skeleton
   name: Skeleton
   type: Monster
@@ -7010,6 +7440,60 @@
     - name: Attack
       desc: 1 beak +2 (1d4 + blood drain)
   description: Darting, orange insect-bat with four wings and needlelike beak.
+- id: sd_monster_stone_shaman
+  name: Stone Shaman
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "11"
+    hp: "19"
+    mv: near
+    level: "4"
+    alignment: C
+    stats:
+      str: "+2"
+      dex: "+1"
+      con: "+1"
+      int: "+0"
+      wis: "+3"
+      cha: "+1"
+    flavor: Stooped elders who lead stone warriors in the rituals and traditions of the basilisk cult.
+  abilities:
+    - name: Daze (WIS Spell)
+      desc: DC 12. Focus. One target in near is helplessly stunned for spell's duration.
+    - name: Death Touch (WIS Spell)
+      desc: DC 13. Close. One target 2d8 damage.
+  actions:
+    - name: Attack
+      desc: 1 obsidian dagger (near) +2 (1d6) and 1 spell +4
+- id: sd_monster_stone_warrior
+  name: Stone Warrior
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "12"
+    hp: "5"
+    mv: near
+    level: "1"
+    alignment: C
+    stats:
+      str: "+2"
+      dex: "+1"
+      con: "+1"
+      int: "+0"
+      wis: "+1"
+      cha: "-1"
+    flavor: Lithe, basilisk-worshipping warriors covered in dried mud dotted with stones and pebbles.
+  abilities:
+    - name: Camouflage
+      desc: ADV on checks to sneak and hide in a natural environment.
+    - name: Basilisk Hatchling
+      desc: 1:6 chance of having a loyal basilisk hatchling.
+  actions:
+    - name: Attack
+      desc: 1 obsidian spear-thrower (far) +2 (1d8)
 - id: sd_monster_strangler
   name: Strangler
   type: Monster
@@ -7554,6 +8038,35 @@
     - name: Attack
       desc: 1 dagger (close/near) +2 (1d4) or 2 spell +5
   description: Thin viperians with scales tinged in black. They wear silk robes and silver, serpentine jewelry.
+- id: sd_monster_void_bat
+  name: Void Bat
+  type: Monster
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    ac: "13"
+    hp: "19"
+    mv: double near (fly)
+    level: "4"
+    alignment: "N"
+    stats:
+      str: "-1"
+      dex: "+3"
+      con: "+1"
+      int: "-3"
+      wis: "+1"
+      cha: "-3"
+    flavor: Dog-sized, eyeless bats with glossy black wings and rows of earholes. They travel through space while absorbing faint light for nourishment, though too much of it burns them.
+  abilities:
+    - name: Impervious
+      desc: Immune to cold.
+    - name: Absorb Ambient Light
+      desc: Faint light (such as from torches) within double near of the void bat dims to a faint ember, only providing light within close. The void bat regains 1d4 HP on its turn while this is in effect.
+    - name: Sunlight Sensitivity
+      desc: DISADV on attacks in sunlight and 1d4 damage per round of exposure.
+  actions:
+    - name: Attack
+      desc: 2 scream +4 (1d10)
 - id: sd_monster_vulture
   name: Vulture
   type: Monster
@@ -7954,6 +8467,18 @@
     duration: 1 day
     range: Close
   description: Send a strobing orb of energy streaking toward a target within range. Choose an energy type from fire, cold, or electricity. The orb deals 3d8 damage and delivers a concussive blast of the chosen energy type. If the energy type is anathema to the target's existence, the orb deals double damage to it.
+- id: sd_spell_alchemy
+  name: Alchemy
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "3"
+    class: Wizard
+    duration: Instant
+    range: Close
+  description: |
+    One inanimate object of human size or less you touch turns into another material of equal or lesser value.
 - id: sd_spell_alter_self
   name: Alter Self
   type: Spell
@@ -7976,6 +8501,21 @@
     duration: Instant
     range: Close
   description: All allies revile and abandon the creature you touch for 1 day. Each time you or your allies harm the target, its former allies may pass a DC 15 Wisdom check to end the effects of the spell.
+- id: sd_spell_anima
+  name: Anima
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "3"
+    class: Wizard
+    duration: Focus
+    range: Close
+  description: |
+    You animate the life force of one natural object you touch the size of a horse or less.
+    The object becomes a loyal creature for the spell's duration using the below stats. Its level is equal to yours.
+    The creature acts on your turn. You may use your action to command it, which it obeys. Otherwise, it does not act.
+    AC 10 + LV, HP 4.5 x LV, ATK 2 bash +7 (1d12), MV near, S +4, D +0, C +0, I -4, W +0, Ch +0, AL N, LV *
 - id: sd_spell_animate_dead
   name: Animate Dead
   type: Spell
@@ -8020,6 +8560,33 @@
     duration: Instant
     range: Self
   description: You interpret the meaning of supernatural portents and omens. Ask the GM one question about a specific course of action. The GM says whether the action will lead to “weal” or “woe.”
+- id: sd_spell_barkskin
+  name: Barkskin
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "2"
+    class: Wizard
+    duration: 1 day
+    range: Self
+  description: |
+    Your skin hardens into tough tree bark. Your AC becomes 15 (18 on a critical spellcasting check) for the spell's duration.
+    You take double damage from fire while you are under the spell's effects.
+- id: sd_spell_befriend
+  name: Befriend
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "2"
+    class: Wizard
+    duration: 5 rounds
+    range: Close
+  description: |
+    A tiny natural creature you touch (such as a mouse or moth) regards you as a friend for the spell's duration.
+    You may give the creature one command, which it tries to complete to the best of its ability and intelligence even after the spell ends.
+    If the command would directly harm the creature, it abandons the task.
 - id: sd_spell_beguile
   name: Beguile
   type: Spell
@@ -8066,6 +8633,18 @@
     duration: 5 rounds
     range: Far
   description: You turn a near-sized cube of ground within range into a muddy, boiling bog of quicksand. A creature stuck in the bog can't move and must succeed on a Dexterity check vs. your spellcasting check to free itself.
+- id: sd_spell_breath
+  name: Breath
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "1"
+    class: Wizard
+    duration: 10 rounds
+    range: Self
+  description: |
+    You can hold your breath for the spell's duration.
 - id: sd_spell_broomstick
   name: Broomstick
   type: Spell
@@ -8392,6 +8971,20 @@
     duration: Instant
     range: Close
   description: You and any willing creatures you choose within close range step into the dream of a sleeping creature you name that is on your same plane. You and anyone traveling with you can step out of the creature, appearing next to it as if having teleported there.
+- id: sd_spell_earthquake
+  name: Earthquake
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "5"
+    class: Wizard
+    duration: Instant
+    range: Double near
+  description: |
+    The earth shakes violently and splits open, swallowing creatures down to their doom.
+    All creatures standing on the ground within double near of you take 4d6 damage.
+    Each affected creature of LV 9 or less must pass a DEX check equal to the damage they took or else be swallowed by the earth, never to be seen again.
 - id: sd_spell_enfeeble
   name: Enfeeble
   type: Spell
@@ -8692,6 +9285,19 @@
     duration: Focus
     range: Far
   description: You create a convincing visible and audible illusion that fills up to a near-sized cube in range. The illusion cannot cause harm, but creatures who believe the illusion is real react to it as though it were. A creature who inspects the illusion from afar must pass a Wisdom check vs. your last spellcasting check to perceive the false nature of the illusion. Touching the illusion also reveals its false nature.
+- id: sd_spell_instill
+  name: Instill
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "1"
+    class: Wizard
+    duration: 5 rounds
+    range: Self
+  description: |
+    One weapon you wield is imbued with life force. It becomes a +1 weapon for the spell's duration.
+    If the weapon is a staff, it deals d6 damage instead of d4.
 - id: sd_spell_invisibility
   name: Invisibility
   type: Spell
@@ -8758,6 +9364,20 @@
     duration: Instant
     range: Far
   description: You shoot a blue-white ray of lightning from your hands, hitting all creatures in a straight line out to a far distance. Creatures struck by the lightning take 3d6 damage.
+- id: sd_spell_locusts
+  name: Locusts
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "3"
+    class: Wizard
+    duration: Focus
+    range: Near
+  description: |
+    A disorienting cloud of angry, biting locusts fills an area around you out to near.
+    The cloud moves with you as you move. You are not affected by it.
+    Creatures in the area of effect take 1d10 damage per round at the start of their turn. They must pass a CON check equal to your last spellcasting check or be unable to move on their turn.
 - id: sd_spell_lokis_trickery
   name: Loki's Trickery
   type: Spell
@@ -8807,6 +9427,20 @@
     duration: Instant
     range: Far
   description: You have advantage on your check to cast this spell. A glowing bolt of force streaks from your open hand, dealing 1d4 damage to one target.
+- id: sd_spell_magnetize
+  name: Magnetize
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "2"
+    class: Wizard
+    duration: 5 rounds
+    range: Close
+  description: |
+    One object you touch up to the size of a horse becomes powerfully magnetized.
+    It attracts all smaller magnetic objects within near.
+    If it can move, it is pulled toward larger magnetic objects within near. A metal creature must pass a STR check equal to your spellcasting check to resist.
 - id: sd_spell_mass_cure
   name: Mass Cure
   type: Spell
@@ -8873,6 +9507,34 @@
     duration: Instant
     range: Self
   description: You beseech the Mother of Night to lend you power. Make a single wish, stating it as exactly as possible. Your wish occurs, as interpreted by the GM. If you fail this spellcasting check, the Mother of Night pulls you into The Nightfall for judgment. You can't cast this spell again until you appease her demands.
+- id: sd_spell_mycelium
+  name: Mycelium
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "4"
+    class: Wizard
+    duration: Instant
+    range: Self
+  description: |
+    You connect your mind with the earth's vast fungi network.
+    Ask the GM one question of up to 15 words. The GM answers truthfully using up to 15 words.
+    If you cast this spell more than once in 24 hours, treat a failed spellcasting check for it as a critical failure instead.
+- id: sd_spell_naming
+  name: Naming
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "5"
+    class: Wizard
+    duration: Instant
+    range: Close
+  description: |
+    You learn the True Name ( Shadowdark RPG pg. 319) of one creature you touch.
+    If the creature is willing, you may give it a new True Name . A creature may only change its True Name once in its lifetime.
+    If it does so, its alignment changes to your alignment.
 - id: sd_spell_nightmare
   name: Nightmare
   type: Spell
@@ -8907,6 +9569,18 @@
     range: Self
   description: |
     For the spell's duration, add your level as an additional bonus to your Wisdom checks and spellcasting checks.
+- id: sd_spell_oxidize
+  name: Oxidize
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "1"
+    class: Wizard
+    duration: Instant
+    range: Close
+  description: |
+    One inanimate object you touch the size of a door or less ages d100 years.
 - id: sd_spell_passwall
   name: Passwall
   type: Spell
@@ -9314,6 +9988,21 @@
     duration: Focus
     range: Near
   description: Reach into the outer planes and summon an elemental or outsider of LV 7 or less under your control. If you lose focus, you lose control and the creature becomes hostile towards you and your allies. A spellcasting check is required to return the creature to the outer planes.
+- id: sd_spell_summon_storm
+  name: Summon Storm
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "4"
+    class: Wizard
+    duration: 10 rounds
+    range: 1 mile
+  description: |
+    You summon a violent storm that affects an area around you out to one mile for the duration.
+    The storm brings darkened skies, severe wind, and driving rain.
+    For the duration of the spell, you can cast control water ( Shadowdark RPG pg. 57), even if you do not know the spell.
+    For the duration of the spell, you can cast lightning bolt (Shadowdark RPG pg. 64 ) , even if you do not know the spell.
 - id: sd_spell_swarm
   name: Swarm
   type: Spell
@@ -9382,6 +10071,36 @@
     range: Close
   description: |
     You enter a trance, catching small glimpses of a creature's fate. One humanoid creature you touch (you can't target yourself) gains a luck token. It can't have more than one luck token at once.
+- id: sd_spell_treeshape
+  name: Treeshape
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "3"
+    class: Wizard
+    duration: 10 rounds
+    range: Self
+  description: |
+    You and your gear turn into a treant with the below stats for the spell's duration.
+    You do not have the treant's Animate Tree talent.
+    You cannot cast spells while under the effect of this spell.
+    You retain your INT, WIS, and CHA stats.
+    AC 14, HP 38, ATK 2 slam +8 (1d12) or 1 rock (far) +8 (2d6), MV near, S +4, D -1, C +2, I *, W *, Ch *, AL N, LV 8
+- id: sd_spell_truespeech
+  name: Truespeech
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "2"
+    class: Wizard
+    duration: Instant
+    range: Close
+  description: |
+    A natural creature you touch understands and can communicate with you in the true language of all animals.
+    You can ask the creature one yes or no question. The GM truthfully answers "yes" or "no."
+    If you cast this spell more than once on the same creature in 24 hours, treat a failed spellcasting check for it as a critical failure instead.
 - id: sd_spell_valkyrie
   name: Valkyrie
   type: Spell
@@ -9440,6 +10159,18 @@
     duration: Instant
     range: Close
   description: You whisper into another creature's ear, planting a false memory in its mind. You describe one brief, false memory that the target believes is true going forward. If you fail this spellcasting check, the GM chooses a short, false memory to plant in your mind instead.
+- id: sd_spell_whisperwind
+  name: Whisperwind
+  type: Spell
+  game: ShadowDark
+  source: Cursed Scroll 4
+  properties:
+    tier: "1"
+    class: Wizard
+    duration: Instant
+    range: Far
+  description: |
+    You send a brief, whispered message that reaches any creature in range.
 - id: sd_spell_willowman
   name: Willowman
   type: Spell

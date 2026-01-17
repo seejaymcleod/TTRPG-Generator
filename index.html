@@ -55,7 +55,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-  <link href="dist/output.css" rel="stylesheet">
+  <!-- <link href="dist/output.css" rel="stylesheet"> -->
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <style>
     /* Custom Scrollbar */
@@ -1649,6 +1649,19 @@
                           </div>
                         </button>
 
+                        <!-- Extraction Status & Debug Toggle -->
+                        <div class="flex items-center gap-4">
+                          <p id="forgeStatus" class="text-xs text-slate-500 font-medium"></p>
+                          <button id="forgeToggleDebugBtn" onclick="window.ForgeApp.toggleDebugLog()"
+                            class="text-[10px] font-bold tracking-wider text-slate-500 hover:text-indigo-400 flex items-center gap-1 transition-colors">
+                            <span class="material-symbols-outlined text-[14px]">terminal</span> DEBUG LOG
+                          </button>
+                          <button onclick="window.ForgeApp.clearState()"
+                            class="text-[10px] font-bold tracking-wider text-slate-500 hover:text-red-400 flex items-center gap-1 transition-colors ml-auto">
+                            <span class="material-symbols-outlined text-[14px]">restart_alt</span> NEW SESSION
+                          </button>
+                        </div>
+
                         <!-- Extraction Status -->
                         <div id="forgeExtractStatus"
                           class="hidden flex items-center gap-2 text-sm text-indigo-300 animate-pulse bg-indigo-500/10 px-3 py-1 rounded-full">
@@ -1763,6 +1776,7 @@
                   </div>
                 </div>
 
+
               </div> <!-- Close max-w-2xl -->
             </div> <!-- Close Steps 1-4 scrollable area -->
 
@@ -1849,19 +1863,59 @@
           </div> <!-- Close Step Content Area -->
 
           <!-- Navigation Buttons (Always visible at bottom) -->
-          <div class="px-8 py-4 bg-slate-900/80 border-t border-slate-700/50 shrink-0">
-            <div class="max-w-2xl mx-auto flex justify-between">
-              <button id="forgePrevBtn"
-                class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled>
-                <span class="material-symbols-outlined">arrow_back</span>
-                Back
-              </button>
-              <button id="forgeNextBtn"
-                class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2">
-                Next
-                <span class="material-symbols-outlined">arrow_forward</span>
-              </button>
+          <div class="px-8 py-4 bg-slate-900 border-t border-slate-700/50 shrink-0">
+            <div class="max-w-4xl mx-auto flex flex-col gap-4">
+
+              <!-- GLOBAL DEBUG LOG TERMINAL -->
+              <div id="forgeDebugLogContainer" class="hidden w-full space-y-2">
+                <div
+                  class="flex items-center justify-between text-[10px] font-bold text-slate-500 px-1 uppercase tracking-widest">
+                  <div class="flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                      <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <span>Server Process Log</span>
+                  </div>
+                  <button onclick="window.ForgeApp.clearDebugLog()" class="hover:text-red-400 transition-colors">Clear
+                    Terminal</button>
+                </div>
+                <div id="forgeDebugLog"
+                  class="w-full h-32 bg-black/90 border border-slate-700/50 rounded-lg p-3 font-mono text-[11px] text-green-500/80 overflow-y-auto custom-scrollbar shadow-2xl">
+                  <div class="text-slate-600 italic">Initialize extraction to see logs...</div>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center bg-slate-800/40 p-3 rounded-xl border border-slate-700/30">
+                <button id="forgePrevBtn"
+                  class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-lg transition-colors flex items-center gap-2 disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled>
+                  <span class="material-symbols-outlined">arrow_back</span>
+                  Back
+                </button>
+
+                <!-- Mid-Process Controls -->
+                <div id="forgeProcessControls" class="hidden flex items-center gap-3">
+                  <button onclick="window.ForgeApp.handleStop()"
+                    class="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-red-600/10 text-red-500 border border-red-600/20 font-bold hover:bg-red-600 hover:text-white transition-all text-xs uppercase tracking-wider">
+                    <span class="material-symbols-outlined text-sm">stop_circle</span>
+                    Stop
+                  </button>
+                  <button onclick="window.ForgeApp.handleRestart()"
+                    class="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-indigo-600/10 text-indigo-400 border border-indigo-600/20 font-bold hover:bg-indigo-600 hover:text-white transition-all text-xs uppercase tracking-wider">
+                    <span class="material-symbols-outlined text-sm">restart_alt</span>
+                    Restart
+                  </button>
+                </div>
+
+                <button id="forgeNextBtn"
+                  class="px-8 py-2.5 bg-primary hover:bg-primary-dark text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-lg shadow-primary/20 group">
+                  Next
+                  <span
+                    class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

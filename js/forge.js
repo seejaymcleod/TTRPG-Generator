@@ -135,93 +135,98 @@ class Combobox {
    Centralized network calls.
    ========================================================================== */
 const ForgeAPI = {
+    async _safeFetch(url, options = {}) {
+        try {
+            const res = await fetch(url, options);
+            const contentType = res.headers.get('content-type');
+
+            if (contentType && contentType.includes('application/json')) {
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || data.message || `Server Error: ${res.status}`);
+                }
+                return data;
+            } else {
+                const text = await res.text();
+                if (!res.ok) {
+                    const match = text.match(/<pre>(.*?)<\/pre>/s) || text.match(/<h1>(.*?)<\/h1>/s);
+                    const errorDetails = match ? match[1].trim() : (text.slice(0, 200) + '...');
+                    throw new Error(`[${res.status}] ${errorDetails}`);
+                }
+                return { text };
+            }
+        } catch (e) {
+            console.error(`Fetch error for ${url}:`, e);
+            throw e;
+        }
+    },
+
     async getSecrets(user) {
-        const res = await fetch('/api/user/secrets', { headers: { 'x-username': user } });
-        return res.json();
+        return this._safeFetch('/api/user/secrets', { headers: { 'x-username': user } });
     },
 
     async getModels() {
-        const res = await fetch('/api/llm/models');
-        return res.json();
+        return this._safeFetch('/api/llm/models');
     },
 
     async getSources(game) {
         if (!game) return { sources: [] };
-        const res = await fetch(`/api/forge/sources/${encodeURIComponent(game)}`);
-        return res.json();
+        return this._safeFetch(`/api/forge/sources/${encodeURIComponent(game)}`);
     },
 
     async getMetadata() {
-        const res = await fetch('/api/forge/metadata');
-        return res.json();
+        return this._safeFetch('/api/forge/metadata');
     },
 
-    async analyze(text, provider, apiKey, model) {
-        const res = await fetch('/api/forge/analyze', {
+    async analyze(text, provider, apiKey, model, taskId) {
+        return this._safeFetch('/api/forge/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, provider, apiKey, model })
+            body: JSON.stringify({ text, provider, apiKey, model, taskId })
         });
-        return res.json();
     },
 
     async process(payload) {
-        const res = await fetch('/api/forge/process', {
+        return this._safeFetch('/api/forge/process', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        return res.json();
     },
 
     async upload(formData) {
-        const res = await fetch('/api/forge/upload', { method: 'POST', body: formData });
-        return res.json();
+        return this._safeFetch('/api/forge/upload', { method: 'POST', body: formData });
     },
 
-    async loadPath(filePath) {
-        const res = await fetch('/api/forge/load-path', {
+    async loadPath(filePath, taskId) {
+        return this._safeFetch('/api/forge/load-path', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ path: filePath })
+            body: JSON.stringify({ path: filePath, taskId })
         });
-        return res.json();
     },
 
     async save(content, type) {
-        const res = await fetch('/api/forge/save', {
+        return this._safeFetch('/api/forge/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content, type })
         });
-        return res.json();
     },
 
-    /**
-     * Multi-modal extraction: Combines Docling text + Vision for entity extraction.
-     * @param {FormData} formData - Must include: file (PDF), doclingText, type, game, source, apiKey, model
-     */
     async extractMultiModal(formData) {
-        const res = await fetch('/api/forge/extract-multimodal', {
+        return this._safeFetch('/api/forge/extract-multimodal', {
             method: 'POST',
             body: formData
         });
-        return res.json();
     },
 
-    /**
-     * Save verified cards to content YAML file.
-     * @param {Array} cards - Array of card objects
-     * @param {string} game - Game system (e.g., "ShadowDark")
-     * @param {string} contentType - Content type (e.g., "Monster")
-     */
-    async saveCards(cards, game, contentType) {
-        const res = await fetch('/api/forge/save-cards', {
+    async saveCards(cards, game, contentType, origin) {
+        return this._safeFetch('/api/forge/save-cards', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ cards, game, contentType })
+            body: JSON.stringify({ cards, game, contentType, origin })
         });
-        return res.json();
     }
 };
 
@@ -238,8 +243,15 @@ class ForgeController {
             origin: 'official',
             currentStep: 1,
             totalSteps: 5,
-            contentTypes: ['monster'] // Default to monster, supports multi-select
+            contentTypes: ['monster'],
+            contentExtracted: false
         };
+
+        this.currentTaskId = null;
+        this.abortController = null;
+
+        // Restore State from LocalStorage
+        this.restoreState();
 
         // Initialize UI Components
         this.initComboboxes();
@@ -260,6 +272,10 @@ class ForgeController {
         this.resetCardFilters = this.resetCardFilters.bind(this);
         this.saveAllCards = this.saveAllCards.bind(this);
 
+        // SSE Progress Logging
+        this.eventSource = null;
+        this._initEventSource();
+
         this.initUI();
         this.initContentTypeButtons();
         this.initWizardNav();
@@ -272,6 +288,197 @@ class ForgeController {
         }
 
         console.log('ForgeController Initialized');
+    }
+
+    _initEventSource() {
+        if (this.eventSource) this.eventSource.close();
+
+        this.eventSource = new EventSource('/api/forge/events');
+
+        this.eventSource.onopen = () => {
+            this.addLog('Connected to server event stream.', 'info');
+        };
+
+        this.eventSource.addEventListener('log', (e) => {
+            const data = JSON.parse(e.data);
+            this.addLog(data.message, data.level || 'info');
+        });
+
+        this.eventSource.addEventListener('progress', (e) => {
+            const data = JSON.parse(e.data);
+            // Optional: Update a secondary progress bar or status text
+            if (data.message) {
+                const statusEl = document.getElementById('forgeStatus');
+                if (statusEl) statusEl.textContent = `${data.message} (${data.current}/${data.total})`;
+            }
+        });
+
+        this.eventSource.onerror = (e) => {
+            console.error('SSE Error:', e);
+            this.addLog('Connection lost. Retrying...', 'error');
+            // Browser auto-retries EventSource, so we just log it
+        };
+    }
+
+    toggleDebugLog() {
+        const container = document.getElementById('forgeDebugLogContainer');
+        if (!container) return;
+        const isHidden = container.classList.contains('hidden');
+        container.classList.toggle('hidden');
+
+        // Auto-reconnect if we open it and it's disconnected
+        if (!isHidden && (!this.eventSource || this.eventSource.readyState === 2)) {
+            this._initEventSource();
+        }
+    }
+
+    clearDebugLog() {
+        const logEl = document.getElementById('forgeDebugLog');
+        if (logEl) logEl.innerHTML = '<div class="text-slate-600 italic">Log cleared.</div>';
+    }
+
+    addLog(message, type = 'info') {
+        const logEl = document.getElementById('forgeDebugLog');
+        if (!logEl) return;
+
+        const entry = document.createElement('div');
+        entry.className = 'mb-1 break-words flex items-start gap-2';
+
+        // Icon and color coding based on type
+        let colorClass = 'text-green-500/80';
+        let icon = '○';
+        switch (type) {
+            case 'warn':
+                colorClass = 'text-yellow-500/80';
+                icon = '⚠';
+                break;
+            case 'error':
+                colorClass = 'text-red-500/80';
+                icon = '✖';
+                break;
+            case 'info':
+                colorClass = 'text-blue-400/80';
+                icon = 'ℹ';
+                break;
+            case 'success':
+                colorClass = 'text-green-400/80';
+                icon = '✔';
+                break;
+            case 'progress':
+                colorClass = 'text-purple-400/80';
+                icon = '⋯';
+                break;
+            case 'debug':
+                colorClass = 'text-slate-400/80';
+                icon = '🔧';
+                break;
+            default:
+                colorClass = 'text-slate-300/80';
+                icon = '○';
+        }
+
+        const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+        // Truncate very long messages with expand option
+        let displayMessage = message;
+        if (message.length > 200) {
+            displayMessage = message.substring(0, 200) + '...';
+            entry.title = message; // Full message on hover
+        }
+
+        entry.innerHTML = `<span class="text-slate-600 text-xs whitespace-nowrap">[${time}]</span><span class="${colorClass}">${icon}</span><span class="${colorClass} flex-1">${displayMessage}</span>`;
+
+        logEl.appendChild(entry);
+
+        // Auto-scroll to bottom
+        logEl.scrollTop = logEl.scrollHeight;
+
+        // Limit log entries to 300
+        if (logEl.children.length > 300) {
+            logEl.removeChild(logEl.firstChild);
+        }
+    }
+
+    saveState() {
+        const provider = document.getElementById('forgeProvider')?.value;
+        const model = document.getElementById('forgeModelSelect')?.value;
+        const apiKey = document.getElementById('forgeApiKey')?.value;
+
+        const toSave = {
+            currentStep: this.state.currentStep,
+            contentExtracted: this.state.contentExtracted,
+            currentFile: this.currentFile,
+            contentTypes: this.state.contentTypes,
+            game: this.gameCombo ? this.gameCombo.getValue() : '',
+            source: this.sourceCombo ? this.sourceCombo.getValue() : '',
+            provider,
+            model,
+            apiKey
+        };
+        localStorage.setItem('forge_state', JSON.stringify(toSave));
+    }
+
+    restoreState() {
+        try {
+            const saved = localStorage.getItem('forge_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                this.state.currentStep = parsed.currentStep || 1;
+                this.state.contentExtracted = parsed.contentExtracted || false;
+                this.currentFile = parsed.currentFile;
+                if (parsed.contentTypes) this.state.contentTypes = parsed.contentTypes;
+
+                // Apply saved settings to UI
+                setTimeout(async () => {
+                    const p = document.getElementById('forgeProvider');
+                    const m = document.getElementById('forgeModelSelect');
+                    const a = document.getElementById('forgeApiKey');
+                    if (p && parsed.provider) p.value = parsed.provider;
+                    if (a && parsed.apiKey) a.value = parsed.apiKey;
+                    if (p) this.setupProviderToggle();
+
+                    if (this.gameCombo && parsed.game) this.gameCombo.setValue(parsed.game);
+                    if (this.sourceCombo && parsed.source) this.sourceCombo.setValue(parsed.source);
+
+                    // If restored to Gemini provider with an API key, fetch models
+                    if (parsed.provider === 'gemini' && parsed.apiKey) {
+                        try {
+                            const response = await fetch(`/api/llm/gemini-models?apiKey=${parsed.apiKey}`);
+                            const data = await response.json();
+                            if (data.models && data.models.length > 0 && m) {
+                                m.innerHTML = data.models.map(model => {
+                                    const name = model.name;
+                                    const disp = model.displayName || name;
+                                    return `<option value="${name}">${disp}</option>`;
+                                }).join('');
+                                console.log('[Forge] Restored', data.models.length, 'Gemini models from state');
+
+                                // Restore model selection after populating
+                                setTimeout(() => {
+                                    if (m && parsed.model) m.value = parsed.model;
+                                }, 100);
+                            }
+                        } catch (e) {
+                            console.warn('[Forge] Failed to fetch Gemini models on restore:', e);
+                        }
+                    } else {
+                        // Restore model for local provider
+                        setTimeout(() => {
+                            if (m && parsed.model) m.value = parsed.model;
+                        }, 500);
+                    }
+                }, 100);
+            }
+        } catch (e) {
+            console.warn('Failed to restore state:', e);
+        }
+    }
+
+    clearState() {
+        if (confirm('Start a new session? Current progress will be lost.')) {
+            localStorage.removeItem('forge_state');
+            location.reload();
+        }
     }
 
     async initComboboxes() {
@@ -292,6 +499,13 @@ class ForgeController {
 
         // Source Combobox
         this.sourceCombo = new Combobox('comboSource', sources);
+
+        // Restore game/source from pending state
+        if (this._pendingState) {
+            if (this._pendingState.game) this.gameCombo.setValue(this._pendingState.game);
+            if (this._pendingState.source) this.sourceCombo.setValue(this._pendingState.source);
+            delete this._pendingState;
+        }
 
         // Bind Game change to update Sources
         this.gameCombo.onChange(async (game) => {
@@ -488,6 +702,11 @@ class ForgeController {
     goToStep(step, force = false) {
         if (step < 1 || step > this.state.totalSteps) return;
 
+        // If a task is running, don't allow moving forward unless forced or finished
+        if (this.currentTaskId && step > this.state.currentStep && !force) {
+            if (!confirm('A process is running. Moving away might hide progress. Continue?')) return;
+        }
+
         // Validation (skipped if force is true)
         if (!force && step > this.state.currentStep) {
             if (!this.validateStep(this.state.currentStep)) return;
@@ -506,6 +725,7 @@ class ForgeController {
         }
 
         this.state.currentStep = step;
+        this.saveState(); // PERSIST
         this.updateWizardUI();
     }
 
@@ -544,10 +764,36 @@ class ForgeController {
             }
         }
 
-        // Toggle visibility of Steps 1-4 container vs Step 5
+        // Restore File UI if currentFile exists
+        if (this.currentFile) {
+            const fileNameEl = document.getElementById('forgeFileName');
+            const fileSection = document.getElementById('forgeActiveFileSection');
+            const inputSection = document.getElementById('forgeInputSection');
+            const check = document.getElementById('forgeCheckMark');
+            const meta = document.getElementById('forgeFileMeta');
+
+            if (fileNameEl) fileNameEl.textContent = this.currentFile.name || (typeof this.currentFile === 'string' ? this.currentFile : 'Loaded File');
+            if (fileSection) fileSection.classList.remove('hidden');
+            if (inputSection) inputSection.classList.add('hidden');
+            if (check && this.state.contentExtracted) check.classList.remove('hidden');
+            if (meta && this.state.contentExtracted) meta.textContent = "Extraction Complete";
+        }
+
+        // Show/Hide Steps 1-4 vs Step 5
         const steps1to4Container = document.getElementById('forgeSteps1to4Container');
         if (steps1to4Container) {
             steps1to4Container.classList.toggle('hidden', step === 5);
+        }
+
+        // Navigation Buttons Labels
+        const prevBtn = document.getElementById('forgePrevBtn');
+        const nextBtn = document.getElementById('forgeNextBtn');
+
+        if (prevBtn) {
+            prevBtn.disabled = step === 1;
+        }
+        if (nextBtn) {
+            nextBtn.classList.toggle('hidden', step === 5); // Hide Next on final step
         }
 
         // Update step indicators
@@ -559,9 +805,6 @@ class ForgeController {
         });
 
         // Update nav buttons
-        const prevBtn = document.getElementById('forgePrevBtn');
-        const nextBtn = document.getElementById('forgeNextBtn');
-
         if (prevBtn) prevBtn.disabled = step === 1;
         if (nextBtn) {
             if (step === this.state.totalSteps) {
@@ -684,8 +927,7 @@ class ForgeController {
         }
 
         try {
-            // --- Simulate "Loading" state (Instant verification) ---
-
+            // Updated: Actually verify the file or at least prepare for extraction
             // 1. Switch Views
             const inputSec = document.getElementById('forgeInputSection');
             const activeSec = document.getElementById('forgeActiveFileSection');
@@ -696,36 +938,35 @@ class ForgeController {
             const nameDisplay = document.getElementById('forgeFileName');
             if (nameDisplay) nameDisplay.textContent = filePath;
 
-            // 3. Fake Progress Animation
+            // 3. Reset State for new file
+            const check = document.getElementById('forgeCheckMark');
+            if (check) check.classList.add('hidden');
+            const successText = document.getElementById('forgeExtractSuccess');
+            if (successText) successText.classList.add('hidden');
+            const meta = document.getElementById('forgeFileMeta');
+            if (meta) meta.textContent = "Validating...";
+
+            // 4. Progress Animation
             const loadProgress = document.getElementById('forgeLoadProgress');
             if (loadProgress) {
                 loadProgress.style.width = '0%';
-                // Force reflow
                 void loadProgress.offsetWidth;
                 loadProgress.style.width = '100%';
             }
 
-            // 4. Show Ready State
+            // 5. Ready State (Wait for animation)
             setTimeout(() => {
-                const check = document.getElementById('forgeCheckMark');
-                if (check) check.classList.remove('hidden');
-
+                if (meta) meta.textContent = "Ready to extract";
                 // Enable Extract Button
                 const extBtn = document.getElementById('forgeExtractBtn');
                 if (extBtn) {
                     extBtn.disabled = false;
                     extBtn.classList.remove('opacity-50');
                 }
-
-                // Update Meta
-                const meta = document.getElementById('forgeFileMeta');
-                if (meta) meta.textContent = "Ready to extract";
-
             }, 600);
 
-            // Store path/file in controller instance for the Extract step
             this.currentFile = fileObj || filePath;
-            console.log("File loaded:", this.currentFile);
+            this.state.contentExtracted = false;
 
         } catch (e) {
             console.error("handleLoadPath Error:", e);
@@ -740,6 +981,17 @@ class ForgeController {
 
         if (!this.currentFile) return;
 
+        // OPEN DEBUG LOG so user sees Docling progress
+        const logContainer = document.getElementById('forgeDebugLogContainer');
+        if (logContainer && logContainer.classList.contains('hidden')) {
+            this.toggleDebugLog();
+        }
+
+        // TASK ID & CONTROLS
+        this.currentTaskId = 'extract_' + Date.now();
+        const controls = document.getElementById('forgeProcessControls');
+        if (controls) controls.classList.remove('hidden');
+
         // UI State: Extracting
         if (btn) btn.disabled = true;
         if (status) status.classList.remove('hidden');
@@ -749,46 +1001,84 @@ class ForgeController {
             // Check if it's a File object (upload) or string (path)
             let data;
             if (this.currentFile instanceof File) {
-                // Upload logic
                 const fd = new FormData();
                 fd.append('file', this.currentFile);
-                fd.append('type', 'auto');
+                fd.append('taskId', this.currentTaskId);
                 data = await ForgeAPI.upload(fd);
             } else {
-                // Load Path logic (which extracts text)
-                data = await ForgeAPI.loadPath(this.currentFile);
+                data = await ForgeAPI.loadPath(this.currentFile, this.currentTaskId);
             }
 
             if (data.error) throw new Error(data.error);
 
             if (data.text) {
-                // Update State
                 this.state.text = data.text;
                 this.state.contentExtracted = true;
 
-                document.getElementById('forgeRawText').value = data.text;
+                const editor = document.getElementById('forgeEditor');
+                if (editor) editor.value = data.text;
 
-                // Update char count
+                const rawText = document.getElementById('forgeRawText');
+                if (rawText) rawText.value = data.text;
+
                 const count = document.getElementById('charCount');
                 if (count) count.textContent = `${data.text.length} chars`;
 
-                // Success UI
                 if (status) status.classList.add('hidden');
                 if (success) success.classList.remove('hidden');
 
-                // Enable Next Button
-                this.updateWizardUI();
+                const check = document.getElementById('forgeCheckMark');
+                if (check) check.classList.remove('hidden');
 
-                // Trigger Background Analysis
+                const meta = document.getElementById('forgeFileMeta');
+                if (meta) meta.textContent = "Extraction Complete";
+
                 this.analyzeText(data.text);
+
+                // AUTO-ADVANCE: Move to Step 2 (Review) so user doesn't wonder what's next
+                setTimeout(() => this.goToStep(2), 500);
             }
 
         } catch (e) {
+            console.error('Extraction failed:', e);
             alert('Extraction failed: ' + e.message);
-            if (btn) btn.disabled = false; // Re-enable on failure
+
+            const meta = document.getElementById('forgeFileMeta');
+            if (meta) meta.textContent = "Extraction Error";
+
+            if (btn) btn.disabled = false;
             if (status) status.classList.add('hidden');
+            this.currentTaskId = null;
+            if (controls) controls.classList.add('hidden');
         }
     }
+    async handleStop() {
+        if (!this.currentTaskId) return;
+        this.addLog('Stopping current process...', 'warn');
+        try {
+            await fetch('/api/forge/cancel', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ taskId: this.currentTaskId })
+            });
+            this.currentTaskId = null;
+            this.addLog('Process cancellation requested.', 'info');
+        } catch (e) {
+            console.error('Stop failed:', e);
+            this.addLog('Failed to stop process: ' + e.message, 'error');
+        }
+    }
+
+    handleRestart() {
+        if (this.state.currentStep === 1) this.handleExtract();
+        else if (this.state.currentStep === 4) this.handleProcess();
+        else {
+            if (confirm('Restart whole session?')) {
+                this.clearState();
+            }
+        }
+    }
+
 
     clearFile() {
         this.state.text = '';
@@ -831,25 +1121,50 @@ class ForgeController {
                 const data = await ForgeAPI.getSecrets(user);
                 if (data.secrets?.geminiApiKey) {
                     const input = document.getElementById('forgeApiKey');
+                    const providerSelect = document.getElementById('forgeProvider');
+                    const modelSelect = document.getElementById('forgeModelSelect');
+
                     if (input) {
                         input.value = data.secrets.geminiApiKey;
-                        // Trigger change to load models if provider is gemini
-                        input.dispatchEvent(new Event('change'));
+
+                        // If provider is set to Gemini, fetch Gemini models directly
+                        // Don't rely on change event since provider might not be set yet
+                        if (providerSelect?.value === 'gemini') {
+                            try {
+                                const response = await fetch(`/api/llm/gemini-models?apiKey=${data.secrets.geminiApiKey}`);
+                                const modelData = await response.json();
+                                if (modelData.models && modelData.models.length > 0 && modelSelect) {
+                                    modelSelect.innerHTML = modelData.models.map(m => {
+                                        const name = m.name;
+                                        const disp = m.displayName || name;
+                                        return `<option value="${name}">${disp}</option>`;
+                                    }).join('');
+                                    console.log('[Forge] Loaded', modelData.models.length, 'Gemini models');
+                                }
+                            } catch (e) {
+                                console.warn('[Forge] Failed to fetch Gemini models:', e);
+                            }
+                        }
                     }
+                }
+            } catch (e) {
+                console.warn('[Forge] Failed to load user secrets:', e);
+            }
+        }
+
+        // Fetch Local Models only if provider is local
+        const provider = document.getElementById('forgeProvider');
+        if (!provider || provider.value !== 'gemini') {
+            try {
+                const data = await ForgeAPI.getModels();
+                const select = document.getElementById('forgeModelSelect');
+                if (data.models && select) {
+                    select.innerHTML = data.models.map(m =>
+                        `<option value="${m.name}">${m.name} (${m.size || ''})</option>`
+                    ).join('');
                 }
             } catch (e) { }
         }
-
-        // Fetch Local Models
-        try {
-            const data = await ForgeAPI.getModels();
-            const select = document.getElementById('forgeModelSelect');
-            if (data.models && select) {
-                select.innerHTML = data.models.map(m =>
-                    `<option value="${m.name}">${m.name} (${m.size})</option>`
-                ).join('');
-            }
-        } catch (e) { }
     }
 
     async analyzeText(text) {
@@ -862,7 +1177,7 @@ class ForgeController {
             const apiKey = document.getElementById('forgeApiKey')?.value || '';
             const model = document.getElementById('forgeModelSelect')?.value || '';
 
-            const data = await ForgeAPI.analyze(text.substring(0, 2000), provider, apiKey, model);
+            const data = await ForgeAPI.analyze(text.substring(0, 2000), provider, apiKey, model, this.currentTaskId);
 
             if (data.analysis) {
                 this.handleAnalysisResults(data.analysis);
@@ -910,15 +1225,25 @@ class ForgeController {
         if (types.length === 0) return alert("Please select at least one content type.");
 
         const btn = document.getElementById('forgeProcessBtn');
+        const controls = document.getElementById('forgeProcessControls');
         const originals = btn.innerHTML;
         btn.disabled = true;
 
-        // Clear editor initially if it's a fresh run, or append? 
+        // OPEN DEBUG LOG if it's hidden, so user sees what's happening
+        const logContainer = document.getElementById('forgeDebugLogContainer');
+        if (logContainer && logContainer.classList.contains('hidden')) {
+            this.toggleDebugLog();
+        }
+
+        // Clear editor initially if it's a fresh run, or append?
         // Let's prompt user or just overwrite? Standard behavior is overwrite.
         // User might want to accumulate. Let's start empty.
         const editor = document.getElementById('forgeEditor');
         editor.value = '';
         this.updatePreview('');
+
+        this.currentTaskId = 'process_' + Date.now();
+        if (controls) controls.classList.remove('hidden');
 
         console.log(`[Forge] Starting multi-type extraction for ${types.length} types:`, types);
 
@@ -927,8 +1252,9 @@ class ForgeController {
                 const type = types[i];
                 // Update UI Progress
                 const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
-                btn.innerHTML = `<span class="material-symbols-outlined animate-spin">sync</span> Generating ${typeLabel}s (${i + 1}/${types.length})...`;
+                btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-purple-400">sync</span> <span class="text-white">Processing ${typeLabel}s (${i + 1}/${types.length})...</span>`;
                 console.log(`[Forge] Processing type ${i + 1}/${types.length}: ${type}`);
+                this.addLog(`Starting extraction for ${type}...`, 'info');
 
                 const payload = {
                     text,
@@ -937,7 +1263,8 @@ class ForgeController {
                     type: type, // Send single type per request for granular progress
                     provider: document.getElementById('forgeProvider')?.value || 'local',
                     apiKey: document.getElementById('forgeApiKey')?.value || '',
-                    model: document.getElementById('forgeModelSelect')?.value || ''
+                    model: document.getElementById('forgeModelSelect')?.value || '',
+                    taskId: this.currentTaskId
                 };
 
                 try {
@@ -972,20 +1299,47 @@ class ForgeController {
                         console.warn(`[Forge] Empty result for ${type} - source may not contain this type`);
                         // Don't add comments - they can break YAML parsing
                     }
-                } catch (innerError) {
-                    console.error(`[Forge] Network/parse error for ${type}:`, innerError);
-                    editor.value += `\n# Failed to process ${type}: ${innerError.message}\n`;
-                    // Continue to next type
+                } catch (err) {
+                    console.error(`[Forge] Error processing ${type}:`, err);
+                    this.addLog(`Error processing ${type}: ${err.message}`, 'error');
+
+                    if (err.message.includes('timeout') || err.message.includes('Network Error')) {
+                        alert(`Network Timeout or Connectivity issue during ${type} generation. The server might still be working - check the Debug Log.`);
+                    } else {
+                        alert(`Failed to extract ${type}: ${err.message}`);
+                    }
+                    // Continue to next type if multi-select? 
+                    // No, usually best to stop and let user decide.
+                    throw err;
                 }
             }
+
+            // Success
+            this.state.contentExtracted = true;
+            this.saveState();
+
+            btn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> SUCCESS - GO TO CARDS`;
+            btn.classList.add('bg-green-600');
+            this.addLog(`All requested content types processed successfully!`, 'info');
+
+            // Auto-advance to cards? Let's stay and let user see the YAML.
+            // But enable the Next nav button.
+            this.updateWizardUI();
+
         } catch (e) {
-            console.error('[Forge] Fatal error in handleProcess:', e);
-            alert("Processing failed. See console.");
+            console.error('Process failed:', e);
+            btn.innerHTML = originals;
+            btn.classList.remove('bg-green-600');
         } finally {
             btn.disabled = false;
-            btn.innerHTML = originals;
-            console.log('[Forge] Multi-type extraction complete');
+            this.currentTaskId = null;
+            if (controls) controls.classList.add('hidden');
+            // Only restore button text if it wasn't a success (keep success message if reached)
+            if (!this.state.contentExtracted) {
+                btn.innerHTML = originals;
+            }
         }
+        console.log('[Forge] Multi-type extraction complete');
     }
 
     handleGenerateCards() {
@@ -1244,7 +1598,7 @@ class ForgeController {
 
             try {
                 // 1. Server Persistence
-                const result = await ForgeAPI.saveCards(items, game, type);
+                const result = await ForgeAPI.saveCards(items, game, type, this.state.origin);
 
                 if (result && result.saved) {
                     successCount += items.length;

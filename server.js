@@ -10,7 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 1337;
 
 app.use(express.static(__dirname));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Add a route to serve the extractContext function directly (Legacy Compat)
 app.get('/js/extractContext.js', (req, res) => {
@@ -59,6 +60,34 @@ console.log(`Engine loaded with ${loader.getAllTables().length} tables.`);
 // Our new engine uses seedrandom. If we want true properties of random, 
 // we can instantiate Renderer with no seed (it uses Date.now + random).
 const getRenderer = (seed) => new Renderer(loader, seed);
+
+// --- SSE Event Management ---
+let forgeClients = [];
+const broadcastForgeEvent = (event, data) => {
+  const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+  forgeClients.forEach(client => client.res.write(payload));
+};
+
+// --- Forge Logging Hijack ---
+// We'll wrap console methods or provide a logger to ForgeService 
+// so we can stream its logs to the UI.
+const forgeLogger = {
+  log: (...args) => {
+    console.log('[Forge UI Log]', ...args);
+    broadcastForgeEvent('log', { level: 'info', message: args.join(' ') });
+  },
+  warn: (...args) => {
+    console.warn('[Forge UI Warn]', ...args);
+    broadcastForgeEvent('log', { level: 'warn', message: args.join(' ') });
+  },
+  error: (...args) => {
+    console.error('[Forge UI Error]', ...args);
+    broadcastForgeEvent('log', { level: 'error', message: args.join(' ') });
+  },
+  progress: (step, total, message) => {
+    broadcastForgeEvent('progress', { step, total, message });
+  }
+};
 
 // --- API Endpoints ---
 
@@ -271,6 +300,12 @@ const getForgeService = () => {
       throw new Error("Forge Service not available. Run npm run build.");
     }
   }
+
+  // Ensure the UI logger is always injected so it can stream progress
+  if (forgeService && forgeService.setLogger) {
+    forgeService.setLogger(forgeLogger);
+  }
+
   return forgeService;
 };
 
@@ -279,14 +314,39 @@ app.post('/api/forge/upload', upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
+  const { taskId } = req.body;
+  const forge = getForgeService();
+  if (taskId) forge.startTask(taskId);
+
   try {
-    const forge = getForgeService();
-    const text = await forge.extractText(req.file.buffer);
+    const text = await forge.extractText(req.file.buffer, req.file.originalname, taskId);
     res.json({ text });
   } catch (e) {
     console.error("Forge Upload Error:", e);
     res.status(500).json({ error: e.message });
+  } finally {
+    if (taskId) forge.finishTask(taskId);
   }
+});
+
+// --- Forge SSE Endpoint ---
+app.get('/api/forge/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.flushHeaders();
+
+  const clientId = Date.now();
+  const newClient = { id: clientId, res };
+  forgeClients.push(newClient);
+
+  req.on('close', () => {
+    forgeClients = forgeClients.filter(c => c.id !== clientId);
+  });
+
+  // Initial connection event
+  res.write(`data: ${JSON.stringify({ type: 'connected', clientId })}\n\n`);
+  broadcastForgeEvent('log', { message: `New client connected (ID: ${clientId})`, level: 'info' });
 });
 
 // POST /api/forge/load-path - Load file from local filesystem path
@@ -318,13 +378,30 @@ app.post('/api/forge/load-path', async (req, res) => {
 
     const buffer = fs.readFileSync(resolvedPath);
     const forge = getForgeService();
-    const text = await forge.extractText(buffer);
+    const { taskId } = req.body;
+    if (taskId) forge.startTask(taskId);
 
-    res.json({ text, filename: path.basename(resolvedPath) });
+    try {
+      const filename = path.basename(resolvedPath);
+      const text = await forge.extractText(buffer, filename, taskId);
+      res.json({ text, filename });
+    } finally {
+      if (taskId) forge.finishTask(taskId);
+    }
   } catch (e) {
     console.error("Forge Load Path Error:", e);
     res.status(500).json({ error: e.message });
   }
+});
+
+// POST /api/forge/cancel - Cancel an active task
+app.post('/api/forge/cancel', async (req, res) => {
+  const { taskId } = req.body;
+  if (!taskId) return res.status(400).json({ error: 'No taskId provided' });
+
+  const forge = getForgeService();
+  const success = forge.cancelTask(taskId);
+  res.json({ success });
 });
 
 // Forge - List Ollama Models
@@ -421,16 +498,20 @@ app.get('/api/forge/metadata', (req, res) => {
 
 // POST /api/forge/analyze
 app.post('/api/forge/analyze', async (req, res) => {
-  const { text, provider, apiKey, model } = req.body;
+  const { text, provider, apiKey, model, taskId } = req.body;
   if (!text) return res.status(400).json({ error: "Text required" });
 
+  const forge = getForgeService();
+  if (taskId) forge.startTask(taskId);
+
   try {
-    const forge = getForgeService();
-    const analysis = await forge.analyzeText(text, provider, apiKey, model);
+    const analysis = await forge.analyzeText(text, provider, apiKey, model, taskId);
     res.json({ analysis });
   } catch (e) {
     console.error("Analysis Error:", e);
     res.status(500).json({ error: e.message });
+  } finally {
+    if (taskId) forge.finishTask(taskId);
   }
 });
 
@@ -448,7 +529,7 @@ app.get('/api/forge/sources/:game', (req, res) => {
 
 // POST /api/forge/process
 app.post('/api/forge/process', async (req, res) => {
-  const { text, type, types, game, source, provider, apiKey, model } = req.body;
+  const { text, type, types, game, source, provider, apiKey, model, taskId } = req.body;
 
   // Support both single type (legacy) and types array (new)
   const contentTypes = types || (type ? [type] : []);
@@ -456,14 +537,18 @@ app.post('/api/forge/process', async (req, res) => {
   if (!text || contentTypes.length === 0) {
     return res.status(400).json({ error: 'Text and at least one content type required' });
   }
+  const forge = getForgeService();
+  if (taskId) forge.startTask(taskId);
+
   try {
-    const forge = getForgeService();
     // Process all selected content types
-    const yaml = await forge.processContent(text, contentTypes, game || '', source || '', provider, apiKey, model);
+    const yaml = await forge.processContent(text, contentTypes, game || '', source || '', provider, apiKey, model, taskId);
     res.json({ yaml });
   } catch (e) {
     console.error("Forge Process Error:", e);
     res.status(500).json({ error: e.message });
+  } finally {
+    if (taskId) forge.finishTask(taskId);
   }
 });
 
@@ -594,7 +679,7 @@ app.post('/api/forge/extract-multimodal', upload.single('file'), async (req, res
 
 // POST /api/forge/save-cards - Save verified cards to content YAML
 app.post('/api/forge/save-cards', async (req, res) => {
-  const { cards, game, contentType } = req.body;
+  const { cards, game, contentType, origin } = req.body;
 
   if (!cards || !Array.isArray(cards) || cards.length === 0) {
     return res.status(400).json({ error: 'Cards array required' });
@@ -605,7 +690,7 @@ app.post('/api/forge/save-cards', async (req, res) => {
 
   try {
     const forge = getForgeService();
-    const result = await forge.saveCards(cards, game, contentType || 'content');
+    const result = await forge.saveCards(cards, game, contentType || 'content', origin);
     res.json(result);
   } catch (e) {
     console.error("Save Cards Error:", e);
@@ -1054,3 +1139,21 @@ app.delete('/api/admin/users/:username', requireAdmin, (req, res) => {
   res.json({ message: `User ${targetUsername} deleted` });
 });
 
+// Final Catch-all Error Handler for API routes
+// This ensures that even middleware errors (like PayloadTooLarge) 
+// return JSON if they come from an /api/* path.
+app.use((err, req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    console.error('API Error Middleware:', err);
+    return res.status(err.status || 500).json({
+      error: err.message || 'Internal Server Error',
+      details: err.stack
+    });
+  }
+  next(err);
+});
+
+// Standard error page fallback
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).send('<h1>Something went wrong</h1><pre>' + err.message + '</pre>');
+});
