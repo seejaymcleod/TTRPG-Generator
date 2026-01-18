@@ -1,1 +1,5 @@
 docling
+pydantic
+google-generativeai
+python-dotenv
+pyyaml

@@ -698,6 +698,50 @@ app.post('/api/forge/save-cards', async (req, res) => {
   }
 });
 
+// POST /api/forge/extract-scribe - Use the enhanced Python Scribe pipeline
+// This uses the new Python scripts with Gemini retry logic and model fallback
+app.post('/api/forge/extract-scribe', async (req, res) => {
+  const { text, type, game, source, taskId, apiKey, model } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: 'Text content required' });
+  }
+  if (!type) {
+    return res.status(400).json({ error: 'Content type required (monster, item, spell)' });
+  }
+
+  const forge = getForgeService();
+  if (taskId) forge.startTask(taskId);
+
+  try {
+    broadcastForgeEvent('log', { level: 'info', message: `[Scribe] Starting ${type} extraction via Python pipeline...` });
+
+    const cards = await forge.extractWithPythonScribe(
+      text,
+      type,
+      game || 'ShadowDark',
+      source || 'Core',
+      taskId,
+      apiKey,
+      model
+    );
+
+    broadcastForgeEvent('log', { level: 'info', message: `[Scribe] Extracted ${cards.length} ${type} entries` });
+
+    res.json({
+      cards,
+      count: cards.length,
+      message: `Extracted ${cards.length} ${type}(s) using Python Scribe pipeline`
+    });
+  } catch (e) {
+    console.error("Scribe Extraction Error:", e);
+    broadcastForgeEvent('log', { level: 'error', message: `[Scribe] Error: ${e.message}` });
+    res.status(500).json({ error: e.message });
+  } finally {
+    if (taskId) forge.finishTask(taskId);
+  }
+});
+
 
 // POST /api/table-contents (Matching Legacy Structure)
 app.post('/api/table-contents', (req, res) => {

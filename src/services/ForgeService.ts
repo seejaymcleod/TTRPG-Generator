@@ -157,6 +157,243 @@ export class ForgeService {
         });
     }
 
+    /**
+     * NEW: Extract content using the Python Scribe pipeline.
+     * This uses the enhanced Python scripts with retry logic and model fallback.
+     */
+    async extractWithPythonScribe(
+        text: string,
+        contentType: string,
+        game: string = 'ShadowDark',
+        source: string = 'Core',
+        taskId?: string,
+        apiKey?: string,
+        model?: string
+    ): Promise<any[]> {
+        const tempTextPath = path.resolve(process.cwd(), `temp_scribe_${Date.now()}.txt`);
+        const tempTemplatePath = path.resolve(process.cwd(), `temp_template_${Date.now()}.json`);
+
+        // Generate JSON schema template based on content type
+        const template = this.generateScribeTemplate(contentType);
+
+        fs.writeFileSync(tempTextPath, text);
+        fs.writeFileSync(tempTemplatePath, JSON.stringify(template, null, 2));
+
+        const venvPython = path.resolve(process.cwd(), '.venv/bin/python');
+        const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
+        const scribeScript = path.resolve(process.cwd(), 'python-service/scribe.py');
+
+        this.log(`[Scribe] Extracting ${contentType} using Python pipeline...`);
+        if (model) this.log(`[Scribe] Using model: ${model}`);
+
+        const args = [
+            scribeScript,
+            '--text', tempTextPath,
+            '--template', tempTemplatePath
+        ];
+
+        if (model) {
+            args.push('--model', model);
+        }
+
+        if (apiKey) {
+            args.push('--api-key', apiKey);
+        }
+
+        return new Promise((resolve, reject) => {
+            const pythonProcess = spawn(pythonCmd, args);
+
+            if (taskId && this.activeTasks.has(taskId)) {
+                this.activeTasks.get(taskId)!.pid = pythonProcess.pid;
+            }
+
+            // 10 minute timeout for large documents
+            const timeout = setTimeout(() => {
+                pythonProcess.kill();
+                reject(new Error("Scribe process timed out after 10 minutes"));
+            }, 600000);
+
+            let output = '';
+            let errorOutput = '';
+
+            pythonProcess.stdout.on('data', (data) => output += data.toString());
+            pythonProcess.stderr.on('data', (data) => {
+                const msg = data.toString();
+                errorOutput += msg;
+                // Forward progress messages to logger
+                if (msg.includes('[Scribe]')) {
+                    this.log(msg.trim());
+                }
+            });
+
+            pythonProcess.on('close', (code) => {
+                clearTimeout(timeout);
+                // Clean up temp files
+                if (fs.existsSync(tempTextPath)) fs.unlinkSync(tempTextPath);
+                if (fs.existsSync(tempTemplatePath)) fs.unlinkSync(tempTemplatePath);
+
+                if (code !== 0 && code !== null) {
+                    reject(new Error(`Scribe process exited with code ${code}: ${errorOutput}`));
+                    return;
+                }
+
+                try {
+                    const parsed = JSON.parse(output);
+                    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].error) {
+                        reject(new Error(`Scribe error: ${parsed[0].error}`));
+                        return;
+                    }
+
+                    // Transform to YAML format
+                    const transformed = this.transformScribeOutput(parsed, contentType, game, source);
+                    this.log(`[Scribe] Extracted ${transformed.length} ${contentType} entries`);
+                    resolve(transformed);
+                } catch (e) {
+                    reject(new Error(`Failed to parse Scribe output: ${e}`));
+                }
+            });
+
+            pythonProcess.on('error', (err) => {
+                clearTimeout(timeout);
+                if (fs.existsSync(tempTextPath)) fs.unlinkSync(tempTextPath);
+                if (fs.existsSync(tempTemplatePath)) fs.unlinkSync(tempTemplatePath);
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * Generate a JSON Schema template for the Scribe based on content type.
+     */
+    private generateScribeTemplate(contentType: string): any {
+        const baseTemplate = {
+            description: `A list of ShadowDark ${contentType}s`,
+            type: "array",
+            items: {
+                type: "object",
+                properties: {} as any,
+                required: ["name"]
+            }
+        };
+
+        const type = contentType.toLowerCase();
+
+        if (type === 'monster' || type === 'npc') {
+            baseTemplate.items.properties = {
+                name: { type: "string", description: "Monster Name" },
+                ac: { type: "integer", description: "Armor Class" },
+                hp: { type: "integer", description: "Hit Points" },
+                level: { type: "integer", description: "Level (LV)" },
+                mv: { type: "string", description: "Movement speed" },
+                alignment: { type: "string", description: "Alignment (L, N, C)" },
+                attack: { type: "string", description: "Full attack string" },
+                stats: {
+                    type: "object",
+                    properties: {
+                        str: { type: "string" }, dex: { type: "string" }, con: { type: "string" },
+                        int: { type: "string" }, wis: { type: "string" }, cha: { type: "string" }
+                    }
+                },
+                flavor: { type: "string", description: "Description" },
+                abilities: {
+                    type: "array",
+                    items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                }
+            };
+            baseTemplate.items.required = ["name", "ac", "hp", "level"];
+        } else if (type === 'spell') {
+            baseTemplate.items.properties = {
+                name: { type: "string" },
+                tier: { type: "integer", description: "Spell tier (1-5)" },
+                class: { type: "string", description: "Casting class (Wizard, Priest, Witch)" },
+                duration: { type: "string" },
+                range: { type: "string" },
+                description: { type: "string", description: "Full spell effect" }
+            };
+            baseTemplate.items.required = ["name", "tier"];
+        } else if (type === 'item') {
+            baseTemplate.items.properties = {
+                name: { type: "string" },
+                category: { type: "string", description: "Item category (Weapon, Armor, Magic Item, etc.)" },
+                cost: { type: "string", description: "Price in gp/sp" },
+                benefit: { type: "string", description: "Item effect or bonus" },
+                flavor: { type: "string", description: "Description" },
+                curse: { type: "string", description: "Curse effect, if any" }
+            };
+            baseTemplate.items.required = ["name"];
+        }
+
+        return baseTemplate;
+    }
+
+    /**
+     * Transform Scribe JSON output to the YAML content format.
+     */
+    private transformScribeOutput(data: any[], contentType: string, game: string, source: string): any[] {
+        const type = contentType.toLowerCase();
+        const typeName = type.charAt(0).toUpperCase() + type.slice(1);
+
+        return data.map(item => {
+            const name = (item.name || 'Unknown').replace(/^(##\s*)?/, '').trim();
+            const nameSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
+            const id = `sd_${type}_${nameSlug}`;
+
+            if (type === 'monster' || type === 'npc') {
+                return {
+                    id,
+                    name: name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '),
+                    type: 'Monster',
+                    game,
+                    source,
+                    properties: {
+                        ac: String(item.ac || ''),
+                        hp: String(item.hp || ''),
+                        mv: item.mv || '',
+                        level: String(item.level || ''),
+                        alignment: item.alignment || 'N',
+                        stats: item.stats || { str: '+0', dex: '+0', con: '+0', int: '+0', wis: '+0', cha: '+0' },
+                        flavor: item.flavor || ''
+                    },
+                    abilities: item.abilities || [],
+                    actions: item.attack ? [{ name: 'Attack', desc: item.attack }] : [],
+                    description: item.flavor || ''
+                };
+            } else if (type === 'spell') {
+                return {
+                    id,
+                    name,
+                    type: 'Spell',
+                    game,
+                    source,
+                    properties: {
+                        tier: String(item.tier || ''),
+                        class: item.class || '',
+                        duration: item.duration || '',
+                        range: item.range || ''
+                    },
+                    description: item.description || ''
+                };
+            } else {
+                // Item
+                return {
+                    id,
+                    name,
+                    type: 'Item',
+                    game,
+                    source,
+                    properties: {
+                        category: item.category || 'Gear',
+                        cost: item.cost || '',
+                        benefit: item.benefit || '',
+                        flavor: item.flavor || '',
+                        curse: item.curse || ''
+                    },
+                    description: item.flavor || item.benefit || ''
+                };
+            }
+        });
+    }
+
     private loadTemplateForGame(game: string): string {
         if (!game) return '';
         const templatePath = path.resolve(process.cwd(), '_Content', game, `${game}_Templates.yaml`);

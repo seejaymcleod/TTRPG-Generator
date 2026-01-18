@@ -227,6 +227,15 @@ const ForgeAPI = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ cards, game, contentType, origin })
         });
+    },
+
+    // NEW: Python Scribe Pipeline - Enhanced extraction with retry logic
+    async extractScribe(text, type, game, source, taskId, apiKey, model) {
+        return this._safeFetch('/api/forge/extract-scribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, type, game, source, taskId, apiKey, model })
+        });
     }
 };
 
@@ -650,6 +659,23 @@ class ForgeController {
         const genCardsBtn = document.getElementById('forgeGenerateCardsBtn');
         if (genCardsBtn) {
             genCardsBtn.addEventListener('click', () => this.handleGenerateCards());
+        }
+
+        // Scribe Mode Toggle
+        const scribeToggle = document.getElementById('forgeUseScribe');
+        const modeLabel = document.getElementById('forgeModeLabel');
+        if (scribeToggle && modeLabel) {
+            scribeToggle.addEventListener('change', () => {
+                if (scribeToggle.checked) {
+                    modeLabel.textContent = 'SCRIBE (Python)';
+                    modeLabel.classList.remove('text-yellow-400');
+                    modeLabel.classList.add('text-green-400');
+                } else {
+                    modeLabel.textContent = 'BATCH LLM';
+                    modeLabel.classList.remove('text-green-400');
+                    modeLabel.classList.add('text-yellow-400');
+                }
+            });
         }
     }
 
@@ -1226,8 +1252,13 @@ class ForgeController {
 
         const btn = document.getElementById('forgeProcessBtn');
         const controls = document.getElementById('forgeProcessControls');
-        const originals = btn.innerHTML;
+        const originalBtnHtml = btn.innerHTML;
         btn.disabled = true;
+
+        // Check which extraction mode is selected
+        const useScribe = document.getElementById('forgeUseScribe')?.checked ?? true;
+        const game = this.gameCombo.getValue() || 'ShadowDark';
+        const source = this.sourceCombo.getValue() || 'Core';
 
         // OPEN DEBUG LOG if it's hidden, so user sees what's happening
         const logContainer = document.getElementById('forgeDebugLogContainer');
@@ -1235,9 +1266,7 @@ class ForgeController {
             this.toggleDebugLog();
         }
 
-        // Clear editor initially if it's a fresh run, or append?
-        // Let's prompt user or just overwrite? Standard behavior is overwrite.
-        // User might want to accumulate. Let's start empty.
+        // Clear editor initially
         const editor = document.getElementById('forgeEditor');
         editor.value = '';
         this.updatePreview('');
@@ -1245,71 +1274,90 @@ class ForgeController {
         this.currentTaskId = 'process_' + Date.now();
         if (controls) controls.classList.remove('hidden');
 
-        console.log(`[Forge] Starting multi-type extraction for ${types.length} types:`, types);
+        const modeName = useScribe ? 'Scribe (Python)' : 'Batch LLM';
+        console.log(`[Forge] Starting ${modeName} extraction for ${types.length} types:`, types);
+        this.addLog(`Using ${modeName} extraction engine...`, 'info');
+
+        // Store extracted cards for Scribe mode
+        this.extractedCards = [];
 
         try {
             for (let i = 0; i < types.length; i++) {
                 const type = types[i];
-                // Update UI Progress
                 const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
                 btn.innerHTML = `<span class="material-symbols-outlined animate-spin text-purple-400">sync</span> <span class="text-white">Processing ${typeLabel}s (${i + 1}/${types.length})...</span>`;
                 console.log(`[Forge] Processing type ${i + 1}/${types.length}: ${type}`);
                 this.addLog(`Starting extraction for ${type}...`, 'info');
 
-                const payload = {
-                    text,
-                    game: this.gameCombo.getValue(),
-                    source: this.sourceCombo.getValue(),
-                    type: type, // Send single type per request for granular progress
-                    provider: document.getElementById('forgeProvider')?.value || 'local',
-                    apiKey: document.getElementById('forgeApiKey')?.value || '',
-                    model: document.getElementById('forgeModelSelect')?.value || '',
-                    taskId: this.currentTaskId
-                };
-
                 try {
-                    const data = await ForgeAPI.process(payload);
-                    console.log(`[Forge] Received response for ${type}:`, data);
+                    if (useScribe) {
+                        // ===== SCRIBE MODE: Python Pipeline =====
+                        const apiKey = document.getElementById('forgeApiKey')?.value || '';
+                        const model = document.getElementById('forgeModelSelect')?.value || '';
 
-                    // Check for valid, non-empty YAML content
-                    // Ignore empty arrays like "[]" or just whitespace
-                    const yamlContent = data.yaml?.trim() || '';
-                    const isEmptyResult = !yamlContent || yamlContent === '[]' || yamlContent === '[ ]';
+                        const data = await ForgeAPI.extractScribe(
+                            text,
+                            type,
+                            game,
+                            source,
+                            this.currentTaskId,
+                            apiKey,
+                            model
+                        );
+                        console.log(`[Forge/Scribe] Received response for ${type}:`, data);
 
-                    if (yamlContent && !isEmptyResult) {
-                        // Append to editor
-                        const currentVal = editor.value.trim();
-                        const newVal = yamlContent;
-
-                        if (currentVal) {
-                            editor.value = currentVal + '\n\n' + newVal;
+                        if (data.cards && data.cards.length > 0) {
+                            this.extractedCards.push(...data.cards);
+                            // Convert cards to YAML for the editor
+                            const yamlContent = jsyaml.dump(data.cards, { lineWidth: -1 });
+                            const currentVal = editor.value.trim();
+                            editor.value = currentVal ? currentVal + '\n\n' + yamlContent : yamlContent;
+                            this.updatePreview(editor.value);
+                            this.addLog(`Extracted ${data.cards.length} ${type}(s) via Scribe`, 'success');
+                        } else if (data.error) {
+                            this.addLog(`Scribe error for ${type}: ${data.error}`, 'error');
                         } else {
-                            editor.value = newVal;
+                            this.addLog(`No ${type}s found in source text`, 'warn');
                         }
-
-                        // Update preview with accumulated content
-                        this.updatePreview(editor.value);
-                        console.log(`[Forge] Appended ${newVal.length} chars for ${type}`);
-                    } else if (data.error) {
-                        console.error(`[Forge] Error generating ${type}:`, data.error);
-                        // Continue to next type instead of crashing entire flow
-                        // Don't add error comments to YAML to avoid parse issues
-                        console.warn(`Skipping error comment for ${type} to keep YAML valid`);
                     } else {
-                        console.warn(`[Forge] Empty result for ${type} - source may not contain this type`);
-                        // Don't add comments - they can break YAML parsing
+                        // ===== BATCH LLM MODE: Original Flow =====
+                        const payload = {
+                            text,
+                            game,
+                            source,
+                            type,
+                            provider: document.getElementById('forgeProvider')?.value || 'local',
+                            apiKey: document.getElementById('forgeApiKey')?.value || '',
+                            model: document.getElementById('forgeModelSelect')?.value || '',
+                            taskId: this.currentTaskId
+                        };
+
+                        const data = await ForgeAPI.process(payload);
+                        console.log(`[Forge/Batch] Received response for ${type}:`, data);
+
+                        const yamlContent = data.yaml?.trim() || '';
+                        const isEmptyResult = !yamlContent || yamlContent === '[]' || yamlContent === '[ ]';
+
+                        if (yamlContent && !isEmptyResult) {
+                            const currentVal = editor.value.trim();
+                            editor.value = currentVal ? currentVal + '\n\n' + yamlContent : yamlContent;
+                            this.updatePreview(editor.value);
+                            this.addLog(`Generated YAML for ${type}`, 'success');
+                        } else if (data.error) {
+                            this.addLog(`Error for ${type}: ${data.error}`, 'error');
+                        } else {
+                            this.addLog(`No ${type}s found in source`, 'warn');
+                        }
                     }
                 } catch (err) {
                     console.error(`[Forge] Error processing ${type}:`, err);
                     this.addLog(`Error processing ${type}: ${err.message}`, 'error');
 
                     if (err.message.includes('timeout') || err.message.includes('Network Error')) {
-                        alert(`Network Timeout or Connectivity issue during ${type} generation. The server might still be working - check the Debug Log.`);
+                        alert(`Network Timeout during ${type} extraction. Check the Debug Log.`);
                     } else {
                         alert(`Failed to extract ${type}: ${err.message}`);
                     }
-                    // Continue to next type if multi-select? 
-                    // No, usually best to stop and let user decide.
                     throw err;
                 }
             }
@@ -1320,26 +1368,23 @@ class ForgeController {
 
             btn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> SUCCESS - GO TO CARDS`;
             btn.classList.add('bg-green-600');
-            this.addLog(`All requested content types processed successfully!`, 'info');
+            this.addLog(`All ${types.length} content type(s) processed successfully!`, 'success');
 
-            // Auto-advance to cards? Let's stay and let user see the YAML.
-            // But enable the Next nav button.
             this.updateWizardUI();
 
         } catch (e) {
             console.error('Process failed:', e);
-            btn.innerHTML = originals;
+            btn.innerHTML = originalBtnHtml;
             btn.classList.remove('bg-green-600');
         } finally {
             btn.disabled = false;
             this.currentTaskId = null;
             if (controls) controls.classList.add('hidden');
-            // Only restore button text if it wasn't a success (keep success message if reached)
             if (!this.state.contentExtracted) {
-                btn.innerHTML = originals;
+                btn.innerHTML = originalBtnHtml;
             }
         }
-        console.log('[Forge] Multi-type extraction complete');
+        console.log('[Forge] Extraction complete');
     }
 
     handleGenerateCards() {
