@@ -3405,17 +3405,61 @@ function updateContentSource(source) {
 }
 
 function toggleAlignment(al) {
-    contentState.filters.alignment[al] = !contentState.filters.alignment[al];
+    const allOptions = Array.from(contentState.meta.alignments);
+    const state = contentState.filters.alignment;
+
+    // Check if currently All Selected
+    const allSelected = allOptions.every(opt => state[opt]);
+
+    if (allSelected) {
+        // Switch to Choice Mode: Select ONLY this one
+        allOptions.forEach(opt => state[opt] = (opt === al));
+    } else {
+        // Toggle this one
+        state[al] = !state[al];
+
+        // If None Selected, Revert to All
+        if (!allOptions.some(opt => state[opt])) {
+            allOptions.forEach(opt => state[opt] = true);
+        }
+    }
+    renderFilterSidebar();
     renderContentList();
 }
 
 function toggleSpellClass(cls) {
-    contentState.filters.spellClass[cls] = !contentState.filters.spellClass[cls];
+    const allOptions = Array.from(contentState.meta.spellClasses);
+    const state = contentState.filters.spellClass;
+
+    const allSelected = allOptions.every(opt => state[opt]);
+
+    if (allSelected) {
+        allOptions.forEach(opt => state[opt] = (opt === cls));
+    } else {
+        state[cls] = !state[cls];
+        if (!allOptions.some(opt => state[opt])) {
+            allOptions.forEach(opt => state[opt] = true);
+        }
+    }
+    renderFilterSidebar();
     renderContentList();
 }
 
 function toggleItemCategory(cat) {
-    contentState.filters.itemCategory[cat] = !contentState.filters.itemCategory[cat];
+    const allOptions = Array.from(contentState.meta.itemCategories);
+    const state = contentState.filters.itemCategory;
+
+    const allSelected = allOptions.every(opt => state[opt]);
+
+    if (allSelected) {
+        allOptions.forEach(opt => state[opt] = (opt === cat));
+    } else {
+        state[cat] = !state[cat];
+        if (!allOptions.some(opt => state[opt])) {
+            allOptions.forEach(opt => state[opt] = true);
+        }
+    }
+    renderFilterSidebar();
     renderContentList();
 }
 
