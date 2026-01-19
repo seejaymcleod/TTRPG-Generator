@@ -1,3 +1,15 @@
+- id: sd_item_alabaster_destrier
+  name: Alabaster Destrier
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, turn the statuette into a pegasus for 1 hour.
+    flavor: A smooth, pearly statuette of a running horse.
+    curse: ""
+  description: A smooth, pearly statuette of a running horse.
 - id: shadowdark_aminiita_root
   name: Aminiita Root
   type: Item
@@ -9,6 +21,90 @@
     use: Eat
     benefit: DC 12 CON or 3d6 damage.
   description: A toxic root that causes severe internal distress when ingested.
+- id: sd_item_amulet_of_secrecy
+  name: Amulet of Secrecy
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: You can't be detected by divination magic such as the scrying spell or a Crystal Ball.
+    flavor: A heavy, flat pendant carved with a lidded eye.
+    curse: You constantly have the sensation of being watched.
+  description: A heavy, flat pendant carved with a lidded eye.
+- id: sd_item_amulet_of_vitality
+  name: Amulet of Vitality
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Your Constitution stat becomes 18 (+4) while wearing this amulet.
+    flavor: A gold amulet with a red ruby teardrop at its center.
+    curse: ""
+  description: A gold amulet with a red ruby teardrop at its center.
+- id: sd_item_armor_of_saint_terragnis
+  name: Armor of Saint Terragnis
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 1,200 gp
+    benefit: +3 plate mail. Hostile spells that target you are DC 18 to cast. Once per month, summon an Avatar of Saint Terragnis for 10 rounds.
+    flavor: Golden plate mail carved from head to toe with warrior angels.
+    curse: ""
+  description: Golden plate mail carved from head to toe with warrior angels.
+- id: sd_item_armor_of_the_oni
+  name: Armor of the Oni
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 plate mail. You can speak and understand Diabolic. Your melee weapon attacks deal +1 damage.
+    flavor: Black plate mail of lacquered, ironwood panels. The helm's visor is the face of a snarling oni.
+    curse: You have disadvantage on attacks and spellcasting checks against demons.
+  description: Black plate mail of lacquered, ironwood panels. The helm's visor is the face of a snarling oni.
+- id: sd_item_bag_of_badgers
+  name: Bag of BADGERS
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, reach inside and pull out an angry badger to throw near distance. Badger attacks for 3 rounds.
+    flavor: A gray, fraying sack matted with white, bristly hair.
+    curse: ""
+  description: A gray, fraying sack matted with white, bristly hair.
+- id: sd_item_bag_of_devouring
+  name: Bag of Devouring
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: ""
+    flavor: A worn, leather pouch with tight drawstrings.
+    curse: This bag devours and destroys anything placed inside it in 1d6 rounds.
+  description: A worn, leather pouch with tight drawstrings.
+- id: sd_item_bag_of_holding
+  name: Bag of Holding
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 150 gp
+    benefit: Has an interdimensional space inside that can hold up to 10 gear slots.
+    flavor: A worn, leather pouch with tight drawstrings.
+    curse: Placing inside another Bag of Holding or a Portable Hole destroys both items and contents.
+  description: A worn, leather pouch with tight drawstrings.
 - id: sd_item_diabolical_bag_of_teeth
   name: Bag of Teeth
   type: Item
@@ -17,6 +113,30 @@
   properties:
     category: Treasure
     benefit: Object cannot be crushed by anything.
+- id: sd_item_bastard_sword
+  name: Bastard sword
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 10 gp
+    benefit: "Damage 1d8/1d10. Properties: Versatile, 2 slots."
+    flavor: A medium-sized sword that can be used with one or two hands.
+    curse: ""
+  description: A medium-sized sword that can be used with one or two hands.
+- id: sd_item_bead_of_force
+  name: Bead of Force
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Throw up to a near distance. If you hit, target becomes caught in a resilient sphere spell.
+    flavor: A marble with a blue ring of light glowing softly inside it.
+    curse: ""
+  description: A marble with a blue ring of light glowing softly inside it.
 - id: sd_item_diabolical_black_candle
   name: Black Candle
   type: Item
@@ -25,6 +145,18 @@
   properties:
     category: Treasure
     benefit: Causes pain and disgust in fey creatures.
+- id: sd_item_blade_of_vengeance
+  name: Blade of Vengeance
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +2 bastard sword. Advantage on attacks against undead. Can cast turn undead once per day.
+    flavor: A gray blade with a diamond-cut ruby in the pommel.
+    curse: ""
+  description: A gray blade with a diamond-cut ruby in the pommel.
 - id: shadowdark_blowgun
   name: Blowgun
   type: Item
@@ -56,6 +188,66 @@
     cost: 2 gp
     benefit: Ranged (N). When you hit a legged creature the size of a horse or smaller, the target's speed is reduced to close until it frees itself (DC 15 STR or DEX check).
   description: Weighted cords designed to entangle the legs of prey or enemies.
+- id: sd_item_boots_of_dancing
+  name: Boots of Dancing
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: ""
+    flavor: Fine, supple boots of sheepskin.
+    curse: Upon donning, you begin cavorting and dancing uncontrollably. Move randomly each turn; DC 15 DEX to remove.
+  description: Fine, supple boots of sheepskin.
+- id: sd_item_boots_of_hovering
+  name: Boots of Hovering
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Walk on an insubstantial surface for 1 turn at a time.
+    flavor: Brown, sturdy boots polished to a sheen with small silver wings.
+    curse: ""
+  description: Brown, sturdy boots polished to a sheen with small silver wings.
+- id: sd_item_boots_of_the_cat
+  name: Boots of the Cat
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Jump near distance from standstill. Checks to move silently are always easy (DC 9).
+    flavor: Gray, doeskin boots as thin and soft as slippers.
+    curse: ""
+  description: Gray, doeskin boots as thin and soft as slippers.
+- id: sd_item_bracers_of_archery
+  name: Bracers of Archery
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: You deal +1 damage with ranged weapons.
+    flavor: Leather bracers embossed with soaring hawks.
+    curse: ""
+  description: Leather bracers embossed with soaring hawks.
+- id: sd_item_bracers_of_defense
+  name: Bracers of Defense
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: You get a +1 bonus to your armor class.
+    flavor: Steel bracers traced with dwarvish runes of protection.
+    curse: ""
+  description: Steel bracers traced with dwarvish runes of protection.
 - id: sd_item_diabolical_brain_in_a_jar
   name: Brain in a Jar
   type: Item
@@ -64,6 +256,30 @@
   properties:
     category: Treasure
     benefit: Causes doubt and hesitation in demons.
+- id: sd_item_brak_s_book_of_misspells
+  name: Brak's Book of Misspells
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: ""
+    flavor: A tome bound in ratskin that bears a jagged, glowing rune.
+    curse: Contains scrolls where successful casting or learning results in the spell targeting the caster.
+  description: A tome bound in ratskin that bears a jagged, glowing rune.
+- id: sd_item_brak_s_cube_of_perfection
+  name: Brak's Cube of Perfection
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 840 gp
+    benefit: Roll a d6 to permanently increase a corresponding stat to 18 (+4).
+    flavor: A tiny cube with paintings of goblins on each face.
+    curse: ""
+  description: A tiny cube with paintings of goblins on each face.
 - id: shadowdark_brass_wine_cup
   name: Brass Wine Cup
   type: Item
@@ -81,6 +297,18 @@
   properties:
     category: Treasure
     benefit: A creature holding it can't knowingly lie.
+- id: sd_item_caltrops
+  name: Caltrops
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Basic Gear
+    cost: 5 sp
+    benefit: Living creatures who step on caltrops take 1 damage and move at half speed for 10 rounds.
+    flavor: Tiny, triangle-shaped iron spikes.
+    curse: ""
+  description: Tiny, triangle-shaped iron spikes.
 - id: sd_item_diabolical_carved_bone
   name: Carved Bone
   type: Item
@@ -89,6 +317,54 @@
   properties:
     category: Treasure
     benefit: Ignites in flames once/day for 1d4 rounds.
+- id: sd_item_chainmail
+  name: Chainmail
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Armor
+    cost: 60 gp
+    benefit: "AC: 13 + DEX modifier. Properties: Disadvantage on stealth and swimming."
+    flavor: Armor made of interlocking metal rings.
+    curse: ""
+  description: Armor made of interlocking metal rings.
+- id: sd_item_circlet_of_wisdom
+  name: Circlet of Wisdom
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Your Wisdom stat becomes 18 (+4) while wearing this circlet.
+    flavor: A thin, silver circlet set with a shimmering, blue pearl.
+    curse: ""
+  description: A thin, silver circlet set with a shimmering, blue pearl.
+- id: sd_item_cloak_of_elvenkind
+  name: Cloak of Elvenkind
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Hide checks are easy (DC 9). Become invisible for 5 rounds once per day.
+    flavor: A hooded, billowing cloak that shifts colors to match surroundings.
+    curse: ""
+  description: A hooded, billowing cloak that shifts colors to match surroundings.
+- id: sd_item_cloak_of_the_bat
+  name: Cloak of the Bat
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Fly a near distance while in a shadowy area.
+    flavor: A leathery, black cloak with a ragged hem.
+    curse: 1 in 20 chance each flight to turn into a small bat for 3 rounds.
+  description: A leathery, black cloak with a ragged hem.
 - id: sd_item_cloven_heart
   name: Cloven Heart
   type: Item
@@ -99,6 +375,18 @@
     flavor: A heart-shaped, glittering ruby with a crack down the center.
     benefit: Grants owner immunity to fire, +2 Strength, and +2 Charisma.
     curse: Grants the enmity of the dralech, Tzakoru, who wants it back.
+- id: sd_item_club
+  name: Club
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 5 cp
+    benefit: Damage 1d4.
+    flavor: A simple, blunt weapon.
+    curse: ""
+  description: A simple, blunt weapon.
 - id: sd_item_diabolical_cold_iron_spike
   name: Cold Iron Spike
   type: Item
@@ -115,6 +403,66 @@
   properties:
     category: Treasure
     benefit: Sings a haunting lullaby when rattled.
+- id: sd_item_crossbow
+  name: Crossbow
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 8 gp
+    benefit: "Damage 1d6. Properties: Two-handed, Loading."
+    flavor: A ranged weapon that requires reloading.
+    curse: ""
+  description: A ranged weapon that requires reloading.
+- id: sd_item_crowbar
+  name: Crowbar
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Basic Gear
+    cost: 5 sp
+    benefit: Grants advantage on checks to pry open stuck objects.
+    flavor: A heavy metal tool.
+    curse: ""
+  description: A heavy metal tool.
+- id: sd_item_crystal_ball
+  name: Crystal Ball
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 260 gp
+    benefit: Wizards can use it to cast the scrying spell.
+    flavor: A flawless glass orb with roiling images swirling inside it.
+    curse: ""
+  description: A flawless glass orb with roiling images swirling inside it.
+- id: sd_item_dagger
+  name: Dagger
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 1 gp
+    benefit: "Damage 1d4. Properties: Finesse, Thrown."
+    flavor: A small, easily concealed blade.
+    curse: ""
+  description: A small, easily concealed blade.
+- id: sd_item_dagger_of_the_goblin_hero
+  name: Dagger of the Goblin Hero
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 dagger. Speak Goblin. Goblinoid creatures react with friendly attitude.
+    flavor: A curved dagger with a half-moon notch at the blade's base.
+    curse: ""
+  description: A curved dagger with a half-moon notch at the blade's base.
 - id: sd_item_diabolical_dried_rose
   name: Dried Rose
   type: Item
@@ -134,6 +482,18 @@
     use: Touch (eyes)
     benefit: DC 12 CON or deep sleep for 1d4 hours.
   description: A fine powder that induces a heavy slumber if it makes contact with the eyes.
+- id: sd_item_egg_of_the_cockatrice
+  name: Egg of the Cockatrice
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 100 gp
+    benefit: Once per week, hatch a cockatrice that follows commands for 5 rounds.
+    flavor: A blue, hard egg as big as a coconut and heavy as a stone.
+    curse: ""
+  description: A blue, hard egg as big as a coconut and heavy as a stone.
 - id: sd_item_emerald_blade
   name: Emerald Blade
   type: Item
@@ -171,6 +531,66 @@
   properties:
     category: Treasure
     benefit: Once/day, briefly read one creature's mind.
+- id: sd_item_flying_carpet
+  name: Flying Carpet
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 840 gp
+    benefit: Fits two riders. Can fly double near on driver's turn.
+    flavor: A richly woven, red carpet with gold tassels.
+    curse: ""
+  description: A richly woven, red carpet with gold tassels.
+- id: sd_item_gauntlets_of_might
+  name: Gauntlets of Might
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Your Strength stat becomes 18 (+4) while wearing these gauntlets.
+    flavor: Heavy, bronze gauntlets with engravings of Herculean giants.
+    curse: ""
+  description: Heavy, bronze gauntlets with engravings of Herculean giants.
+- id: sd_item_genie_lamp
+  name: Genie Lamp
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Summon a djinni or efreeti who can grant a wish spell.
+    flavor: A tarnished, brass oil lamp.
+    curse: ""
+  description: A tarnished, brass oil lamp.
+- id: sd_item_gloves_of_agility
+  name: Gloves of Agility
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Your Dexterity stat becomes 18 (+4) while wearing these gloves.
+    flavor: Thin, leather gloves that seem to meld with the wearer's hands.
+    curse: ""
+  description: Thin, leather gloves that seem to meld with the wearer's hands.
+- id: sd_item_goblin_bomb
+  name: Goblin Bomb
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Throw near distance; explodes in 1d4 rounds for 2d8 damage in near range.
+    flavor: A preserved rat stuffed with an explosive charge and a fuse.
+    curse: ""
+  description: A preserved rat stuffed with an explosive charge and a fuse.
 - id: sd_item_gold_hummingbird_charm_necklace
   name: Gold Hummingbird Charm Necklace
   type: Item
@@ -188,6 +608,114 @@
     category: Item
     benefit: Belongs to a noble family in Alkesh.
   description: A ring used to seal documents and prove noble lineage.
+- id: sd_item_greataxe
+  name: Greataxe
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 10 gp
+    benefit: "Damage 1d8/1d10. Properties: Versatile, 2 slots."
+    flavor: A large, heavy axe.
+    curse: ""
+  description: A large, heavy axe.
+- id: sd_item_greataxe_of_the_horde
+  name: Greataxe of the Horde
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 220 gp
+    benefit: +2 greataxe. Once per day, turn a hit into a critical hit.
+    flavor: A jagged greataxe carved from a weighty dragon bone.
+    curse: If hit points drop below half, DC 12 CHA check or battle rage for 1d4 rounds attacking nearest creature.
+  description: A jagged greataxe carved from a weighty dragon bone.
+- id: sd_item_greatsword
+  name: Greatsword
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 12 gp
+    benefit: "Damage 1d12. Properties: Two-handed, 2 slots."
+    flavor: A massive sword requiring two hands to wield.
+    curse: ""
+  description: A massive sword requiring two hands to wield.
+- id: sd_item_hat_of_intellect
+  name: Hat of Intellect
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Your Intelligence stat becomes 18 (+4) while wearing this hat.
+    flavor: A floppy, pointed hat with a wide brim.
+    curse: ""
+  description: A floppy, pointed hat with a wide brim.
+- id: sd_item_hat_of_the_hound
+  name: Hat of the Hound
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Transform into a mastiff each day for up to 10 rounds total.
+    flavor: A rounded, jaunty bowler hat.
+    curse: ""
+  description: A rounded, jaunty bowler hat.
+- id: sd_item_helm_of_mind_reading
+  name: Helm of Mind Reading
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Cast detect thoughts spell three times per day (+4 bonus).
+    flavor: A helm carved with brain ridges and octopus-like tentacles.
+    curse: ""
+  description: A helm carved with brain ridges and octopus-like tentacles.
+- id: sd_item_horned_helm_of_ramlaat
+  name: Horned Helm of Ramlaat
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 AC. Advantage on checks to knock down creatures or objects.
+    flavor: A bloodstained helm made of a ram's skull.
+    curse: You feel compelled to headbutt delicate objects.
+  description: A bloodstained helm made of a ram's skull.
+- id: sd_item_hourglass_of_the_black_sands
+  name: Hourglass of the Black Sands
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, turn the hourglass to make a spell's duration 1d4 rounds longer.
+    flavor: An ancient hourglass running with obsidian sand.
+    curse: ""
+  description: An ancient hourglass running with obsidian sand.
+- id: sd_item_immovable_rod
+  name: Immovable Rod
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 300 gp
+    benefit: Click button to fix the rod in space (holds 5,000 lbs).
+    flavor: A short, iron rod with a button on one end.
+    curse: ""
+  description: A short, iron rod with a button on one end.
 - id: shadowdark_iron_orange
   name: Iron Orange
   type: Item
@@ -206,6 +734,30 @@
     category: Item
     benefit: By law, forgives its bearer of one crime.
   description: A legal token of pardon recognized in certain desert jurisdictions.
+- id: sd_item_javelin
+  name: Javelin
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 5 sp
+    benefit: "Damage 1d4. Properties: Thrown."
+    flavor: A light spear intended for throwing.
+    curse: ""
+  description: A light spear intended for throwing.
+- id: sd_item_jewel_of_barbalt
+  name: Jewel of Barbalt
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: You roll a critical success on an 18-20.
+    flavor: A coconut-sized ruby cut with a thousand facets.
+    curse: You roll a critical failure on a 1-3.
+  description: A coconut-sized ruby cut with a thousand facets.
 - id: shadowdark_kingslayer_oil
   name: Kingslayer Oil
   type: Item
@@ -217,6 +769,90 @@
     use: Eat
     benefit: DC 18 CON or delayed onset (1 hour) go to 0 HP.
   description: A lethal, slow-acting oil often used in political assassinations.
+- id: sd_item_kytherian_cog
+  name: Kytherian Cog
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 300 gp
+    benefit: Used to power The Kytherian Mechanism.
+    flavor: A coin-sized, toothed wheel buffed to a silvery shine.
+    curse: ""
+  description: A coin-sized, toothed wheel buffed to a silvery shine.
+- id: sd_item_leather_armor
+  name: Leather armor
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Armor
+    cost: 10 gp
+    benefit: "AC: 11 + DEX modifier."
+    flavor: Light armor made of cured animal hide.
+    curse: ""
+  description: Light armor made of cured animal hide.
+- id: sd_item_longbow
+  name: Longbow
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 8 gp
+    benefit: "Damage 1d8. Properties: Two-handed."
+    flavor: A powerful ranged weapon.
+    curse: ""
+  description: A powerful ranged weapon.
+- id: sd_item_longbow_of_the_elders
+  name: Longbow of the Elders
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 longbow. Advantage on attacks against unnatural creatures and outsiders.
+    flavor: A deeply curved longbow with deer antler reinforcements.
+    curse: ""
+  description: A deeply curved longbow with deer antler reinforcements.
+- id: sd_item_longsword
+  name: Longsword
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 9 gp
+    benefit: Damage 1d8.
+    flavor: A standard infantry sword.
+    curse: ""
+  description: A standard infantry sword.
+- id: sd_item_mace
+  name: Mace
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 5 gp
+    benefit: Damage 1d6.
+    flavor: A blunt impact weapon.
+    curse: ""
+  description: A blunt impact weapon.
+- id: sd_item_magic_ink
+  name: Magic Ink
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Writing is invisible when cool; visible only when warmed by heat. (1d4 uses).
+    flavor: A pot of glossy, black ink.
+    curse: ""
+  description: A pot of glossy, black ink.
 - id: shadowdark_magic_sesame_seeds
   name: Magic Sesame Seeds
   type: Item
@@ -226,6 +862,66 @@
     category: Magic Item
     benefit: Sprinkle on a door to unlock it.
   description: Enchanted seeds that can bypass locks when used correctly.
+- id: sd_item_memnon_s_blazing_javelin
+  name: Memnon's Blazing Javelin
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 javelin. Returns to hand. Once per day, transform into a lightning bolt spell.
+    flavor: A golden javelin that occasionally turns into lightning.
+    curse: ""
+  description: A golden javelin that occasionally turns into lightning.
+- id: sd_item_memnon_s_discordant_blade
+  name: Memnon's Discordant Blade
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 greatsword. Once per day, annihilate a creature of level 9 or less.
+    flavor: A barbed greatsword with a red blade trailing sparks.
+    curse: Cannot relinquish ownership. Lose 1d6 HP daily unless you slay a LV 2+ creature.
+  description: A barbed greatsword with a red blade trailing sparks.
+- id: sd_item_memnon_s_entropic_armor
+  name: Memnon's Entropic Armor
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 plate mail. Once per day, unmake all non-magical weapons that strike you until next turn.
+    flavor: Deep blue plate mail traced with gold lightning and red gems.
+    curse: ""
+  description: Deep blue plate mail traced with gold lightning and red gems.
+- id: sd_item_mirror_of_mischief
+  name: Mirror of Mischief
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: ""
+    flavor: A full-length mirror in a frame of silver demons.
+    curse: Creates an evil, malicious duplicate of the first humanoid to look into it.
+  description: A full-length mirror in a frame of silver demons.
+- id: sd_item_mithral
+  name: Mithral
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Armor property
+    cost: x4 cost
+    benefit: "Gear Slots: -1. Properties: No penalty to stealth or swimming."
+    flavor: A rare, lightweight metal for armor.
+    curse: ""
+  description: A rare, lightweight metal for armor.
 - id: sd_item_mithral_chainmail
   name: Mithral Chainmail
   type: Item
@@ -241,6 +937,18 @@
   properties:
     category: Armor
     flavor: Green-hued mithral plate mail etched with leaves.
+- id: sd_item_moonwrought_chainmail
+  name: Moonwrought Chainmail
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 mithral chainmail. Once per day, gain +1 bonus to next spellcasting check or ranged attack.
+    flavor: A luminous jacket of chainmail as lightweight as a silk shirt.
+    curse: ""
+  description: A luminous jacket of chainmail as lightweight as a silk shirt.
 - id: shadowdark_morningstar
   name: Morningstar
   type: Item
@@ -290,6 +998,42 @@
     category: Item
     benefit: Exceptionally potent alcohol.
   description: A strong desert wine known for its intoxicating effects.
+- id: sd_item_necklace_of_charm
+  name: Necklace of Charm
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Your Charisma stat becomes 18 (+4) while wearing this necklace.
+    flavor: A gold, fishbone chain.
+    curse: ""
+  description: A gold, fishbone chain.
+- id: sd_item_necrotic_mace_of_withering
+  name: Necrotic Mace of Withering
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 mace. Chaotic priests can turn cure wounds spells into harmful magic.
+    flavor: Iron mace tipped with a heavy, screaming skull.
+    curse: Inverting cure wounds causes nightmares; DC 12 WIS check or gain no benefit from rest.
+  description: Iron mace tipped with a heavy, screaming skull.
+- id: sd_item_nightcloak
+  name: Nightcloak
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 leather armor. Once per day, automatically pass a Dexterity check to hide.
+    flavor: Matte black leathers enchanted to deepen shadows.
+    curse: ""
+  description: Matte black leathers enchanted to deepen shadows.
 - id: shadowdark_nuzule_oil
   name: Nuzule Oil
   type: Item
@@ -301,6 +1045,54 @@
     use: Injure
     benefit: DC 15 CON or unconscious 3 rds.
   description: A potent oil that renders a wounded target unconscious almost instantly.
+- id: sd_item_obsidian_witchknife
+  name: Obsidian Witchknife
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 1,200 gp
+    benefit: +2 dagger. Wound self to add damage taken to your spellcasting check.
+    flavor: A glinting, obsidian blade trailing thin black smoke.
+    curse: ""
+  description: A glinting, obsidian blade trailing thin black smoke.
+- id: sd_item_oil_flask
+  name: Oil flask
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Basic Gear
+    cost: 5 sp
+    benefit: Fuels a lantern for one hour. One flask covers a close area and burns for 4 rounds, dealing 1d4 damage each round.
+    flavor: A container of flammable oil.
+    curse: ""
+  description: A container of flammable oil.
+- id: sd_item_onyx_destrier
+  name: Onyx Destrier
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, turn the statuette into a nightmare for 1 hour.
+    flavor: A polished, ebony statuette of a running horse.
+    curse: ""
+  description: A polished, ebony statuette of a running horse.
+- id: sd_item_ophidian_armor
+  name: Ophidian Armor
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 leather armor. Advantage on checks to avoid poison effects.
+    flavor: Glistening, smooth leather of dappled emerald scales.
+    curse: ""
+  description: Glistening, smooth leather of dappled emerald scales.
 - id: sd_item_diabolical_pan_pipe
   name: Pan Pipe
   type: Item
@@ -309,6 +1101,18 @@
   properties:
     category: Treasure
     benefit: As heavy as an anvil when not carried.
+- id: sd_item_pearl_of_power
+  name: Pearl of Power
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, regain ability to cast a lost spell.
+    flavor: A fat, opalescent pearl glowing with inner radiance.
+    curse: ""
+  description: A fat, opalescent pearl glowing with inner radiance.
 - id: shadowdark_phoenix_plumes
   name: Phoenix Plumes
   type: Item
@@ -336,6 +1140,162 @@
     cost: 10 gp
     benefit: Melee (2x C), 1d10 damage. Two-handed (2H), 2 slots.
   description: A very long polearm that allows the wielder to strike from a significant distance.
+- id: sd_item_pipe_of_the_rolling_hills
+  name: Pipe of the Rolling Hills
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Up to three times per day, regain 1d4 hit points when smoked.
+    flavor: A long, curved pipe smelling of cloves and resin.
+    curse: ""
+  description: A long, curved pipe smelling of cloves and resin.
+- id: sd_item_pipes_of_the_sewers
+  name: Pipes of the Sewers
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, summon 2d6 giant rats for d6 rounds.
+    flavor: A set of tarnished, brass pan pipes.
+    curse: If you stop playing while rats are present, they turn on you.
+  description: A set of tarnished, brass pan pipes.
+- id: sd_item_plate_mail
+  name: Plate mail
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Armor
+    cost: 130 gp
+    benefit: "AC: 15. Properties: No swimming allowed, disadvantage on stealth."
+    flavor: Heavy armor made of overlapping metal plates.
+    curse: ""
+  description: Heavy armor made of overlapping metal plates.
+- id: sd_item_portable_hole
+  name: Portable Hole
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 720 gp
+    benefit: Unfolds into a 6-foot wide, 6-foot deep hole with 20 gear slots of storage.
+    flavor: A black, velvet square of cloth.
+    curse: Placing inside another Portable Hole or Bag of Holding destroys both items and contents.
+  description: A black, velvet square of cloth.
+- id: sd_item_potion_of_extirpation
+  name: Potion of Extirpation
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 360 gp
+    benefit: Utterly remove one object or creature from reality.
+    flavor: An acrid, tarry substance in an iron flask.
+    curse: ""
+  description: An acrid, tarry substance in an iron flask.
+- id: sd_item_potion_of_flying
+  name: Potion of Flying
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 200 gp
+    benefit: Drink to fly a near distance for 10 rounds.
+    flavor: A sunny liquid with bubbles that flash like stars.
+    curse: ""
+  description: A sunny liquid with bubbles that flash like stars.
+- id: sd_item_potion_of_forgetfulness
+  name: Potion of Forgetfulness
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Imbiber permanently forgets one memory of your choosing.
+    flavor: A pink draught swirling counter-clockwise.
+    curse: ""
+  description: A pink draught swirling counter-clockwise.
+- id: sd_item_potion_of_giant_strength
+  name: Potion of Giant Strength
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 200 gp
+    benefit: Strength becomes 18 (+4) and deal x2 damage on melee attacks for 10 rounds.
+    flavor: A clay jar holding green, leafy sludge.
+    curse: ""
+  description: A clay jar holding green, leafy sludge.
+- id: sd_item_potion_of_healing
+  name: Potion of Healing
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 150 gp
+    benefit: Regain hit points based on level (1d6 to 4d12).
+    flavor: A glass bottle with a fizzy, lemon-vanilla liquid inside.
+    curse: ""
+  description: A glass bottle with a fizzy, lemon-vanilla liquid inside.
+- id: sd_item_potion_of_invisibility
+  name: Potion of Invisibility
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 80 gp
+    benefit: Become invisible for 10 rounds or until attacking/casting.
+    flavor: A glass vial with audible splashing liquid.
+    curse: ""
+  description: A glass vial with audible splashing liquid.
+- id: sd_item_potion_of_luck
+  name: Potion of Luck
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Gain one level and reset XP total to zero.
+    flavor: A golden elixir resonating with an angelic chord.
+    curse: ""
+  description: A golden elixir resonating with an angelic chord.
+- id: sd_item_potion_of_polymorph
+  name: Potion of Polymorph
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 200 gp
+    benefit: Casts polymorph on you with a duration of 1 hour.
+    flavor: A pickled newt in a lavender flask.
+    curse: ""
+  description: A pickled newt in a lavender flask.
+- id: sd_item_potion_of_vitality
+  name: Potion of Vitality
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Permanently gain hit points equal to class's hit points die roll.
+    flavor: A crimson elixir that thumps with a heartbeat.
+    curse: Drinking more than one in a lifetime requires DC 18 CON check or instant death.
+  description: A crimson elixir that thumps with a heartbeat.
 - id: shadowdark_razor_chain
   name: Razor Chain
   type: Item
@@ -354,6 +1314,90 @@
   properties:
     category: Treasure
     benefit: Allows you to hold your breath for an hour.
+- id: sd_item_ring_of_feather_falling
+  name: Ring of Feather Falling
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 250 gp
+    benefit: Once per day, cast feather fall when you fall.
+    flavor: A pearly ring carved as an owl feather.
+    curse: ""
+  description: A pearly ring carved as an owl feather.
+- id: sd_item_ring_of_fireballs
+  name: Ring of Fireballs
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Pluck glass marble to throw fireball spell far distance. Regrows after rest.
+    flavor: A bronze loop with claws holding a red marble.
+    curse: ""
+  description: A bronze loop with claws holding a red marble.
+- id: sd_item_ring_of_invisibility
+  name: Ring of Invisibility
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, cast the invisibility spell.
+    flavor: A simple gold band.
+    curse: Cumulative 1% chance per rest of sleep-ruining nightmares.
+  description: A simple gold band.
+- id: sd_item_ring_of_the_ram
+  name: Ring of the Ram
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Once per day, deal double damage for 5 rounds.
+    flavor: A bone-carved ring with a ram skull.
+    curse: "During rage: can't cast spells, enemies have advantage on melee attacks against you."
+  description: A bone-carved ring with a ram skull.
+- id: sd_item_robe_of_the_archmage
+  name: Robe of the Archmage
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Unarmored AC becomes 15 + DEX. Spellcasting DC for three chosen spells is always 11. Advantage to cast disintegrate.
+    flavor: A red silk robe with moons and golden eyes on sleeves.
+    curse: ""
+  description: A red silk robe with moons and golden eyes on sleeves.
+- id: sd_item_robe_of_the_druid
+  name: Robe of the Druid
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Unarmored AC becomes 15 + DEX. Regain one lost spell twice per day. Advantage on shapechange; duration 1 hour.
+    flavor: A green velvet robe embroidered with silver leaves.
+    curse: ""
+  description: A green velvet robe embroidered with silver leaves.
+- id: sd_item_robe_of_the_sorcerer
+  name: Robe of the Sorcerer
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Unarmored AC becomes 15 + DEX. Add INT modifier to spell damage. Advantage on power word kill.
+    flavor: A black leather robe with mithral chains.
+    curse: ""
+  description: A black leather robe with mithral chains.
 - id: sd_item_rot_ruin
   name: Rot-Ruin
   type: Item
@@ -382,6 +1426,18 @@
     cost: 30 gp
     benefit: Rider ADV on checks to stay mounted; 1 free for mount to carry.
   description: A standard riding saddle that helps the rider maintain their seat.
+- id: sd_item_scarab_of_protection
+  name: Scarab of Protection
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: If you die, succeed on a DC 18 CON check to be unconscious instead.
+    flavor: A brooch from a gold-dipped horned scarab beetle.
+    curse: ""
+  description: A brooch from a gold-dipped horned scarab beetle.
 - id: shadowdark_scimitar
   name: Scimitar
   type: Item
@@ -392,6 +1448,18 @@
     cost: 8 gp
     benefit: Melee (C), 1d6 damage. Finesse (F).
   description: A curved, single-edged blade common in the desert wastes.
+- id: sd_item_scimitar_of_the_ash_moon
+  name: Scimitar of the Ash Moon
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +3 greatsword. Critical hits behead the target.
+    flavor: Wide, curved blade with bronze efreeti head pommel.
+    curse: ""
+  description: Wide, curved blade with bronze efreeti head pommel.
 - id: shadowdark_screamer
   name: Screamer
   type: Item
@@ -409,6 +1477,90 @@
   properties:
     category: Treasure
     benefit: Belongs to a witch who wants it back.
+- id: sd_item_shield
+  name: Shield
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Armor
+    cost: 10 gp
+    benefit: "AC: +2. Properties: Occupies one hand."
+    flavor: A handheld protection device.
+    curse: ""
+  description: A handheld protection device.
+- id: sd_item_shield_of_faith
+  name: Shield of Faith
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 shield. Once per day, wreathe in holy flames for +2 AC for 3 rounds.
+    flavor: Weighty kite shield with a crimson cross.
+    curse: ""
+  description: Weighty kite shield with a crimson cross.
+- id: sd_item_shield_of_the_lion
+  name: Shield of the Lion
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 shield. Once per day, command roar to force morale check on hostile creatures in near range.
+    flavor: Carved as a roaring lion's face with flowing mane.
+    curse: ""
+  description: Carved as a roaring lion's face with flowing mane.
+- id: sd_item_shield_of_the_witch_king
+  name: Shield of the Witch-King
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +2 shield. Take half damage from undead creatures.
+    flavor: Jagged triangle of black steel with spiny plates.
+    curse: At 0 HP, Ix-Natheer blocks healing magic. If you die, his spirit possesses you.
+  description: Jagged triangle of black steel with spiny plates.
+- id: sd_item_shortbow
+  name: Shortbow
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 6 gp
+    benefit: "Damage 1d4. Properties: Two-handed."
+    flavor: A compact bow.
+    curse: ""
+  description: A compact bow.
+- id: sd_item_shortsword
+  name: Shortsword
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 7 gp
+    benefit: Damage 1d6.
+    flavor: A short, agile blade.
+    curse: ""
+  description: A short, agile blade.
+- id: sd_item_shortsword_of_the_thief
+  name: Shortsword of the Thief
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 shortsword (+2 if thief/halfling). Once per day, regain a spent luck token.
+    flavor: Stubby gray blade with notches.
+    curse: ""
+  description: Stubby gray blade with notches.
 - id: sd_item_diabolical_shrunken_head
   name: Shrunken Head
   type: Item
@@ -427,6 +1579,18 @@
     cost: 1 gp
     benefit: Ranged (N), 1d4 damage. Can be thrown into the ground; living creatures who step on it take 1 damage and can only move at half speed for 10 rounds.
   description: Small, sharpened metal stars that can be used as projectiles or caltrops.
+- id: sd_item_silver_mace_of_wrath
+  name: Silver Mace of Wrath
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 mace. Double damage against creatures with lycanthropy.
+    flavor: Tarnished silver mace with crescent moon flanges.
+    curse: ""
+  description: Tarnished silver mace with crescent moon flanges.
 - id: shadowdark_skinlasher
   name: Skinlasher
   type: Item
@@ -446,6 +1610,90 @@
     cost: 5 sp
     benefit: Ranged (F), 1d4 damage.
   description: A simple leather strap used to hurl stones or lead bullets.
+- id: sd_item_spear
+  name: Spear
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 5 sp
+    benefit: "Damage 1d6. Properties: Thrown."
+    flavor: A long polearm tipped with a point.
+    curse: ""
+  description: A long polearm tipped with a point.
+- id: sd_item_sphere_of_annihilation
+  name: Sphere of Annihilation
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Utterly destroys all matter it touches. Can be moved with DC 18 INT check.
+    flavor: A three-foot, spherical void of pure darkness.
+    curse: ""
+  description: A three-foot, spherical void of pure darkness.
+- id: sd_item_spyglass_of_true_sight
+  name: Spyglass of True Sight
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Look through to see invisible creatures and objects.
+    flavor: Brass telescoping lens with carved runes.
+    curse: The wielder feels a compulsion to look at everything through it.
+  description: Brass telescoping lens with carved runes.
+- id: sd_item_staff
+  name: Staff
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 5 sp
+    benefit: "Damage 1d4. Properties: Two-handed."
+    flavor: A simple wooden pole.
+    curse: ""
+  description: A simple wooden pole.
+- id: sd_item_staff_of_healing
+  name: Staff of Healing
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 staff. Once per day, touch a creature to heal 1d6 HP.
+    flavor: Knotted oak stave with heavy knurl.
+    curse: ""
+  description: Knotted oak stave with heavy knurl.
+- id: sd_item_staff_of_ord
+  name: Staff of Ord
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: 1,200 gp
+    benefit: +3 staff. Functions as wand of dimension door, fireball, sending, and telekinesis. Hostile spells against you are DC 18.
+    flavor: Tapered mithral staff with eye symbol.
+    curse: ""
+  description: Tapered mithral staff with eye symbol.
+- id: sd_item_staff_of_the_cobra
+  name: Staff of the Cobra
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 staff. Snakes are friendly. Turn staff into giant snake once per day.
+    flavor: Curved scepter tipped with flaring cobra head.
+    curse: Disadvantage on attacks and hostile spells targeting snakes.
+  description: Curved scepter tipped with flaring cobra head.
 - id: shadowdark_sunscorch
   name: Sunscorch
   type: Item
@@ -464,6 +1712,42 @@
     category: Item
     benefit: Bag of 1d4 dates that each heal 1 HP when eaten.
   description: Nutritious and slightly magical fruit from a desert oasis.
+- id: sd_item_sword_of_the_ancients
+  name: Sword of the Ancients
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +2 longsword. Unbreakable; carves through any material. Can be summoned to hand.
+    flavor: Chipped rusting blade with leather grip.
+    curse: ""
+  description: Chipped rusting blade with leather grip.
+- id: sd_item_the_kytherian_mechanism
+  name: The Kytherian Mechanism
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Functional once seven Kytherian Cogs are replaced; allows operator to undo one event from history.
+    flavor: Towering brass platform with countless cogs.
+    curse: ""
+  description: Towering brass platform with countless cogs.
+- id: sd_item_the_malediction
+  name: The Malediction
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Chaotic beings gain a level and learn Diabolic.
+    flavor: Black leatherbound tome with a grinning demon face.
+    curse: Non-chaotic readers must pass DC 18 WIS or lose one level.
+  description: Black leatherbound tome with a grinning demon face.
 - id: shadowdark_thorgol_the_anvil
   name: Thorgol the Anvil
   type: Item
@@ -473,6 +1757,78 @@
     category: Magic Weapon
     benefit: +2 warhammer. Can instantly fuse together two metal objects it strikes at the same time. Duergar immediately rally around anyone wielding it.
   description: A heavy, black iron warhammer with triangular knots on each face, found in a hidden cave.
+- id: sd_item_thrice_blessed_sword
+  name: Thrice-Blessed Sword
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +3 longsword. Double damage against demons, devils, and undead.
+    flavor: Golden-handled blade anointed with incense and prayers.
+    curse: ""
+  description: Golden-handled blade anointed with incense and prayers.
+- id: sd_item_tome_mordanticus
+  name: Tome Mordanticus
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Learn three True Names of any beings you choose.
+    flavor: Hand-drawn bestiary of notable creatures.
+    curse: ""
+  description: Hand-drawn bestiary of notable creatures.
+- id: sd_item_tome_of_gehemna
+  name: Tome of Gehemna
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: A random wizard spell scroll appears inside each day.
+    flavor: Sturdy russet volume with golden eye circle.
+    curse: ""
+  description: Sturdy russet volume with golden eye circle.
+- id: sd_item_tome_of_hadebe
+  name: Tome of Hadebe
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Contains one scroll each of burning hands, fireball, and prismatic orb.
+    flavor: Brass-plated book with etched copper leaf pages.
+    curse: ""
+  description: Brass-plated book with etched copper leaf pages.
+- id: sd_item_trident_of_the_seas
+  name: Trident of the Seas
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +2 spear. Breathe underwater; speak to sea creatures. Cast control water once per day (+4).
+    flavor: Three-pronged mithral harpoon studded with pearls.
+    curse: ""
+  description: Three-pronged mithral harpoon studded with pearls.
+- id: sd_item_true_name
+  name: True Name
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Boon
+    cost: N/A
+    benefit: Advantage on attack rolls and spellcasting checks targeting the named creature.
+    flavor: The secret, unique name of a creature documented in The Covenant.
+    curse: ""
+  description: The secret, unique name of a creature documented in The Covenant.
 - id: shadowdark_truth_speak_oil
   name: Truth-speak Oil
   type: Item
@@ -521,6 +1877,18 @@
     cost: 120 gp
     benefit: No rider on mount; move at half speed; +15 gear slots; limit 1 per mount.
   description: A large vehicle pulled by a mount to carry heavy loads.
+- id: sd_item_wand_of_animate_dead
+  name: Wand of Animate Dead
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Contains animate dead and create undead spells.
+    flavor: Knobby finger-bone of a swamp troll.
+    curse: Take 1d4 CON damage per use. Death at 0 CON results in turning into a zombie.
+  description: Knobby finger-bone of a swamp troll.
 - id: sd_item_wand_of_moonbeam
   name: Wand of Moonbeam
   type: Item
@@ -529,6 +1897,54 @@
   properties:
     category: Magic Item
     benefit: Any spellcaster can wield this wand to cast the Moonbeam spell. The wand begins twitching whenever a lycanthrope is within near distance of it.
+- id: sd_item_wand_of_warding
+  name: Wand of Warding
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Contains dispel magic and protection from energy spells.
+    flavor: Dark iron rod with spiraling runes.
+    curse: Failed check results in losing ability to cast a random known spell until rest.
+  description: Dark iron rod with spiraling runes.
+- id: sd_item_war_horn_of_the_angels
+  name: War Horn of the Angels
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Cast rebuke unholy (+4 bonus). Target demons/devils have disadvantage on checks.
+    flavor: Opalescent ox horn with golden mouthpiece.
+    curse: ""
+  description: Opalescent ox horn with golden mouthpiece.
+- id: sd_item_warhammer
+  name: Warhammer
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Weapon
+    cost: 10 gp
+    benefit: "Damage 1d10. Properties: Two-handed."
+    flavor: A heavy hammer intended for battle.
+    curse: ""
+  description: A heavy hammer intended for battle.
+- id: sd_item_warhammer_of_the_dwarf_lords
+  name: Warhammer of the Dwarf Lords
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 warhammer (+2 if dwarf). Thrown property; returns to hand. Double damage against giants.
+    flavor: Boxy hammer with leather throwing strap.
+    curse: ""
+  description: Boxy hammer with leather throwing strap.
 - id: sd_item_diabolical_warped_skull
   name: Warped Skull
   type: Item
@@ -537,6 +1953,18 @@
   properties:
     category: Treasure
     benefit: Drips blood in the presence of undead.
+- id: sd_item_well_of_many_worlds
+  name: Well of Many Worlds
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: Unfolds into a 6-foot wide hole. Creatures jumping in are transported to random planes.
+    flavor: A dark circle of cloth.
+    curse: ""
+  description: A dark circle of cloth.
 - id: shadowdark_whip
   name: Whip
   type: Item
@@ -564,6 +1992,18 @@
     category: Item
     benefit: Pour in sand to attract a purple worm in 1d4 rds.
   description: A pungent oil used to lure massive desert worms.
+- id: sd_item_wraith_chain
+  name: Wraith Chain
+  type: Item
+  game: ShadowDark
+  source: Core
+  properties:
+    category: Magic Item
+    cost: Varies
+    benefit: +1 mithral chainmail. Once per day, cause a successful attack against you to miss.
+    flavor: Black mithral chain shirt with shadow cloak.
+    curse: ""
+  description: Black mithral chain shirt with shadow cloak.
 - id: sd_item_wrath_bolt
   name: Wrath Bolt
   type: Item
