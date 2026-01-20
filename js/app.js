@@ -4275,7 +4275,30 @@ function renderConfigurableBody(item, container, tmpl, options) {
 
     if (tmpl.layout) {
         tmpl.layout.forEach(section => {
-            if (section.type === 'flavor' && p.flavor) {
+            // NEW: abilities_list type - splits a text field by separator and lists vertically
+            if (section.type === 'abilities_list') {
+                const key = section.key || 'description';
+                const separator = section.separator || '.';
+                const cssClass = section.class || 'text-sm';
+                const text = p[key] || item[key] || '';
+
+                if (text) {
+                    // Split by separator, trim, filter empty
+                    const abilities = text.split(separator)
+                        .map(a => a.trim())
+                        .filter(a => a.length > 0);
+
+                    if (abilities.length > 0) {
+                        contentHtml += `
+                            <div class="mb-3">
+                                <ul class="space-y-1 ${cssClass}">
+                                    ${abilities.map(a => `<li class="flex items-start gap-2"><span class="${colorClass}">•</span><span>${a}</span></li>`).join('')}
+                                </ul>
+                            </div>`;
+                    }
+                }
+            }
+            else if (section.type === 'flavor' && p.flavor) {
                 contentHtml += `<div class="italic text-sm text-text-muted-light dark:text-text-muted-dark mb-3 border-l-2 border-${color}-500/40 pl-3">${p.flavor}</div>`;
             }
             else if (section.type === 'properties') {
@@ -4285,11 +4308,8 @@ function renderConfigurableBody(item, container, tmpl, options) {
                 if (filteredKeys.length > 0) {
                     const fields = filteredKeys.map(k => {
                         let val = p[k];
-                        let label = k.toUpperCase();
-
-                        // Helper: Handle alignment specifically? or generic?
-                        if (k === 'level') label = 'LV';
-                        if (k === 'alignment') label = 'AL';
+                        // Use custom label from template if available, otherwise uppercase key name
+                        let label = (section.labels && section.labels[k]) ? section.labels[k] : k.toUpperCase();
 
                         return `<div><strong class="${colorClass}">${label}</strong> ${val}</div>`;
                     }).join('');
@@ -4374,9 +4394,25 @@ function renderConfigurableBody(item, container, tmpl, options) {
 function renderContentCard(item, container, options = {}) {
     const { isEmbedded = true, isStandalone = false } = options;
 
-    // Check for display template (Case-insensitive)
-    const typeKey = Object.keys(displayTemplates).find(k => k.toLowerCase() === (item.type || '').toLowerCase());
-    const tmpl = typeKey ? displayTemplates[typeKey] : null;
+    // Check for display template - try Game:Type first, then just Type (case-insensitive)
+    let tmpl = null;
+
+    // First try game-specific template (e.g., "Knave:Monster")
+    if (item.game && item.type) {
+        const gameTypeKey = `${item.game}:${item.type}`;
+        const gameTypeMatch = Object.keys(displayTemplates).find(k => k.toLowerCase() === gameTypeKey.toLowerCase());
+        if (gameTypeMatch) {
+            tmpl = displayTemplates[gameTypeMatch];
+        }
+    }
+
+    // Fall back to type-only template (e.g., "Monster")
+    if (!tmpl && item.type) {
+        const typeKey = Object.keys(displayTemplates).find(k => k.toLowerCase() === item.type.toLowerCase());
+        if (typeKey) {
+            tmpl = displayTemplates[typeKey];
+        }
+    }
 
     if (tmpl && tmpl.layout) {
         renderConfigurableBody(item, container, tmpl, options);

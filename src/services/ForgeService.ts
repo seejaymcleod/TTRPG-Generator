@@ -184,8 +184,8 @@ export class ForgeService {
         const tempTextPath = path.resolve(process.cwd(), `temp_scribe_${Date.now()}.txt`);
         const tempTemplatePath = path.resolve(process.cwd(), `temp_template_${Date.now()}.json`);
 
-        // Generate JSON schema template based on content type
-        const template = this.generateScribeTemplate(contentType);
+        // Generate JSON schema template based on content type AND game
+        const template = this.generateScribeTemplate(contentType, game);
 
         fs.writeFileSync(tempTextPath, text);
         fs.writeFileSync(tempTemplatePath, JSON.stringify(template, null, 2));
@@ -274,11 +274,15 @@ export class ForgeService {
     }
 
     /**
-     * Generate a JSON Schema template for the Scribe based on content type.
+     * Generate a JSON Schema template for the Scribe based on content type and game.
+     * Different games have different monster formats (e.g., Knave vs ShadowDark).
      */
-    private generateScribeTemplate(contentType: string): any {
+    private generateScribeTemplate(contentType: string, game: string = 'ShadowDark'): any {
+        const type = contentType.toLowerCase();
+        const gamePrefix = game.toLowerCase().replace(/[^a-z]/g, '');
+
         const baseTemplate = {
-            description: `A list of ShadowDark ${contentType}s`,
+            description: `A list of ${game} ${contentType}s`,
             type: "array",
             items: {
                 type: "object",
@@ -287,31 +291,47 @@ export class ForgeService {
             }
         };
 
-        const type = contentType.toLowerCase();
-
         if (type === 'monster' || type === 'npc') {
-            baseTemplate.items.properties = {
-                name: { type: "string", description: "Monster Name" },
-                ac: { type: "integer", description: "Armor Class" },
-                hp: { type: "integer", description: "Hit Points" },
-                level: { type: "integer", description: "Level (LV)" },
-                mv: { type: "string", description: "Movement speed" },
-                alignment: { type: "string", description: "Alignment (L, N, C)" },
-                attack: { type: "string", description: "Full attack string" },
-                stats: {
-                    type: "object",
-                    properties: {
-                        str: { type: "string" }, dex: { type: "string" }, con: { type: "string" },
-                        int: { type: "string" }, wis: { type: "string" }, cha: { type: "string" }
+            // Game-specific monster schemas
+            if (game === 'Knave') {
+                // Knave has a simpler format: AC, HP, LVL, ATK, MOV, MRL, NA, then period-separated abilities
+                baseTemplate.items.properties = {
+                    name: { type: "string", description: "Monster Name" },
+                    ac: { type: "integer", description: "Armor Class (AC)" },
+                    hp: { type: "integer", description: "Hit Points (HP)" },
+                    level: { type: "integer", description: "Level (LVL)" },
+                    attacks: { type: "string", description: "Attacks (ATK) - e.g., 'bite (d6)'" },
+                    mv: { type: "string", description: "Movement (MOV) - e.g., '40''" },
+                    morale: { type: "integer", description: "Morale (MRL) - 2-12" },
+                    number_appearing: { type: "string", description: "Number Appearing - format is 'Dungeon (Wilderness)' e.g., 'd6 (3d10)' means d6 in dungeons, 3d10 in wilderness" },
+                    description: { type: "string", description: "Period-separated abilities and traits following the stats" }
+                };
+                baseTemplate.items.required = ["name", "ac", "hp", "level", "attacks"];
+            } else {
+                // ShadowDark and other games use fuller stat blocks
+                baseTemplate.items.properties = {
+                    name: { type: "string", description: "Monster Name" },
+                    ac: { type: "integer", description: "Armor Class" },
+                    hp: { type: "integer", description: "Hit Points" },
+                    level: { type: "integer", description: "Level (LV)" },
+                    mv: { type: "string", description: "Movement speed" },
+                    alignment: { type: "string", description: "Alignment (L, N, C)" },
+                    attack: { type: "string", description: "Full attack string" },
+                    stats: {
+                        type: "object",
+                        properties: {
+                            str: { type: "string" }, dex: { type: "string" }, con: { type: "string" },
+                            int: { type: "string" }, wis: { type: "string" }, cha: { type: "string" }
+                        }
+                    },
+                    flavor: { type: "string", description: "Description" },
+                    abilities: {
+                        type: "array",
+                        items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
                     }
-                },
-                flavor: { type: "string", description: "Description" },
-                abilities: {
-                    type: "array",
-                    items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
-                }
-            };
-            baseTemplate.items.required = ["name", "ac", "hp", "level"];
+                };
+                baseTemplate.items.required = ["name", "ac", "hp", "level"];
+            }
         } else if (type === 'spell') {
             baseTemplate.items.properties = {
                 name: { type: "string" },
@@ -339,40 +359,70 @@ export class ForgeService {
 
     /**
      * Transform Scribe JSON output to the YAML content format.
+     * Output structure varies by game (Knave vs ShadowDark have different formats).
      */
     private transformScribeOutput(data: any[], contentType: string, game: string, source: string): any[] {
         const type = contentType.toLowerCase();
         const typeName = type.charAt(0).toUpperCase() + type.slice(1);
 
+        // Generate game-specific ID prefix
+        const idPrefix = game === 'Knave' ? 'knave' :
+            game === 'ShadowDark' ? 'sd' :
+                game.toLowerCase().replace(/[^a-z]/g, '');
+
         return data.map(item => {
             const name = (item.name || 'Unknown').replace(/^(##\s*)?/, '').trim();
             const nameSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
-            const id = `sd_${type}_${nameSlug}`;
+            const id = `${idPrefix}_${type}_${nameSlug}`;
+            const titleCaseName = name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
             if (type === 'monster' || type === 'npc') {
-                return {
-                    id,
-                    name: name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' '),
-                    type: 'Monster',
-                    game,
-                    source,
-                    properties: {
-                        ac: String(item.ac || ''),
-                        hp: String(item.hp || ''),
-                        mv: item.mv || '',
-                        level: String(item.level || ''),
-                        alignment: item.alignment || 'N',
-                        stats: item.stats || { str: '+0', dex: '+0', con: '+0', int: '+0', wis: '+0', cha: '+0' },
-                        flavor: item.flavor || ''
-                    },
-                    abilities: item.abilities || [],
-                    actions: item.attack ? [{ name: 'Attack', desc: item.attack }] : [],
-                    description: item.flavor || ''
-                };
+                // Game-specific monster output
+                if (game === 'Knave') {
+                    // Knave: Simple structure with period-separated description
+                    return {
+                        id,
+                        name: titleCaseName,
+                        type: 'Monster',
+                        game,
+                        source,
+                        properties: {
+                            ac: String(item.ac || ''),
+                            hp: String(item.hp || ''),
+                            level: String(item.level || ''),
+                            attacks: item.attacks || item.attack || '',
+                            mv: item.mv || '',
+                            morale: String(item.morale || ''),
+                            number_appearing: item.number_appearing || ''
+                        },
+                        description: item.description || ''
+                    };
+                } else {
+                    // ShadowDark and others: Full structure with stats, abilities, actions
+                    return {
+                        id,
+                        name: titleCaseName,
+                        type: 'Monster',
+                        game,
+                        source,
+                        properties: {
+                            ac: String(item.ac || ''),
+                            hp: String(item.hp || ''),
+                            mv: item.mv || '',
+                            level: String(item.level || ''),
+                            alignment: item.alignment || 'N',
+                            stats: item.stats || { str: '+0', dex: '+0', con: '+0', int: '+0', wis: '+0', cha: '+0' },
+                            flavor: item.flavor || ''
+                        },
+                        abilities: item.abilities || [],
+                        actions: item.attack ? [{ name: 'Attack', desc: item.attack }] : [],
+                        description: item.flavor || ''
+                    };
+                }
             } else if (type === 'spell') {
                 return {
                     id,
-                    name,
+                    name: titleCaseName,
                     type: 'Spell',
                     game,
                     source,
@@ -388,7 +438,7 @@ export class ForgeService {
                 // Item
                 return {
                     id,
-                    name,
+                    name: titleCaseName,
                     type: 'Item',
                     game,
                     source,

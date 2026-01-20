@@ -8,7 +8,7 @@ version: "2e"
 # GAME-SPECIFIC CONVENTIONS
 # ============================================================================
 conventions:
-  # Stat Abbreviations
+  # Stat Abbreviations (Knave uses these inline labels)
   stats:
     LVL: "level"
     MRL: "morale"
@@ -26,6 +26,7 @@ templates:
     description: |
       A creature entry for Knave 2e.
       Monsters in Knave are defined by a compact single-paragraph stat block.
+      Stats are inline followed by period-separated abilities.
     
     id_format: "knave_monster_{snake_case_name}"
     
@@ -67,10 +68,10 @@ templates:
         description: "Morale (MRL) - number between 2-12"
         example: "12"
       number_appearing:
-        description: "Number Appearing (NA) - dungeon (wild)"
-        example: "d6 (0)"
+        description: "Number Appearing - format is 'Dungeon (Wilderness)' e.g., d6 (3d10) means roll d6 in dungeons, 3d10 in wilderness"
+        example: "d6 (3d10)"
       description:
-        description: "Traits, abilities, and flavor text following the stats"
+        description: "Period-separated abilities and traits"
         example: "Immune to mental effects. Dark vision. Held together by magic. Loud."
 
     source_schema:
@@ -79,27 +80,27 @@ templates:
         format: "NAME: AC [ac], HP [hp], LVL [lvl], ATK [atk], MOV [mv], MRL [mrl], NA [na]. [Description]"
         notes:
           - "Name is bold Uppercase"
-          - "Stats follow immediately after colon"
-          - "Description is the rest of the paragraph"
+          - "Stats follow immediately after colon, comma-separated"
+          - "Abilities follow the last stat after a period, separated by periods"
         examples:
           - "ANIMATED ARMOR: AC 18, HP 24, LVL 6, ATK weapon (d8), MOV 20', MRL 12, NA d6 (0). Immune to mental effects. Dark vision. Held together by magic. Loud."
-          - "BASILISK: AC 15, HP 24, LVL 6, ATK bite (d10), MOV 20', MRL 9, NA d6 (d6). Petrifies targets who look in its eyes and fail a CON check. Creatures take -5 to attacks while avoiding its gaze."
+          - "BLINK DOG: AC 14, HP 16, LVL 4, ATK bite (d6), MOV 40', MRL 6, NA d6 (d6). d4 × 10' teleportation. Can teleport into and then out of melee on their turn."
 
     full_example: |
-      - id: knave_monster_animated_armor
-        name: "Animated Armor"
+      - id: knave_monster_blink_dog
+        name: "Blink Dog"
         type: Monster
         game: Knave
         source: Knave 2e
         properties:
-          ac: 18
-          hp: 24
-          level: 6
-          attacks: "weapon (d8)"
-          mv: "20'"
-          morale: 12
-          number_appearing: "d6 (0)"
-          description: "Immune to mental effects. Dark vision. Held together by magic. Loud."
+          ac: 14
+          hp: 16
+          level: 4
+          attacks: "bite (d6)"
+          mv: "40'"
+          morale: 6
+          number_appearing: "d6 (d6)"
+          description: "d4 × 10' teleportation. Can teleport into and then out of melee on their turn."
 
     prompt: |
       Extract monsters from the text. Each monster is a single paragraph starting with a BOLD UPPERCASE NAME followed by a colon.
@@ -108,28 +109,28 @@ templates:
       [NAME]: AC [ac], HP [hp], LVL [lvl], ATK [atk], MOV [mv], MRL [mrl], NA [na]. [Description]
       
       Parsing Rules:
-      1. Name: Capitalize and title case the name (e.g. "ANIMATED ARMOR" -> "Animated Armor").
-      2. Stats: Extract strictly by their labels (AC, HP, LVL, etc).
-      3. Description: Everything after the last stat (usually Number Appearing NA).
+      1. Name: Capitalize and title case the name (e.g. "BLINK DOG" -> "Blink Dog").
+      2. Stats: Extract strictly by their labels (AC, HP, LVL, ATK, MOV, MRL, NA).
+      3. Description: Everything after the last stat (Number Appearing NA) - these are period-separated abilities.
       
       Example Input:
-      ANIMATED ARMOR: AC 18, HP 24, LVL 6, ATK weapon (d8), MOV 20', MRL 12, NA d6 (0). Immune to mental effects. Dark vision. Held together by magic. Loud.
+      BLINK DOG: AC 14, HP 16, LVL 4, ATK bite (d6), MOV 40', MRL 6, NA d6 (d6). d4 × 10' teleportation. Can teleport into and then out of melee on their turn.
       
       Example Output:
-      - id: knave_monster_animated_armor
-        name: "Animated Armor"
+      - id: knave_monster_blink_dog
+        name: "Blink Dog"
         type: Monster
         game: Knave
         source: Knave 2e
         properties:
-          ac: 18
-          hp: 24
-          level: 6
-          attacks: "weapon (d8)"
-          mv: "20'"
-          morale: 12
-          number_appearing: "d6 (0)"
-          description: "Immune to mental effects. Dark vision. Held together by magic. Loud."
+          ac: 14
+          hp: 16
+          level: 4
+          attacks: "bite (d6)"
+          mv: "40'"
+          morale: 6
+          number_appearing: "d6 (d6)"
+          description: "d4 × 10' teleportation. Can teleport into and then out of melee on their turn."
 
     taxonomy:
       level:
@@ -142,7 +143,7 @@ templates:
         options: ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 
     # Visual Display Template (Used by Frontend)
-    colorAccent: "zinc"
+    colorAccent: "amber"
     header:
       - key: "level"
         label: "LVL"
@@ -152,16 +153,18 @@ templates:
       - key: "hp"
         label: "HP"
     layout:
-      - type: "description"
-        class: "italic mb-2"
       - type: "properties"
-        keys: ["ac", "hp", "mv", "morale", "number_appearing", "attacks"]
+        keys: ["ac", "hp", "level", "attacks", "mv", "morale", "number_appearing"]
         labels: 
-            mv: "MOV"
-            morale: "MRL"
-            number_appearing: "NA"
-            attacks: "ATK"
-        color: "zinc"
-      - type: "stats"
-        style: "hidden" # Knave doesn't use the STR/DEX/CON grid
-
+            ac: "AC"
+            hp: "HP"
+            level: "Level"
+            attacks: "Attacks"
+            mv: "Move"
+            morale: "Morale"
+            number_appearing: "Appearing (Dungeon/Wild)"
+        color: "amber"
+      - type: "abilities_list"
+        key: "description"
+        separator: "."
+        class: "text-sm leading-relaxed"

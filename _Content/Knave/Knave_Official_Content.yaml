@@ -1,4 +1,4 @@
-- id: sd_monster_animated_armor
+- id: knave_monster_animated_armor
   name: Animated Armor
   type: Monster
   game: Knave
@@ -6,23 +6,13 @@
   properties:
     ac: "18"
     hp: "24"
-    mv: 20'
     level: "6"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Immune to mental effects. Dark vision. Held together by magic. Loud.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d8)
+    attacks: weapon (d8)
+    mv: 20'
+    morale: "12"
+    number_appearing: d6 (0)
   description: Immune to mental effects. Dark vision. Held together by magic. Loud.
-- id: sd_monster_bandit
+- id: knave_monster_bandit
   name: Bandit
   type: Monster
   game: Knave
@@ -30,23 +20,13 @@
   properties:
     ac: "13"
     hp: "4"
-    mv: 40'
     level: "1"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Like to ambush.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d6)
+    attacks: weapon (d6)
+    mv: 40'
+    morale: "8"
+    number_appearing: d8 (3d10)
   description: Like to ambush.
-- id: sd_monster_basilisk
+- id: knave_monster_basilisk
   name: Basilisk
   type: Monster
   game: Knave
@@ -54,23 +34,13 @@
   properties:
     ac: "15"
     hp: "24"
-    mv: 20'
     level: "6"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Petrifies targets who look in its eyes and fail a CON check. Creatures take -5 to attacks while avoiding its gaze.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (d10)
+    attacks: bite (d10)
+    mv: 20'
+    morale: "9"
+    number_appearing: d6 (d6)
   description: Petrifies targets who look in its eyes and fail a CON check. Creatures take -5 to attacks while avoiding its gaze.
-- id: sd_monster_black_pudding
+- id: knave_monster_black_pudding
   name: Black Pudding
   type: Monster
   game: Knave
@@ -78,23 +48,13 @@
   properties:
     ac: "13"
     hp: "40"
-    mv: 20'
     level: "10"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Only vulnerable to fire. When hit by a non-fire attack, it creates a LVL 2 pudding that deals d8 damage. Dissolves metal and wood and can move across ceilings and walls.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: touch (3d8)
+    attacks: touch (3d8)
+    mv: 20'
+    morale: "12"
+    number_appearing: 1 (0)
   description: Only vulnerable to fire. When hit by a non-fire attack, it creates a LVL 2 pudding that deals d8 damage. Dissolves metal and wood and can move across ceilings and walls.
-- id: sd_monster_blink_dog
+- id: knave_monster_blink_dog
   name: Blink Dog
   type: Monster
   game: Knave
@@ -102,23 +62,13 @@
   properties:
     ac: "14"
     hp: "16"
-    mv: 40'
     level: "4"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: d4 × 10' teleportation. Can teleport into and then out of melee on their turn.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (d6)
+    attacks: bite (d6)
+    mv: 40'
+    morale: "6"
+    number_appearing: d6 (d6)
   description: d4 × 10' teleportation. Can teleport into and then out of melee on their turn.
-- id: sd_monster_brain_flayer
+- id: knave_monster_brain_flayer
   name: Brain Flayer
   type: Monster
   game: Knave
@@ -126,23 +76,13 @@
   properties:
     ac: "15"
     hp: "32"
-    mv: 40'
     level: "8"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Psychic attack either mind controls or deals 3d6 damage to a target up to 40' away who fails a WIS check. Eats a victim's brain d4 rounds after a tentacle hits. Inhuman motives, iron will. Levitates.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: psychic or 4 tentacles (d2)
+    attacks: psychic or 4 tentacles (d2)
+    mv: 40'
+    morale: "7"
+    number_appearing: d4 (d4)
   description: Psychic attack either mind controls or deals 3d6 damage to a target up to 40' away who fails a WIS check. Eats a victim's brain d4 rounds after a tentacle hits. Inhuman motives, iron will. Levitates.
-- id: sd_monster_bugbear
+- id: knave_monster_bugbear
   name: Bugbear
   type: Monster
   game: Knave
@@ -150,23 +90,13 @@
   properties:
     ac: "14"
     hp: "12"
-    mv: 30'
     level: "3"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: +5 on surprise checks. Full of low cunning. Always hungry.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d6)
+    attacks: weapon (d6)
+    mv: 30'
+    morale: "9"
+    number_appearing: 2d4 (5d4)
   description: +5 on surprise checks. Full of low cunning. Always hungry.
-- id: sd_monster_bulette
+- id: knave_monster_bulette
   name: Bulette
   type: Monster
   game: Knave
@@ -174,23 +104,13 @@
   properties:
     ac: "19"
     hp: "36"
-    mv: 50'/10' burrowing
     level: "9"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: If cornered, it can leap 20' forwards and attack with 4 claws.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (4d12) and 2 claws (3d6)
+    attacks: bite (4d12) and 2 claws (3d6)
+    mv: 50'/10' burrowing
+    morale: "11"
+    number_appearing: 0 (d2)
   description: If cornered, it can leap 20' forwards and attack with 4 claws.
-- id: sd_monster_doppelganger
+- id: knave_monster_doppelganger
   name: Doppelganger
   type: Monster
   game: Knave
@@ -198,23 +118,13 @@
   properties:
     ac: "14"
     hp: "16"
-    mv: 30'
     level: "4"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Can duplicate nearby humanoids. Changes back when dead.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (d12)
+    attacks: bite (d12)
+    mv: 30'
+    morale: "10"
+    number_appearing: d6 (d6)
   description: Can duplicate nearby humanoids. Changes back when dead.
-- id: sd_monster_dragon
+- id: knave_monster_dragon
   name: Dragon
   type: Monster
   game: Knave
@@ -222,23 +132,27 @@
   properties:
     ac: "20"
     hp: "40"
-    mv: 30' (80' flying)
     level: "10"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Enjoys flattery.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: fire breath (90' cone, damage equal to its own HP) or 2 claws (1d8) and 1 bite (4d8)
+    attacks: fire breath (90' cone, damage equal to its own HP) or 2 claws (1d8) and 1 bite (4d8)
+    mv: 30' (80' flying)
+    morale: "10"
+    number_appearing: d4 (d4)
   description: Enjoys flattery.
-- id: sd_monster_eye_tyrant
+- id: knave_monster_expert
+  name: Expert
+  type: Monster
+  game: Knave
+  source: Core
+  properties:
+    ac: "11"
+    hp: "3"
+    level: "1"
+    attacks: punch (d2)
+    mv: 40'
+    morale: "7"
+    number_appearing: ""
+  description: Provide services within their area of expertise. Follow PCs into dungeons, but will not fight or put themselves at risk.
+- id: knave_monster_eye_tyrant
   name: Eye Tyrant
   type: Monster
   game: Knave
@@ -246,23 +160,13 @@
   properties:
     ac: "19"
     hp: "44"
-    mv: 30'
     level: "11"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Central eye creates 60' antimagic cone. Each of 10 eye stalks can fire a random spell (pp. 22-25) once per round. Megalomaniac.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (2d4) or eye rays
+    attacks: bite (2d4) or eye rays
+    mv: 30'
+    morale: "12"
+    number_appearing: 1 (0)
   description: Central eye creates 60' antimagic cone. Each of 10 eye stalks can fire a random spell (pp. 22-25) once per round. Megalomaniac.
-- id: sd_monster_gelatinous_cube
+- id: knave_monster_gelatinous_cube
   name: Gelatinous Cube
   type: Monster
   game: Knave
@@ -270,23 +174,13 @@
   properties:
     ac: "11"
     hp: "16"
-    mv: 10'
     level: "4"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Immune to lightning and cold. +5 on surprise checks. Touched targets are engulfed and take 2d4 damage each turn. Escape by passing a STR check.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: touch (2d4)
+    attacks: touch (2d4)
+    mv: 10'
+    morale: "12"
+    number_appearing: 1 (0)
   description: Immune to lightning and cold. +5 on surprise checks. Touched targets are engulfed and take 2d4 damage each turn. Escape by passing a STR check.
-- id: sd_monster_ghost
+- id: knave_monster_ghost
   name: Ghost
   type: Monster
   game: Knave
@@ -294,23 +188,13 @@
   properties:
     ac: "19"
     hp: "40"
-    mv: 30'
     level: "10"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Undead, silent, immune to mental spells. Only harmed by silver and magic. Life drain removes a random ability score point. Possession takes over a creature within 60' who fails a WIS check. Complete a mission (p. 51) to let it rest.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: life drain or possession
+    attacks: life drain or possession
+    mv: 30'
+    morale: "10"
+    number_appearing: 1 (1)
   description: Undead, silent, immune to mental spells. Only harmed by silver and magic. Life drain removes a random ability score point. Possession takes over a creature within 60' who fails a WIS check. Complete a mission (p. 51) to let it rest.
-- id: sd_monster_ghoul
+- id: knave_monster_ghoul
   name: Ghoul
   type: Monster
   game: Knave
@@ -318,23 +202,13 @@
   properties:
     ac: "13"
     hp: "8"
-    mv: 30'
     level: "2"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Hits paralyze targets who fail a STR check for 2d4 turns. Undead, silent, immune to mental spells.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: 2 claws (d3) and 1 bite (d3)
+    attacks: 2 claws (d3) and 1 bite (d3)
+    mv: 30'
+    morale: "9"
+    number_appearing: d6 (2d8)
   description: Hits paralyze targets who fail a STR check for 2d4 turns. Undead, silent, immune to mental spells.
-- id: sd_monster_giant
+- id: knave_monster_giant
   name: Giant
   type: Monster
   game: Knave
@@ -342,23 +216,13 @@
   properties:
     ac: "15"
     hp: "32"
-    mv: 40'
     level: "8"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Stupid.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (2d8) or boulder (3d6)
+    attacks: weapon (2d8) or boulder (3d6)
+    mv: 40'
+    morale: "8"
+    number_appearing: d4 (2d4)
   description: Stupid.
-- id: sd_monster_giant_frog
+- id: knave_monster_giant_frog
   name: Giant Frog
   type: Monster
   game: Knave
@@ -366,23 +230,13 @@
   properties:
     ac: "12"
     hp: "12"
-    mv: 30'
     level: "3"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Attacks up to 15' away with its sticky tongue. On a hit, target is dragged to its mouth and bitten. On an attack roll of 20, target is swallowed and takes d6 direct damage each round until the toad dies.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (d4)
+    attacks: bite (d4)
+    mv: 30'
+    morale: "6"
+    number_appearing: d4 (d4)
   description: Attacks up to 15' away with its sticky tongue. On a hit, target is dragged to its mouth and bitten. On an attack roll of 20, target is swallowed and takes d6 direct damage each round until the toad dies.
-- id: sd_monster_giant_spider
+- id: knave_monster_giant_spider
   name: Giant Spider
   type: Monster
   game: Knave
@@ -390,23 +244,13 @@
   properties:
     ac: "13"
     hp: "12"
-    mv: 20'
     level: "3"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Bitten targets who fail a CON check die in d4 turns. Paranoid.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (d6)
+    attacks: bite (d6)
+    mv: 20'
+    morale: "8"
+    number_appearing: d3 (d3)
   description: Bitten targets who fail a CON check die in d4 turns. Paranoid.
-- id: sd_monster_gnoll
+- id: knave_monster_gnoll
   name: Gnoll
   type: Monster
   game: Knave
@@ -414,23 +258,13 @@
   properties:
     ac: "14"
     hp: "8"
-    mv: 30'
     level: "2"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Lazy. Prefers bullying to combat.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (2d4)
+    attacks: weapon (2d4)
+    mv: 30'
+    morale: "8"
+    number_appearing: d6 (3d6)
   description: Lazy. Prefers bullying to combat.
-- id: sd_monster_goblin
+- id: knave_monster_goblin
   name: Goblin
   type: Monster
   game: Knave
@@ -438,23 +272,13 @@
   properties:
     ac: "13"
     hp: "4"
-    mv: 20'
     level: "1"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Dark vision. Reckless, insane.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d6)
+    attacks: weapon (d6)
+    mv: 20'
+    morale: "7"
+    number_appearing: 2d4 (6d10)
   description: Dark vision. Reckless, insane.
-- id: sd_monster_harpy
+- id: knave_monster_harpy
   name: Harpy
   type: Monster
   game: Knave
@@ -462,23 +286,27 @@
   properties:
     ac: "12"
     hp: "12"
-    mv: 20' (50' when flying)
     level: "3"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Song charms targets who fail a CHA check.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: 2 claws (d4) or song
+    attacks: 2 claws (d4) or song
+    mv: 20' (50' when flying)
+    morale: "7"
+    number_appearing: d6 (2d4)
   description: Song charms targets who fail a CHA check.
-- id: sd_monster_hobgoblin
+- id: knave_monster_hireling
+  name: Hireling
+  type: Monster
+  game: Knave
+  source: Core
+  properties:
+    ac: "11"
+    hp: "3"
+    level: "1"
+    attacks: punch (d2)
+    mv: 40'
+    morale: "4"
+    number_appearing: d10 (village)
+  description: Perform unskilled labor and avoid danger at all costs.
+- id: knave_monster_hobgoblin
   name: Hobgoblin
   type: Monster
   game: Knave
@@ -486,23 +314,13 @@
   properties:
     ac: "13"
     hp: "4"
-    mv: 30'
     level: "1"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Honorable warriors.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d8)
+    attacks: weapon (d8)
+    mv: 30'
+    morale: "8"
+    number_appearing: d6 (4d6)
   description: Honorable warriors.
-- id: sd_monster_kobold
+- id: knave_monster_kobold
   name: Kobold
   type: Monster
   game: Knave
@@ -510,23 +328,13 @@
   properties:
     ac: "12"
     hp: "4"
-    mv: 20'
     level: "1"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Prefer to ambush. Dark vision. Want to follow a strong leader.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d4)
+    attacks: weapon (d4)
+    mv: 20'
+    morale: "6"
+    number_appearing: 4d4 (6d10)
   description: Prefer to ambush. Dark vision. Want to follow a strong leader.
-- id: sd_monster_lich
+- id: knave_monster_lich
   name: Lich
   type: Monster
   game: Knave
@@ -534,23 +342,27 @@
   properties:
     ac: "19"
     hp: "44"
-    mv: 20'
     level: "11"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Touch paralyses for 6 turns on a failed STR check. Undead, silent, and immune to mental spells as well as mundane, electrical, and cold damage. Owns 10 randomly generated spell books. You are beneath his notice.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: touch (d10) or gaze (charm)
+    attacks: touch (d10)
+    mv: 20'
+    morale: "10"
+    number_appearing: 1 (1)
   description: Touch paralyses for 6 turns on a failed STR check. Undead, silent, and immune to mental spells as well as mundane, electrical, and cold damage. Owns 10 randomly generated spell books. You are beneath his notice.
-- id: sd_monster_mimic
+- id: knave_monster_mercenary
+  name: Mercenary
+  type: Monster
+  game: Knave
+  source: Core
+  properties:
+    ac: "15"
+    hp: "3"
+    level: "1"
+    attacks: weapon (d6)
+    mv: 40'
+    morale: "8"
+    number_appearing: d6 (village)
+  description: Fight for the PCs but will not enter dungeons.
+- id: knave_monster_mimic
   name: Mimic
   type: Monster
   game: Knave
@@ -558,23 +370,13 @@
   properties:
     ac: "13"
     hp: "28"
-    mv: 30'
     level: "7"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Mimics objects. +5 on surprise checks. Sticky.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: pseudopod (3d4)
+    attacks: pseudopod (3d4)
+    mv: 30'
+    morale: "9"
+    number_appearing: 1 (0)
   description: Mimics objects. +5 on surprise checks. Sticky.
-- id: sd_monster_ogre
+- id: knave_monster_ogre
   name: Ogre
   type: Monster
   game: Knave
@@ -582,23 +384,13 @@
   properties:
     ac: "14"
     hp: "16"
-    mv: 30'
     level: "4"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Stuffs creatures into a sack for later.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d10)
+    attacks: weapon (d10)
+    mv: 30'
+    morale: "10"
+    number_appearing: d6 (2d6)
   description: Stuffs creatures into a sack for later.
-- id: sd_monster_orc
+- id: knave_monster_orc
   name: Orc
   type: Monster
   game: Knave
@@ -606,23 +398,13 @@
   properties:
     ac: "13"
     hp: "4"
-    mv: 40'
     level: "1"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Takes -5 in full sun. Grognards.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d6)
+    attacks: weapon (d6)
+    mv: 40'
+    morale: "6"
+    number_appearing: 2d4 (d6×10)
   description: Takes -5 in full sun. Grognards.
-- id: sd_monster_owl_bear
+- id: knave_monster_owl_bear
   name: Owl Bear
   type: Monster
   game: Knave
@@ -630,23 +412,13 @@
   properties:
     ac: "14"
     hp: "20"
-    mv: 40'
     level: "5"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Deals 2d8 bonus damage when both claws hit one target. Playful.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: 2 claws (d8) and 1 bite (d8)
+    attacks: 2 claws (d8) and 1 bite (d8)
+    mv: 40'
+    morale: "9"
+    number_appearing: d4 (d4)
   description: Deals 2d8 bonus damage when both claws hit one target. Playful.
-- id: sd_monster_purple_worm
+- id: knave_monster_purple_worm
   name: Purple Worm
   type: Monster
   game: Knave
@@ -654,23 +426,13 @@
   properties:
     ac: "13"
     hp: "60"
-    mv: 20'
     level: "15"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: If the bite attack rolls 5+ higher than needed, the target is swallowed whole and takes 3d6 damage each round until the worm dies.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (2d8) and sting (d8)
+    attacks: bite (2d8) and sting (d8)
+    mv: 20'
+    morale: "10"
+    number_appearing: d2 (d4)
   description: If the bite attack rolls 5+ higher than needed, the target is swallowed whole and takes 3d6 damage each round until the worm dies.
-- id: sd_monster_rust_monster
+- id: knave_monster_rust_monster
   name: Rust Monster
   type: Monster
   game: Knave
@@ -678,23 +440,13 @@
   properties:
     ac: "17"
     hp: "20"
-    mv: 40'
     level: "5"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Dissolves and eats nearby metal.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: none
+    attacks: none
+    mv: 40'
+    morale: "7"
+    number_appearing: d4 (d4)
   description: Dissolves and eats nearby metal.
-- id: sd_monster_skeleton
+- id: knave_monster_skeleton
   name: Skeleton
   type: Monster
   game: Knave
@@ -702,23 +454,13 @@
   properties:
     ac: "12"
     hp: "4"
-    mv: 20'
     level: "1"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Undead, silent, immune to mental spells and piercing damage. Gleeful.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: weapon (d6)
+    attacks: weapon (d6)
+    mv: 20'
+    morale: "12"
+    number_appearing: 3d4 (3d10)
   description: Undead, silent, immune to mental spells and piercing damage. Gleeful.
-- id: sd_monster_treant
+- id: knave_monster_treant
   name: Treant
   type: Monster
   game: Knave
@@ -726,23 +468,13 @@
   properties:
     ac: "17"
     hp: "32"
-    mv: 20'
     level: "8"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Fears fire. +5 to surprise in a forest. Can turn up to 2 trees within 60' into treants (who don't have this power) over the course of two rounds. Self-righteous.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: 2 fists (2d6)
+    attacks: 2 fists (2d6)
+    mv: 20'
+    morale: "9"
+    number_appearing: 0 (d8)
   description: Fears fire. +5 to surprise in a forest. Can turn up to 2 trees within 60' into treants (who don't have this power) over the course of two rounds. Self-righteous.
-- id: sd_monster_troll
+- id: knave_monster_troll
   name: Troll
   type: Monster
   game: Knave
@@ -750,23 +482,13 @@
   properties:
     ac: "15"
     hp: "28"
-    mv: 40'
     level: "7"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Recovers d6 HP/ round. Revives 2d6 rounds after death. Fire or acid lowers its max HP.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: 2 claws (d6) and 1 bite (d10)
+    attacks: 2 claws (d6) and 1 bite (d10)
+    mv: 40'
+    morale: "10"
+    number_appearing: d8 (d8)
   description: Recovers d6 HP/ round. Revives 2d6 rounds after death. Fire or acid lowers its max HP.
-- id: sd_monster_vampire
+- id: knave_monster_vampire
   name: Vampire
   type: Monster
   game: Knave
@@ -774,23 +496,13 @@
   properties:
     ac: "17"
     hp: "32"
-    mv: 40'
     level: "8"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Undead, silent, immune to mental spells and mundane damage. Heals d6 damage per round. A touched creature loses a point from a random ability score. Gaze attack charms the target if they fail a CHA check. Can change to a humanoid, dire wolf, giant bat, or gaseous cloud at will. Repelled by garlic, holy relics, running water, and mirrors. Killed by sunlight or a stake through the heart. Dramatic.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: touch (d10) or gaze (charm)
+    attacks: touch (d10) or gaze (charm)
+    mv: 40'
+    morale: "11"
+    number_appearing: d4 (d6)
   description: Undead, silent, immune to mental spells and mundane damage. Heals d6 damage per round. A touched creature loses a point from a random ability score. Gaze attack charms the target if they fail a CHA check. Can change to a humanoid, dire wolf, giant bat, or gaseous cloud at will. Repelled by garlic, holy relics, running water, and mirrors. Killed by sunlight or a stake through the heart. Dramatic.
-- id: sd_monster_werewolf
+- id: knave_monster_werewolf
   name: Werewolf
   type: Monster
   game: Knave
@@ -798,19 +510,9 @@
   properties:
     ac: "14"
     hp: "18"
-    mv: 60'
     level: "4"
-    alignment: "N"
-    stats:
-      str: "+0"
-      dex: "+0"
-      con: "+0"
-      int: "+0"
-      wis: "+0"
-      cha: "+0"
-    flavor: Can shift between human and wolf forms. Only harmed by silver and magic. Fears wolfsbane. Humans who are bitten become a werewolf 2d12 days later if they fail a CON check. Tortured.
-  abilities: []
-  actions:
-    - name: Attack
-      desc: bite (2d4)
+    attacks: bite (2d4)
+    mv: 60'
+    morale: "8"
+    number_appearing: d6 (2d6)
   description: Can shift between human and wolf forms. Only harmed by silver and magic. Fears wolfsbane. Humans who are bitten become a werewolf 2d12 days later if they fail a CON check. Tortured.
