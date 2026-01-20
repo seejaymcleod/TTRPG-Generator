@@ -6441,7 +6441,7 @@
   type: Monster
   game: ShadowDark
   source: Monster of the Month
-  properties:
+  propertieLet's :
     ac: "11"
     hp: "24"
     mv: near
@@ -8927,13 +8927,6 @@
   actions:
     - name: Attack
       desc: 1 bite +3 (1d4)
-- id: test-official-1
-  name: Test Official
-  type: Monster
-  game: ShadowDark
-  source: Core
-  properties: {}
-  description: Test
 - id: sd_monster_the_tarrasque
   name: The Tarrasque
   type: Monster

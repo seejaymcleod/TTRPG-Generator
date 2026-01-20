@@ -3579,6 +3579,10 @@ function renderDualSlider(container, label, propKey, metaRange) {
             handles.forEach(h => h.style.zIndex = 10);
             handle.style.zIndex = 20;
 
+            // Throttle for real-time filtering (50ms)
+            let lastFilterTime = 0;
+            const THROTTLE_MS = 50;
+
             function onMove(e) {
                 let x = e.clientX - rect.left;
                 let pct = (x / rect.width) * 100;
@@ -3605,12 +3609,19 @@ function renderDualSlider(container, label, propKey, metaRange) {
                 fill.style.left = `${newMinPct}%`;
                 fill.style.width = `${newMaxPct - newMinPct}%`;
                 labelSpan.textContent = `${current.min} – ${current.max}`;
+
+                // Real-time filtering with throttle
+                const now = Date.now();
+                if (now - lastFilterTime > THROTTLE_MS) {
+                    lastFilterTime = now;
+                    renderContentList();
+                }
             }
 
             function onUp() {
                 document.removeEventListener('mousemove', onMove);
                 document.removeEventListener('mouseup', onUp);
-                renderContentList(); // Trigger filter update on release
+                renderContentList(); // Final filter on release to ensure accuracy
             }
 
             document.addEventListener('mousemove', onMove);
