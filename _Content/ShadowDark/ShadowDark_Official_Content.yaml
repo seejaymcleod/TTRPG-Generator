@@ -6441,7 +6441,7 @@
   type: Monster
   game: ShadowDark
   source: Monster of the Month
-  propertieLet's :
+  properties:
     ac: "11"
     hp: "24"
     mv: near
@@ -6963,8 +6963,8 @@
     - name: Attack
       desc: 2 bite +5
   description: Mindless, skeletal husks of nagas reanimated by sorcery.
-- id: sd_monster_necrotic_ooze_cube
-  name: Necrotic Ooze Cube
+- id: sd_monster_necrotic_cube
+  name: Necrotic Cube
   type: Monster
   game: ShadowDark
   source: Monster of the Month
