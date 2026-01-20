@@ -134,7 +134,14 @@ export class ForgeService {
             let errorOutput = '';
 
             pythonProcess.stdout.on('data', (data) => output += data.toString());
-            pythonProcess.stderr.on('data', (data) => errorOutput += data.toString());
+            pythonProcess.stderr.on('data', (data) => {
+                const msg = data.toString();
+                errorOutput += msg;
+                // Forward reasonable-looking logs to the UI
+                if (this.logger?.log && (msg.includes('Docling') || msg.includes('INFO') || msg.length < 200)) {
+                    this.log(`[Docling] ${msg.trim()}`);
+                }
+            });
 
             pythonProcess.on('close', (code) => {
                 clearTimeout(timeout);
@@ -145,7 +152,11 @@ export class ForgeService {
                 } else if (code === null) {
                     reject(new Error("Docling process was killed (timeout)"));
                 } else {
-                    resolve(output);
+                    if (!output || output.trim().length === 0) {
+                        reject(new Error("Docling process finished but returned empty output. Check server logs."));
+                    } else {
+                        resolve(output);
+                    }
                 }
             });
 
@@ -441,7 +452,13 @@ export class ForgeService {
         const signal = taskId ? this.activeTasks.get(taskId)?.controller.signal : undefined;
         try {
             const result = await this.llm.generate(userPrompt, systemPrompt, provider, apiKey, model, this.logger, signal);
-            return JSON.parse(result.replace(/```json/g, '').replace(/```/g, '').trim());
+            // Robust cleaning: remove backticks, "json" prefix (with or without backticks), and whitespace
+            const cleaned = result
+                .replace(/```json/g, '')
+                .replace(/```/g, '')
+                .replace(/^json\s*/i, '') // Handle "json { ... }" without backticks
+                .trim();
+            return JSON.parse(cleaned);
         } catch (e) {
             this.error(`Analysis failed: ${e}`);
             return { game: "Unknown", source: "Unknown", contentType: "unknown" };

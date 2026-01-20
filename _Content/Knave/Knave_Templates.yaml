@@ -1,0 +1,167 @@
+# Knave 2e Content Templates v1.0
+# Templates for parsing Knave 2e content from raw text/PDF.
+
+game: Knave
+version: "2e"
+
+# ============================================================================
+# GAME-SPECIFIC CONVENTIONS
+# ============================================================================
+conventions:
+  # Stat Abbreviations
+  stats:
+    LVL: "level"
+    MRL: "morale"
+    NA: "number_appearing"
+    MOV: "mv"
+    ATK: "attacks"
+    AC: "ac"
+    HP: "hp"
+
+# ============================================================================
+# MONSTER TEMPLATE
+# ============================================================================
+templates:
+  Monster:
+    description: |
+      A creature entry for Knave 2e.
+      Monsters in Knave are defined by a compact single-paragraph stat block.
+    
+    id_format: "knave_monster_{snake_case_name}"
+    
+    required_fields:
+      id:
+        description: "Unique identifier"
+        format: "knave_monster_lowercase_with_underscores"
+        example: "knave_monster_animated_armor"
+      name:
+        description: "Name of the monster"
+        example: "Animated Armor"
+      type:
+        description: "Always 'Monster'"
+        value: "Monster"
+      game:
+        description: "Always 'Knave'"
+        value: "Knave"
+      source:
+        description: "Source book"
+        value: "Knave 2e"
+
+    properties:
+      ac:
+        description: "Armor Class (AC)"
+        example: "18"
+      hp:
+        description: "Hit Points (HP)"
+        example: "24"
+      level:
+        description: "Level (LVL) - or Hit Dice"
+        example: "6"
+      attacks:
+        description: "Attacks (ATK) - weapon and damage"
+        example: "weapon (d8)"
+      mv:
+        description: "Movement (MOV) - distance in feet"
+        example: "20'"
+      morale:
+        description: "Morale (MRL) - number between 2-12"
+        example: "12"
+      number_appearing:
+        description: "Number Appearing (NA) - dungeon (wild)"
+        example: "d6 (0)"
+      description:
+        description: "Traits, abilities, and flavor text following the stats"
+        example: "Immune to mental effects. Dark vision. Held together by magic. Loud."
+
+    source_schema:
+      description: "Visual layout patterns in Knave 2e"
+      stat_line:
+        format: "NAME: AC [ac], HP [hp], LVL [lvl], ATK [atk], MOV [mv], MRL [mrl], NA [na]. [Description]"
+        notes:
+          - "Name is bold Uppercase"
+          - "Stats follow immediately after colon"
+          - "Description is the rest of the paragraph"
+        examples:
+          - "ANIMATED ARMOR: AC 18, HP 24, LVL 6, ATK weapon (d8), MOV 20', MRL 12, NA d6 (0). Immune to mental effects. Dark vision. Held together by magic. Loud."
+          - "BASILISK: AC 15, HP 24, LVL 6, ATK bite (d10), MOV 20', MRL 9, NA d6 (d6). Petrifies targets who look in its eyes and fail a CON check. Creatures take -5 to attacks while avoiding its gaze."
+
+    full_example: |
+      - id: knave_monster_animated_armor
+        name: "Animated Armor"
+        type: Monster
+        game: Knave
+        source: Knave 2e
+        properties:
+          ac: 18
+          hp: 24
+          level: 6
+          attacks: "weapon (d8)"
+          mv: "20'"
+          morale: 12
+          number_appearing: "d6 (0)"
+          description: "Immune to mental effects. Dark vision. Held together by magic. Loud."
+
+    prompt: |
+      Extract monsters from the text. Each monster is a single paragraph starting with a BOLD UPPERCASE NAME followed by a colon.
+      
+      Pattern:
+      [NAME]: AC [ac], HP [hp], LVL [lvl], ATK [atk], MOV [mv], MRL [mrl], NA [na]. [Description]
+      
+      Parsing Rules:
+      1. Name: Capitalize and title case the name (e.g. "ANIMATED ARMOR" -> "Animated Armor").
+      2. Stats: Extract strictly by their labels (AC, HP, LVL, etc).
+      3. Description: Everything after the last stat (usually Number Appearing NA).
+      
+      Example Input:
+      ANIMATED ARMOR: AC 18, HP 24, LVL 6, ATK weapon (d8), MOV 20', MRL 12, NA d6 (0). Immune to mental effects. Dark vision. Held together by magic. Loud.
+      
+      Example Output:
+      - id: knave_monster_animated_armor
+        name: "Animated Armor"
+        type: Monster
+        game: Knave
+        source: Knave 2e
+        properties:
+          ac: 18
+          hp: 24
+          level: 6
+          attacks: "weapon (d8)"
+          mv: "20'"
+          morale: 12
+          number_appearing: "d6 (0)"
+          description: "Immune to mental effects. Dark vision. Held together by magic. Loud."
+
+    taxonomy:
+      level:
+        label: "Level"
+        source_property: "level"
+        options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
+      morale:
+        label: "Morale"
+        source_property: "morale"
+        options: ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+
+    # Visual Display Template (Used by Frontend)
+    colorAccent: "zinc"
+    header:
+      - key: "level"
+        label: "LVL"
+        badge: true
+      - key: "ac"
+        label: "AC"
+      - key: "hp"
+        label: "HP"
+    layout:
+      - type: "description"
+        class: "italic mb-2"
+      - type: "properties"
+        keys: ["ac", "hp", "mv", "morale", "number_appearing", "attacks"]
+        labels: 
+            mv: "MOV"
+            morale: "MRL"
+            number_appearing: "NA"
+            attacks: "ATK"
+        color: "zinc"
+      - type: "stats"
+        style: "hidden" # Knave doesn't use the STR/DEX/CON grid
+

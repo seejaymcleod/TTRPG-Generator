@@ -2892,7 +2892,8 @@ function initContentFilters() {
             ac: { min: Number.MAX_SAFE_INTEGER, max: 0 },
             hp: { min: Number.MAX_SAFE_INTEGER, max: 0 }
         },
-        itemCategories: new Set()  // For Item type filtering
+        itemCategories: new Set(),  // For Item type filtering
+        taxonomy: {} // Dynamic taxonomy fields: { FieldName: Set(Values) }
     };
 
     contentData.forEach(item => {
@@ -2932,6 +2933,71 @@ function initContentFilters() {
             const cat = p.category;
             if (cat) meta.itemCategories.add(cat);
         }
+
+        // --- Dynamic Taxonomy Extraction ---
+        // Get the template for this item type
+        const tmpl = displayTemplates[item.type];
+        if (tmpl && tmpl.taxonomy) {
+            Object.keys(tmpl.taxonomy).forEach(field => {
+                // Determine property key - simple mapping for now: field name is prop key
+                // Note: Taxonomy keys in YAML are like "Power Source", "Usage Category"
+                // Content properties might be "power_source" or "PowerSource" or "Properties"
+
+                // Helper to find property with loose matching
+                const findProperty = (obj, keys) => {
+                    if (!obj) return undefined;
+
+                    // 1. Try exact keys first (mapped or field name)
+                    for (const k of keys) {
+                        if (obj[k] !== undefined) return obj[k];
+                    }
+
+                    // 2. Try lowercase
+                    for (const k of keys) {
+                        const lower = k.toLowerCase();
+                        if (obj[lower] !== undefined) return obj[lower];
+                    }
+
+                    // 3. Try snake_case (replace spaces with underscores)
+                    for (const k of keys) {
+                        const snake = k.toLowerCase().replace(/ /g, '_');
+                        if (obj[snake] !== undefined) return obj[snake];
+                    }
+
+                    // 4. Try no spaces (Pascal/Camel case approximation)
+                    for (const k of keys) {
+                        const nospace = k.toLowerCase().replace(/ /g, '');
+                        // iterating object keys is expensive, so we just check direct access if we can guess the key
+                        // But since we can't guess valid casing (e.g. usageCategory vs UsageCategory), 
+                        // we might just stop here or do a thorough search if needed.
+                        // For now, let's try direct access of the nospace version (lowercase)
+                        if (obj[nospace] !== undefined) return obj[nospace];
+                    }
+
+                    return undefined;
+                };
+
+                let searchKeys = [field];
+                // Check if template defines a specific source property
+                if (tmpl.taxonomy[field] && tmpl.taxonomy[field].source_property) {
+                    searchKeys.unshift(tmpl.taxonomy[field].source_property);
+                }
+
+                const val = findProperty(p, searchKeys);
+
+                if (val) {
+                    if (!meta.taxonomy[field]) meta.taxonomy[field] = new Set();
+
+                    // Handle comma-separated lists if needed (e.g. Tags)
+                    // For strict taxonomy, values should be single, but best to be safe
+                    if (typeof val === 'string' && val.includes(',')) {
+                        val.split(',').map(v => v.trim()).forEach(v => meta.taxonomy[field].add(v));
+                    } else {
+                        meta.taxonomy[field].add(val);
+                    }
+                }
+            });
+        }
     });
 
     contentState.meta = meta;
@@ -2964,8 +3030,28 @@ function initContentFilters() {
     contentState.filters.props.ac = { ...meta.ranges.ac };
     contentState.filters.props.hp = { ...meta.ranges.hp };
 
+    // Initialize Dynamic Taxonomy Filters
+    contentState.filters.taxonomy = contentState.filters.taxonomy || {};
+
+    Object.keys(meta.taxonomy).forEach(field => {
+        if (!contentState.filters.taxonomy[field]) {
+            contentState.filters.taxonomy[field] = {};
+            meta.taxonomy[field].forEach(val => {
+                contentState.filters.taxonomy[field][val] = true;
+            });
+        } else {
+            // ensure new values are added as true if not present
+            meta.taxonomy[field].forEach(val => {
+                if (contentState.filters.taxonomy[field][val] === undefined) {
+                    contentState.filters.taxonomy[field][val] = true;
+                }
+            });
+        }
+    });
+
     console.log("DEBUG: initContentFilters END", {
-        finalProps: JSON.parse(JSON.stringify(contentState.filters.props))
+        finalProps: JSON.parse(JSON.stringify(contentState.filters.props)),
+        taxonomy: contentState.filters.taxonomy
     });
 }
 
@@ -2976,146 +3062,481 @@ function renderContentUi() {
 }
 
 // --- FILTER UI ---
+// --- FILTER UI ---
 function renderFilterSidebar() {
     const container = document.getElementById('contentFilterContainer');
     if (!container) return;
 
     container.innerHTML = '';
 
-    // 1. GAME - Single-select pill buttons
+    // Calculate Dynamic Options from Content (if not in meta)
+    // We do this here to ensure it's always fresh and handles cases where meta might be stale
+    const availableGames = new Set(['ShadowDark']); // Default
+    const availableTypes = new Set(['Monster', 'Spell', 'Item']); // Default
+
+    if (contentData && contentData.length > 0) {
+        contentData.forEach(item => {
+            if (item.game) availableGames.add(item.game);
+            if (item.type) availableTypes.add(item.type);
+        });
+    }
+
+    // 1. GAME + SOURCE - Game buttons with integrated source dropdowns (like Table mode)
     const gameSection = document.createElement('div');
-    gameSection.innerHTML = `
-        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Game</label>
-        <div class="flex flex-wrap gap-2">
-            <button onclick="selectContentGame('ShadowDark')" 
-                class="filter-btn ${contentState.filters.game === 'ShadowDark' ? 'selected' : ''}">ShadowDark</button>
-        </div>
-    `;
+    gameSection.innerHTML = `<label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Game</label>`;
+
+    const gameButtonsContainer = document.createElement('div');
+    gameButtonsContainer.className = 'flex flex-wrap gap-2';
+
+    const sortedGames = Array.from(availableGames).sort();
+
+    sortedGames.forEach(gameName => {
+        const isSelected = contentState.filters.game === gameName;
+
+        // Count sources for this game FIRST (to decide if we need dropdown)
+        const gameSources = new Set();
+        contentData.forEach(item => {
+            if (item.game === gameName && item.source) {
+                gameSources.add(item.source);
+            }
+        });
+        const hasMultipleSources = gameSources.size > 1;
+
+        // Create wrapper for game button + dropdown
+        const wrapper = document.createElement('div');
+        wrapper.className = 'content-game-filter-wrapper relative';
+
+        // Create button - only add dropdown arrow if multiple sources exist
+        const btn = document.createElement('button');
+        btn.className = `filter-btn flex items-center gap-1 ${isSelected ? 'selected' : ''}`;
+        btn.dataset.game = gameName;
+
+        if (hasMultipleSources) {
+            btn.innerHTML = `
+                <span>${gameName}</span>
+                <svg class="w-3 h-3 ml-1 dropdown-arrow" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 1l4 4 4-4"/>
+                </svg>
+            `;
+        } else {
+            btn.innerHTML = `<span>${gameName}</span>`;
+        }
+
+        // Click on button = select game
+        btn.onclick = (e) => {
+            if (hasMultipleSources && e.target.closest('.dropdown-arrow')) return;
+            selectContentGame(gameName);
+        };
+
+        wrapper.appendChild(btn);
+
+        if (hasMultipleSources) {
+            const dropdown = document.createElement('div');
+            dropdown.className = 'content-source-dropdown hidden absolute z-50 mt-2 w-64 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-4';
+            dropdown.dataset.game = gameName;
+            dropdown.style.left = '0';
+
+            // Header with SELECT ALL and CLEAR
+            const header = document.createElement('div');
+            header.className = 'flex justify-center gap-8 mb-4 pb-3 border-b border-slate-700';
+            header.innerHTML = `
+                <button class="content-select-all-btn text-sm font-bold uppercase tracking-wider text-primary hover:text-primary-light transition-colors">Select All</button>
+                <button class="content-clear-btn text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 transition-colors">Clear</button>
+            `;
+            dropdown.appendChild(header);
+
+            // Source checkboxes
+            const list = document.createElement('div');
+            list.className = 'space-y-3 max-h-48 overflow-y-auto';
+
+            Array.from(gameSources).sort().forEach(source => {
+                // Check if this source is enabled
+                const isChecked = contentState.filters.sources[source] !== false;
+
+                const item = document.createElement('label');
+                item.className = 'flex items-center gap-3 cursor-pointer group';
+                item.innerHTML = `
+                    <input type="checkbox" class="w-5 h-5 rounded bg-slate-700 border-slate-600 text-primary focus:ring-primary focus:ring-offset-slate-800"
+                        data-source="${source}" ${isChecked ? 'checked' : ''}>
+                    <span class="text-sm text-slate-200 group-hover:text-white transition-colors">${source}</span>
+                `;
+
+                const checkbox = item.querySelector('input');
+                checkbox.addEventListener('change', () => {
+                    contentState.filters.sources[source] = checkbox.checked;
+                    renderContentList();
+                });
+
+                list.appendChild(item);
+            });
+            dropdown.appendChild(list);
+
+            // Select All handler
+            header.querySelector('.content-select-all-btn').onclick = (e) => {
+                e.stopPropagation();
+                gameSources.forEach(s => contentState.filters.sources[s] = true);
+                renderFilterSidebar();
+                renderContentList();
+            };
+
+            // Clear handler
+            header.querySelector('.content-clear-btn').onclick = (e) => {
+                e.stopPropagation();
+                gameSources.forEach(s => contentState.filters.sources[s] = false);
+                renderFilterSidebar();
+                renderContentList();
+            };
+
+            // Prevent dropdown clicks from closing it
+            dropdown.onclick = (e) => e.stopPropagation();
+
+            wrapper.appendChild(dropdown);
+
+            // Toggle dropdown on arrow click
+            btn.querySelector('.dropdown-arrow').onclick = (e) => {
+                e.stopPropagation();
+                const isOpen = !dropdown.classList.contains('hidden');
+                // Close all other dropdowns
+                document.querySelectorAll('.content-source-dropdown').forEach(d => d.classList.add('hidden'));
+                if (!isOpen) {
+                    dropdown.classList.remove('hidden');
+                }
+            };
+        }
+
+        gameButtonsContainer.appendChild(wrapper);
+    });
+
+    gameSection.appendChild(gameButtonsContainer);
     container.appendChild(gameSection);
 
-    // 2. SOURCE - Dropdown popup (like Tables page)
-    renderSourceDropdown(container);
+    // Close dropdowns on outside click
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.content-game-filter-wrapper')) {
+            document.querySelectorAll('.content-source-dropdown').forEach(d => d.classList.add('hidden'));
+        }
+    });
 
-    // 3. TYPE - Single-select pill buttons (exclusive)
+    // 3. TYPE - Dynamic Pills (Scoped to Game)
+    // Filter available types to ONLY those present in the currently selected Game
+    const scopedTypes = new Set();
+    // If a game is selected, filter strictly. If NO game is selected, show all available types.
+    const activeGame = contentState.filters.game;
+
+    if (activeGame) {
+        if (contentData && contentData.length > 0) {
+            contentData.forEach(item => {
+                // Case-insensitive comparison for safety, though IDs are usually normalized
+                if (item.game && item.game.toLowerCase() === activeGame.toLowerCase() && item.type) {
+                    scopedTypes.add(item.type);
+                }
+            });
+        }
+    } else {
+        // No game selected -> show all
+        availableTypes.forEach(t => scopedTypes.add(t));
+    }
+
+    // Use scopedTypes. If empty (and game is selected), it means that game has NO content loaded yet.
+    // In that case, showing "No Types" is better than showing irrelevant buttons.
+    const typeSource = scopedTypes;
+
     const typeSection = document.createElement('div');
     typeSection.className = 'mt-4';
     const selectedType = Object.keys(contentState.filters.type).find(t => contentState.filters.type[t]) || '';
+
+    // Sort types to put Monster, Spell, Item first if present
+    const typeOrder = ['Monster', 'Spell', 'Item', 'Table'];
+    const sortedTypes = Array.from(typeSource).sort((a, b) => {
+        const ia = typeOrder.indexOf(a);
+        const ib = typeOrder.indexOf(b);
+        if (ia !== -1 && ib !== -1) return ia - ib;
+        if (ia !== -1) return -1;
+        if (ib !== -1) return 1;
+        return a.localeCompare(b);
+    });
+
+    let typeButtons = sortedTypes.map(t => `
+        <button onclick="selectContentType('${t}')" 
+            class="filter-btn ${selectedType === t ? 'selected' : ''}">${t}s</button>
+    `).join('');
+
     typeSection.innerHTML = `
         <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Type</label>
         <div class="flex flex-wrap gap-2">
-            <button onclick="selectContentType('Monster')" 
-                class="filter-btn ${selectedType === 'Monster' ? 'selected' : ''}">Monsters</button>
-            <button onclick="selectContentType('Spell')" 
-                class="filter-btn ${selectedType === 'Spell' ? 'selected' : ''}">Spells</button>
-            <button onclick="selectContentType('Item')" 
-                class="filter-btn ${selectedType === 'Item' ? 'selected' : ''}">Items</button>
+            ${typeButtons}
         </div>
     `;
     container.appendChild(typeSection);
 
-    // 4. MONSTER-SPECIFIC FILTERS
+    // 4. MONSTER-SPECIFIC FILTERS (Numeric Ranges)
     if (contentState.filters.type['Monster']) {
-        // Level Range - Dual-handle slider
+        // ALWAYS Render Sliders for properties that make sense as ranges
         renderDualSlider(container, 'Level', 'level', contentState.meta.ranges.level);
-        // AC Range
         renderDualSlider(container, 'AC', 'ac', contentState.meta.ranges.ac);
-        // HP Range
         renderDualSlider(container, 'HP', 'hp', contentState.meta.ranges.hp);
 
-        // Alignment Multi-select pill buttons
-        const alSection = document.createElement('div');
-        alSection.className = 'mt-4';
-        const alLabels = { 'L': 'Lawful', 'N': 'Neutral', 'C': 'Chaotic' };
-        let alButtons = '';
-        Array.from(contentState.meta.alignments).sort().forEach(al => {
-            const selected = contentState.filters.alignment[al] ? 'selected' : '';
-            alButtons += `<button onclick="toggleAlignment('${al}')" class="filter-btn ${selected}">${alLabels[al] || al}</button>`;
-        });
-        if (alButtons) {
-            alSection.innerHTML = `
-                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Alignment</label>
-                <div class="flex flex-wrap gap-2">${alButtons}</div>
-            `;
-            container.appendChild(alSection);
+        // Alignment (Legacy/Hybrid: Check if it's in taxonomy, if not render default)
+        // If 'alignment' is NOT in dynamic taxonomy, render standard
+        if (!contentState.meta.taxonomy['alignment']) {
+            const alSection = document.createElement('div');
+            alSection.className = 'mt-4';
+            const alLabels = { 'L': 'Lawful', 'N': 'Neutral', 'C': 'Chaotic' };
+            let alButtons = '';
+            Array.from(contentState.meta.alignments).sort().forEach(al => {
+                const selected = contentState.filters.alignment[al] ? 'selected' : '';
+                alButtons += `<button onclick="toggleAlignment('${al}')" class="filter-btn ${selected}">${alLabels[al] || al}</button>`;
+            });
+            if (alButtons) {
+                alSection.innerHTML = `
+                    <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Alignment</label>
+                    <div class="flex flex-wrap gap-2">${alButtons}</div>
+                `;
+                container.appendChild(alSection);
+            }
         }
     }
 
     // 5. SPELL-SPECIFIC FILTERS
     if (contentState.filters.type['Spell']) {
-        // Tier Range
-        renderDualSlider(container, 'Tier', 'tier', contentState.meta.ranges.tier);
+        // Prefer dynamic Tiers if available, otherwise slider?
+        // User said "display file should control which".
+        // Currently taxonomy defines 'tier'. If 'tier' is in taxonomy, dynamic loop handles it.
+        // If we want slider for tier, we should suppress dynamic loop for 'tier' OR
+        // make dynamic loop smart.
+        // For now, let's keep Tier as dynamic pills (as verified user liked it or asked for control).
+        // If taxonomy has 'tier', we SKIP the slider here to avoid double render.
+        if (!contentState.meta.taxonomy['tier']) {
+            renderDualSlider(container, 'Tier', 'tier', contentState.meta.ranges.tier);
+        }
 
-        // Class Multi-select pill buttons
-        const clsSection = document.createElement('div');
-        clsSection.className = 'mt-4';
-        let clsButtons = '';
-        Array.from(contentState.meta.spellClasses).sort().forEach(cls => {
-            const selected = contentState.filters.spellClass[cls] ? 'selected' : '';
-            clsButtons += `<button onclick="toggleSpellClass('${cls}')" class="filter-btn ${selected}">${cls}</button>`;
-        });
-        if (clsButtons) {
-            clsSection.innerHTML = `
-                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Class</label>
-                <div class="flex flex-wrap gap-2">${clsButtons}</div>
-            `;
-            container.appendChild(clsSection);
+        // Class (Legacy/Hybrid)
+        if (!contentState.meta.taxonomy['class']) {
+            const clsSection = document.createElement('div');
+            clsSection.className = 'mt-4';
+            let clsButtons = '';
+            Array.from(contentState.meta.spellClasses).sort().forEach(cls => {
+                const selected = contentState.filters.spellClass[cls] ? 'selected' : '';
+                clsButtons += `<button onclick="toggleSpellClass('${cls}')" class="filter-btn ${selected}">${cls}</button>`;
+            });
+            if (clsButtons) {
+                clsSection.innerHTML = `
+                    <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Class</label>
+                    <div class="flex flex-wrap gap-2">${clsButtons}</div>
+                `;
+                container.appendChild(clsSection);
+            }
         }
     }
 
     // 6. ITEM-SPECIFIC FILTERS
     if (contentState.filters.type['Item']) {
-        // Category Multi-select pill buttons
-        const catSection = document.createElement('div');
-        catSection.className = 'mt-4';
-        let catButtons = '';
-        Array.from(contentState.meta.itemCategories).sort().forEach(cat => {
-            const selected = contentState.filters.itemCategory?.[cat] ? 'selected' : '';
-            catButtons += `<button onclick="toggleItemCategory('${cat}')" class="filter-btn ${selected}">${cat}</button>`;
-        });
-        if (catButtons) {
-            catSection.innerHTML = `
-                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Category</label>
-                <div class="flex flex-wrap gap-2">${catButtons}</div>
-            `;
-            container.appendChild(catSection);
+        // Category (Legacy/Hybrid)
+        // If 'category' is NOT in dynamic taxonomy, render standard
+        if (!contentState.meta.taxonomy['category']) {
+            const catSection = document.createElement('div');
+            catSection.className = 'mt-4';
+            let catButtons = '';
+            Array.from(contentState.meta.itemCategories).sort().forEach(cat => {
+                const selected = contentState.filters.itemCategory?.[cat] ? 'selected' : '';
+                catButtons += `<button onclick="toggleItemCategory('${cat}')" class="filter-btn ${selected}">${cat}</button>`;
+            });
+            if (catButtons) {
+                catSection.innerHTML = `
+                    <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Category</label>
+                    <div class="flex flex-wrap gap-2">${catButtons}</div>
+                `;
+                container.appendChild(catSection);
+            }
         }
     }
+
+    // 7. DYNAMIC TAXONOMY FILTERS
+    // Iterate over all active types, find their templates, and look for fields present in meta.taxonomy
+    const activeTypes = Object.keys(contentState.filters.type).filter(t => contentState.filters.type[t]);
+
+    // We already have gathered available values in contentState.meta.taxonomy
+    // We only render filters for fields that HAVE values in the current set
+    const taxonomyFields = Object.keys(contentState.meta.taxonomy);
+
+    // Get currently active types (or all if none selected? No, usually defaults to one or all)
+    // contentState.filters.type is object { Monster: true, Spell: false ... }
+    // If no type filter is active, we might show keys for ALL loaded content types?
+    // Let's rely on activeTypes calculated above.
+
+    taxonomyFields.forEach(field => {
+        // Skip legacy fields that we specifically want to Handle manually or override
+        // logic: alignment & class are handled by legacy blocks above if missing from taxonomy,
+        // BUT if present we want them here.
+        // HOWEVER, 'level', 'ac', 'hp' should ALWAYS be sliders for Monsters -> SKIP here.
+        // 'tier' is ambiguous. User liked 2 types.
+
+        if (activeTypes.includes('Monster') && (field === 'level' || field === 'ac' || field === 'hp')) return;
+        if (activeTypes.includes('Spell') && field === 'tier' && contentState.meta.ranges.tier.max > 0) {
+            // If tier is in taxonomy AND we have a range, we might want to render a slider instead of pills.
+            // For now, if taxonomy has 'tier', we let it render as pills here.
+            // If the user wants a slider for 'tier' when it's in taxonomy, we'd add a skip here.
+            // The current instruction implies if taxonomy has 'tier', it should be handled dynamically (pills).
+        }
+
+
+        // CHECK: Is this field relevant to any ACTIVE type?
+        let isRelevant = false;
+        let label = field;
+
+        for (const type of activeTypes) {
+            // Look for specific template first (e.g. ShadowDark:Monster)
+            // We need to know the active Game for this. Or just check both?
+            // Since we filter items based on ALL Active filters, we should check if the field is relevant to ANY active item's template.
+
+            // Simple approach: Check if ANY template for this type (across all loaded games) has the field.
+            // OR better: check namespaced keys in `displayTemplates` that match the type.
+
+            // Iterating all templates to find if they match "AnyGame:Type"
+            const keys = Object.keys(displayTemplates).filter(k => k === type || k.endsWith(':' + type));
+
+            for (const key of keys) {
+                const tmpl = displayTemplates[key];
+                if (tmpl && tmpl.taxonomy && tmpl.taxonomy[field]) {
+                    isRelevant = true;
+                    label = tmpl.taxonomy[field].label || field;
+                    break;
+                }
+            }
+            if (isRelevant) break;
+        }
+
+        // If not relevant to any active type, skip rendering
+        if (!isRelevant) return;
+
+        const values = contentState.meta.taxonomy[field];
+        if (!values || values.size === 0) return; // Should not happen if populated from content
+
+        // Check "Smart Slider" condition:
+        // If values are numeric and count > 6, maybe we SHOULD use a slider?
+        // But for now user asked for "double-ball slider" for Monster Levels specifically.
+        // We already forced that by skipping 'level' above and using renderDualSlider.
+
+        const section = document.createElement('div');
+        section.className = 'mt-4';
+
+        let buttons = '';
+        const sortedValues = Array.from(values).sort();
+
+        sortedValues.forEach(val => {
+            const isSelected = contentState.filters.taxonomy[field] && contentState.filters.taxonomy[field][val];
+            buttons += `<button onclick="toggleTaxonomyFilter('${field}', '${String(val).replace(/'/g, "\\'")}')" 
+                class="filter-btn ${isSelected ? 'selected' : ''}">${val}</button>`;
+        });
+
+        section.innerHTML = `
+            <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
+            <div class="flex flex-wrap gap-2">${buttons}</div>
+        `;
+        container.appendChild(section);
+    });
 }
 
 function renderSourceDropdown(container) {
-    const section = document.createElement('div');
-    section.className = 'mt-4 relative';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'relative mt-4 source-dropdown-wrapper';
 
-    const sources = Array.from(contentState.meta.sources).sort();
     const allSelected = Object.values(contentState.filters.sources).every(v => v);
     const selectedCount = Object.values(contentState.filters.sources).filter(v => v).length;
-    const btnLabel = contentState.filters.source === 'all' ? 'All Sources' :
-        (selectedCount === sources.length ? 'All Sources' : `${selectedCount} Selected`);
+    const totalSources = Object.keys(contentState.filters.sources).length;
 
-    section.innerHTML = `
-        <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Source</label>
-        <button onclick="toggleContentSourceDropdown(event)" 
-            class="filter-btn selected flex items-center gap-1 w-full justify-between">
-            <span>${btnLabel}</span>
-            <span class="material-symbols-outlined text-sm">expand_more</span>
-        </button>
-        <div id="contentSourceDropdown" class="hidden absolute left-0 right-0 top-full mt-1 bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark rounded-lg shadow-lg z-50 p-3">
-            <div class="flex justify-between mb-2 text-xs font-bold uppercase">
-                <button onclick="selectAllContentSources()" class="text-primary hover:underline">Select All</button>
-                <button onclick="clearAllContentSources()" class="text-red-500 hover:underline">Clear</button>
-            </div>
-            <div class="space-y-1 max-h-40 overflow-y-auto">
-                ${sources.map(s => `
-                    <label class="flex items-center gap-2 text-sm cursor-pointer hover:text-primary">
-                        <input type="checkbox" onchange="toggleContentSourceItem('${s}')" ${contentState.filters.sources[s] ? 'checked' : ''} 
-                            class="rounded text-primary focus:ring-primary">
-                        <span>${s}</span>
-                    </label>
-                `).join('')}
-            </div>
-        </div>
+    // Label logic matching Table mode
+    let btnLabel = allSelected ? 'All Sources' : `${selectedCount} of ${totalSources}`;
+
+    // Toggle button (styled like Table mode - purple with dropdown arrow)
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn selected flex items-center gap-2 w-full justify-between';
+    btn.innerHTML = `
+        <span>${btnLabel}</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
     `;
-    container.appendChild(section);
+
+    // Dropdown menu (dark background like Table mode)
+    const menu = document.createElement('div');
+    menu.className = 'hidden absolute z-50 w-64 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl p-4';
+    menu.style.left = '0';
+
+    // Header with SELECT ALL and CLEAR (exactly like the screenshot)
+    const header = document.createElement('div');
+    header.className = 'flex justify-center gap-8 mb-4 pb-3 border-b border-slate-700';
+    header.innerHTML = `
+        <button id="source-select-all-btn" class="text-sm font-bold uppercase tracking-wider text-primary hover:text-primary-light transition-colors">Select All</button>
+        <button id="source-clear-btn" class="text-sm font-bold uppercase tracking-wider text-red-400 hover:text-red-300 transition-colors">Clear</button>
+    `;
+    menu.appendChild(header);
+
+    // List of sources with checkboxes
+    const list = document.createElement('div');
+    list.className = 'space-y-3 max-h-48 overflow-y-auto';
+
+    const sortedSources = Array.from(contentState.meta.sources).sort();
+
+    sortedSources.forEach(source => {
+        const isChecked = contentState.filters.sources[source];
+        const item = document.createElement('label');
+        item.className = 'flex items-center gap-3 cursor-pointer group';
+        item.innerHTML = `
+            <input type="checkbox" class="w-5 h-5 rounded bg-slate-700 border-slate-600 text-primary focus:ring-primary focus:ring-offset-slate-800"
+                value="${source}" ${isChecked ? 'checked' : ''}>
+            <span class="text-sm text-slate-200 group-hover:text-white transition-colors">${source}</span>
+        `;
+
+        const checkbox = item.querySelector('input');
+        checkbox.addEventListener('change', () => {
+            contentState.filters.sources[source] = checkbox.checked;
+            renderFilterSidebar();
+            renderContentList();
+        });
+
+        list.appendChild(item);
+    });
+    menu.appendChild(list);
+
+    // Toggle dropdown
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        const isOpen = !menu.classList.contains('hidden');
+        document.querySelectorAll('.source-dropdown-wrapper .absolute').forEach(el => el.classList.add('hidden'));
+        if (!isOpen) {
+            menu.classList.remove('hidden');
+        } else {
+            menu.classList.add('hidden');
+        }
+    };
+
+    // Select All handler
+    menu.querySelector('#source-select-all-btn').onclick = (e) => {
+        e.stopPropagation();
+        Object.keys(contentState.filters.sources).forEach(k => contentState.filters.sources[k] = true);
+        renderFilterSidebar();
+        renderContentList();
+    };
+
+    // Clear handler
+    menu.querySelector('#source-clear-btn').onclick = (e) => {
+        e.stopPropagation();
+        Object.keys(contentState.filters.sources).forEach(k => contentState.filters.sources[k] = false);
+        renderFilterSidebar();
+        renderContentList();
+    };
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+
+    wrapper.appendChild(btn);
+    wrapper.appendChild(menu);
+    container.appendChild(wrapper);
 }
 
 function renderDualSlider(container, label, propKey, metaRange) {
@@ -3145,9 +3566,56 @@ function renderDualSlider(container, label, propKey, metaRange) {
     // Add drag listeners
     const sliderContainer = section.querySelector('.range-slider-container');
     const handles = sliderContainer.querySelectorAll('.range-slider-handle');
+    const fill = sliderContainer.querySelector('.range-slider-fill');
+    const labelSpan = section.querySelector('span.text-primary');
+
     handles.forEach(handle => {
-        handle.addEventListener('mousedown', startSliderDrag);
-        handle.addEventListener('touchstart', startSliderDrag, { passive: false });
+        handle.onmousedown = (e) => {
+            e.preventDefault();
+            const isMin = handle.dataset.handle === 'min';
+            const rect = sliderContainer.getBoundingClientRect();
+
+            // Bring to front preventing lock
+            handles.forEach(h => h.style.zIndex = 10);
+            handle.style.zIndex = 20;
+
+            function onMove(e) {
+                let x = e.clientX - rect.left;
+                let pct = (x / rect.width) * 100;
+                pct = Math.max(0, Math.min(100, pct));
+
+                // Calculate value
+                let val = Math.round(metaRange.min + (pct / 100) * range);
+
+                // Update state
+                if (isMin) {
+                    val = Math.min(val, current.max); // Can touch but not cross
+                    current.min = val;
+                } else {
+                    val = Math.max(val, current.min);
+                    current.max = val;
+                }
+
+                // Update UI visually immediately
+                const newMinPct = ((current.min - metaRange.min) / range) * 100;
+                const newMaxPct = ((current.max - metaRange.min) / range) * 100;
+
+                sliderContainer.querySelector('[data-handle="min"]').style.left = `${newMinPct}%`;
+                sliderContainer.querySelector('[data-handle="max"]').style.left = `${newMaxPct}%`;
+                fill.style.left = `${newMinPct}%`;
+                fill.style.width = `${newMaxPct - newMinPct}%`;
+                labelSpan.textContent = `${current.min} – ${current.max}`;
+            }
+
+            function onUp() {
+                document.removeEventListener('mousemove', onMove);
+                document.removeEventListener('mouseup', onUp);
+                renderContentList(); // Trigger filter update on release
+            }
+
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        };
     });
 }
 
@@ -3343,6 +3811,7 @@ function renderSortControls() {
 }
 
 // --- FILTER ACTIONS ---
+// --- FILTER ACTIONS ---
 function selectContentGame(game) {
     contentState.filters.game = game;
     initContentFilters();
@@ -3463,6 +3932,36 @@ function toggleItemCategory(cat) {
     renderContentList();
 }
 
+// Dynamic Taxonomy Toggle
+function toggleTaxonomyFilter(field, value) {
+    if (!contentState.filters.taxonomy[field]) contentState.filters.taxonomy[field] = {};
+    const state = contentState.filters.taxonomy[field];
+
+    const allOptions = Array.from(contentState.meta.taxonomy[field] || []);
+
+    // Initialize if empty (all implicit true)
+    if (Object.keys(state).length === 0) {
+        allOptions.forEach(opt => state[opt] = true);
+    }
+
+    const allSelected = allOptions.every(opt => state[opt]);
+
+    if (allSelected) {
+        // Switch to Choice Mode: Select ONLY this one
+        allOptions.forEach(opt => state[opt] = (opt === value));
+    } else {
+        // Toggle this one
+        state[value] = !state[value];
+
+        // If None Selected, Revert to All
+        if (!allOptions.some(opt => state[opt])) {
+            allOptions.forEach(opt => state[opt] = true);
+        }
+    }
+    renderFilterSidebar();
+    renderContentList();
+}
+
 function updateRangeInput(prop, bound, value) {
     const val = parseInt(value) || 0;
     contentState.filters.props[prop][bound] = val;
@@ -3495,16 +3994,40 @@ function resetContentFilters() {
 }
 
 // Helper to render summary based on templates
+// Helper to render summary based on templates
 function getCardSummaryHtml(item) {
     const p = item.properties || {};
-    const tmpl = displayTemplates[item.type];
+
+    // Look up template: Try "Game:Type" first, then "Type"
+    let tmpl = null;
+    if (item.game && displayTemplates[`${item.game}:${item.type}`]) {
+        tmpl = displayTemplates[`${item.game}:${item.type}`];
+    } else {
+        tmpl = displayTemplates[item.type];
+    }
 
     if (tmpl && tmpl.header) {
         return tmpl.header.map(field => {
-            const val = p[field.key] || (field.key === 'alignment' && p.alignment ? p.alignment : '');
-            if (!val && !field.label) return '';
+            // Flexible property lookup
+            const keys = [field.key, field.key.toLowerCase(), field.key.replace(/_/g, ' ')];
+            let val = undefined;
 
+            // source_property override from schema?
+            if (field.source_property) keys.unshift(field.source_property);
+
+            // Manual lookup loop
+            for (const k of keys) {
+                if (p[k] !== undefined) { val = p[k]; break; }
+            }
+
+            // Fallback for alignment at root if not in properties
+            if (val === undefined && field.key === 'alignment' && item.alignment) val = item.alignment;
+
+            if ((!val && val !== 0) && !field.label) return ''; // Skip empty if no label
+
+            const displayVal = val || '';
             const label = field.label ? `${field.label} ` : '';
+
             if (field.badge) {
                 // Map logical colors to classes
                 let colorClass = 'text-primary bg-primary/10'; // Default
@@ -3512,10 +4035,12 @@ function getCardSummaryHtml(item) {
                 if (c === 'purple') colorClass = 'text-purple-600 dark:text-purple-400 bg-purple-500/10';
                 else if (c === 'amber') colorClass = 'text-amber-600 dark:text-amber-400 bg-amber-500/10';
                 else if (c === 'emerald') colorClass = 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/10';
+                else if (c === 'red') colorClass = 'text-red-600 dark:text-red-400 bg-red-500/10';
+                else if (c === 'blue') colorClass = 'text-blue-600 dark:text-blue-400 bg-blue-500/10';
 
-                return `<span class="text-xs ${colorClass} px-2 py-0.5 rounded font-bold">${label}${val}</span>`;
+                return `<span class="text-xs ${colorClass} px-2 py-0.5 rounded font-bold">${label}${displayVal}</span>`;
             }
-            return `<span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2">${label}${val}</span>`;
+            return `<span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2">${label}${displayVal}</span>`;
         }).join('');
     }
 
@@ -3570,19 +4095,32 @@ function renderContentList() {
         const props = item.properties;
         const r = contentState.filters.props;
 
+        // Match validation using robust findProperty helper
+        const findProperty = (obj, keys) => {
+            if (!obj) return undefined;
+            // Ensure array
+            if (!Array.isArray(keys)) keys = [keys];
+
+            for (const k of keys) if (obj[k] !== undefined) return obj[k];
+            for (const k of keys) { const lower = k.toLowerCase(); if (obj[lower] !== undefined) return obj[lower]; }
+            for (const k of keys) { const snake = k.toLowerCase().replace(/ /g, '_'); if (obj[snake] !== undefined) return obj[snake]; }
+            for (const k of keys) { const nospace = k.toLowerCase().replace(/ /g, ''); if (obj[nospace] !== undefined) return obj[nospace]; }
+            return undefined;
+        };
+
         if (item.type === 'Monster') {
-            const lvl = parseInt(props.level) || 0;
-            const ac = parseInt(props.ac) || 0;
-            const hp = parseInt(props.hp) || 0;
-            const al = props.alignment;
+            const lvl = parseInt(findProperty(props, ['level', 'Level', 'LVL'])) || 0;
+            const ac = parseInt(findProperty(props, ['ac', 'AC', 'Armor Class'])) || 0;
+            const hp = parseInt(findProperty(props, ['hp', 'HP', 'Hit Points'])) || 0;
+            const al = findProperty(props, ['alignment', 'Alignment']);
 
             if (lvl < r.level.min || lvl > r.level.max) return false;
             if (ac < r.ac.min || ac > r.ac.max) return false;
             if (hp < r.hp.min || hp > r.hp.max) return false;
-            if (al && !contentState.filters.alignment[al]) return false;
+            if (al && contentState.filters.alignment && !contentState.filters.alignment[al]) return false;
         } else if (item.type === 'Spell') {
-            const tier = parseInt(props.tier) || 0;
-            const cls = props.class;
+            const tier = parseInt(findProperty(props, ['tier', 'Tier', 'Level'])) || 0;
+            const cls = findProperty(props, ['class', 'Class']);
 
             if (tier < r.tier.min || tier > r.tier.max) return false;
 
@@ -3593,10 +4131,50 @@ function renderContentList() {
                 if (!anyEnabled) return false;
             }
         } else if (item.type === 'Item') {
-            const cat = props.category;
+            const cat = findProperty(props, ['category', 'Category']);
             // Check if any categories are selected and if this item's category is enabled
-            const anySelected = Object.values(contentState.filters.itemCategory).some(v => v);
-            if (anySelected && cat && !contentState.filters.itemCategory[cat]) return false;
+            if (contentState.filters.itemCategory) {
+                const anySelected = Object.values(contentState.filters.itemCategory).some(v => v);
+                if (anySelected && cat && !contentState.filters.itemCategory[cat]) return false;
+            }
+        }
+
+        // --- Dynamic Taxonomy Filtering ---
+        if (contentState.filters.taxonomy) {
+            for (const field of Object.keys(contentState.filters.taxonomy)) {
+                const state = contentState.filters.taxonomy[field];
+                // Check if any filter is active for this field
+                const anySelected = Object.values(state).some(v => v);
+                if (!anySelected) continue; // If all false (shouldn't happen in this logic) or none set
+
+                // If 'all' logic (all true), skip
+                const allTrue = Object.values(state).every(v => v);
+                if (allTrue) continue;
+
+                // Determine key using template mapping if available
+                let searchKeys = [field];
+                const tmpl = displayTemplates[item.type];
+                if (tmpl && tmpl.taxonomy && tmpl.taxonomy[field] && tmpl.taxonomy[field].source_property) {
+                    searchKeys.unshift(tmpl.taxonomy[field].source_property);
+                }
+
+                // Try mapped key, then field name, case-insensitive
+                const val = findProperty(props, searchKeys);
+
+                if (!val) {
+                    // Item doesn't have this field. 
+                    return false;
+                }
+
+                // Handle multi-values in item (e.g. comma separated)
+                let itemValues = [val];
+                if (typeof val === 'string' && val.includes(',')) {
+                    itemValues = val.split(',').map(v => v.trim());
+                }
+
+                const match = itemValues.some(v => state[v]);
+                if (!match) return false;
+            }
         }
 
         return true;
@@ -3744,17 +4322,25 @@ function renderConfigurableBody(item, container, tmpl, options) {
                         ${item.actions.map(a => `<div class="text-sm"><strong class="text-red-500 dark:text-red-400">${a.name || 'Action'}.</strong> ${formatAttacks(a.desc)}</div>`).join('')}
                     </div>`;
             }
-            else if (section.type === 'stats' && p.stats) {
-                const s = p.stats;
-                contentHtml += `
-                    <div class="grid grid-cols-6 gap-0 text-center my-2 text-xs bg-background-light dark:bg-background-dark p-1.5 rounded border border-border-light dark:border-border-dark">
-                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">STR</div><div class="font-semibold">${s.str || '0'}</div></div>
-                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">DEX</div><div class="font-semibold">${s.dex || '0'}</div></div>
-                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">CON</div><div class="font-semibold">${s.con || '0'}</div></div>
-                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">INT</div><div class="font-semibold">${s.int || '0'}</div></div>
-                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">WIS</div><div class="font-semibold">${s.wis || '0'}</div></div>
-                        <div><div class="font-bold uppercase text-text-muted-light dark:text-text-muted-dark" style="font-size: 9px;">CHA</div><div class="font-semibold">${s.cha || '0'}</div></div>
-                    </div>`;
+            else if (section.type === 'stats') {
+                // KNAVE-SPECIFIC: Skip stats grid entirely for Knave monsters (they don't use D&D stats)
+                if (item.game === 'Knave') return;
+
+                // For other games (like ShadowDark), show stats if they exist
+                if (!p.stats) return;
+
+                const stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+                const grid = stats.map(s => {
+                    const val = (p.stats && p.stats[s.toLowerCase()]) ? p.stats[s.toLowerCase()] : '+0';
+                    return `
+                        <div class="flex flex-col items-center p-2 rounded bg-background-light dark:bg-background-dark">
+                            <span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark">${s}</span>
+                            <span class="font-mono font-bold text-text-main-light dark:text-text-main-dark">${val}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                contentHtml += `<div class="grid grid-cols-6 gap-2 mb-3 p-1 rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">${grid}</div>`;
             }
             else if (section.type === 'abilities' && item.abilities && item.abilities.length > 0) {
                 contentHtml += `

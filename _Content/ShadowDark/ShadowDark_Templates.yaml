@@ -224,6 +224,22 @@ templates:
           - name: "Attack"
             desc: "2 claw +4 (1d6) and 1 bite +4 (1d10)"
 
+    gut_path: "I. ACTORS > 1. Monsters"
+    taxonomy:
+      # Mapped Properties
+      level:
+        label: "Level"
+        source_property: "level"
+        options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
+      
+      # Taxonomy Tags
+      Family:
+        label: "Family"
+        options: ["Humanoid", "Beast", "Undead", "Construct", "Outsider", "Monstrosity", "Plant", "Giant", "Dragon"]
+      Biome:
+        label: "Biome"
+        options: ["Forest", "Dungeon", "Urban", "Aquatic", "Desert", "Mountains", "Swamp"]
+
   # ==========================================================================
   # SPELL TEMPLATE
   # ==========================================================================
@@ -347,6 +363,23 @@ templates:
           When you cast this spell, you choose to summon either a wight or wraith. It appears next to you and is under your control.
           
           The undead creature acts on your turn. After 1 day, it melts away into smoke.
+
+    gut_path: "III. MECHANICS > 6. Powers"
+    taxonomy:
+      # Mapped Properties
+      class:
+        label: "Class"
+        source_property: "class"
+        options: ["Wizard", "Priest", "Witch", "Seer", "Shaman"]
+      tier:
+        label: "Tier"
+        source_property: "tier"
+        options: ["1", "2", "3", "4", "5"]
+      
+      # Taxonomy Tags
+      "Power Source":
+        label: "Source"
+        options: ["Arcane", "Divine"]
 
   # ==========================================================================
   # ITEM TEMPLATE (Magic Items, Potions, Gear)
@@ -505,3 +538,31 @@ templates:
               effect: "3d10 hit points"
             - level: "10+"
               effect: "4d12 hit points"
+    gut_path: "II. OBJECTS"
+    taxonomy:
+      # Mapped Properties
+      category:
+         label: "Category"
+         source_property: "category"
+         options: ["Magic Item", "Potion", "Weapon", "Armor", "Gear", "Treasure"]
+      
+      # Weapons
+      "Usage Category":
+        label: "Usage"
+        options: ["Melee", "Ranged", "Thrown", "Ammunition"]
+      "Physical Form":
+        label: "Form"
+        options: ["Bladed", "Bludgeoning", "Polearm", "Bow", "Crossbow"]
+      "Properties":
+        label: "Properties"
+        options: ["Finesse", "Two-handed", "Versatile", "Thrown", "Loading"]
+      
+      # Armor
+      "Armor Class":
+        label: "AC Type"
+        options: ["Light", "Medium", "Heavy", "Shield"]
+      
+      # Consumables
+      "Consumable Form":
+        label: "Form"
+        options: ["Potion", "Scroll", "Oil", "Ration"]

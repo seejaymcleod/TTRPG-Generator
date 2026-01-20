@@ -113,81 +113,6 @@ app.get('/api/tables', (req, res) => {
   }
 });
 
-// GET /api/content
-app.get('/api/content', (req, res) => {
-  try {
-    let yaml;
-    try {
-      yaml = require('js-yaml');
-    } catch (e) {
-      console.error("js-yaml not found, cannot serve YAML content");
-      return res.status(500).json({ error: "Server missing js-yaml dependency" });
-    }
-
-    const contentDir = path.join(__dirname, '_Content');
-    const contentData = [];
-
-    // Recursively scan for `*_Content.yaml` files
-    function scanForContent(dir) {
-      if (!fs.existsSync(dir)) return;
-
-      const items = fs.readdirSync(dir, { withFileTypes: true });
-
-      items.forEach(item => {
-        const fullPath = path.join(dir, item.name);
-
-        if (item.isDirectory()) {
-          scanForContent(fullPath);
-        } else if (item.name.endsWith('_Content.yaml') || item.name.endsWith('_Content.yml')) {
-          try {
-            const fileContent = fs.readFileSync(fullPath, 'utf8');
-            const data = yaml.load(fileContent);
-
-            if (Array.isArray(data)) {
-              console.log(`[Content] Loaded ${data.length} items from ${item.name}`);
-              contentData.push(...data);
-            }
-          } catch (e) {
-            console.warn(`[Content] Failed to load ${item.name}: ${e.message}`);
-          }
-        }
-      });
-    }
-
-    // Start scan from ShadowDark directory (or root content dir if desired)
-    // For now, let's scan the whole _Content dir to be future-proof
-    scanForContent(contentDir);
-
-    res.json({ content: contentData });
-  } catch (e) {
-    console.error("Error serving content:", e);
-    res.status(500).json({ error: e.message });
-  }
-});
-
-// GET /api/templates
-app.get('/api/templates', (req, res) => {
-  try {
-    let yaml;
-    try {
-      yaml = require('js-yaml');
-    } catch (e) {
-      return res.status(500).json({ error: "Server missing js-yaml dependency" });
-    }
-
-    const templatePath = path.join(__dirname, '_Content', 'display_templates.yaml');
-    if (fs.existsSync(templatePath)) {
-      const fileContent = fs.readFileSync(templatePath, 'utf8');
-      const data = yaml.load(fileContent);
-      res.json(data);
-    } else {
-      res.json({}); // Return empty if no config
-    }
-  } catch (e) {
-    console.error("Error serving templates:", e);
-    res.status(500).json({ error: e.message });
-  }
-});
 
 // POST /api/generate
 app.post('/api/generate', (req, res) => {
@@ -493,6 +418,157 @@ app.get('/api/forge/metadata', (req, res) => {
   } catch (e) {
     console.error('Forge metadata error:', e);
     res.json({ games: [], sources: [], types: [] });
+  }
+});
+
+// GET /api/templates - Get display templates
+app.get('/api/templates', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const yaml = require('js-yaml');
+
+    // 1. Load Base Templates
+    const baseTemplatePath = path.join(__dirname, '_Content', 'display_templates.yaml');
+    let templates = {};
+    if (fs.existsSync(baseTemplatePath)) {
+      templates = yaml.load(fs.readFileSync(baseTemplatePath, 'utf8')) || {};
+    }
+    if (!templates.types) templates.types = {};
+
+    // Debug info
+    templates._debug = { loaded: [] };
+
+    // 2. Scan for Game-Specific Templates (e.g. _Content/Knave/Knave_Templates.yaml)
+    const contentDir = path.join(__dirname, '_Content');
+    if (fs.existsSync(contentDir)) {
+      const items = fs.readdirSync(contentDir, { withFileTypes: true });
+      items.forEach(item => {
+        if (item.isDirectory()) {
+          const gameDir = path.join(contentDir, item.name);
+          const templateFile = path.join(gameDir, `${item.name}_Templates.yaml`);
+
+          if (fs.existsSync(templateFile)) {
+            try {
+              const doc = yaml.load(fs.readFileSync(templateFile, 'utf8'));
+
+              templates._debug.loaded.push({
+                file: templateFile,
+                hasTemplates: !!(doc && doc.templates),
+                keys: doc && doc.templates ? Object.keys(doc.templates) : []
+              });
+
+              // Merge 'templates' section into our types
+              if (doc && doc.templates) {
+                Object.keys(doc.templates).forEach(typeKey => {
+                  // Always add Namespaced Key (e.g. "Knave:Monster")
+                  const scopedKey = `${item.name}:${typeKey}`;
+                  templates.types[scopedKey] = doc.templates[typeKey];
+
+                  // Also fill base key if missing (fallback)
+                  if (!templates.types[typeKey]) {
+                    templates.types[typeKey] = doc.templates[typeKey];
+                  }
+                });
+              }
+            } catch (e) {
+              templates._debug.loaded.push({ file: templateFile, error: e.message });
+              console.error(`Error loading templates from ${templateFile}:`, e);
+            }
+          }
+        }
+      });
+    }
+
+    res.json(templates);
+  } catch (e) {
+    console.error("Template fetch error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// DEBUG ENDPOINT
+app.get('/api/debug/content', (req, res) => {
+  const fs = require('fs');
+  const path = require('path');
+  const contentDir = path.join(__dirname, '_Content');
+  const debug = { start: contentDir, items: [] };
+
+  if (fs.existsSync(contentDir)) {
+    const items = fs.readdirSync(contentDir, { withFileTypes: true });
+    items.forEach(item => {
+      const info = { name: item.name, isDirectory: item.isDirectory() };
+      if (item.isDirectory()) {
+        const gameDir = path.join(contentDir, item.name);
+        const templateFile = path.join(gameDir, `${item.name}_Templates.yaml`);
+        info.templateFile = templateFile;
+        info.exists = fs.existsSync(templateFile);
+      }
+      debug.items.push(info);
+    });
+  }
+  res.json(debug);
+});
+
+// GET /api/content - Get all content items
+app.get('/api/content', (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const yaml = require('js-yaml');
+
+    const contentDir = path.join(__dirname, '_Content');
+    const content = [];
+    const seenIds = new Set();
+
+    // Recursively scan _Content for YAML files
+    function scanDir(dir) {
+      if (!fs.existsSync(dir)) return;
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+      items.forEach(item => {
+        if (item.isDirectory()) {
+          scanDir(path.join(dir, item.name));
+        } else if (item.name.endsWith('.yaml') || item.name.endsWith('.yml')) {
+          // Skip template files
+          if (item.name.includes('_Templates')) return;
+          if (item.name === 'display_templates.yaml') return;
+
+          try {
+            const fileContent = fs.readFileSync(path.join(dir, item.name), 'utf8');
+            const docs = yaml.loadAll(fileContent);
+
+            docs.forEach(doc => {
+              if (doc && doc.id) {
+                // NORMALIZE GAME NAME
+                if (doc.game && doc.game.toLowerCase() === 'shadowdark') {
+                  doc.game = 'ShadowDark';
+                }
+
+                if (!seenIds.has(doc.id)) {
+                  seenIds.add(doc.id);
+                  content.push(doc);
+                }
+              } else if (Array.isArray(doc)) {
+                // Handle list-based YAML files (e.g. older format if any)
+                doc.forEach(d => {
+                  if (d && d.id && !seenIds.has(d.id)) {
+                    if (d.game && d.game.toLowerCase() === 'shadowdark') d.game = 'ShadowDark';
+                    seenIds.add(d.id);
+                    content.push(d);
+                  }
+                });
+              }
+            });
+          } catch (e) { /* Skip invalid YAML */ }
+        }
+      });
+    }
+
+    scanDir(contentDir);
+    res.json({ content });
+  } catch (e) {
+    console.error("Content fetch error:", e);
+    res.status(500).json({ error: e.message });
   }
 });
 
@@ -855,10 +931,7 @@ app.post('/api/table-contents', (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-  console.log(`Server v2 running on port ${PORT}`);
-  console.log(`Powered by TypeScript Engine`);
-});
+
 
 // --- User System Implementation ---
 
@@ -1201,3 +1274,8 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   res.status(err.status || 500).send('<h1>Something went wrong</h1><pre>' + err.message + '</pre>');
 });
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+

@@ -1,13 +1,13 @@
+TASK above:
+
 SOURCES:
 ai/00_SYSTEM_CONTRACT.md
 ai/REPO_MAP.md
 ai/STATE.md
 
-TASK: 
-
-1. Separate the elementals into two, with a lesser and greater version. They each have separate HP and LVL and Attack values. 
-2. Make the Hydra have 15HP and LVL 2. The abilities note is sufficient for people to understand the mechanics.
-
+GEMINI API KEY:
+If lost for some reason, it's in the user file:
+/Users/seejaymac/Documents/GitHub/TTRPG-Generator/data/users/SeeJayMac.json
 
 CONTEXT:
 <only the relevant code snippets or diff>

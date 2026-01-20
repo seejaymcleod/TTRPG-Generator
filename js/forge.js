@@ -1061,13 +1061,21 @@ class ForgeController {
 
                 this.analyzeText(data.text);
 
+                // FORCE ENABLE NEXT
+                const nextBtn = document.getElementById('forgeNextBtn');
+                if (nextBtn) {
+                    nextBtn.disabled = false;
+                    nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+
                 // AUTO-ADVANCE: Move to Step 2 (Review) so user doesn't wonder what's next
                 setTimeout(() => this.goToStep(2), 500);
             }
 
         } catch (e) {
             console.error('Extraction failed:', e);
-            alert('Extraction failed: ' + e.message);
+            const msg = e.message || (typeof e === 'string' ? e : 'Unknown error');
+            alert('Extraction failed: ' + msg);
 
             const meta = document.getElementById('forgeFileMeta');
             if (meta) meta.textContent = "Extraction Error";
@@ -1351,12 +1359,13 @@ class ForgeController {
                     }
                 } catch (err) {
                     console.error(`[Forge] Error processing ${type}:`, err);
-                    this.addLog(`Error processing ${type}: ${err.message}`, 'error');
+                    const msg = err.message || (typeof err === 'string' ? err : 'Unknown Error');
+                    this.addLog(`Error processing ${type}: ${msg}`, 'error');
 
-                    if (err.message.includes('timeout') || err.message.includes('Network Error')) {
+                    if (msg.includes('timeout') || msg.includes('Network Error')) {
                         alert(`Network Timeout during ${type} extraction. Check the Debug Log.`);
                     } else {
-                        alert(`Failed to extract ${type}: ${err.message}`);
+                        alert(`Failed to extract ${type}: ${msg}`);
                     }
                     throw err;
                 }

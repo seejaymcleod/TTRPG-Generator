@@ -16,7 +16,7 @@ types:
       - type: "flavor"
         italic: true
       - type: "properties"
-        keys: ["ac", "hp", "mv", "alignment"]
+        keys: ["ac", "hp", "mv", "morale", "alignment"]
         color: "amber"
       - type: "actions"
         title: "ACTIONS"
@@ -24,6 +24,18 @@ types:
         style: "compact"
       - type: "abilities"
         color: "amber"
+    taxonomy:
+      level:
+        label: "Level"
+        source_property: "level"
+        options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
+      # Taxonomy Tags
+      Family:
+        label: "Family"
+        options: ["Humanoid", "Beast", "Undead", "Construct", "Outsider", "Monstrosity", "Plant", "Giant", "Dragon"]
+      Biome:
+        label: "Biome"
+        options: ["Forest", "Dungeon", "Urban", "Aquatic", "Desert", "Mountains", "Swamp"]
 
   Spell:
     colorAccent: "purple"
@@ -38,6 +50,18 @@ types:
         keys: ["tier", "class", "duration", "range"]
         color: "purple"
       - type: "description"
+    taxonomy:
+      class:
+        label: "Class"
+        source_property: "class"
+        options: ["Wizard", "Priest", "Witch", "Seer", "Shaman"]
+      tier:
+        label: "Tier"
+        source_property: "tier"
+        options: ["1", "2", "3", "4", "5"]
+      "Power Source":
+        label: "Source"
+        options: ["Arcane", "Divine"]
 
   Item:
     colorAccent: "emerald"
@@ -58,3 +82,23 @@ types:
         title: "CURSE"
         color: "red"
       - type: "description"
+    taxonomy:
+      category:
+         label: "Category"
+         source_property: "category"
+         options: ["Magic Item", "Potion", "Weapon", "Armor", "Gear", "Treasure"]
+      "Usage Category":
+        label: "Usage"
+        options: ["Melee", "Ranged", "Thrown", "Ammunition"]
+      "Physical Form":
+        label: "Form"
+        options: ["Bladed", "Bludgeoning", "Polearm", "Bow", "Crossbow"]
+      "Properties":
+        label: "Properties"
+        options: ["Finesse", "Two-handed", "Versatile", "Thrown", "Loading"]
+      "Armor Class":
+        label: "AC Type"
+        options: ["Light", "Medium", "Heavy", "Shield"]
+      "Consumable Form":
+        label: "Form"
+        options: ["Potion", "Scroll", "Oil", "Ration"]

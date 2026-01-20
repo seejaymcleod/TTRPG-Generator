@@ -13,7 +13,7 @@
 - id: shadowdark_aminiita_root
   name: Aminiita Root
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -160,7 +160,7 @@
 - id: shadowdark_blowgun
   name: Blowgun
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -170,7 +170,7 @@
 - id: shadowdark_bluewort_paste
   name: Bluewort Paste
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -181,7 +181,7 @@
 - id: shadowdark_bolas
   name: Bolas
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -283,7 +283,7 @@
 - id: shadowdark_brass_wine_cup
   name: Brass Wine Cup
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -474,7 +474,7 @@
 - id: shadowdark_drowsy_dust
   name: Drowsy Dust
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -507,7 +507,7 @@
 - id: shadowdark_ether_of_idos
   name: Ether of Idos
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -602,7 +602,7 @@
 - id: shadowdark_gold_signet_ring
   name: Gold Signet Ring
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -719,7 +719,7 @@
 - id: shadowdark_iron_orange
   name: Iron Orange
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Magic Item
@@ -728,7 +728,7 @@
 - id: shadowdark_jade_comb
   name: Jade Comb
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -761,7 +761,7 @@
 - id: shadowdark_kingslayer_oil
   name: Kingslayer Oil
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -856,7 +856,7 @@
 - id: shadowdark_magic_sesame_seeds
   name: Magic Sesame Seeds
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Magic Item
@@ -952,7 +952,7 @@
 - id: shadowdark_morningstar
   name: Morningstar
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -962,7 +962,7 @@
 - id: shadowdark_mount_armor_chainmail
   name: Mount Armor, Chainmail
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Mount Gear
@@ -972,7 +972,7 @@
 - id: shadowdark_mount_armor_leather
   name: Mount Armor, Leather
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Mount Gear
@@ -982,7 +982,7 @@
 - id: shadowdark_mount_armor_plate
   name: Mount Armor, Plate
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Mount Gear
@@ -992,7 +992,7 @@
 - id: shadowdark_murgazi_wine
   name: Murgazi Wine
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -1037,7 +1037,7 @@
 - id: shadowdark_nuzule_oil
   name: Nuzule Oil
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -1116,7 +1116,7 @@
 - id: shadowdark_phoenix_plumes
   name: Phoenix Plumes
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -1133,7 +1133,7 @@
 - id: shadowdark_pike
   name: Pike
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -1299,7 +1299,7 @@
 - id: shadowdark_razor_chain
   name: Razor Chain
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -1419,7 +1419,7 @@
 - id: shadowdark_saddle
   name: Saddle
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Mount Gear
@@ -1441,7 +1441,7 @@
 - id: shadowdark_scimitar
   name: Scimitar
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -1463,7 +1463,7 @@
 - id: shadowdark_screamer
   name: Screamer
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Magic Weapon
@@ -1572,7 +1572,7 @@
 - id: shadowdark_shuriken
   name: Shuriken
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -1594,7 +1594,7 @@
 - id: shadowdark_skinlasher
   name: Skinlasher
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Magic Weapon
@@ -1603,7 +1603,7 @@
 - id: shadowdark_sling
   name: Sling
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -1697,7 +1697,7 @@
 - id: shadowdark_sunscorch
   name: Sunscorch
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Magic Weapon
@@ -1706,7 +1706,7 @@
 - id: shadowdark_sweet_dates
   name: Sweet Dates
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -1751,7 +1751,7 @@
 - id: shadowdark_thorgol_the_anvil
   name: Thorgol the Anvil
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Magic Weapon
@@ -1832,7 +1832,7 @@
 - id: shadowdark_truth_speak_oil
   name: Truth-speak Oil
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -1851,7 +1851,7 @@
 - id: shadowdark_vapor_of_leng
   name: Vapor of Leng
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Poison
@@ -1870,7 +1870,7 @@
 - id: shadowdark_wagon
   name: Wagon
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Mount Gear
@@ -1968,7 +1968,7 @@
 - id: shadowdark_whip
   name: Whip
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Weapon
@@ -1986,7 +1986,7 @@
 - id: shadowdark_worm_oil
   name: Worm Oil
   type: Item
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     category: Item
@@ -2889,7 +2889,7 @@
 - id: shadowdark_monster_camel_silver
   name: Camel, Silver
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "10"
@@ -2912,7 +2912,7 @@
 - id: shadowdark_monster_canyon_ape
   name: Canyon Ape
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "13"
@@ -3811,7 +3811,7 @@
 - id: shadowdark_monster_donkey
   name: Donkey
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "10"
@@ -4286,7 +4286,7 @@
 - id: shadowdark_monster_dunefiend
   name: Dunefiend
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "14"
@@ -4338,7 +4338,7 @@
 - id: shadowdark_monster_dust_devil
   name: Dust Devil
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "16"
@@ -5707,35 +5707,6 @@
     - name: Attack
       desc: 2 claw +3 (1d6) or 1 song
   description: Horrific, winged women with vulture-like lower bodies. They keen a hypnotic song.
-- id: sd_monster_heal_cube
-  name: Heal Cube
-  type: Monster
-  game: ShadowDark
-  source: Monster of the Month, 3 - Ooze Cubes
-  properties:
-    ac: "11"
-    hp: "24"
-    mv: near
-    level: "5"
-    alignment: "N"
-    stats:
-      str: "+3"
-      dex: "+1"
-      con: "+2"
-      int: "-4"
-      wis: "+1"
-      cha: "-4"
-    flavor: A massive cube of clear slime with a faint, pink color. Plump mice and centipedes drift around inside.
-  abilities:
-    - name: Engulf
-      desc: DC 12 STR or trapped inside cube. DC 12 STR on turn to escape.
-    - name: Heal
-      desc: Creatures in cube heal 1 HP per round. Treat as if underwater.
-    - name: Rubbery
-      desc: Half damage from stabbing weapons.
-  actions:
-    - name: Touch
-      desc: 1 touch +4 (engulf + heal)
 - id: sd_monster_hell_hound
   name: Hell Hound
   type: Monster
@@ -5767,7 +5738,7 @@
 - id: shadowdark_monster_hero
   name: Hero
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "16"
@@ -5913,7 +5884,7 @@
 - id: shadowdark_monster_horse_war
   name: Horse, War
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "11"
@@ -6464,12 +6435,12 @@
   actions:
     - name: Attack
       desc: 1 spell +5
-  description: Trained wizards who are often members of a sorcerous order.
+  description: Trained wizards who are oftn members of a sorcerous order.
 - id: sd_monster_magnetic_cube
   name: Magnetic Cube
   type: Monster
   game: ShadowDark
-  source: Monster of the Month, 3 - Ooze Cubes
+  source: Monster of the Month
   properties:
     ac: "11"
     hp: "24"
@@ -6732,7 +6703,7 @@
 - id: shadowdark_monster_mirage
   name: Mirage
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "6"
@@ -6992,42 +6963,11 @@
     - name: Attack
       desc: 2 bite +5
   description: Mindless, skeletal husks of nagas reanimated by sorcery.
-- id: sd_monster_necrotic_cube
-  name: Necrotic Cube
-  type: Monster
-  game: ShadowDark
-  source: Monster of the Month, 3 - Ooze Cubes
-  properties:
-    ac: "11"
-    hp: "24"
-    mv: near
-    level: "5"
-    alignment: "N"
-    stats:
-      str: "+3"
-      dex: "+1"
-      con: "+2"
-      int: "-4"
-      wis: "+1"
-      cha: "-4"
-    flavor: A green-tinted cube of clear jelly with bleached skeletons adrift inside.
-  abilities:
-    - name: Engulf
-      desc: DC 12 STR or trapped inside cube. Touch attack auto-hits engulfed targets each round. DC 12 STR on turn to escape.
-    - name: Necrotic
-      desc: A creature who dies while engulfed becomes a skeleton.
-    - name: Rubbery
-      desc: Half damage from stabbing weapons.
-    - name: Skeletons
-      desc: Necrotic cubes have 1d6 skeletons inside them. Each round, one escapes to attack the cube's enemies on a d6 roll of 1-3.
-  actions:
-    - name: Touch
-      desc: 1 touch +4 (1d8 + engulf)
 - id: sd_monster_necrotic_ooze_cube
   name: Necrotic Ooze Cube
   type: Monster
   game: ShadowDark
-  source: 3 - Ooze Cubes
+  source: Monster of the Month
   properties:
     ac: "11"
     hp: "24"
@@ -7252,7 +7192,7 @@
   name: Ooze Cube
   type: Monster
   game: ShadowDark
-  source: 3 - Ooze Cubes
+  source: Monster of the Month
   properties:
     ac: "11"
     hp: "24"
@@ -7795,7 +7735,7 @@
 - id: shadowdark_monster_ras_godai
   name: Ras-Godai
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "13"
@@ -8033,7 +7973,7 @@
 - id: shadowdark_monster_rookie
   name: Rookie
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "14"
@@ -8293,7 +8233,7 @@
 - id: shadowdark_monster_scrag
   name: Scrag
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "12"
@@ -8316,7 +8256,7 @@
 - id: shadowdark_monster_scrag_war
   name: Scrag, War
   type: Monster
-  game: Shadowdark
+  game: ShadowDark
   source: Cursed Scroll 2
   properties:
     ac: "12"
@@ -10972,7 +10912,7 @@
     duration: Instant
     range: Close
   description: |
-    You learn the True Name ( Shadowdark RPG pg. 319) of one creature you touch.
+    You learn the True Name ( ß RPG pg. 319) of one creature you touch.
     If the creature is willing, you may give it a new True Name . A creature may only change its True Name once in its lifetime.
     If it does so, its alignment changes to your alignment.
 - id: sd_spell_nightmare
@@ -11441,8 +11381,8 @@
   description: |
     You summon a violent storm that affects an area around you out to one mile for the duration.
     The storm brings darkened skies, severe wind, and driving rain.
-    For the duration of the spell, you can cast control water ( Shadowdark RPG pg. 57), even if you do not know the spell.
-    For the duration of the spell, you can cast lightning bolt (Shadowdark RPG pg. 64 ) , even if you do not know the spell.
+    For the duration of the spell, you can cast control water ( ShadowDark RPG pg. 57), even if you do not know the spell.
+    For the duration of the spell, you can cast lightning bolt (ShadowDark RPG pg. 64 ) , even if you do not know the spell.
 - id: sd_spell_swarm
   name: Swarm
   type: Spell
