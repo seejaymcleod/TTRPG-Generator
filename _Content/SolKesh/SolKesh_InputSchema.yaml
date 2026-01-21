@@ -1,0 +1,144 @@
+# SolKesh Input Schema
+# Instructions for parsing raw content into the Content Schema.
+
+game: SolKesh
+version: "1.2"
+
+conventions:
+  stats:
+    STR: "str"
+    DEX: "dex"
+    CON: "con"
+    INT: "int"
+    WIS: "wis"
+    CHA: "cha"
+
+# Extraction Rules defines how to parse specific visual layouts into the Content Schema
+extraction_rules:
+  
+  # Global formatting rules
+  id_format: "sk_{type_prefix}_{snake_case_name}"
+  
+  # Content Types Detection & Schema
+  types:
+    Apex:
+      detection: "Contains 'Legendary Actions' header or 'Apex' in Niche"
+      type_prefix: "apex"
+      instructions: "Set type: 'Monster', stage: 'Apex'. Parse required Apex sections."
+      sections:
+        required: ["Header Bio", "Stats", "Traits", "Actions", "Legendary Actions"]
+        optional: ["Bonus Actions", "Reactions", "Lair Actions", "Regional Effects", "Ecology", "Crafting"]
+    
+    Standard:
+      detection: "Default monster block with standard stats, no Legendary Actions"
+      type_prefix: "monster"
+      instructions: "Set type: 'Monster', stage: 'Standard'. Parse standard sections."
+      sections:
+        required: ["Header Bio", "Stats", "Traits", "Actions"]
+        optional: ["Bonus Actions", "Reactions", "Defensive Instinct", "Ecology", "Crafting"]
+      
+    Young:
+      detection: "Grouped on pages labeled 'Young of the...' or names ending in 'Juvenile', 'Elver', 'Baby'"
+      type_prefix: "young"
+      instructions: "Set type: 'Monster', stage: 'Young'. Parse simplified stats."
+      sections:
+        required: ["Header Bio", "Stats", "Traits", "Actions"]
+        optional: ["Bonus Actions", "Reactions"]
+
+  # Section Mapping (Common to all types)
+  sections:
+    header_bio:
+      pattern: "Class - {class} - Genus {genus} - Niche - {niche}"
+      instructions: "Extract bio details from the top banner. Young monsters often lack deep biome/bond info."
+      fields:
+        bio.class: "{class}"
+        bio.genus: "{genus}"
+        bio.niche: "{niche}"
+        bio.biome: "Infer from keywords like Coastal, Forest, etc if not explicit."
+
+    stats_block:
+      instructions: "Extract core combat stats from the stat block header."
+      fields:
+        ac: 
+          pattern: "AC {value} ({type})"
+          example: "AC 15 (natural armor)"
+        hp:
+          pattern: "HP {value} ({formula})"
+          example: "HP 26 (4d8 +8)"
+        speed:
+          pattern: "Speed {value}"
+          example: "Speed 30 ft., swim 20 ft."
+        initiative:
+          pattern: "Initiative {mod} ({score})"
+          example: "Initiative +1 (11)"
+
+    attributes:
+      instructions: "Extract the table of scores, modifiers, and saves."
+      pattern: "| {STAT} {Score} | {Mod} {SaveMod} |"
+      fields:
+        attributes.str: "STR column -> score, mod, save"
+        attributes.dex: "DEX column -> score, mod, save"
+        attributes.con: "CON column -> score, mod, save"
+        attributes.int: "INT column -> score, mod, save"
+        attributes.wis: "WIS column -> score, mod, save"
+        attributes.cha: "CHA column -> score, mod, save"
+
+    secondary_stats:
+      instructions: "Extract list-based properties."
+      fields:
+        vulnerabilities: "Vulnerabilities {list}"
+        resistances: "Resistances {list}"
+        immunities: "Immunities {list}"
+        senses: "Senses {list}"
+        skills: "Skills {list}"
+        challenge: 
+          pattern: "Challenge {rating} (XP {xp}; PB {pb})"
+          example: "Challenge 1 (XP 200; PB +2)"
+
+    ecology:
+      pattern: "Preyed upon by - {preyed_upon} - Preys on - {preys_on}"
+      fields:
+        ecology.preyed_upon_by: "{preyed_upon}"
+        ecology.preys_on: "{preys_on}"
+
+    taming:
+      pattern: "Taming {bond_value} ... Maturity Age {maturity}"
+      fields:
+        taming.bond: "{bond_value}"
+        taming.maturity: "{maturity}"
+      
+    # Specific Block Parsing
+    defensive_instinct:
+      header: "Defensive Instinct"
+      behavior: "Extract full text block. If (x/Day) present, include it."
+      
+    encountering:
+      header: "Encountering"
+      behavior: "Extract flavor text describing behavior during encounters."
+      
+    crafting:
+      header: "Crafting"
+      pattern: "{Type} Crafting\n{Name} - {Cost}\n{Check}"
+      instructions: "Extract footer items into 'crafting' array."
+
+    # Apex Specifics
+    legendary_actions:
+      header: "Legendary Actions"
+      instructions: "Extract 'Uses' count. Parse list of actions."
+      
+    lair_actions:
+      header: "Lair Actions"
+      instructions: "Extract list of actions."
+      
+    regional_effects:
+      header: "Regional Effects"
+      instructions: "Extract list of effects."
+
+  # Biome Mapping Strategy
+  biomes:
+    "The Wealdwoods": "Forests"
+    "The Farplains": "Plains"
+    "The Umbrawells": "Caverns"
+    "The Fenlands": "Wetlands"
+    "The Strands": "Coastal"
+    "The Wayward": "Nomadic"

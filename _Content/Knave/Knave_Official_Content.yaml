@@ -516,3 +516,807 @@
     morale: "8"
     number_appearing: d6 (2d6)
   description: Can shift between human and wolf forms. Only harmed by silver and magic. Fears wolfsbane. Humans who are bitten become a werewolf 2d12 days later if they fail a CON check. Tortured.
+
+# =============================================================================
+# KNAVE SPELLS
+# =============================================================================
+
+- id: knave_spell_adhere
+  name: Adhere
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT objects become sticky enough to hold a PC to a ceiling. Lasts until washed.
+
+- id: knave_spell_animal_friendship
+  name: Animal Friendship
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT animals obey your orders as well as a trained dog for one day.
+
+- id: knave_spell_animate_object
+  name: Animate Object
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT objects obey your orders. They move 15' per round.
+
+- id: knave_spell_anthropomorphize
+  name: Anthropomorphize
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT animals gain human intelligence for one day.
+
+- id: knave_spell_arcane_eye
+  name: Arcane Eye
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You create a magic eye that flies around under your control for INT turns. You can see through it as well as your normal eyes.
+
+- id: knave_spell_astral_prison
+  name: Astral Prison
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object is frozen in time and space within an invulnerable crystal shell for INT turns.
+
+- id: knave_spell_attract
+  name: Attract
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT + 1 objects are strongly magnetically attracted to each other if they come within 10'.
+
+- id: knave_spell_auditory_illusion
+  name: Auditory Illusion
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can create illusory sounds that seem to come from INT directions of your choice.
+
+- id: knave_spell_babble
+  name: Babble
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures must loudly and clearly repeat everything you think. They are otherwise mute.
+
+- id: knave_spell_beast_form
+  name: Beast Form
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You and your possessions turn into an animal for up to INT days.
+
+- id: knave_spell_befuddle
+  name: Befuddle
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A creature is unable to form short-term memories for INT turns.
+
+- id: knave_spell_bend_fate
+  name: Bend Fate
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Roll INT + 1 d20s. After this point, when any creature you can see makes a check, use and discard one of the rolled results until they are all gone.
+
+- id: knave_spell_body_swap
+  name: Body Swap
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You switch bodies with a creature you touch for INT turns. If one body dies, the other dies as well.
+
+- id: knave_spell_catherine
+  name: Catherine
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A woman wearing a blue dress appears for INT hours. She will obey polite, safe requests.
+
+- id: knave_spell_charm
+  name: Charm
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT humanoids believe they are close friends with you until proven otherwise.
+
+- id: knave_spell_command
+  name: Command
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A creature obeys a single, INT-word command that doesn't harm it.
+
+- id: knave_spell_comprehend
+  name: Comprehend
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You are fluent in all languages for INT hours.
+
+- id: knave_spell_control_plants
+  name: Control Plants
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Plants within INT x 10' obey you. They move 5' per round.
+
+- id: knave_spell_control_weather
+  name: Control Weather
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You control your hex's weather for INT hours.
+
+- id: knave_spell_detect_magic
+  name: Detect Magic
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Anything magical within line of sight glows and reveals its properties on request. Lasts 1 day or until you make INT requests.
+
+- id: knave_spell_disassemble
+  name: Disassemble
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT body parts may be detached at will. You can still control them. Lasts until they are reattached.
+
+- id: knave_spell_disguise
+  name: Disguise
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You may alter the look of INT humanoids as long as they remain humanoid. Lasts until the subjects speak.
+
+- id: knave_spell_displace
+  name: Displace
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object appears to be up to INT x 10' from its actual position.
+
+- id: knave_spell_duplicate
+  name: Duplicate
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Create INT fragile, porcelain copies of items you can see.
+
+- id: knave_spell_earthquake
+  name: Earthquake
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: The ground shakes violently for INT rounds.
+
+- id: knave_spell_elasticity
+  name: Elasticity
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Your body can stretch up to INT x 10'.
+
+- id: knave_spell_elemental_wall
+  name: Elemental Wall
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Creates a wall of ice or fire INT x 40' long, 5' wide and 10' tall. The wall can curve however you want.
+
+- id: knave_spell_filch
+  name: Filch
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT visible items teleport to your hands.
+
+- id: knave_spell_fog_cloud
+  name: Fog Cloud
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Fog spreads out in an INT x 10' radius from you. Fades in one turn.
+
+- id: knave_spell_gravity_shift
+  name: Gravity Shift
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures can alter their "down" direction at will.
+
+- id: knave_spell_greed
+  name: Greed
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures become obsessed with possessing a visible item.
+
+- id: knave_spell_haste
+  name: Haste
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures have their movement speed tripled.
+
+- id: knave_spell_hatred
+  name: Hatred
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures start attacking each other for one turn or until one dies.
+
+- id: knave_spell_hear_whispers
+  name: Hear Whispers
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A creature can hear all sounds up to 120' away for INT turns.
+
+- id: knave_spell_hover
+  name: Hover
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Make INT objects hover 2' above the ground, frictionless. They can support the weight of up to INT people.
+
+- id: knave_spell_hypnotize
+  name: Hypnotize
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A creature enters a trance and will answer INT yes or no questions.
+
+- id: knave_spell_icy_touch
+  name: Icy Touch
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An ice layer spreads across a surface, up to INT x 10' in radius.
+
+- id: knave_spell_increase_gravity
+  name: Increase Gravity
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: The gravity within INT x 10' of you triples.
+
+- id: knave_spell_invisible_tether
+  name: Invisible Tether
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT objects within 10' of each other cannot be moved more than 10' apart from each other.
+
+- id: knave_spell_knock
+  name: Knock
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT locks unlock.
+
+- id: knave_spell_leap
+  name: Leap
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can jump up to INT x 10'.
+
+- id: knave_spell_liquid_air
+  name: Liquid Air
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: The air within INT x 10' of you becomes swimmable.
+
+- id: knave_spell_lock
+  name: Lock
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A door cannot be opened by mundane means for INT turns.
+
+- id: knave_spell_magic_suppressor
+  name: Magic Suppressor
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: All magic is nullified while within INT x 10' of you.
+
+- id: knave_spell_manse
+  name: Manse
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A furnished house with INT rooms appears for 1 day. It has no food or gear and does not count as a safe haven.
+
+- id: knave_spell_marble_madness
+  name: Marble Madness
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Your pockets refill with marbles every round for INT rounds.
+
+- id: knave_spell_masquerade
+  name: Masquerade
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: All creatures within INT x 10' of you are compelled to dance.
+
+- id: knave_spell_miniaturize
+  name: Miniaturize
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You and INT other touched creatures become mouse-sized.
+
+- id: knave_spell_mirror_image
+  name: Mirror Image
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT illusory copies of you, under your control, appear.
+
+- id: knave_spell_mirrorwalk
+  name: Mirrorwalk
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A mirror becomes a gate to another mirror you touched today.
+
+- id: knave_spell_multiarm
+  name: Multiarm
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You gain INT extra arms.
+
+- id: knave_spell_night_sphere
+  name: Night Sphere
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An INT x 40' wide sphere of total darkness appears.
+
+- id: knave_spell_objectify
+  name: Objectify
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT willing creatures become inanimate, immobile objects of your choice for as long as they wish. They can still hear and see.
+
+- id: knave_spell_ooze_form
+  name: Ooze Form
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Your body and gear become living slime for INT turns.
+
+- id: knave_spell_pacify
+  name: Pacify
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures develop an intense hatred of violence unless attacked.
+
+- id: knave_spell_phantom_coach
+  name: Phantom Coach
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A coach scoops up INT creatures (who are outdoors) and deposits them in a random adjacent hex.
+
+- id: knave_spell_phobia
+  name: Phobia
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures become terrified of an object.
+
+- id: knave_spell_pit
+  name: Pit
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A pit 10' wide and INT x 10' deep opens in the ground.
+
+- id: knave_spell_primeval_surge
+  name: Primeval Surge
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object grows to the size of an elephant for INT turns. If it is a creature, it is enraged.
+
+- id: knave_spell_psychometry
+  name: Psychometry
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: The GM answers INT yes or no questions about an object.
+
+- id: knave_spell_pull
+  name: Pull
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object of any size is pulled directly towards you with the force of INT men for one round.
+
+- id: knave_spell_push
+  name: Push
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object of any size is pushed directly away from you with the force of INT men for one round.
+
+- id: knave_spell_raise_dead
+  name: Raise Dead
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT unarmed skeletons rise from the ground to serve you.
+
+- id: knave_spell_read_mind
+  name: Read Mind
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can hear the surface thoughts of creatures for INT turns.
+
+- id: knave_spell_repel
+  name: Repel
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT + 1 objects are strongly magnetically repelled from each other if they come within 10'.
+
+- id: knave_spell_scry
+  name: Scry
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can share the vision of a creature you touched today for INT turns.
+
+- id: knave_spell_sculpt_elements
+  name: Sculpt Elements
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Inanimate material acts like clay in your hands for INT turns.
+
+- id: knave_spell_shroud
+  name: Shroud
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures are invisible for as long as they can hold their breath (CON x 3 rounds).
+
+- id: knave_spell_shuffle
+  name: Shuffle
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures switch places randomly.
+
+- id: knave_spell_silence
+  name: Silence
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: All sound is deadened within 10' of you for INT turns.
+
+- id: knave_spell_sleep
+  name: Sleep
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: INT creatures fall asleep.
+
+- id: knave_spell_smoke_form
+  name: Smoke Form
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Your body and gear become living smoke for INT turns.
+
+- id: knave_spell_snail_knight
+  name: Snail Knight
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: In 10 minutes, a knight atop a giant snail rides into view. He may aid you for INT days if he finds you worthy. The snail cannot move faster than a walk.
+
+- id: knave_spell_sniff
+  name: Sniff
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A creature can smell all scents up to 120' away for INT turns.
+
+- id: knave_spell_sort
+  name: Sort
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Inanimate items sort themselves according to INT categories you set. The categories must be visually verifiable.
+
+- id: knave_spell_speak_with_dead
+  name: Speak with Dead
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: The spirit of a touched dead body appears and will answer INT questions (if it can).
+
+- id: knave_spell_spectacle
+  name: Spectacle
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A clearly unreal illusion appears under your control for INT days. It may be up to the size of a palace and has full motion and sound.
+
+- id: knave_spell_spellseize
+  name: Spellseize
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Cast this as a reaction to another spell of level INT or less being cast to make a temporary copy of it that you can cast within 1 day.
+
+- id: knave_spell_spider_climb
+  name: Spider Climb
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can climb surfaces like a spider for INT turns.
+
+- id: knave_spell_summon_cube
+  name: Summon Cube
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You may summon or banish a 5' cube of earth 5 times per round for INT rounds. Cubes must be affixed to the earth or to other cubes.
+
+- id: knave_spell_summon_idol
+  name: Summon Idol
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A carved stone statue up to INT x 10' tall rises from the ground.
+
+- id: knave_spell_swarm
+  name: Swarm
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You become a swarm of crows, rats, or piranhas for INT turns. You only take damage from area effects.
+
+- id: knave_spell_telekinesis
+  name: Telekinesis
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You may mentally manipulate items (one at a time) up to 10 feet away for INT turns.
+
+- id: knave_spell_telepathy
+  name: Telepathy
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can project your thoughts into a mind within INT hexes.
+
+- id: knave_spell_teleport
+  name: Teleport
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object teleports to a clear patch of ground up to INT x 40' away from its origin point.
+
+- id: knave_spell_thaumaturgic_anchor
+  name: Thaumaturgic Anchor
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object becomes the target of every spell cast within 120' of it for INT turns.
+
+- id: knave_spell_thicket
+  name: Thicket
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A thicket of trees and dense brush up to INT x 40' wide sprouts up over the course of one round.
+
+- id: knave_spell_time_jump
+  name: Time Jump
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: An object disappears as it jumps INT turns into the future. When it returns, it destroys any matter in its space.
+
+- id: knave_spell_time_rush
+  name: Time Rush
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Time within INT x 10' of you goes 10 times faster than the rest of the world. Lasts 10 rounds (for you).
+
+- id: knave_spell_time_slow
+  name: Time Slow
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Time within INT x 10' of you goes 10 times slower than the rest of the world. Lasts 10 rounds (for you).
+
+- id: knave_spell_truth_sense
+  name: Truth Sense
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can detect lies for INT hours.
+
+- id: knave_spell_unravel
+  name: Unravel
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Cast this as a reaction to another spell of level INT or less going off to nullify it.
+
+- id: knave_spell_upwell
+  name: Upwell
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A spring of seawater erupts, producing a thousand cubic feet of water per turn for INT turns.
+
+- id: knave_spell_vision
+  name: Vision
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You create an illusory object with full motion and sound that only one creature can sense. Lasts INT turns.
+
+- id: knave_spell_visual_illusion
+  name: Visual Illusion
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You create INT silent, immobile, illusory objects that last until they are touched.
+
+- id: knave_spell_ward
+  name: Ward
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: A silver circle 40' across appears on the ground around you. Until you leave the circle, INT types of things that you name cannot cross it.
+
+- id: knave_spell_web
+  name: Web
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can shoot INT x 40' of strong, sticky web. Lasts until burned.
+
+- id: knave_spell_whirlwind
+  name: Whirlwind
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You create a vortex of air INT x 10' wide that can deflect missiles.
+
+- id: knave_spell_wizard_mark
+  name: Wizard Mark
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: Your finger produces ulfire-colored paint for INT hours. This paint is only visible to you, and can be seen at any distance, even through objects.
+
+- id: knave_spell_x_ray_vision
+  name: X-Ray Vision
+  type: Spell
+  game: Knave
+  source: Core
+  properties:
+    description: You can see through INT feet of material.

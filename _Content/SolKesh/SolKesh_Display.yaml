@@ -1,0 +1,45 @@
+# SolKesh Display Template
+# Visual layout configuration for SolKesh content cards.
+
+game: SolKesh
+version: "1.1"
+
+# 1. Standard Monster
+Monster:
+  colorAccent: "cyan"
+  formatters:
+    extract_last: '(\S+)\s*$'
+    extract_parentheses: '\(([^)]+)\)'
+  summaryTemplate: "{tag:bio.niche:extract_last:emerald} {tag:bio.biome:extract_parentheses:blue} {tag:stage::amber} {stat:ac:AC} {stat:hp:HP} {stat:challenge.rating:CR}"
+  header:
+    - { key: "stage", label: "Stage", badge: true }
+    - { key: "bio.niche", label: "Diet", badge: false }
+    - { key: "subtype", label: "Aggro", badge: false }
+    - { key: "challenge.rating", label: "CR", badge: true }
+  layout:
+    - { type: "description", key: "subtype", class: "text-xs font-bold uppercase tracking-wider text-cyan-400 mb-2" }
+    - { type: "grid", columns: 2, class: "text-xs text-text-muted-light dark:text-text-muted-dark mb-3 border-b border-border-light dark:border-border-dark pb-2", items: [{label: "Class", key: "bio.class"}, {label: "Niche", key: "bio.niche"}, {label: "Biome", key: "bio.biome"}, {label: "Maturity", key: "taming.maturity"}, {label: "Preyed Upon By", key: "ecology.preyed_upon_by"}, {label: "Bond", key: "taming.bond"}, {label: "Preys On", key: "ecology.preys_on"}] }
+    - { type: "properties", keys: ["ac", "hp", "speed", "initiative"], labels: {"ac": "Armor Class", "hp": "Hit Points", "speed": "Speed", "initiative": "Initiative"}, color: "cyan" }
+    - { type: "abilities_grid", key: "attributes" }
+    - { type: "properties", keys: ["vulnerabilities", "resistances", "immunities", "senses", "skills", "challenge.rating"], labels: {"vulnerabilities": "Vuln", "resistances": "Resist", "immunities": "Immune", "senses": "Senses", "skills": "Skills", "challenge.rating": "CR"}, class: "text-sm border-t border-b border-gray-700 py-2 my-2" }
+    - { type: "section_header", title: "Traits" }
+    - { type: "abilities_list", key: "traits" }
+    - { type: "section_header", title: "Actions" }
+    - { type: "abilities_list", key: "actions" }
+    - { type: "section_header", title: "Bonus Actions", if_has: "bonus_actions" }
+    - { type: "abilities_list", key: "bonus_actions" }
+    - { type: "section_header", title: "Reactions", if_has: "reactions" }
+    - { type: "abilities_list", key: "reactions" }
+    
+    # Apex Specifics
+    - { type: "section_header", title: "Legendary Actions", if_has: "legendary_actions", color: "orange" }
+    - { type: "abilities_list", key: "legendary_actions" }
+    - { type: "section_header", title: "Lair Actions", if_has: "lair_actions", color: "orange" }
+    - { type: "abilities_list", key: "lair_actions" }
+    - { type: "section_header", title: "Regional Effects", if_has: "regional_effects", color: "orange" }
+    - { type: "abilities_list", key: "regional_effects" }
+
+    - { type: "text_block", title: "Defensive Instinct", key: "defensive_instinct", if_has: "defensive_instinct", class: "bg-gray-800 p-2 rounded-t border-t border-x border-gray-600 mt-4 italic" }
+    - { type: "text_block", title: "Encountering", key: "encountering", if_has: "encountering", class: "bg-gray-800 p-2 rounded-b border-b border-x border-gray-600 mb-4 text-xs" }
+    - { type: "list", title: "Harvest & Crafting", key: "crafting", if_has: "crafting", item_template: "**${type}**: ${name} (${cost}) - ${check}", class: "mt-4 bg-gray-900 p-2 rounded text-xs" }
+    - { type: "flavor", key: "flavor", italic: true }

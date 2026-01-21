@@ -1080,8 +1080,9 @@ class ForgeController {
             const meta = document.getElementById('forgeFileMeta');
             if (meta) meta.textContent = "Extraction Error";
 
-            if (btn) btn.disabled = false;
             if (status) status.classList.add('hidden');
+        } finally {
+            if (btn) btn.disabled = false;
             this.currentTaskId = null;
             if (controls) controls.classList.add('hidden');
         }

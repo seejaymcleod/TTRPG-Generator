@@ -1,0 +1,1010 @@
+- id: sk_monster_trikautrae
+  name: Trikautrae
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Medium Beast, Unaligned, Defensive
+    flavor: Covered in a skin of fluid, suffused with a neurotoxin, the tendrils that rim the edge of the urchin can temporarily numb the extremities of creatures on contact. Fringed by a ring of large, flattened modified spines, the urchin can pivot and rotate them for a measured pace of locomotion. While slow, the trikautrae can crawl up past the tide to entice nearby scavengers.
+    bio:
+      class: Echinoidea
+      genus: Derived Evolution Colobocentrotus
+      niche: Specialist Carnivore
+      biome: ''
+    ecology:
+      preyed_upon_by: Daugon, Gharril, Slannethiss, Vortautilus
+      preys_on: Black Billed Fingulls
+    taming:
+      bond: 'Null'
+      maturity: Age 6 Seasons
+    ac: '14'
+    hp: 45 (6d8 + 18)
+    speed: 5 ft.
+    initiative: '-1 (9)'
+    attributes:
+      str:
+        score: 16
+        mod: '+3'
+        save: '+3'
+      dex:
+        score: 8
+        mod: '-1'
+        save: '-1'
+      con:
+        score: 16
+        mod: '+3'
+        save: '+3'
+      int:
+        score: 2
+        mod: '-4'
+        save: '-4'
+      wis:
+        score: 8
+        mod: '-1'
+        save: '-1'
+      cha:
+        score: 3
+        mod: '-4'
+        save: '-4'
+    skills: Stealth +1
+    senses: Blindsight 30 ft., passive Perception 10
+    immunities: Blinded, Charmed, Deafened
+    challenge:
+      rating: '2'
+      xp: '450'
+      pb: '+2'
+    traits:
+      - name: Amphibious
+        desc: The trikautrae can breathe both air and water.
+      - name: Tidal Camouflage
+        desc: While the trikautrae remains motionless with its shell closed, it is indistinguishable from the surrounding stones. It has advantage on Dexterity (Stealth) checks made to Hide while in the Strands biome or coastal-like environments.
+    actions:
+      - name: Paralyzing Clamp ( Open )
+        desc: 'Melee Weapon Roll : +5 to hit, reach 5 ft., one target. Hit : 11 (2d6 + 3) Piercing damage. Constitution Saving Throw: DC 14, target creature the trikautrae has successfully hit. Failure: The target creature has the Paralyzed condition for 6 minutes. The Paralyzed target can repeat the Saving Throw at the end of each of its turns, ending the effect on a success.'
+      - name: Devour ( Open)
+        desc: 'Strength Saving Throw: DC 14, one Medium or smaller creature Grappled by the trikautrae (it can one creature swallowed at a time). Failure: The target is swallowed. A swallowed creature has the Paralyzed and Restrained conditions, has Total Cover against attacks and other effects outside the trikautrae, and takes 4 (1d6) Acid damage at the start of each of the trikautrae''s turns. If the trikautrae takes 20 damage or more on a single turn from a creature inside it, the trikautrae must succeed on a DC 19 Constitution Saving Throw at the end of that turn or regurgitate the creature, which falls in a space within 5 ft. of the trikautrae and has the Prone condition. If the trikautrae dies, any swallowed creature no longer has the Restrained condition and can escape from the corpse using 5 ft. of movement, exiting Prone.'
+      - name: Shelled Tackle (Closed)
+        desc: 'Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 11 (2d6 + 3) Bludgeoning damage.'
+    bonus_actions:
+      - name: Clamping Shell
+        desc: The trikautrae can close its shell. While closed it gains +2 AC (total 16) and Resistance to Piercing and Slashing damage and it can use its (closed) Actions. In a subsequent turn, it can use a Bonus Action to Open its shell once more.
+    defensive_instinct: 'When near death, its shell closes against intrusion. Reaction Trigger: When the trikautrae is reduced to 0 hit points. Response - Constitution Saving Throw: DC 12, the trikautrae. Success: The Trikautrae''s mouth remains tightly closed upon death, blocking the Scavenging of its Paralytic Tendril Knot and Concentrated Digestion Enzyme. Any effort to open its mouth requires a DC 17 Strength check.'
+  stage: Standard
+  encountering: Along the rocky shores of the Strands, the trikautrae is often found nestled among the stones and tidal pools. Never venturing far from the water, it often comes ashore at night, opening its wide mouth to entrap prey with its luminescent glowing tendrils that wave in the moonlit air. During the day, nestled among the clams and stones, it is much harder to spot.
+  crafting:
+    - type: Weapon Crafting
+      name: Paralytic Tendril Knot
+      cost: 31 gp
+      check: DC 15 Wisdom (Survival) Check
+    - type: Potion Crafting
+      name: Concentrated Digestion Enzyme
+      cost: 65 gp
+      check: DC 19 Wisdom (Survival) Check
+    - type: Armor Crafting
+      name: Stonescale Shell
+      cost: 28 gp
+      check: DC 14 Wisdom (Survival) Check
+- id: sk_young_daellash_elver
+  name: Daellash Elver
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Beast, Unaligned, Wary
+    flavor: While the daellash adult is a solitary ambush predator, its young benefi t from staying near their kin. Dozens expose their heads into the vacillating current of the waves near the shoreline from tiny little burrows they dig their long bodies. Waiting to snatch any stray fi sh with their trap-like jaws and, just as quickly, retreating into the sand when something larger nears.
+    bio:
+      class: ''
+      genus: ''
+      niche: ambush predator
+      biome: shoreline
+    ecology:
+      preyed_upon_by: ''
+      preys_on: stray fish
+    ac: AC 11
+    hp: HP 5 (2d6-2)
+    speed: Speed 0 ft., swim 30 ft.
+    initiative: Initiative +2 (12)
+    attributes:
+      str:
+        score: 6
+        mod: '-2'
+        save: '-2'
+      dex:
+        score: 14
+        mod: '+2'
+        save: '+4'
+      con:
+        score: 9
+        mod: '-1'
+        save: '-1'
+      int:
+        score: 4
+        mod: '-3'
+        save: '-3'
+      wis:
+        score: 8
+        mod: '-1'
+        save: '-1'
+      cha:
+        score: 8
+        mod: '-1'
+        save: '-1'
+    senses: Darkvision 30 ft., Passive Perception 11
+    challenge:
+      rating: 1/4
+      xp: '10'
+      pb: '2'
+    traits:
+      - name: Saturated Gill Branches
+        desc: The daellash elver can breathe only underwater, and can survive without oxygen for 30 minutes.
+      - name: Hunting Kin
+        desc: The daellash elver has Advantage on attack rolls against a creature if at least one of the daellash elver 's allies is within 5 ft. of the creature and the ally doesn't have the Incapacitated condition.
+    actions:
+      - name: Snapping Bite
+        desc: 'Melee Attack Roll : +4 to hit, reach 5 ft., one target. Hit: 4 (1d4+2) Piercing damage.'
+    reactions:
+      - name: Slip Away
+        desc: 'Trigger: When an enemy the daellash elver can see makes an attack roll against it, before damage is dealt. Response - Dexterity Saving Throw: DC 12, the triggering creature. Failure: The attack misses instead as the elver slips into its hole momentarily.'
+  stage: Young
+  encountering: Dozens expose their heads into the vacillating current of the waves near the shoreline from tiny little burrows they dig their long bodies. Waiting to snatch any stray fi sh with their trap-like jaws and, just as quickly, retreating into the sand when something larger nears.
+- id: sk_young_gharril_juvenile
+  name: Gharril Juvenile
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Wary
+    flavor: A single large eye peers from a shell half-buried in the sand, waves of the tide break upon the small outcropping and patiently it waits for the telltale slap of a flopping stranding fi sh. Bubbles pop and spew eagerly from its maw as the little mollusk spies its landtrapped prey and, with a shimmy and tug, it pulls itself from the sand and rushes over to the glistening meal.
+    bio:
+      class: ''
+      genus: ''
+      niche: mollusk
+      biome: beach
+    ecology:
+      preyed_upon_by: ''
+      preys_on: stranding fish
+    ac: AC 8
+    hp: HP 3 (1d4+1)
+    speed: Speed 30 ft., swim 20 ft.
+    initiative: Initiative +0 (10)
+    senses: Tremorsense 30 ft., Passive Perception 10
+    vulnerabilities: Cold
+    challenge:
+      rating: '0'
+      xp: '0'
+      pb: '2'
+    traits:
+      - name: Amphibious
+        desc: A gharril juvenile can breathe both air and water.
+      - name: Coral Shelled
+        desc: When a gharril juvenile's lower body is buried and remains motionless, it is indistinguishable from a coral outcropping. It has advantage on Dexterity (Stealth) Checks made to Hide while in the Strands biome or coastal-like environments.
+    actions:
+      - name: Shelled Tackle
+        desc: 'Melee Attack Roll: +2 to hit, reach 5 ft., one target. Hit: 1 Bludgeoning damage. If the gharril juvenile moved 20+ ft. straight toward the target immediately before the hit, the target takes an additional 1 Bludgeoning damage.'
+  stage: Young
+- id: sk_young_illithisk_juvenile
+  name: Illithisk Juvenile
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Wary
+    flavor: Chittering amongst its young spawn, the energetic illithisk juveniles instinctively rub up against the larger adults, often pestering the larger crustaceans, and getting a sharp wack of their scythe-like arms to ward them off. While annoying, this behavior prompts the adult's symbiotic urchin to germinate and spread to the younger generation of crustaceans.
+    bio:
+      class: ''
+      genus: ''
+      niche: ''
+      biome: ''
+    ecology:
+      preyed_upon_by: ''
+      preys_on: ''
+    ac: AC 10
+    hp: HP 2 (2d4)
+    speed: Speed 30 ft., swim 20 ft.
+    initiative: Initiative +1 (11)
+    attributes:
+      str:
+        score: 6
+        mod: '-2'
+        save: '-2'
+      dex:
+        score: 13
+        mod: '+1'
+        save: '+1'
+      con:
+        score: 10
+        mod: '+0'
+        save: '+0'
+      int:
+        score: 3
+        mod: '-4'
+        save: '-4'
+      wis:
+        score: 8
+        mod: '-1'
+        save: '-1'
+      cha:
+        score: 3
+        mod: '-4'
+        save: '-4'
+    skills: Stealth +2
+    senses: Darkvision 60 ft., Passive Perception 11
+    challenge:
+      rating: '0'
+      xp: '0'
+      pb: '2'
+    traits:
+      - name: Amphibious
+        desc: An illithisk juvenile can breathe both air and water.
+    actions:
+      - name: Small Scythe
+        desc: 'Melee Attack Roll : +3 to hit, reach 5ft., one target. Hit : 1 Slashing damage.'
+    reactions:
+      - name: Bacterial Burst
+        desc: 'Trigger: The illithisk juvenile is slain. Response - Constitution Saving Throw: DC 14, each creature in a 10 ft. Emanation originating from the illithisk juvenile. Failure: 7 (2d6) Poison damage. Success: Half damage.'
+  stage: Young
+- id: sk_monster_axilot
+  name: Axilot
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Beast, Unaligned, Aggressive
+    flavor: The quick pitter-patter of taloned feet speed over dry plains as the axilot rushes past circling scavengers. A dozen of their kind following suit, all directed at the large freshly slain carcass being torn apart by a famished predator under the arid day sun. With the sound of a sharp crack, it plunges into the fallen beast, its axe-like beak cracking through the ribcage and exposing the nutrient-rich organs for a fast snatch and hasty retreat. Its kin plunging in quick succession while the frustrated predator lashes out at the pestering flightless birds. With their precious prize held firmly in razored beaks, bright scarlet drops trail behind them as they escape the hunting ground. Wolfing down the meat while on the run, they take no rest as the flock continues their search to steal another meal. Bright turquoise feathers help the terrestrial bird sight their kin over long distances. Males sport red tails, signaling their readiness to mate. As its defining trait, the sharp wedge-shaped beak is both light and durable. Microscopic keratin tiles overlap an interior structure made of a foam of bony fibers, aiding the bird to endure bone shattering impacts.
+    bio:
+      class: Aves
+      genus: Derived Evolution Geococcyx
+      niche: Specialist Scavenger Omnivore
+      biome: Farplains
+    ecology:
+      preyed_upon_by: Argustaur, Draffer, Grahknash, Khanith, Maedrynn
+      preys_on: Bloomux, Lhoupin, Tartakka
+    taming:
+      bond: '3'
+      maturity: Age 2 Seasons
+    ac: '10'
+    hp: 10 (3d6)
+    speed: 30 ft.
+    initiative: +3 (13)
+    skills: Acrobatics +4
+    senses: Darkvision 60 ft., Passive Perception 11
+    challenge:
+      rating: '1'
+      xp: '200'
+      pb: '2'
+    traits:
+      - name: Farplains Senses
+        desc: The axilot has Advantage on Wisdom (Perception) checks that rely on sight or smell.
+      - name: Pack Strikes
+        desc: The axilot has Advantage on attack rolls against a creature if at least one of the axilot's allies is within 5 ft. of the creature and the ally doesn't have the Incapacitated condition.
+    actions:
+      - name: Axe Beak
+        desc: 'Melee Attack Roll : +4 to hit, reach 5ft., one target. Hit : 4 (1d4 + 2) Piercing damage. If the axilot moves 20+ ft. immediately before the hit toward a creature, that target takes an extra 4 (1d8) Piercing damage. Constitution Saving Throw: DC 11, target creature that the axilot has successfully hit. Failure: Target creature has Disadvantage on their next attack roll.'
+      - name: Talons
+        desc: 'Melee Attack Roll : +4 to hit, reach 5ft., one target. Hit : 7 (2d4 + 2) Slashing damage.'
+    reactions:
+      - name: Aggressive Instinct (1/Day)
+        desc: 'Trigger: An allied axilot within 60 ft. that it can see is slain. Response: Wisdom Saving Throw: DC 10, the axilot. Success: It makes an Talons Attack Action against any enemy creature within 5 ft. as a Bonus Action if within range. Failure: It takes a Disengage action and attempts to move as far as possible from any hostile creatures.'
+      - name: Flock Coordination
+        desc: 'Trigger: An allied axilot within 10 ft. of it that it can see makes a Dash action. Response: The axilot can make a Dash action or Disengage action and move in the same direction if possible.'
+  stage: Standard
+  encountering: Finding an axilot is a much easier task than catching one, as the fleet-footed birds are quick to react to predators and unknown creatures, rushing off far from their reach. Although their striking method is devastating for their size, it can also be their downfall if an axilot charges and becomes stuck in the carcass, making itself easy prey to be caught.
+  crafting:
+    - type: Weapon Crafting
+      name: Axilot Beak
+      cost: 16 gp
+      check: DC 18 Wisdom (Survival) Check
+    - type: Consumable and Hatching
+      name: Pebbleskin Egg
+      cost: 90 gp
+      check: DC 19 Intelligence (Nature) Check
+    - type: Ammunition Crafting
+      name: 1d12 Quill Feather
+      cost: 8 sp
+      check: DC 9 Wisdom (Survival) Check
+- id: sk_monster_bloomux
+  name: Bloomux
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Large Beast, Unaligned, Wary
+    flavor: Among the lush flower-fields of Valedayn, slow plodding bloomux graze in great herds. Sipping nectar from the leagues of flowering fields with their long prehensile proboscises, these peaceful arthropods, standing at nearly seven feet tall, want nothing more than to grow their honeywombs for their gestating pupae during the summer. When predators approach the herd, the nectarivores will turn their spiny backsides outwards to dissuade any foolish hunter that attempts to get near. Though this presents their precious honeywombs to the attacker, the potential explosion of chitinous spikes, sticky nectar and wriggling pupae often proves fatal to predators, and allows the larvae to be eaten by scavengers for the next stage in their development.
+    bio:
+      class: Insecta
+      genus: Derived Evolution Macrosiphum
+      niche: Specialized Nectarivore
+      biome: Valedayn
+    ecology:
+      preyed_upon_by: Axilot, Draffer, Grahknash, Khanith, Maedrynn, Tyrandroth
+      preys_on: ''
+    taming:
+      bond: '3'
+      maturity: Age 3 Seasons
+    ac: '13'
+    hp: 45 (6d10 + 12)
+    speed: ''
+    skills: Perception +3
+    senses: Passive Perception 13
+    vulnerabilities: Piercing
+    challenge:
+      rating: '2'
+      xp: '450'
+      pb: '2'
+    traits:
+      - name: Sweetest Scent
+        desc: The bloomux have Advantage on any attack rolls against non-bloomux creatures covered in nectar.
+      - name: Prickly Hide
+        desc: At the start of it its turn, the bloomux deals 3 (1d6) Piercing damage to any creature Grappling it.
+      - name: Fatal Burst
+        desc: 'When the bloomux dies, it explodes in a burst of nectar and spines. DC 11 Dexterity Saving Throw, each creature in a 15 ft. radius Sphere centered on the bloomux. Failure: 10 (3D6) Piercing damage and is covered in a sticky honey, Reducing their movement speed by half. Success: Half damage. A nectarcovered creature can use an Action to wipe off the nectar.'
+    actions:
+      - name: Prickly Spines
+        desc: 'Melee Attack Roll : +5 to hit, reach 5ft., one target. Hit : 12 (3d6 + 3) Piercing damage.'
+    reactions:
+      - name: Wary Instinct (Once)
+        desc: 'Trigger: If the bloomux suffers a total of 10 or more damage in a single round of combat. Response: Constitution Saving Throw: DC 16, the bloomux. Failure: The bloomux immediately uses its Fatal Burst ability.'
+    bonus_actions:
+      - name: Honeyed Sacrifice
+        desc: The bloomux can trigger its Fatal Burst ability instantly, killing itself in the process.
+  stage: Standard
+  encountering: These ponderous beasts are easy to spot in large swarms of twenty to sixty individuals, roaming south to north as the fields bloom. While they are not a species liable to stampede, if the swarm feels endangered they'll be quick to turn their spines outward to ward off any dangerous predators, only sacrificing themselves in a sequence of fatal eruptions in the most direst of situations to save their young pupae.
+  crafting:
+    - type: Potion Brewing
+      name: Honeywomb Nectar
+      cost: 42 gp
+      check: DC 12 Wisdom (Survival) Check
+    - type: Trap Crafting
+      name: 1d12 Bloomspine
+      cost: 4 gp
+      check: DC 8 Wisdom (Survival) Check
+    - type: Trap Crafting
+      name: Curled Proboscis
+      cost: 62 gp
+      check: DC 18 Wisdom (Survival) Check
+- id: sk_monster_drafian
+  name: Drafian
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Large Beast, Unaligned, Defensive
+    flavor: After eons of pressure to hasten the vulnerable metamorphosis that transforms a caterpillar into a butterfly, one species developed wing-like membranes during its larval form and simply continued feasting. This form of neoteny forced the creature to forgo the usual brief life span of sexual maturity and, instead the insect now grows large and lives past their year-long lifespan, hibernating in leafy nests and reaching egg laying adulthood once growing to a foot in length. While not capable of true flight like a butterfly, the drafian, in its near larval state can nonetheless glide across great distances to find rich feeding grounds. Such a gentle flight would be an easy meal for most predators had the drafian's bodily fluids not be suffused with a neurotoxin from feasting on the toxic leaves of a drafwood tree. A wide sail-like membrane spreads outwards to catch updrafts and allow the drafian to glide effortlessly across fields and rivers. Folding its wing-membranes close to its body, the drafian navigates along treetops in a similar manner to its larval caterpillar origins. When needing to move quickly, it launches itself upwards and spreads the thin jelly-like skin out to glide effortlessly. Rows of spiracles adorn the sides of the soft fleshed insect. These allow the creature to grow large as it can take in vast amounts of oxygen when in flight.
+    bio:
+      class: Insecta
+      genus: Derived Evolution Cyclophora
+      niche: Arboreal Specialist Herbivore
+      biome: Farplains
+    ecology:
+      preyed_upon_by: Maedrynn, Skyelarx, Tyrandroth, Ynnil
+      preys_on: ''
+    taming:
+      bond: '4'
+      maturity: Age 1 Season
+    ac: '13'
+    hp: 45 (6d10 + 12)
+    speed: 20 ft., glide 30 ft.
+    initiative: '-1 (9)'
+    attributes:
+      str:
+        score: 16
+        mod: '+3'
+        save: '+3'
+      dex:
+        score: 8
+        mod: '-1'
+        save: '-1'
+      con:
+        score: 14
+        mod: '+2'
+        save: '+2'
+      int:
+        score: 2
+        mod: '-4'
+        save: '-4'
+      wis:
+        score: 7
+        mod: '-2'
+        save: '-2'
+      cha:
+        score: 6
+        mod: '-3'
+        save: '-3'
+    skills: Acrobatics +1, Perception +0, Stealth +1
+    senses: Passive Perception 10
+    challenge:
+      rating: '2'
+      xp: '450'
+      pb: '2'
+    traits:
+      - name: Wary Eyes of Prey
+        desc: The drafian has Advantage on Wisdom (Perception) checks that rely on sight.
+      - name: Leafy Simulacrum
+        desc: The drafian has Advantage on Dexterity (Stealth) checks made to hide in its natural environments of the fields and forests.
+      - name: Leaping Glide
+        desc: The drafian can leap into the air 20 ft. and begin gliding. During this glide, it gains a flying speed of 30 ft., and can move 5 ft. horizontally for every 1 ft. it descends, and it can pass over other creatures and obstacles.
+      - name: Drafwood Toxic Blood
+        desc: 'Constitution Saving Throw: DC 14, each creature that successfully damages the drafian with a melee attack. Failure: 7 (2d6) Poison damage and the target has the Poisoned condition. The target may repeat the save at the end of each of its turns, ending the effect on itself on a success. After 10 minutes, it succeeds automatically. While Poisoned, the target has Disadvantage on all Wisdom rolls and takes 2 (1d4) Poison damage at the start of its turn.'
+    actions:
+      - name: Nibbling Bite
+        desc: 'Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) Piercing damage.'
+    reactions:
+      - name: Defensive Instinct (1/Day)
+        desc: 'Trigger: A creature the drafian can see hits it with an attack roll. Response: Dexterity Saving Throw: DC 14, each creature in a 20 ft. Cone originating from behind the drafian. Failure: 7 (2d6) Poison damage. Success: Half damage.'
+    bonus_actions:
+      - name: Silken Stream
+        desc: 'While the drafian glides, it may release a wide column of thin threads of silk for the full length of its movement. Constitution Saving Throw: DC 14, each creature in a 30 ft. long, 5 ft. wide line. Failure: 3 (1d6) Poison damage and the target has the Poisoned condition. The target may repeat the save at the end of each of its turns, ending the effect on itself on a success. After 10 minutes, it succeeds automatically. While Poisoned, the target has Disadvantage on all Wisdom Rolls and takes 2 (1d4) Poison damage at the start of its turn.'
+  stage: Standard
+  encountering: With little to concern itself besides eating and breeding, the drafian is either evading or gliding across the Farplains in search of plants to feed on during the spring and summer months. Most predators stay clear of the bright green insect for the ill effects of its blood and potentially fatal strands of silk that stretch across the fields.
+  crafting:
+    - type: Weapon Crafting
+      name: Spool of Drafwood Silk
+      cost: 12 GP
+      check: DC 14 Wisdom (Survival) Check
+    - type: Potion Brewing
+      name: Drafian Haemolymph
+      cost: 18 GP
+      check: DC 13 Wisdom (Survival) Check
+    - type: Weapon Crafting
+      name: Rudder Membrane
+      cost: 33 GP
+      check: DC 14 Wisdom (Survival) Check
+- id: sk_monster_khanaur
+  name: Khanaur
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Large Beast, Unaligned, Defensive
+    flavor: A deep grinding sound heralds the peaceful packs of khanaur as they chew through stalks of tall grass and dig up tubers to feed their voracious appetites. Roaming in groups of several individuals, their larvae stuck on the undersides of the adult members to keep their familial packs tight and moving, the khanaur travel the Farplains in slow seasonal migrations. Grazing in close proximity to each other to ward off any nearby predators, while the larger females of their group patrol, their massive forelimbs stomping into the soil to warn any that think they can attempt to penetrate their heavily armored chitin shells. Keeping pace with their roaming herd are packs of khanith, picking off smaller predators that would otherwise prey on the larvae grubs, their presence welcomed by their larger cousins.
+    bio:
+      class: Insecta
+      genus: Derived Evolution Micropeplus
+      niche: Generalist Grazing Herbivore
+      biome: Farplains
+    ecology:
+      preyed_upon_by: Argustaur, Draffer, Grahknash, Maedrynn, Tyrandroth
+      preys_on: ''
+    taming:
+      bond: '4'
+      maturity: Age 3 Seasons
+    ac: '18'
+    hp: 85 (9d10 + 36)
+    speed: 30 ft.
+    initiative: '-1 (9)'
+    attributes:
+      str:
+        score: 20
+        mod: '+5'
+        save: '+7'
+      dex:
+        score: 8
+        mod: '-1'
+        save: '-1'
+      con:
+        score: 18
+        mod: '+4'
+        save: '+6'
+      int:
+        score: 2
+        mod: '-4'
+        save: '-4'
+      wis:
+        score: 7
+        mod: '-2'
+        save: '-2'
+      cha:
+        score: 10
+        mod: '+0'
+        save: '+0'
+    senses: Darkvision 60 ft., Passive Perception 9
+    resistances: Slashing
+    challenge:
+      rating: '4'
+      xp: '1100'
+      pb: '2'
+    traits:
+      - name: Pack Protector
+        desc: By the use of its enormously armored arms, when an ally of a khanaur is within 5 ft. and is the target of an attack, it can use its Reaction to force Disadvantage on the attacking creatures attack roll.
+      - name: Distant Kin
+        desc: If a friendly khanaur or khanith creature is attacked within 60 ft., surrounding khanaur become aware by the use of pheromones. Khanith are considered allies to the khanaur.
+      - name: Forlorn Grief
+        desc: Whenever the khanaur starts its turn with 20 hit points or fewer, and is the last of its allies within 60 ft., the khanaur enrages. The khanaur has Advantage on attack rolls, and is unable to Disengage from combat once engaged. Once the khanaur is enraged, it continues to do so until it is slain.
+    actions:
+      - name: Multiattack
+        desc: The khanaur makes two attacks, using its Crushing Fore Claws and Mandible Bite in any combination.
+      - name: Crushing Fore Claws
+        desc: 'Melee Attack Roll : +7 to hit, reach 5ft., one target. Hit : 10 (1d10 + 5) Bludgeoning damage. If the target is a Large or smaller creature, and the khanaur moved 20+ ft. straight toward it immediately before the hit, the target has the Prone condition.'
+      - name: Mandible Bite
+        desc: 'Melee Weapon Attack : +7 to hit, reach 5ft., one target. Hit : 14 (2d8 + 5) Piercing damage.'
+    defensive_instinct: 'When an allied creature within 60 ft. of it that the khanaur can see is slain. On its turn the khanaur slams the ground in fury. Strength Saving Throw: DC 14, any creature within an 10 ft. Emanation centered on the khanaur. Failure: Target creature has the Prone condition.'
+  stage: Standard
+  encountering: These large herbivores look deceptively docile when slowly grazing in the fields, their eyes staring vacantly as they chew, but they are always watching for danger. Once confronted by aggressive creatures they quickly form a defensive posture, their instinctual need to protect taking over. If roused to violence, there is little that would calm them until the hostile is long gone or crushed into the soil.
+  crafting:
+    - type: Potion Brewing
+      name: Heavy Tarsal Claw
+      cost: 49 gp
+      check: DC 14 Wisdom (Survival) Check
+    - type: Weapon Crafting
+      name: Piercing Mandible
+      cost: 87 gp
+      check: DC 18 Wisdom (Survival) Check
+    - type: Armor Crafting
+      name: Reinforced Chitin Plate
+      cost: 62 gp
+      check: DC 16 Wisdom (Survival) Check
+- id: sk_apex_maedrynn_murmuration
+  name: Maedrynn Murmuration
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Gargantuan Swarm of Tiny Beasts, Unaligned, Wary
+    flavor: Ordinarily found near the prairies that skirt the edges of the Wealdwoods, the diminutive hummingbird flutters about from flower to flower, its green shimmering feathers as welcome as a calm and peaceful summer day. That all changes quickly when spring warms the grasses and a keening death knell is heard screeching across the open skies of the Farplains. Before long, thousands of them gather into a great murmur, darkening the sky above the flat lands, becoming a natural calamity and blocking out the sun. A single maedrynn hummingbird may be of little threat, but during the ferocious but fortunately short mating season, they become an absolute apex predator together. Countless birds descending like a tornado of serrated beaks onto any creature that is foolish enough to be out in the open daylight, ripping and flensing flesh from bone in a frantic need to fuel their rapid and voracious metabolism.
+    bio:
+      class: Aves
+      genus: Derived Evolution Androdon
+      niche: Aerial Apex Omnivore
+      biome: Farplains
+    ecology:
+      preyed_upon_by: ''
+      preys_on: Argustaur, Bloomux, Khanaur, Khanith, Korruk, Rutort, Vinnirex, Sacrissian, Tartakka, Tyrandroth
+    taming:
+      bond: 'Null'
+      maturity: Age 2 Seasons
+    ac: '21'
+    hp: 546 (28d20 + 252)
+    speed: 10 ft., fly 60 ft.
+    initiative: +8 (18)
+    attributes:
+      str:
+        score: 18
+        mod: '+4'
+        save: '+4'
+      dex:
+        score: 26
+        mod: '+8'
+        save: '+15'
+      con:
+        score: 28
+        mod: '+9'
+        save: '+16'
+      int:
+        score: 7
+        mod: '-2'
+        save: '-2'
+      wis:
+        score: 16
+        mod: '+3'
+        save: '+3'
+      cha:
+        score: 4
+        mod: '-3'
+        save: '-3'
+    skills: Acrobatics +15, Perception +10
+    senses: Passive Perception 20
+    vulnerabilities: Thunder
+    resistances: Bludgeoning, Piercing, Slashing
+    immunities: Charmed, Frightened, Grappled, Paralyzed, Petrified, Prone, Restrained, Stunned
+    challenge:
+      rating: '24'
+      xp: 62,000
+      pb: '7'
+    traits:
+      - name: Thousands of Eyes
+        desc: The swarm has Advantage on Wisdom (Perception) checks that rely on sight.
+      - name: Cloud of Birds
+        desc: The swarm occupies a 30 ft. radius (Gargantuan) space and can move through any opening large enough for a Tiny creature.
+      - name: Undulating Murmuration
+        desc: The swarm of birds moves in dizzying patterns. Ranged attack rolls outside of 60 ft. are made with Disadvantage against it.
+      - name: Trilling Death
+        desc: Creatures have the Deafened condition while within the swarm's space. In addition, any creature within 60 ft. must succeed on a DC 15 Constitution Saving Throw on each of their turns to maintain their Concentration.
+      - name: Frenzied
+        desc: The swarm has Advantage on attack rolls against Bloodied creatures.
+    actions:
+      - name: Multiattack
+        desc: The swarm makes three attacks, using Serrated Beaks, Hungering Outliers, or Feasting Storm in in any combination.
+      - name: Serrated Beaks
+        desc: 'Melee Attack Roll: +15 to hit, reach 0 ft., one target in the swarm''s space. Hit: 36 (8d6+8) Slashing damage, or 22 (4d6+8) Slashing damage if the swarm is Bloodied. Dexterity Saving Throw: DC 8, one creature that the swarm successfully hit with its Serrated Beaks attack. Failure: The target has the Blind condition until the swarms next turn, as the birds slash at their eyes.'
+      - name: Hungering Outliers
+        desc: 'Ranged Attack Roll: +15 to hit, reach 60 ft., one target. Hit: 29 (6d6+8) Slashing damage, or 18 (3d6+8) Slashing damage if the swarm is Bloodied.'
+      - name: Feasting Storm
+        desc: 'Dexterity Saving Throw: DC 18, all creatures within the swarm''s space. Failure: 38 (12d4+8) Slashing damage and the creature has the Prone condition, or 23 (6d4+8) Slashing damage if the swarm is Bloodied. Success: Half damage.'
+    defensive_instinct: 'When Bloodied and in melee combat. On its turn, Wisdom Saving Throw: DC 18, the swarm. Success: Individual maedrynn flock to join the swarm, the maedrynn murmuration swarm immediately gains 10 (1d20) Health Points (HP).'
+  stage: Apex
+  legendary_actions:
+    - name: Legendary Action Uses
+      desc: 3 (4 in Lair) . Immediately after another creature's turn, the maedrynn murmuration can expend a Legendary Action Use to take one of the following actions. The swarm regains all expended Legendary Actions at the start of each of its turns.
+    - name: Disperse
+      desc: The swarm spreads out in a tall column, leaving more space between each individual bird. The swarm gains +1 bonus to its Armor Class (total AC 22) and loses its Vulnerability to Thunder damage, until the beginning of its turn.
+    - name: Screeching Cacophony
+      desc: 'Constitution Saving Throw: DC 14, all creatures within the swarm''s space . Failure: 16 (3d10) Thunder damage. Success: Half damage.'
+    - name: Pulling Beaks
+      desc: 'Dexterity Saving Throw: DC 16, one target in the swarm''s space. Failure: Target has the Restrained condition (Escape DC 14) as birds pluck and pull at their limbs.'
+  lair_actions:
+    - name: Fade and Form
+      desc: The maedrynn murmuration swarm breaks apart into thousands of individual birds and reforms into a free space within 60 ft. of itself.
+    - name: Darting Death Dealers
+      desc: 'The maedrynn murmuration swarm designates a point within 60 ft. of itself. Dexterity Saving Throw: DC 18, all creatures within 5 ft. of the selected point. Failure: 17 (5d6) Slashing damage. Success: Half damage.'
+    - name: Cloud of Fear
+      desc: 'Wisdom Saving Throw: DC 17, all creatures within 60 ft. that can see or hear the swarm. Failure: Target creature has the Frightened condition until the maedrynn murmuration swarm''s next turn.'
+    - name: Buffeting Wings
+      desc: 'The maedrynn murmuration swarm selects a target creature within 60 ft. of itself. Strength Saving Throw: DC 14, target creature. Failure: The creature is pushed 10 ft. in the direction of the swarm''s choice.'
+    - name: Distracted Feast
+      desc: The maedrynn murmuration swarm designates a point within 60 ft. of itself that hosts the remains of one of their earlier meals. Until the maedrynn murmuration swarm's next turn, 20 ft. from that point is Obscured, as the birds thickly flock and feast.
+    - name: '[Seasonal] Calling Cries'
+      desc: The cries of hunger gather more maedrynn to join the murmur. The maedrynn murmuration swarm gains 5 (1d10) Health Points (HP) as more birds join the swarm.
+  regional_effects:
+    - name: Grave Temptations
+      desc: Emboldened by the multitude of bones, scavengers try their luck on the outskirts, 6 miles from the Lair. Double the amount of creatures from the results on the Scavengers Table.
+    - name: Lingering Hunger
+      desc: Sated individual maedrynn hummingbirds busying themselves with preparing their nests within 5 miles of the Lair may still single out nearby creatures for a bite of flesh. Increased likelihood to target Maedrynn Young (pg. 98).
+    - name: Dreadful Flight
+      desc: 'Flying creatures within 4 miles of the Lair are overcome with fear from the cloud of birds on the horizon. Wisdom Saving Throw: DC 12, any creature with a flying speed attempting to move. Failure: Target creature lowers their flying speed to a minimum of 10 ft., the target repeats the save at the end of each of its turns, ending the effect on itself on a success. After 5 minutes, it succeeds automatically and doesn''t need to take this test again for 1 day.'
+    - name: Barren Plains
+      desc: Little is left of the many creatures that roamed these fields but bloody bones. Travelers within 3 miles of the Lair must re-roll the first of any creature results for Hunting Expeditions.
+    - name: Ceaseless Trilling
+      desc: The massive murmuration of hummingbirds shriek and call constantly and from within 2 miles of the Lair. Creatures that attempt a Long Rest must succeed on a DC 15 Constitution Saving Throw or gain one level of Exhaustion from the fitful rest. Additionally, creatures have Disadvantage on Wisdom (Perception) checks that rely on hearing.
+    - name: Watchful Cloud
+      desc: Within 1 mile, the frenzied eyes of thousands of maedrynn above look hungrily for the movement of any prey. Creatures out in the open, 1 mile of the Lair must make a DC 14 Dexterity (Stealth) check to not alert the maedrynn murmuration of their presence for every hour they remain outside.
+  encountering: Travelers stepping on to the Farplains often must contend with ferocious lizards, gigantic insects and more. Choosing to journey during the brief reign of the maedrynn is a recipe for annihilation, leaving little but bones for the grass.
+  crafting:
+    - type: Tool Crafting
+      name: Moribeak
+      cost: 287 gp
+      check: DC 21 Wisdom (Survival) Check
+    - type: Potion Brewing
+      name: Glucose Rich Blood
+      cost: 115 gp
+      check: DC 19 Wisdom (Survival) Check
+    - type: Armor Crafting
+      name: 1d20 Iridescent Feather
+      cost: 16 gp
+      check: DC 14 Wisdom (Survival) Check
+    - type: Tool Crafting
+      name: Crested Skull
+      cost: 381 gp
+      check: DC 22 Wisdom (Survival) Check
+    - type: Tool Crafting
+      name: Darting Tongue
+      cost: 124 gp
+      check: DC 17 Wisdom (Survival) Check
+    - type: Hatching
+      name: Oval Egg
+      cost: 326 gp
+      check: DC 26 Intelligence ( Nature) Check
+- id: sk_monster_farplains_young
+  name: Farplains Young
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Wary
+    flavor: Far from removed from the terrifying murmur that slaughters anything under its shadow, a single maedrynn looks to be nothing more than a regular hummingbird. Only when threatened do they make their particular shrieking call, summoning others to flock in aid, their aggressive ripping bites begin to be reminiscent of their lethal mating season.
+    taming:
+      bond: '4'
+      maturity: 2 Seasons
+    ac: '12'
+    hp: 4 (1d4)
+    speed: fly 60 ft.
+    skills: Acrobatics +5, Performance +3, Stealth +5
+    senses: Passive Perception 11
+    challenge:
+      rating: 1/4
+      xp: '50'
+      pb: '2'
+    traits:
+      - name: Agile Flier
+        desc: Th e maedrynn doesn't provoke an Opportunity Attack when it flies out of an enemy's reach.
+    actions:
+      - name: Moribeak Shriek
+        desc: Th e maedrynn can call for aid. Any nearby maedrynn within 100 ft. may answer and join the maedrynn by its next turn.
+      - name: Ripping Beak
+        desc: 'Melee Attack Roll : +5 to hit, reach 5 ft., one target. Hit : 1 Slashing damage.'
+    reactions:
+      - name: Flutter Flight
+        desc: 'Trigger: A creature the maedrynn can see hits it with an attack roll. Response - Dexterity Saving Th row: DC 14, the triggering creature. Failure: Th e attack misses instead.'
+  stage: Standard
+- id: sk_monster_tyrandroth_nymph
+  name: Tyrandroth Nymph
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Aggressive
+    flavor: Swimming in shallow ponds and lakes that dot the great expanse of the Farplains, the aggressive nymphs outweigh any of their kind, capable of snatching fully grown fi sh in their grasping mandibles. Rapacious in the extreme, the nymph hunts and feasts the moment it hatches, rushing to not only escape the water and take flight, but to do so before hundreds of its kin do the same.
+    ac: '9'
+    hp: 4 (2d4)
+    speed: 10 ft., swim 30 ft.
+    initiative: +2 (12)
+    skills: Perception +3 , Stealth +3
+    senses: Passive Perception 11
+    challenge:
+      rating: 1/4
+      xp: '50'
+      pb: '2'
+    traits:
+      - name: Aquatic Infancy
+        desc: Th e tyrandroth nymph can breathe only underwater.
+      - name: Lethal Water's Edge
+        desc: When submerged in water, the tyrandroth nymph has Advantage on attack rolls against any creature it has Surprised.
+  stage: Standard
+- id: sk_monster_draffer_cub
+  name: Draffer Cub
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Beast, Unaligned, Aggressive
+    flavor: Born to race alongside its pack, the draffer cub rushes as quickly as its small legs can carry it to keep up with them on the hunt. While its tusks are little more than sharpened nubs, the cub learns from watching the pack how to encircle and harass the herds, to slash and cut to bleed them dry. Feasting on the scavenged remains, the adults often leave the rich organ meat for their young to grow strong on.
+    ac: '11'
+    hp: 7 (2d6)
+    speed: 40 ft.
+    initiative: +2 (12)
+    attributes:
+      str:
+        score: 10
+        mod: '+0'
+        save: '+0'
+      dex:
+        score: 15
+        mod: '+2'
+        save: '+2'
+      con:
+        score: 10
+        mod: '+0'
+        save: '+0'
+      int:
+        score: 5
+        mod: '-3'
+        save: '-3'
+      wis:
+        score: 11
+        mod: '+1'
+        save: '+1'
+      cha:
+        score: 8
+        mod: '-1'
+        save: '-1'
+    skills: Acrobatics +4
+    senses: Passive Perception 11
+    challenge:
+      rating: 1/4
+      xp: '50'
+      pb: '2'
+    traits:
+      - name: Enthusiastic Leap
+        desc: With a 10 ft. running start, a draffer cub can leap up to 10 ft. long and 5 ft. high.
+      - name: Bounding Energy
+        desc: If the draffer cub succeeds on a Dexterity Saving Th row, it takes no damage from effects that would deal half damage on Success.
+    actions:
+      - name: Tiny Tusks
+        desc: 'Melee Attack Roll : +4 to hit, reach 5ft., one target. Hit: 5 (1d6+2) Slashing damage.'
+  stage: Standard
+- id: sk_monster_tartakka_calf
+  name: Tartakka Calf
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Beast, Unaligned, Aggressive
+    flavor: Purposefully breeding only the most quarrelsome individuals to protect their quick moving herd, it is no wonder that the tartakka calves are found to be incredibly excited and playful. Often bounding ahead of the herd, only reigning back into the protective circle of the adults when their curiosity disturbs something large and frightful.
+    ac: '10'
+    hp: 7 (2d6)
+    speed: 30 ft.
+    initiative: +1 (11)
+    attributes:
+      str:
+        score: 14
+        mod: '+2'
+        save: '+2'
+      dex:
+        score: 12
+        mod: '+1'
+        save: '+1'
+      con:
+        score: 12
+        mod: '+1'
+        save: '+3'
+      int:
+        score: 4
+        mod: '-3'
+        save: '-3'
+      wis:
+        score: 5
+        mod: '-3'
+        save: '-3'
+      cha:
+        score: 7
+        mod: '-2'
+        save: '-2'
+    senses: Passive Perception 7
+    challenge:
+      rating: '0'
+      xp: '10'
+      pb: '2'
+    traits:
+      - name: Playful
+        desc: Th e tartakka calf has Disadvantage on Perception (Wisdom) checks, as it's too busy rushing around joyfully.
+    actions:
+      - name: Short Toothed Bite
+        desc: 'Melee Attack Roll: +4 to hit, reach 5 ft., one target. Hit : 1 Piercing damage.'
+    bonus_actions:
+      - name: Quick Stepping
+        desc: Th e tartakka calf can take the Dash action while in combat, and doesn't provoke an Opportunity Attack when it moves out of an enemy's reach.
+  stage: Standard
+- id: sk_monster_secondskin_mold
+  name: Secondskin Mold
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Variable Sized Natural Trap, Unaligned
+    flavor: Minuscule spores float across the windswept Farplains, harmless in their minute size. Only an infinitesimally rare few will chance upon the corpse of a creature to settle on and rapidly infest. This slime mold spreads across the bones, rendering the beast's corpse into a decrepit version of its living form, covered in fruiting bodies ready to propegate.
+    ac: '1'
+    hp: 2 (1d4)
+    speed: 0 ft.
+    senses: None
+    immunities: Blinded, Charmed, Deafened, Exhaustion, Frightened, Prone
+    traits:
+      - name: Trap Space
+        desc: This gray mold spreads across the bones of long dead creatures, its Trap Space filling the same area of the slain creature's size, ranging from Small to Gargantuan.
+      - name: Countering
+        desc: 'While often hard to see, gray motes of spores gently rise off the fuzzy mold that clings to the bones. Wisdom (Perception) Check: DC 16. Success: The Natural Trap is identified.'
+    reactions:
+      - name: Gray Lung
+        desc: 'Trigger: When a creature enters its Trap Space. Response -Constitution Saving Throw: DC 16, the creature that breathes triggered the Trap. Failure: 7 (3d4) Necrotic damage at the start of each of its turns due to the mold invading and digesting its lungs. The target creature repeats the save at the end of each of its turns, ending the effect on itself on a success. After 10 minutes, it succeeds automatically.'
+  stage: Standard
+- id: sk_monster_shrillion
+  name: Shrillion
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Natural Trap, Unaligned
+    flavor: Often found above extensive Umbrawells caverns, the large plant that grows in the loamy soil converts much of the excess sulfur dioxide that leaks up from the subterranean acidic lifeforms. Stored within chambers within its cloves they will loudly expel from seams once disturbed.
+    ac: '1'
+    hp: 2 (1d4)
+    speed: 0 ft.
+    senses: None
+    immunities: Blinded, Charmed, Deafened, Exhaustion, Frightened, Prone
+    traits:
+      - name: Trap Space
+        desc: The shrillion grow in patches underneath the soil surface, half a dozen grow in a space that takes up 5 ft. Square. Usually only the tall thin leaves are visible above The Natural
+      - name: Countering
+        desc: 'the soil. Wisdom (Perception) Check: DC 12. Success: Trap is identified.'
+    reactions:
+      - name: Alerting Shrill
+        desc: 'Trigger: When a creature enters its Trap Space. Response -Dexterity Saving Throw: DC 12, the creature that triggered the Trap. Failure: The disturbed root releases a highly pressurized gas that emits an audible whine that can be clearly heard within 300 ft. of it. The shrillion continues to whine until the disturbance moves out of its Trap Space.'
+  stage: Standard
+- id: sk_monster_flint_reed
+  name: Flint Reed
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Medium Natural Trap, Unaligned
+    flavor: During the fall dry season, when the grasses grow brown and brittle, silvery filaments fray at the edges of the flint reed grasses which will rub against each other in the heavy winds, sparking flame and igniting wide swathes of fields. Seeds are then dropped into the smoldering, ash-fertile soil for next year's growth. A high concentration of iron in the silvery fibers that fray at the edge of each leaf allow the plant to spark flame when agitated
+    ac: '1'
+    hp: 2 (1d4)
+    speed: 0 ft.
+    senses: None
+    immunities: Blinded, Bludgeoning, Charmed, Deafened, Exhaustion, Frightened, Piercing, Prone
+    traits:
+      - name: Trap Space
+        desc: The waist-high grasses grow in clustered patches spread over a 5 ft. Square.
+      - name: Countering
+        desc: 'While the grass can be seen nearly all year long, it is only during the dry fall seasons that it grows silver fibers that can spark flame. Wisdom (Perception) Check: DC 10. Success: The Natural Trap is identified'
+    reactions:
+      - name: Cleansing Spark
+        desc: 'Trigger: When a creature steps within its Trap Space. Response -Dexterity Saving Throw: DC 17, the creature that triggered the Trap. Failure: A 10 ft. cube of fire engulfs the dry grass. An inferno damages any creatures or objects, dealing 11 (4d10) Fire damage immediately and again every minute. The fire can be doused with 10 gallons of water, and within 4 minutes the fire burns itself out, leaving behind charred blackened grass.'
+  stage: Standard
+- id: sk_monster_deliris_yarrow
+  name: Deliris Yarrow
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Natural Trap, Unaligned
+    flavor: These pungent, yet beautiful flowers can be found dotted across grassy hills and prairies throughout Sol'Kesh. Their delicate stems are susceptible to damage from grazing herds and have developed a means to keep large fauna at bay as the pollen kicked up from disturbing them can induce a rapid acting fever. Forcing the lumbering beasts to slow down and keep away from the yellow flowers. Minuscule clusters of flowers spread across the fields in an idyllic display of beauty. Only to cause feverish sickness for any that approach too closely
+    ac: '1'
+    hp: 2 (1d4)
+    speed: 0 ft.
+    senses: None
+    immunities: Blinded, Bludgeoning, Charmed, Deafened, Exhaustion, Frightened, Piercing, Prone
+    traits:
+      - name: Trap Space
+        desc: Often found in a patch of a dozen individual flowers, the flowers spread over a 5 ft. Square.
+      - name: Countering
+        desc: 'These small yellow clusters of flowers rise from the green leafed bushes. Wisdom (Perception) Check: DC 8. Success: The Natural Trap is identified.'
+    reactions:
+      - name: Fever Pollen
+        desc: 'Trigger: When a creature steps within its Trap Space. Response -Constitution Saving Throw: DC 15, the creature that triggered the Trap. Failure: The target creature gains one level of Exhaustion for 1 hour.'
+  stage: Standard
+- id: sk_monster_ruske
+  name: Ruske
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Beast, Unaligned, Defensive
+    flavor: A warm breeze sways drooping willow branches, stirring a slow gentle river, its wide banks home to long strands of cattails. Th ick clusters of lily pads with slow moving, wedge-shaped-shelled creatures quietly chewing, quietly chewing through them at a docile pace. Frogs and birds rest on this notably serene crustacean's hard, flat shell while it roams the fresh waters, spearing all manner of river plants and chewing through the fi brous material with its long channel of teeth. Th ough blind, it has a highly developed sense of taste, able to detect the flora of its specialized diet and the flourishing surface algae. It is through the fi ltering and consumption of this scum that the ruske both cleanses the water ways for plants to proliferate, and develops its own inner toxins. Th ese toxins suffuse its body, giving its meat an impalpable taste and often lethal digestion, leading this creature to live a safe, if slow life.
+    bio:
+      class: Xiphosura
+      genus: Derived Evolution - Limulus
+      niche: Generalist Algeavore
+      biome: Fenlands
+    ecology:
+      preyed_upon_by: Nicalliath, Nuthorghull
+      preys_on: ''
+    taming:
+      bond: '2'
+      maturity: 2 Seasons
+    ac: '16'
+    hp: 19 (3d8+6)
+    speed: 0 ft., swim 20 ft.
+    initiative: +2 (12)
+    attributes:
+      str:
+        score: 12
+        mod: '+1'
+        save: '+1'
+      dex:
+        score: 10
+        mod: '+0'
+        save: '+0'
+      con:
+        score: 17
+        mod: '+3'
+        save: '+3'
+      int:
+        score: 2
+        mod: '-4'
+        save: '-4'
+      wis:
+        score: 12
+        mod: '+1'
+        save: '+1'
+      cha:
+        score: 5
+        mod: '-3'
+        save: '-3'
+    skills: Perception +3, Stealth +2
+    senses: Blindsight 30 ft. , Passive Perception 13
+    resistances: Slashing
+    immunities: Blinded, Frightened, Surprised
+    challenge:
+      rating: 1/2
+      xp: '100'
+      pb: '2'
+    traits:
+      - name: River Born
+        desc: Th e ruske can breathe only underwater, and can survive outside of the water for a full hour before suffocating.
+      - name: Peaceful Wader
+        desc: While the ruske remains motionless in natural bodies of water, it indistinguishable from the surrounding plant life and has Advantage on Stealth checks.
+      - name: Languid
+        desc: Th e ruske has Disadvantage on Initiative rolls.
+      - name: Tranquil Ride
+        desc: While it is treading water, the ruske is unbothered when creatures stand upon on them. Th e ruske can bear the weight of a medium creature of up to 250 pounds.
+    actions:
+      - name: Chitin Lance
+        desc: 'Melee Attack Roll: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) Piercing damage. If the ruske swam at least 10+ ft. toward the target immediately before the hit, the target takes an extra 7 (2d6) Piercing damage.'
+    reactions:
+      - name: Defensive Instinct (1/Day)
+        desc: 'Trigger: When the ruske reaches 0 hit points. Response - Constitution Saving Th row: DC 5 + damage taken from the most recent hit , unless it was a critical hit, the ruske. Success: Th e ruske drops to 1 Hit Point instead.'
+    defensive_instinct: When suffering a fatal blow, its slow, senseless reactions can keep it moving.
+  stage: Standard
+  encountering: A common sight in many ponds and rivers,the ruske is often so covered in lily pads and algae growths that it is nearly imperceptible until it moves against the current. Tranquil to a fault, there is little that can alarm a ruske, and it will gladly carry larger creatures on its back while it peacefully munches through swamp scum and floating leaves.
+  crafting:
+    - type: Armor
+      name: Dorsal Shell
+      cost: 6 gp
+      check: DC 12 Wisdom (Survival) Check
+    - type: Weapon
+      name: Antenna Lance
+      cost: 13 gp
+      check: DC 15 Wisdom (Survival) Check
+    - type: Consumable
+      name: Putrid Slab
+      cost: 2 gp
+      check: DC 10 Wisdom (Survival) Check

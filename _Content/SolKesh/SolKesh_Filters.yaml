@@ -1,0 +1,27 @@
+# SolKesh Taxonomy
+# Filter configurations for the library UI.
+
+game: SolKesh
+version: "1.1"
+
+filters:
+  level:
+    label: "CR"
+    source_property: "properties.challenge.rating"
+    filter_type: "slider"
+  ac:
+    label: "AC"
+    source_property: "properties.ac"
+    filter_type: "slider"
+  hp:
+    label: "HP"
+    source_property: "properties.hp"
+    filter_type: "slider"
+  biome:
+    label: "Biome"
+    source_property: "properties.bio.biome"
+    filter_type: "multiselect"
+  type:
+    label: "Type"
+    source_property: "properties.subtype"
+    filter_type: "text_search"

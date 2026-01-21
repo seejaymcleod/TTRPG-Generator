@@ -1,0 +1,567 @@
+- id: sk_monster_cerrophol
+  name: Cerrophol
+  type: Monster
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Medium Beast, Unaligned, Aggressive
+    flavor: As the tide falls, exposing trapped crustaceans and fish within tidal pools, the cerrophol stalks out of the surf to survey the pickings. A semi-terrestrial squid using feeding tentacles to hunt above the waves.
+    bio:
+      class: Cephalopoda
+      genus: Derived Evolution - Dosidicus
+      niche: Amphibious Generalist Carnivore
+      biome: The Strands (Coastal)
+    ecology:
+      preyed_upon_by: Daellash, Gharril, Goliarch, Illithisk, Slannethiss, Vinnirex
+      preys_on: Daugon, Gharril, Illithisk
+    taming:
+      bond: "5"
+      maturity: 3 Seasons
+    ac: "14"
+    hp: 46 (8d8 + 8)
+    speed: 20 ft., swim 40 ft.
+    initiative: +3 (13)
+    attributes:
+      str: { score: 15, mod: "+2", save: "+2" }
+      dex: { score: 16, mod: "+3", save: "+3" }
+      con: { score: 12, mod: "+1", save: "+1" }
+      int: { score: 9, mod: "-1", save: "-1" }
+      wis: { score: 13, mod: "+1", save: "+1" }
+      cha: { score: 8, mod: "-1", save: "-1" }
+    skills: Perception +3, Stealth +5
+    senses: Darkvision 30 ft., Passive Perception 13
+    challenge: { rating: "2", xp: "450", pb: "+2" }
+    traits:
+      - name: Coastal Hunter
+        desc: The cerrophol can breathe only water, and while out of water, it can hold its breath for 1 hour.
+      - name: Polarized Sight
+        desc: The cerrophol has Advantage on Wisdom (Insight) checks to determine if a creature is being deceptive.
+      - name: Twisting Form
+        desc: The cerrophol has Advantage on Saving Throws made to escape the Grappled condition.
+    defensive_instinct: |
+      (1/Day) When Bloodied and engaged in melee combat, the cerrophol begins to flail wildly.
+      On its turn, Wisdom Saving Throw: DC 12. Success: Gains a third attack. Failure: Free Disengage and Dash away.
+    actions:
+      - name: Multiattack
+        desc: The cerrophol makes two attacks, using Piercing Tentacles and Gripping Arms.
+      - name: Piercing Tentacles
+        desc: "Melee Attack Roll: +5 to hit, reach 5 ft., one target. Hit: 12 (2d8+3) Piercing damage. Attack rolls against target have Advantage until start of next turn."
+      - name: Gripping Arms
+        desc: "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 6 (1d6+3) Bludgeoning damage. Medium/smaller target is Grappled (Escape DC 15)."
+    reactions:
+      - name: Ink Spill (1/Day)
+        desc: "Trigger: Takes damage out of water. Response: Releases 15 ft. radius slippery ink. Difficult terrain. DC 14 Dex Save or Prone."
+    encountering: Naturally inquisitive, the cerrophol has adapted to a life of changing tides. It may follow stealthily if not threatened.
+    crafting:
+      - { type: Weapon Crafting, name: Piercing Tentacle, cost: 18 gp, check: "DC 14 Wisdom (Survival)" }
+      - { type: Trap Crafting, name: Hollowed Mantle, cost: 46 gp, check: "DC 18 Wisdom (Survival)" }
+      - { type: Consumable, name: Calamari Ring, cost: 1 gp, check: "DC 10 Wisdom (Survival)" }
+
+- id: sk_monster_daellash
+  name: Daellash
+  type: Monster
+  stage: Standard
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Large Beast, Unaligned, Wary
+    flavor: From deep within limestone tunnels to vast interwoven coral caverns, the daellash worms its way through tight confines, snapping up crustaceans with grasping jaws.
+    bio:
+      class: Actinopterygii
+      genus: Derived Evolution - Gorgasia
+      niche: Generalist Marine Carnivore
+      biome: The Umbrawells (Caverns)
+    ecology:
+      preyed_upon_by: Goliarch, Slannethiss, Spiera, Vortautilus
+      preys_on: Cerrophol, Esslinter, Illithisk, Tiama
+    taming:
+      bond: "3"
+      maturity: 9 Seasons
+    ac: "12"
+    hp: 45 (6d10 + 12)
+    speed: 5 ft., burrow 10 ft., swim 40 ft.
+    initiative: +2 (12)
+    attributes:
+      str: { score: 17, mod: "+3", save: "+3" }
+      dex: { score: 14, mod: "+2", save: "+2" }
+      con: { score: 15, mod: "+2", save: "+2" }
+      int: { score: 7, mod: "-2", save: "-2" }
+      wis: { score: 10, mod: "+0", save: "+0" }
+      cha: { score: 8, mod: "-1", save: "-1" }
+    skills: Perception +2
+    senses: Perception +2
+    challenge: { rating: "2", xp: "450", pb: "+2" }
+    traits:
+      - name: Saturated Gill Branches
+        desc: Can breathe only underwater, survives without oxygen for 30 minutes.
+      - name: Serpentine Form
+        desc: Advantage on Saving Throws made to escape a Grapple.
+    defensive_instinct: |
+      (1/Day) - Wary Instinct. When swallowing a creature, it looks for escape.
+      On turn, DC 10 Wis Save. Success: Disengage and flee deeper into tunnels.
+    actions:
+      - name: Grasping Bite
+        desc: "Melee: +5 to hit, reach 10 ft. Hit: 12 (2d8 + 3) Piercing. DC 10 Wis Save or Grappled (Escape DC 12). Deals 7 (1d8+3) auto damage at start of turn."
+      - name: Gulping Maw
+        desc: "Attack against Grappled target. Hit: Swallowed. Blinded, Restrained, Total Cover, 5 (2d4) Bludgeoning/turn."
+    encountering: A hunter of tight confines, rarely seen outside narrow tunnels. Mothers sequester eggs deep in crevasses.
+    crafting:
+      - { type: Consumable, name: Steak Slice, cost: 4 gp, check: "DC 8 Wisdom (Survival)" }
+      - { type: Hatching, name: Crevice Roe, cost: 60 gp, check: "DC 20 Intelligence (Nature)" }
+      - { type: Tool Crafting, name: Gill Branches, cost: 18 gp, check: "DC 16 Wisdom (Survival)" }
+
+- id: sk_monster_daugon
+  name: Daugon
+  type: Monster
+  stage: Standard
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Medium Beast, Unaligned, Defensive
+    flavor: Basking on stony beaches, the daugon survives extreme temperature dualities. A large mammal with a dorsal sail for thermal regulation.
+    bio:
+      class: Mammalia
+      genus: Derived Evolution - Suss
+      niche: Generalist Semi-Aquatic Omnivore
+      biome: The Strands (Coastal)
+    ecology:
+      preyed_upon_by: Daellash, Goliarch, Slannethiss, Spiera, Vinnirex
+      preys_on: Cariver, Trawlauth, Trikautrae
+    taming:
+      bond: "4"
+      maturity: 16 Seasons
+    ac: "16"
+    hp: 45 (6d8 + 18)
+    speed: 20 ft., swim 30 ft.
+    initiative: +1 (11)
+    attributes:
+      str: { score: 16, mod: "+3", save: "+3" }
+      dex: { score: 12, mod: "+1", save: "+1" }
+      con: { score: 17, mod: "+3", save: "+5" }
+      int: { score: 6, mod: "-2", save: "-2" }
+      wis: { score: 14, mod: "+2", save: "+2" }
+      cha: { score: 6, mod: "-2", save: "-2" }
+    skills: Perception +4
+    resistances: Bludgeoning, Cold
+    senses: Darkvision 60 ft., Passive Perception 14
+    challenge: { rating: "2", xp: "450", pb: "+2" }
+    traits:
+      - name: Robust Nose
+        desc: Advantage on Wisdom (Perception) Checks relying on smell.
+      - name: Depth Diver
+        desc: Can hold breath for 2 hours.
+      - name: Solar Sail
+        desc: Free Action to raise sail. Gains Resistance to Fire until next turn.
+    defensive_instinct: |
+      (1/Day) When friendly daugon dies within 60 ft, becomes enraged.
+      DC 12 Wis Save. Success: Hoot of the Herd Bonus Action as Free Action (2d4 bonus).
+    actions:
+      - name: Multiattack
+        desc: Makes two attacks using Pebbled Headbutt, Sharpened Incisors, and Tail Slam.
+      - name: Pebbled Headbutt
+        desc: "Melee: +5 to hit, 5 ft. Hit: 7 (1d6+3) Bludgeoning. DC 13 Str Save or Prone."
+      - name: Sharpened Incisors
+        desc: "Melee: +5 to hit, 5 ft. Hit: 6 (1d6+3) Piercing."
+      - name: Tail Slam
+        desc: "Melee: +5 to hit, 10 ft. Hit: 11 (2d6+3) Bludgeoning."
+    bonus_actions:
+      - name: Hoot of the Herd (1/Day)
+        desc: Daugon within 60 ft gain 1d4 bonus to Hit for 1 minute.
+    crafting:
+      - { type: Tool Crafting, name: Ambergris, cost: 52 gp, check: "DC 18 Wisdom (Survival)" }
+      - { type: Armor Crafting, name: Solar Sail, cost: 26 gp, check: "DC 15 Wisdom (Survival)" }
+      - { type: Weapon Crafting, name: Arc Spine, cost: 15 gp, check: "DC 12 Wisdom (Survival)" }
+
+- id: sk_monster_gharril
+  name: Gharril
+  type: Monster
+  stage: Standard
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Medium Beast, Unaligned, Aggressive
+    flavor: A large shell rising from tidal pools, the gharril is a predatory snail that grinds prey with a fearsome maw.
+    bio:
+      class: Gastropoda
+      genus: Derived Evolution - Euglandina
+      niche: Amphibious Generalist Omnivore
+      biome: The Strands (Coastal)
+    ecology:
+      preyed_upon_by: Cerrophol, Daellash, Illithisk, Slannethiss
+      preys_on: Daugon, Lanceleth, Scavick, Vinnirex
+    taming:
+      bond: "4"
+      maturity: 2 Seasons
+    ac: "15"
+    hp: 26 (4d8 + 8)
+    speed: 30 ft., swim 20 ft.
+    initiative: +1 (11)
+    attributes:
+      str: { score: 16, mod: "+3", save: "+3" }
+      dex: { score: 12, mod: "+1", save: "+1" }
+      con: { score: 14, mod: "+2", save: "+2" }
+      int: { score: 7, mod: "-2", save: "-2" }
+      wis: { score: 8, mod: "-1", save: "-1" }
+      cha: { score: 4, mod: "-3", save: "-3" }
+    vulnerabilities: Cold
+    resistances: Bludgeoning
+    senses: Tremor Sense 30 ft., Passive Perception 11
+    challenge: { rating: "1", xp: "200", pb: "+2" }
+    traits:
+      - name: Amphibious
+        desc: Can breathe both air and water.
+      - name: Coral Shelled
+        desc: Indistinguishable from coral when buried. Advantage on Stealth to Hide in Strands.
+    defensive_instinct: |
+      (1/Day) If it survives first attack, attempts to bury soft flesh.
+      Lowers speed to 0, loses Cold Vuln, gains +2 AC (17). Return as Bonus Action.
+    actions:
+      - name: Mauling Tentacles
+        desc: "Melee: +5 to hit, 5 ft. Hit: 7 (1d6+3) Bludgeoning. DC 14 Str Save or Grappled (Escape DC 14)."
+      - name: Bone Pearl (Recharge 5-6)
+        desc: "Ranged: +3 to hit, 40 ft. Hit: 11 (3d6+1) Bludgeoning. DC 16 Str Save or Prone."
+    bonus_actions:
+      - name: Slobbering Maw
+        desc: "Grappled target takes 3 (1d6) Piercing. DC 13 Wis Save or Frightened."
+    encountering: Aggressively territorial by day, lethargic by night.
+    crafting:
+      - { type: Weapon Crafting, name: Ossified Pearl, cost: 21 gp, check: "DC 16 Wisdom (Survival)" }
+      - { type: Weapon Crafting, name: Hatchet Tooth, cost: 8 gp, check: "DC 12 Wisdom (Survival)" }
+      - { type: Tool Crafting, name: Oculoid, cost: 36 gp, check: "DC 18 Wisdom (Survival)" }
+
+- id: sk_monster_illithisk
+  name: Illithisk
+  type: Monster
+  stage: Standard
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Medium Beast, Unaligned, Defensive
+    flavor: Rising from the surf with symbiotic urchin pillars on its back, the illithisk is a scavenger with paralyzing toxins.
+    bio:
+      class: Malacostraca
+      genus: Derived Evolution - Nephropides
+      niche: Amphibious Generalist Carnivore
+      biome: The Strands (Coastal)
+    ecology:
+      preyed_upon_by: Daellash, Slannethiss, Vortautilus
+      preys_on: Daugon, Gharril, Rauka, Vinnirex
+    taming:
+      bond: "5"
+      maturity: 4 Seasons
+    ac: "14"
+    hp: 22 (3d8 + 9)
+    speed: 30 ft., swim 30 ft.
+    initiative: +3 (13)
+    attributes:
+      str: { score: 14, mod: "+2", save: "+2" }
+      dex: { score: 16, mod: "+3", save: "+5" }
+      con: { score: 13, mod: "+1", save: "+1" }
+      int: { score: 7, mod: "-2", save: "-2" }
+      wis: { score: 10, mod: "+0", save: "+0" }
+      cha: { score: 3, mod: "-4", save: "-4" }
+    skills: Stealth +5
+    vulnerabilities: Cold
+    resistances: Slashing
+    senses: Darkvision 60 ft., Passive Perception 12
+    challenge: { rating: "1", xp: "200", pb: "+2" }
+    traits:
+      - name: Amphibious
+        desc: Can breathe both air and water.
+      - name: Tidal Stalker
+        desc: Advantage on attack rolls against Surprised creatures.
+    defensive_instinct: |
+      When Bloodied, spores expel. DC 11 Con Save, 5 ft Emanation. Failure: 5 (2d4) Poison and Paralyzed. Success: Half.
+    actions:
+      - name: Scything Claw
+        desc: "Melee: +5 to hit, 5 ft. Hit: 10 (2d6+3) Slashing. DC 12 Str Save or Grappled (Escape DC 12)."
+      - name: Paralytic Bite
+        desc: "Melee: +5 to hit, 5 ft. Hit: 7 (1d8+3) Piercing. DC 11 Con Save or 5 (2d4) Poison and Paralyzed."
+    encountering: Watchful eyes on the shoreline. Cunning predators.
+    crafting:
+      - { type: Weapon Crafting, name: Scything Edge, cost: 18 gp, check: "DC 16 Wisdom (Survival)" }
+      - { type: Item Crafting, name: 1d4 Urchin Pillar, cost: 12 gp, check: "DC 18 Wisdom (Survival)" }
+      - { type: Weapon Crafting, name: Mandible Blade, cost: 16 gp, check: "DC 16 Wisdom (Survival)" }
+
+- id: sk_apex_slannethiss
+  name: Slannethiss
+  type: Monster
+  stage: Apex
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Large Beast, Unaligned, Aggressive
+    flavor: As the tide recedes, a large shell rises out of a tidal pool. The Slannethiss is a terrifying apex predator of the strands.
+    bio:
+      class: Amphibia
+      genus: Derived Evolution - Eurycea
+      niche: Amphibious Apex Carnivore
+      biome: The Strands (Coastal)
+    ecology:
+      preyed_upon_by: Arkiopti, Daugon, Illithisk, Goliarch, Nicalliath, Sacrissian, Vinnirex
+      preys_on: None (Apex)
+    taming:
+      bond: "Control 9"
+      maturity: 25 Seasons
+    ac: "17"
+    hp: 114 (12d10 + 48)
+    speed: 50 ft., swim 60 ft.
+    initiative: +7 (17)
+    attributes:
+      str: { score: 20, mod: "+5", save: "+5" }
+      dex: { score: 24, mod: "+7", save: "+11" }
+      con: { score: 19, mod: "+4", save: "+4" }
+      int: { score: 9, mod: "-1", save: "-1" }
+      wis: { score: 21, mod: "+5", save: "+9" }
+      cha: { score: 14, mod: "+2", save: "+2" }
+    skills: Acrobatics +11, Perception +9, Stealth +11
+    immunities: Blindness, Charmed, Frightened
+    resistances: Lightning, Slashing
+    vulnerabilities: Thunder
+    senses: Truesight 60 ft., Passive Perception 19
+    challenge: { rating: "11", xp: "7,200", pb: "4" }
+    traits:
+      - name: Legendary Resistance (2/Day)
+        desc: If the slannethiss fails a Saving Throw, it can choose to succeed instead.
+      - name: Amphibious
+        desc: The slannethiss can breathe both air and water.
+      - name: Sensory Horned
+        desc: Advantage on Wisdom (Perception) checks. While underwater, knows exact location of any creature within 100 ft.
+      - name: Shoreline Stalker
+        desc: Advantage on Dexterity (Stealth) checks in Strands. Hide as Bonus Action.
+      - name: Wickedly Fast
+        desc: Opportunity attacks against the slannethiss are made with Disadvantage.
+      - name: Slippery
+        desc: If succeeding on Dex save for half damage, takes no damage instead.
+    actions:
+      - name: Multiattack
+        desc: Makes three attacks using Crushing Tarsus, Heaving Bulk, Mandible Bite or Viscous Webbing in any combination.
+      - name: Grasping Talons
+        desc: "Melee: +11 to hit, 5 ft. Hit: 28 (6d6+7) Slashing. DC 16 Dex Save or Grappled (Escape DC 17). Can grapple two creatures."
+      - name: Twisting Bite
+        desc: "Melee: +11 to hit, 5 ft. Hit: 32 (5d10+5) Piercing. DC 17 Str Save or 22 (4d10) Slashing damage."
+      - name: Slapping Tail
+        desc: "Melee: +9 to hit, 10 ft. Hit: 16 (2d10+5) Piercing. DC 15 Str Save or Pushed 5 ft and Prone."
+    reactions:
+      - name: Redirecting Charge
+        desc: "Trigger: Creature sees hit with Lightning attack. Response: Con Save DC 5 + damage. Success: Redirects to another creature within 30 ft."
+    legendary_actions:
+      - name: Quick Slash
+        desc: Makes one Grasping Talons attack.
+      - name: Slither Step
+        desc: Moves up to half speed without provoking Opportunity Attacks.
+      - name: Violent Instincts
+        desc: "If grappling, slams creature against stone. DC 16 Str Save. Failure: 11 (2d10) Bludgeoning."
+    lair_actions:
+      - name: Slinking into Shadow
+        desc: Ranged attacks against it are Disadvantage until next turn.
+      - name: Tunnels in the Strands
+        desc: "Disappears into crevice, reappears in space within 60 ft."
+      - name: Choice Corals
+        desc: "Throws coral cluster at enemy within 30 ft. DC 14 Con Save or Paralyzed."
+      - name: Salt and Grit
+        desc: "Swipes tail into sand. 20 ft cone. DC 13 Dex Save or Blinded."
+    regional_effects:
+      - name: Scant Predators
+        desc: Clears out most megafauna within 6 miles of Lair.
+      - name: Nature Unbalanced
+        desc: Small herbivores flourish within 5 miles.
+      - name: Fear's Shroud
+        desc: Creatures within 4 miles feel fear. Disadvantage on Saves against Frightened.
+      - name: Tremor in the Water
+        desc: Creatures in water 1 mile out must make DC 16 Stealth check to avoid detection.
+    crafting:
+      - { type: Item Crafting, name: External Gills, cost: 134 gp, check: "DC 16 Wisdom (Survival)" }
+      - { type: Weapon Crafting, name: Primary Sensory Horn, cost: 216 gp, check: "DC 22 Wisdom (Survival)" }
+      - { type: Weapon Crafting, name: Secondary Sensory Horn, cost: 190 gp, check: "DC 19 Wisdom (Survival)" }
+
+- id: sk_young_daellash
+  name: Daellash Elver
+  type: Monster
+  stage: Young
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Small Beast, Unaligned, Wary
+    flavor: While the adult is a solitary ambush predator, its young benefit from staying near their kin. Dozens expose their heads into the vacillating current...
+    bio:
+      class: Actinopterygii
+      genus: Derived Evolution - Gorgasia
+      niche: Generalist Marine Carnivore
+      biome: The Umbrawells (Caverns)
+    ac: "11"
+    hp: 5 (2d6-2)
+    speed: 0 ft., swim 30 ft.
+    initiative: +2 (12)
+    attributes:
+      str: { score: 6, mod: "-2", save: "-2" }
+      dex: { score: 14, mod: "+2", save: "+4" }
+      con: { score: 9, mod: "-1", save: "-1" }
+      int: { score: 4, mod: "-3", save: "-3" }
+      wis: { score: 8, mod: "-1", save: "-1" }
+      cha: { score: 8, mod: "-1", save: "-1" }
+    challenge: { rating: "1/4", xp: "10", pb: "2" }
+    traits:
+      - name: Saturated Gill Branches
+        desc: Can breathe only underwater, survives without oxygen for 30 minutes.
+      - name: Hunting Kin
+        desc: Advantage on attack rolls if at least one ally is within 5 ft.
+    actions:
+      - name: Snapping Bite
+        desc: "Melee: +4 to hit, 5 ft. Hit: 4 (1d4+2) Piercing."
+    reactions:
+      - name: Slip Away Trigger
+        desc: "When enemy makes attack roll. Response: DC 12 Dex Save. Failure: Attack misses as elver slips into hole."
+
+- id: sk_young_vortautilus
+  name: Vortautilus Baby
+  type: Monster
+  stage: Young
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Wary
+    flavor: Small and thin shelled compared to its adult form, the baby vortautilus swims low to the ocean floor...
+    bio:
+      class: Cephalopoda
+      genus: Derived Evolution - Nautilus
+      niche: Marine Omnivore
+      biome: The Strands (Coastal)
+    ac: "13"
+    hp: 7 (2d4+4)
+    speed: 0 ft., swim 30 ft.
+    initiative: +2 (14)
+    attributes:
+      str: { score: 7, mod: "-2", save: "-2" }
+      dex: { score: 15, mod: "+2", save: "+2" }
+      con: { score: 14, mod: "+2", save: "+2" }
+      int: { score: 6, mod: "-2", save: "-2" }
+      wis: { score: 8, mod: "-1", save: "-1" }
+      cha: { score: 7, mod: "-2", save: "-2" }
+    skills: Athletics +4
+    resistances: Cold, Slashing
+    senses: Darkvision 30 ft., Passive Perception 11
+    challenge: { rating: "0", xp: "0", pb: "2" }
+    traits:
+      - name: Water Breathing
+        desc: Can breathe only water. Breath held for 1 hour in shell.
+      - name: Shell Safety
+        desc: Retract into shell as Action, gaining +1 AC (14).
+    actions:
+      - name: Thermal Stream
+        desc: "15 ft line. DC 12 Dex Save. Failure: 1 Bludgeoning."
+    bonus_actions:
+      - name: Jettison
+        desc: Moves up to 30 ft in straight line, no Opportunity Attacks.
+
+- id: sk_young_gharril
+  name: Gharril Juvenile
+  type: Monster
+  stage: Young
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Wary
+    flavor: A single large eye peers from a shell half-buried in the sand...
+    bio:
+      class: Gastropoda
+      genus: Derived Evolution - Euglandina
+      niche: Amphibious Generalist Omnivore
+      biome: The Strands (Coastal)
+    ac: "8"
+    hp: 3 (1d4+1)
+    speed: 30 ft., swim 20 ft.
+    initiative: +0 (10)
+    attributes:
+      str: { score: 12, mod: "+1", save: "+1" }
+      dex: { score: 10, mod: "+0", save: "+0" }
+      con: { score: 12, mod: "+1", save: "+1" }
+      int: { score: 6, mod: "-2", save: "-2" }
+      wis: { score: 5, mod: "-3", save: "-3" }
+      cha: { score: 4, mod: "-3", save: "-3" }
+    vulnerabilities: Cold
+    senses: Tremorsense 30 ft., Passive Perception 10
+    challenge: { rating: "0", xp: "0", pb: "2" }
+    traits:
+      - name: Amphibious
+        desc: Can breathe both air and water.
+      - name: Coral Shelled
+        desc: Indistinguishable from coral when buried. Advantage on Stealth.
+    actions:
+      - name: Shelled Tackle
+        desc: "Melee: +2 to hit, 5 ft. Hit: 1 Bludgeoning. If moved 20+ ft straight, takes additional 1 Bludgeoning."
+
+- id: sk_young_illithisk
+  name: Illithisk Juvenile
+  type: Monster
+  stage: Young
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned, Wary
+    flavor: Chittering amongst its young spawn, the energetic illithisk juveniles instinctively rub up against the larger adults...
+    bio:
+      class: Malacostraca
+      genus: Derived Evolution - Nephropides
+      niche: Amphibious Generalist Carnivore
+      biome: The Strands (Coastal)
+    ac: "10"
+    hp: 2 (2d4)
+    speed: 30 ft., swim 20 ft.
+    initiative: +1 (11)
+    attributes:
+      str: { score: 6, mod: "-2", save: "-2" }
+      dex: { score: 13, mod: "+1", save: "+1" }
+      con: { score: 10, mod: "+0", save: "+0" }
+      int: { score: 3, mod: "-4", save: "-4" }
+      wis: { score: 8, mod: "-1", save: "-1" }
+      cha: { score: 3, mod: "-4", save: "-4" }
+    skills: Stealth +2
+    senses: Darkvision 60 ft., Passive Perception 11
+    challenge: { rating: "0", xp: "0", pb: "2" }
+    traits:
+      - name: Amphibious
+        desc: Can breathe both air and water.
+    actions:
+      - name: Small Scythe
+        desc: "Melee: +3 to hit, 5 ft. Hit: 1 Slashing."
+    reactions:
+      - name: Bacterial Burst
+        desc: "Trigger: Slain. DC 14 Con Save, 10 ft Emanation. Failure: 7 (2d6) Poison. Success: Half."
+
+- id: solkesh_monster_stonecrest_sparrow
+  name: Stonecrest Sparrow
+  type: Monster
+  stage: Standard
+  game: SolKesh
+  source: SolKesh Bestiary
+  properties:
+    subtype: Tiny Beast, Unaligned
+    flavor: Among the rising peaks of the Sol'Kesh highlands, a single chirp pierces the calm morning air.
+    bio:
+      class: Aves
+      genus: Derived Evolution - Passeriformes
+      niche: Aerial Insectivore
+      biome: The Farplains (Plains)
+    ac: "12"
+    hp: "3"
+    speed: 10 ft., fly 50 ft.
+    attributes:
+      str: { score: 2 }
+      dex: { score: 14 }
+      con: { score: 2 }
+      int: { score: 6 }
+      wis: { score: 11 }
+      cha: { score: 10 }
+    traits:
+      - name: Keen Eyes
+        desc: Advantage on Sight Perception.
+      - name: Flutter Flight
+        desc: No Opportunity Attacks when flying out of reach.
+      - name: Defensive Instinct (1/Day)
+        desc: If survives attack, recharges Shattering Chirp.
+    actions:
+      - name: Peck
+        desc: "Melee: +4 to hit. Hit: 4 (1d4+2) Piercing."
+      - name: Shattering Chirp (Recharge 5-6)
+        desc: "15 ft cone. DC 12 Con Save. Failure: 9 (1d10+4) Thunder and Deafened."

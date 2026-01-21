@@ -112,7 +112,7 @@ export class ForgeService {
         fs.writeFileSync(tempPath, fileBuffer);
 
         return new Promise((resolve, reject) => {
-            const pythonScript = path.resolve(process.cwd(), 'python-service/parser.py');
+            const pythonScript = path.resolve(process.cwd(), '_Forge/PythonService/parser.py');
             const venvPython = path.resolve(process.cwd(), '.venv/bin/python');
             const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
 
@@ -169,18 +169,36 @@ export class ForgeService {
     }
 
     /**
-     * NEW: Extract content using the Python Scribe pipeline.
+     * Extract content using the Python Scribe pipeline.
      * This uses the enhanced Python scripts with retry logic and model fallback.
+     * @param textOrPath - Either the raw text content, or if filePath is provided, a placeholder
+     * @param contentType - Type of content to extract (monster, spell, item, etc.)
+     * @param game - Game system name
+     * @param source - Content source name
+     * @param taskId - Optional task ID for cancellation
+     * @param apiKey - Optional API key
+     * @param model - Optional model override
+     * @param filePath - Optional file path to read content from (takes precedence over text)
      */
     async extractWithPythonScribe(
-        text: string,
+        textOrPath: string,
         contentType: string,
         game: string = 'ShadowDark',
         source: string = 'Core',
         taskId?: string,
         apiKey?: string,
-        model?: string
+        model?: string,
+        filePath?: string
     ): Promise<any[]> {
+        // Determine the text content - from file or from parameter
+        let text: string;
+        if (filePath && fs.existsSync(filePath)) {
+            this.log(`[Scribe] Reading content from file: ${filePath}`);
+            text = fs.readFileSync(filePath, 'utf-8');
+        } else {
+            text = textOrPath;
+        }
+
         const tempTextPath = path.resolve(process.cwd(), `temp_scribe_${Date.now()}.txt`);
         const tempTemplatePath = path.resolve(process.cwd(), `temp_template_${Date.now()}.json`);
 
@@ -192,7 +210,7 @@ export class ForgeService {
 
         const venvPython = path.resolve(process.cwd(), '.venv/bin/python');
         const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
-        const scribeScript = path.resolve(process.cwd(), 'python-service/scribe.py');
+        const scribeScript = path.resolve(process.cwd(), '_Forge/PythonService/scribe.py');
 
         this.log(`[Scribe] Extracting ${contentType} using Python pipeline...`);
         if (model) this.log(`[Scribe] Using model: ${model}`);
@@ -275,11 +293,11 @@ export class ForgeService {
 
     /**
      * Generate a JSON Schema template for the Scribe based on content type and game.
-     * Different games have different monster formats (e.g., Knave vs ShadowDark).
+     * Uses InputSchema when available, falls back to hardcoded logic for backward compatibility.
      */
     private generateScribeTemplate(contentType: string, game: string = 'ShadowDark'): any {
         const type = contentType.toLowerCase();
-        const gamePrefix = game.toLowerCase().replace(/[^a-z]/g, '');
+        const inputSchema = this.loadInputSchema(game);
 
         const baseTemplate = {
             description: `A list of ${game} ${contentType}s`,
@@ -291,10 +309,166 @@ export class ForgeService {
             }
         };
 
+        // If we have an InputSchema for this game, use it to build the template dynamically
+        if (inputSchema && inputSchema.extraction_rules) {
+            this.log(`Using InputSchema for ${game} template generation`);
+            const rules = inputSchema.extraction_rules;
+            const sections = rules.sections || {};
+
+            if (type === 'monster' || type === 'npc') {
+                // Build monster template from InputSchema sections
+                baseTemplate.items.properties = {
+                    name: { type: "string", description: "Monster Name" },
+                    subtype: { type: "string", description: "Size, type, alignment, behavior" }
+                };
+
+                // Add bio fields if header_bio section exists
+                if (sections.header_bio) {
+                    baseTemplate.items.properties.bio = {
+                        type: "object",
+                        description: "Biological classification",
+                        properties: {
+                            class: { type: "string", description: "Taxonomic class" },
+                            genus: { type: "string", description: "Genus/lineage" },
+                            niche: { type: "string", description: "Ecological niche" },
+                            biome: { type: "string", description: "Home biome" }
+                        }
+                    };
+                }
+
+                // Add stats from stats_block section
+                if (sections.stats_block) {
+                    baseTemplate.items.properties.ac = { type: "string", description: sections.stats_block.fields?.ac?.example || "Armor Class" };
+                    baseTemplate.items.properties.hp = { type: "string", description: sections.stats_block.fields?.hp?.example || "Hit Points" };
+                    baseTemplate.items.properties.speed = { type: "string", description: sections.stats_block.fields?.speed?.example || "Speed" };
+                    baseTemplate.items.properties.initiative = { type: "string", description: sections.stats_block.fields?.initiative?.example || "Initiative" };
+                }
+
+                // Add attributes from attributes section
+                if (sections.attributes) {
+                    baseTemplate.items.properties.attributes = {
+                        type: "object",
+                        description: "Ability scores with score, modifier, and save",
+                        properties: {
+                            str: { type: "object", properties: { score: { type: "integer" }, mod: { type: "string" }, save: { type: "string" } } },
+                            dex: { type: "object", properties: { score: { type: "integer" }, mod: { type: "string" }, save: { type: "string" } } },
+                            con: { type: "object", properties: { score: { type: "integer" }, mod: { type: "string" }, save: { type: "string" } } },
+                            int: { type: "object", properties: { score: { type: "integer" }, mod: { type: "string" }, save: { type: "string" } } },
+                            wis: { type: "object", properties: { score: { type: "integer" }, mod: { type: "string" }, save: { type: "string" } } },
+                            cha: { type: "object", properties: { score: { type: "integer" }, mod: { type: "string" }, save: { type: "string" } } }
+                        }
+                    };
+                }
+
+                // Add secondary stats
+                if (sections.secondary_stats) {
+                    baseTemplate.items.properties.skills = { type: "string", description: "Skills list" };
+                    baseTemplate.items.properties.senses = { type: "string", description: "Senses" };
+                    baseTemplate.items.properties.vulnerabilities = { type: "string" };
+                    baseTemplate.items.properties.resistances = { type: "string" };
+                    baseTemplate.items.properties.immunities = { type: "string" };
+                    baseTemplate.items.properties.challenge = {
+                        type: "object",
+                        properties: {
+                            rating: { type: "string" },
+                            xp: { type: "string" },
+                            pb: { type: "string" }
+                        }
+                    };
+                }
+
+                // Add ecology if present
+                if (sections.ecology) {
+                    baseTemplate.items.properties.ecology = {
+                        type: "object",
+                        properties: {
+                            preyed_upon_by: { type: "string" },
+                            preys_on: { type: "string" }
+                        }
+                    };
+                }
+
+                // Add taming if present
+                if (sections.taming) {
+                    baseTemplate.items.properties.taming = {
+                        type: "object",
+                        properties: {
+                            bond: { type: "string" },
+                            maturity: { type: "string" }
+                        }
+                    };
+                }
+
+                // Add action/trait arrays
+                baseTemplate.items.properties.traits = {
+                    type: "array",
+                    items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                };
+                baseTemplate.items.properties.actions = {
+                    type: "array",
+                    items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                };
+                baseTemplate.items.properties.reactions = {
+                    type: "array",
+                    items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                };
+                baseTemplate.items.properties.bonus_actions = {
+                    type: "array",
+                    items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                };
+
+                // Handle Apex-specific sections
+                if (sections.legendary_actions) {
+                    baseTemplate.items.properties.legendary_actions = {
+                        type: "array",
+                        items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                    };
+                }
+                if (sections.lair_actions) {
+                    baseTemplate.items.properties.lair_actions = {
+                        type: "array",
+                        items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                    };
+                }
+                if (sections.regional_effects) {
+                    baseTemplate.items.properties.regional_effects = {
+                        type: "array",
+                        items: { type: "object", properties: { name: { type: "string" }, desc: { type: "string" } } }
+                    };
+                }
+
+                // Add other special fields
+                if (sections.defensive_instinct) {
+                    baseTemplate.items.properties.defensive_instinct = { type: "string" };
+                }
+                if (sections.encountering) {
+                    baseTemplate.items.properties.encountering = { type: "string" };
+                }
+                if (sections.crafting) {
+                    baseTemplate.items.properties.crafting = {
+                        type: "array",
+                        items: {
+                            type: "object",
+                            properties: {
+                                type: { type: "string" },
+                                name: { type: "string" },
+                                cost: { type: "string" },
+                                check: { type: "string" }
+                            }
+                        }
+                    };
+                }
+
+                baseTemplate.items.properties.flavor = { type: "string", description: "Flavor text/description" };
+                baseTemplate.items.required = ["name", "ac", "hp"];
+
+                return baseTemplate;
+            }
+        }
+
+        // Fallback to hardcoded logic for games without InputSchema
         if (type === 'monster' || type === 'npc') {
-            // Game-specific monster schemas
             if (game === 'Knave') {
-                // Knave has a simpler format: AC, HP, LVL, ATK, MOV, MRL, NA, then period-separated abilities
                 baseTemplate.items.properties = {
                     name: { type: "string", description: "Monster Name" },
                     ac: { type: "integer", description: "Armor Class (AC)" },
@@ -303,12 +477,12 @@ export class ForgeService {
                     attacks: { type: "string", description: "Attacks (ATK) - e.g., 'bite (d6)'" },
                     mv: { type: "string", description: "Movement (MOV) - e.g., '40''" },
                     morale: { type: "integer", description: "Morale (MRL) - 2-12" },
-                    number_appearing: { type: "string", description: "Number Appearing - format is 'Dungeon (Wilderness)' e.g., 'd6 (3d10)' means d6 in dungeons, 3d10 in wilderness" },
-                    description: { type: "string", description: "Period-separated abilities and traits following the stats" }
+                    number_appearing: { type: "string", description: "Number Appearing - format is 'Dungeon (Wilderness)' e.g., 'd6 (3d10)'" },
+                    description: { type: "string", description: "Period-separated abilities and traits" }
                 };
                 baseTemplate.items.required = ["name", "ac", "hp", "level", "attacks"];
             } else {
-                // ShadowDark and other games use fuller stat blocks
+                // ShadowDark and others
                 baseTemplate.items.properties = {
                     name: { type: "string", description: "Monster Name" },
                     ac: { type: "integer", description: "Armor Class" },
@@ -359,27 +533,132 @@ export class ForgeService {
 
     /**
      * Transform Scribe JSON output to the YAML content format.
-     * Output structure varies by game (Knave vs ShadowDark have different formats).
+     * Uses InputSchema for ID format and ContentSchema for structure when available.
      */
     private transformScribeOutput(data: any[], contentType: string, game: string, source: string): any[] {
         const type = contentType.toLowerCase();
         const typeName = type.charAt(0).toUpperCase() + type.slice(1);
+        const inputSchema = this.loadInputSchema(game);
 
-        // Generate game-specific ID prefix
-        const idPrefix = game === 'Knave' ? 'knave' :
-            game === 'ShadowDark' ? 'sd' :
-                game.toLowerCase().replace(/[^a-z]/g, '');
+        // Determine ID prefix and format from InputSchema or use hardcoded defaults
+        const schemaIdFormat = inputSchema?.extraction_rules?.id_format as string | undefined;
+        const idPrefix = schemaIdFormat
+            ? schemaIdFormat.split('_')[0]
+            : (game === 'Knave' ? 'knave' : game === 'ShadowDark' ? 'sd' : game.toLowerCase().replace(/[^a-z]/g, ''));
 
         return data.map(item => {
             const name = (item.name || 'Unknown').replace(/^(##\s*)?/, '').trim();
             const nameSlug = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
-            const id = `${idPrefix}_${type}_${nameSlug}`;
+
+            // Build ID based on type and stage
+            let typePrefix = type;
+            if (item.stage === 'Apex' || item.legendary_actions?.length > 0) {
+                typePrefix = 'apex';
+            } else if (item.stage === 'Young' || name.toLowerCase().includes('juvenile') || name.toLowerCase().includes('baby') || name.toLowerCase().includes('elver')) {
+                typePrefix = 'young';
+            }
+
+            let id: string;
+            if (schemaIdFormat) {
+                id = schemaIdFormat.replace('{type_prefix}', typePrefix).replace('{snake_case_name}', nameSlug);
+            } else {
+                id = `${idPrefix}_${typePrefix}_${nameSlug}`;
+            }
+
+
             const titleCaseName = name.split(' ').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 
             if (type === 'monster' || type === 'npc') {
-                // Game-specific monster output
+                // Check if this game has InputSchema (like SolKesh)
+                if (inputSchema?.extraction_rules?.sections) {
+                    // Schema-driven monster output (SolKesh style)
+                    const monster: any = {
+                        id,
+                        name: titleCaseName,
+                        type: 'Monster',
+                        game,
+                        source,
+                        properties: {
+                            subtype: item.subtype || '',
+                            flavor: item.flavor || item.description || ''
+                        }
+                    };
+
+                    // Add stage if detected
+                    if (typePrefix === 'apex') {
+                        monster.stage = 'Apex';
+                    } else if (typePrefix === 'young') {
+                        monster.stage = 'Young';
+                    } else {
+                        monster.stage = 'Standard';
+                    }
+
+                    // Add bio section
+                    if (item.bio) {
+                        monster.properties.bio = {
+                            class: item.bio.class || '',
+                            genus: item.bio.genus || '',
+                            niche: item.bio.niche || '',
+                            biome: item.bio.biome || ''
+                        };
+                    }
+
+                    // Add ecology section
+                    if (item.ecology) {
+                        monster.properties.ecology = {
+                            preyed_upon_by: item.ecology.preyed_upon_by || '',
+                            preys_on: item.ecology.preys_on || ''
+                        };
+                    }
+
+                    // Add taming section
+                    if (item.taming) {
+                        monster.properties.taming = {
+                            bond: String(item.taming.bond || ''),
+                            maturity: item.taming.maturity || ''
+                        };
+                    }
+
+                    // Add core stats
+                    monster.properties.ac = String(item.ac || '');
+                    monster.properties.hp = item.hp || '';
+                    monster.properties.speed = item.speed || item.mv || '';
+                    if (item.initiative) monster.properties.initiative = item.initiative;
+
+                    // Add full attributes
+                    if (item.attributes) {
+                        monster.properties.attributes = item.attributes;
+                    }
+
+                    // Add secondary stats
+                    if (item.skills) monster.properties.skills = item.skills;
+                    if (item.senses) monster.properties.senses = item.senses;
+                    if (item.vulnerabilities) monster.properties.vulnerabilities = item.vulnerabilities;
+                    if (item.resistances) monster.properties.resistances = item.resistances;
+                    if (item.immunities) monster.properties.immunities = item.immunities;
+                    if (item.challenge) monster.properties.challenge = item.challenge;
+
+                    // Add trait/action arrays
+                    if (item.traits?.length > 0) monster.properties.traits = item.traits;
+                    if (item.actions?.length > 0) monster.properties.actions = item.actions;
+                    if (item.reactions?.length > 0) monster.properties.reactions = item.reactions;
+                    if (item.bonus_actions?.length > 0) monster.properties.bonus_actions = item.bonus_actions;
+
+                    // Add Apex-specific sections
+                    if (item.legendary_actions?.length > 0) monster.legendary_actions = item.legendary_actions;
+                    if (item.lair_actions?.length > 0) monster.lair_actions = item.lair_actions;
+                    if (item.regional_effects?.length > 0) monster.regional_effects = item.regional_effects;
+
+                    // Add special fields
+                    if (item.defensive_instinct) monster.properties.defensive_instinct = item.defensive_instinct;
+                    if (item.encountering) monster.encountering = item.encountering;
+                    if (item.crafting?.length > 0) monster.crafting = item.crafting;
+
+                    return monster;
+                }
+
+                // Fallback: Game-specific hardcoded output
                 if (game === 'Knave') {
-                    // Knave: Simple structure with period-separated description
                     return {
                         id,
                         name: titleCaseName,
@@ -398,7 +677,7 @@ export class ForgeService {
                         description: item.description || ''
                     };
                 } else {
-                    // ShadowDark and others: Full structure with stats, abilities, actions
+                    // ShadowDark and others
                     return {
                         id,
                         name: titleCaseName,
@@ -453,6 +732,58 @@ export class ForgeService {
                 };
             }
         });
+    }
+
+    /**
+     * Load InputSchema for a game - contains extraction rules, patterns, and conventions.
+     * Returns null if the schema file doesn't exist.
+     */
+    private loadInputSchema(game: string): any | null {
+        if (!game) return null;
+        const schemaPath = path.resolve(process.cwd(), '_Content', game, `${game}_InputSchema.yaml`);
+        if (!fs.existsSync(schemaPath)) {
+            this.log(`No InputSchema found for ${game}`);
+            return null;
+        }
+        try {
+            const content = fs.readFileSync(schemaPath, 'utf-8');
+            const parsed = yaml.load(content) as any;
+            this.log(`Loaded InputSchema for ${game} (v${parsed.version || '?'})`);
+            return parsed;
+        } catch (e) {
+            this.warn(`Failed to parse InputSchema for ${game}: ${e}`);
+            return null;
+        }
+    }
+
+    /**
+     * Load ContentSchema for a game - contains the canonical structure for content validation.
+     * Returns the definition for a specific content type (Monster, Spell, Item, etc.)
+     */
+    private loadContentSchema(game: string, contentType: string): any | null {
+        if (!game) return null;
+        const schemaPath = path.resolve(process.cwd(), '_Content', game, `${game}_ContentSchema.yaml`);
+        if (!fs.existsSync(schemaPath)) {
+            this.log(`No ContentSchema found for ${game}`);
+            return null;
+        }
+        try {
+            const content = fs.readFileSync(schemaPath, 'utf-8');
+            const parsed = yaml.load(content) as any;
+
+            // Find the definition for the specified content type
+            const typeName = contentType.charAt(0).toUpperCase() + contentType.slice(1).toLowerCase();
+            const definition = parsed.definitions?.[typeName];
+
+            if (definition) {
+                this.log(`Loaded ContentSchema definition for ${game}/${typeName}`);
+                return { ...definition, game: parsed.game, version: parsed.version };
+            }
+            return null;
+        } catch (e) {
+            this.warn(`Failed to parse ContentSchema for ${game}: ${e}`);
+            return null;
+        }
     }
 
     private loadTemplateForGame(game: string): string {

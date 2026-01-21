@@ -9,6 +9,15 @@ GEMINI API KEY:
 If lost for some reason, it's in the user file:
 /Users/seejaymac/Documents/GitHub/TTRPG-Generator/data/users/SeeJayMac.json
 
+
+TASK: 
+Check out this folder AS AN EXAMPLE: 
+/Users/seejaymac/Documents/GitHub/TTRPG-Generator/_Content/SolKesh
+
+The Forge YAML creation script is not working properly. It should be updated and heavily refactored to use the inputschema as a template to pull from the generated MD file. And a contentSchema should be used to generate the Game_SourceType_Content.yaml files. 
+
+For testing only, you can use the /Users/seejaymac/Documents/GitHub/TTRPG-Generator/import/raw_data/SolKesh.md file, rather than pulling from the textbox on page 2 of the Forge mode. I guess the script should be able to handle both a file OR a string from that box. 
+
 CONTEXT:
 <only the relevant code snippets or diff>
 

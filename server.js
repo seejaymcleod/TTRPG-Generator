@@ -435,49 +435,88 @@ app.get('/api/templates', (req, res) => {
       templates = yaml.load(fs.readFileSync(baseTemplatePath, 'utf8')) || {};
     }
     if (!templates.types) templates.types = {};
+    if (!templates.taxonomy) templates.taxonomy = {}; // Taxonomies by game
 
     // Debug info
     templates._debug = { loaded: [] };
 
-    // 2. Scan for Game-Specific Templates (e.g. _Content/Knave/Knave_Templates.yaml)
+    // 2. Scan for Game-Specific Templates (Old Location: _Content/Game/Game_Templates.yaml)
+    // 2. Scan for Game-Specific Templates (Recursive Scan of _Content)
     const contentDir = path.join(__dirname, '_Content');
-    if (fs.existsSync(contentDir)) {
-      const items = fs.readdirSync(contentDir, { withFileTypes: true });
+
+    function scanTemplates(dir) {
+      if (!fs.existsSync(dir)) return;
+      const items = fs.readdirSync(dir, { withFileTypes: true });
+
       items.forEach(item => {
         if (item.isDirectory()) {
-          const gameDir = path.join(contentDir, item.name);
-          const templateFile = path.join(gameDir, `${item.name}_Templates.yaml`);
-
-          if (fs.existsSync(templateFile)) {
+          scanTemplates(path.join(dir, item.name));
+        } else {
+          // A. Legacy: {Game}_Templates.yaml
+          if (item.name.endsWith('_Templates.yaml')) {
+            const templateFile = path.join(dir, item.name);
+            const gameName = item.name.split('_')[0];
             try {
               const doc = yaml.load(fs.readFileSync(templateFile, 'utf8'));
+              templates._debug.loaded.push({ file: templateFile, type: 'legacy', game: gameName });
 
-              templates._debug.loaded.push({
-                file: templateFile,
-                hasTemplates: !!(doc && doc.templates),
-                keys: doc && doc.templates ? Object.keys(doc.templates) : []
-              });
-
-              // Merge 'templates' section into our types
               if (doc && doc.templates) {
                 Object.keys(doc.templates).forEach(typeKey => {
-                  // Always add Namespaced Key (e.g. "Knave:Monster")
-                  const scopedKey = `${item.name}:${typeKey}`;
+                  const scopedKey = `${gameName}:${typeKey}`;
                   templates.types[scopedKey] = doc.templates[typeKey];
+                  // Fallback
+                  if (!templates.types[typeKey]) templates.types[typeKey] = doc.templates[typeKey];
+                });
+              }
+              if (doc && doc.taxonomy) {
+                templates.taxonomy[gameName] = doc.taxonomy;
+              }
+            } catch (e) {
+              console.error(`Error loading legacy template ${templateFile}:`, e);
+            }
+          }
 
-                  // Also fill base key if missing (fallback)
-                  if (!templates.types[typeKey]) {
-                    templates.types[typeKey] = doc.templates[typeKey];
-                  }
+          // B. New Display: {Game}_Display.yaml
+          if (item.name.endsWith('_Display.yaml')) {
+            const templateFile = path.join(dir, item.name);
+            const gameName = item.name.split('_')[0];
+            try {
+              const doc = yaml.load(fs.readFileSync(templateFile, 'utf8'));
+              templates._debug.loaded.push({ file: templateFile, type: 'display', game: gameName });
+              if (doc) {
+                Object.keys(doc).forEach(typeKey => {
+                  if (typeKey === 'game' || typeKey === 'version') return;
+                  const scopedKey = `${gameName}:${typeKey}`;
+                  templates.types[scopedKey] = { ...doc[typeKey], ...templates.types[scopedKey] };
+                  // Fallback
+                  if (!templates.types[typeKey]) templates.types[typeKey] = doc[typeKey];
                 });
               }
             } catch (e) {
-              templates._debug.loaded.push({ file: templateFile, error: e.message });
-              console.error(`Error loading templates from ${templateFile}:`, e);
+              console.error(`Error loading display template ${templateFile}:`, e);
+            }
+          }
+
+          // C. New Taxonomy: {Game}_Taxonomy.yaml
+          if (item.name.endsWith('_Taxonomy.yaml')) {
+            const templateFile = path.join(dir, item.name);
+            const gameName = item.name.split('_')[0];
+            try {
+              const doc = yaml.load(fs.readFileSync(templateFile, 'utf8'));
+              templates._debug.loaded.push({ file: templateFile, type: 'taxonomy', game: gameName });
+              if (doc && doc.filters) {
+                templates.taxonomy[gameName] = doc.filters;
+              }
+            } catch (e) {
+              console.error(`Error loading taxonomy ${templateFile}:`, e);
             }
           }
         }
       });
+    }
+
+    if (fs.existsSync(contentDir)) {
+      scanTemplates(contentDir);
     }
 
     res.json(templates);
@@ -776,11 +815,13 @@ app.post('/api/forge/save-cards', async (req, res) => {
 
 // POST /api/forge/extract-scribe - Use the enhanced Python Scribe pipeline
 // This uses the new Python scripts with Gemini retry logic and model fallback
+// Supports: text (textbox input) OR filePath (file-based extraction)
 app.post('/api/forge/extract-scribe', async (req, res) => {
-  const { text, type, game, source, taskId, apiKey, model } = req.body;
+  const { text, filePath, type, game, source, taskId, apiKey, model } = req.body;
 
-  if (!text) {
-    return res.status(400).json({ error: 'Text content required' });
+  // Require either text OR filePath
+  if (!text && !filePath) {
+    return res.status(400).json({ error: 'Either text content or filePath required' });
   }
   if (!type) {
     return res.status(400).json({ error: 'Content type required (monster, item, spell)' });
@@ -793,13 +834,14 @@ app.post('/api/forge/extract-scribe', async (req, res) => {
     broadcastForgeEvent('log', { level: 'info', message: `[Scribe] Starting ${type} extraction via Python pipeline...` });
 
     const cards = await forge.extractWithPythonScribe(
-      text,
+      text || '',
       type,
       game || 'ShadowDark',
       source || 'Core',
       taskId,
       apiKey,
-      model
+      model,
+      filePath  // New: pass filePath for file-based extraction
     );
 
     broadcastForgeEvent('log', { level: 'info', message: `[Scribe] Extracted ${cards.length} ${type} entries` });
@@ -817,6 +859,7 @@ app.post('/api/forge/extract-scribe', async (req, res) => {
     if (taskId) forge.finishTask(taskId);
   }
 });
+
 
 
 // POST /api/table-contents (Matching Legacy Structure)

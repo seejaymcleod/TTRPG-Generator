@@ -230,14 +230,24 @@ templates:
       level:
         label: "Level"
         source_property: "level"
-        options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
+        filter_type: "slider"
+      ac:
+        label: "AC"
+        source_property: "ac"
+        filter_type: "slider"
+      hp:
+        label: "HP"
+        source_property: "hp"
+        filter_type: "slider"
       
       # Taxonomy Tags
       Family:
         label: "Family"
+        filter_type: "pills"
         options: ["Humanoid", "Beast", "Undead", "Construct", "Outsider", "Monstrosity", "Plant", "Giant", "Dragon"]
       Biome:
         label: "Biome"
+        filter_type: "pills"
         options: ["Forest", "Dungeon", "Urban", "Aquatic", "Desert", "Mountains", "Swamp"]
 
   # ==========================================================================

@@ -2904,96 +2904,84 @@ function initContentFilters() {
 
         const p = item.properties || {};
 
+        // Legacy field collection (not yet in templates)
         if (item.type === 'Monster') {
-            const lvl = parseInt(p.level) || 0;
-            const ac = parseInt(p.ac) || 0;
-            const hp = parseInt(p.hp) || 0;
-            const al = p.alignment;
-
-            if (al) meta.alignments.add(al);
-
-            meta.ranges.level.min = Math.min(meta.ranges.level.min, lvl);
-            meta.ranges.level.max = Math.max(meta.ranges.level.max, lvl);
-            meta.ranges.ac.min = Math.min(meta.ranges.ac.min, ac);
-            meta.ranges.ac.max = Math.max(meta.ranges.ac.max, ac);
-            meta.ranges.hp.min = Math.min(meta.ranges.hp.min, hp);
-            meta.ranges.hp.max = Math.max(meta.ranges.hp.max, hp);
+            if (p.alignment) meta.alignments.add(p.alignment);
         } else if (item.type === 'Spell') {
-            const tier = parseInt(p.tier) || 0;
             const cls = p.class;
-
             if (cls) {
-                // Handle comma-separated classes like "Priest, Wizard"
                 cls.split(',').map(c => c.trim()).forEach(c => meta.spellClasses.add(c));
             }
-
-            meta.ranges.tier.min = Math.min(meta.ranges.tier.min, tier);
-            meta.ranges.tier.max = Math.max(meta.ranges.tier.max, tier);
         } else if (item.type === 'Item') {
-            const cat = p.category;
-            if (cat) meta.itemCategories.add(cat);
+            if (p.category) meta.itemCategories.add(p.category);
         }
 
         // --- Dynamic Taxonomy Extraction ---
         // Get the template for this item type
-        const tmpl = displayTemplates[item.type];
+        // Try Game:Type first (e.g. "Knave:Monster"), then just Type
+        let tmpl = null;
+        if (item.game && item.type) {
+            const gameTypeKey = `${item.game}:${item.type}`;
+            // Case-insensitive lookup
+            const gameTypeMatch = Object.keys(displayTemplates).find(k => k.toLowerCase() === gameTypeKey.toLowerCase());
+            if (gameTypeMatch) tmpl = displayTemplates[gameTypeMatch];
+        }
+
+        // Fallback
+        if (!tmpl && item.type) {
+            tmpl = displayTemplates[item.type];
+        }
+
         if (tmpl && tmpl.taxonomy) {
             Object.keys(tmpl.taxonomy).forEach(field => {
-                // Determine property key - simple mapping for now: field name is prop key
-                // Note: Taxonomy keys in YAML are like "Power Source", "Usage Category"
-                // Content properties might be "power_source" or "PowerSource" or "Properties"
+                const fieldConfig = tmpl.taxonomy[field];
+                const filterType = fieldConfig.filter_type || 'pills'; // Default to pills
 
                 // Helper to find property with loose matching
                 const findProperty = (obj, keys) => {
                     if (!obj) return undefined;
-
-                    // 1. Try exact keys first (mapped or field name)
                     for (const k of keys) {
                         if (obj[k] !== undefined) return obj[k];
                     }
-
-                    // 2. Try lowercase
                     for (const k of keys) {
                         const lower = k.toLowerCase();
                         if (obj[lower] !== undefined) return obj[lower];
                     }
-
-                    // 3. Try snake_case (replace spaces with underscores)
                     for (const k of keys) {
                         const snake = k.toLowerCase().replace(/ /g, '_');
                         if (obj[snake] !== undefined) return obj[snake];
                     }
-
-                    // 4. Try no spaces (Pascal/Camel case approximation)
                     for (const k of keys) {
                         const nospace = k.toLowerCase().replace(/ /g, '');
-                        // iterating object keys is expensive, so we just check direct access if we can guess the key
-                        // But since we can't guess valid casing (e.g. usageCategory vs UsageCategory), 
-                        // we might just stop here or do a thorough search if needed.
-                        // For now, let's try direct access of the nospace version (lowercase)
                         if (obj[nospace] !== undefined) return obj[nospace];
                     }
-
                     return undefined;
                 };
 
                 let searchKeys = [field];
-                // Check if template defines a specific source property
-                if (tmpl.taxonomy[field] && tmpl.taxonomy[field].source_property) {
-                    searchKeys.unshift(tmpl.taxonomy[field].source_property);
+                if (fieldConfig.source_property) {
+                    searchKeys.unshift(fieldConfig.source_property);
                 }
 
                 const val = findProperty(p, searchKeys);
 
-                if (val) {
-                    if (!meta.taxonomy[field]) meta.taxonomy[field] = new Set();
-
-                    // Handle comma-separated lists if needed (e.g. Tags)
-                    // For strict taxonomy, values should be single, but best to be safe
-                    if (typeof val === 'string' && val.includes(',')) {
-                        val.split(',').map(v => v.trim()).forEach(v => meta.taxonomy[field].add(v));
+                if (val !== undefined && val !== null && val !== '') {
+                    if (filterType === 'slider') {
+                        // Slider: calculate numeric range
+                        const numVal = parseInt(val) || 0;
+                        if (!meta.ranges[field]) {
+                            meta.ranges[field] = { min: Number.MAX_SAFE_INTEGER, max: 0 };
+                        }
+                        meta.ranges[field].min = Math.min(meta.ranges[field].min, numVal);
+                        meta.ranges[field].max = Math.max(meta.ranges[field].max, numVal);
                     } else {
-                        meta.taxonomy[field].add(val);
+                        // Pills: collect discrete values
+                        if (!meta.taxonomy[field]) meta.taxonomy[field] = new Set();
+                        if (typeof val === 'string' && val.includes(',')) {
+                            val.split(',').map(v => v.trim()).forEach(v => meta.taxonomy[field].add(v));
+                        } else {
+                            meta.taxonomy[field].add(val);
+                        }
                     }
                 }
             });
@@ -3024,11 +3012,12 @@ function initContentFilters() {
     // Default: All item categories enabled
     meta.itemCategories.forEach(cat => contentState.filters.itemCategory[cat] = true);
 
-    // Default ranges
-    contentState.filters.props.level = { ...meta.ranges.level };
-    contentState.filters.props.tier = { ...meta.ranges.tier };
-    contentState.filters.props.ac = { ...meta.ranges.ac };
-    contentState.filters.props.hp = { ...meta.ranges.hp };
+    // Default ranges (from template-defined sliders)
+    Object.keys(meta.ranges).forEach(field => {
+        if (meta.ranges[field].min <= meta.ranges[field].max) {
+            contentState.filters.props[field] = { ...meta.ranges[field] };
+        }
+    });
 
     // Initialize Dynamic Taxonomy Filters
     contentState.filters.taxonomy = contentState.filters.taxonomy || {};
@@ -3269,172 +3258,115 @@ function renderFilterSidebar() {
     `;
     container.appendChild(typeSection);
 
-    // 4. MONSTER-SPECIFIC FILTERS (Numeric Ranges)
-    if (contentState.filters.type['Monster']) {
-        // ALWAYS Render Sliders for properties that make sense as ranges
-        renderDualSlider(container, 'Level', 'level', contentState.meta.ranges.level);
-        renderDualSlider(container, 'AC', 'ac', contentState.meta.ranges.ac);
-        renderDualSlider(container, 'HP', 'hp', contentState.meta.ranges.hp);
-
-        // Alignment (Legacy/Hybrid: Check if it's in taxonomy, if not render default)
-        // If 'alignment' is NOT in dynamic taxonomy, render standard
-        if (!contentState.meta.taxonomy['alignment']) {
-            const alSection = document.createElement('div');
-            alSection.className = 'mt-4';
-            const alLabels = { 'L': 'Lawful', 'N': 'Neutral', 'C': 'Chaotic' };
-            let alButtons = '';
-            Array.from(contentState.meta.alignments).sort().forEach(al => {
-                const selected = contentState.filters.alignment[al] ? 'selected' : '';
-                alButtons += `<button onclick="toggleAlignment('${al}')" class="filter-btn ${selected}">${alLabels[al] || al}</button>`;
-            });
-            if (alButtons) {
-                alSection.innerHTML = `
-                    <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Alignment</label>
-                    <div class="flex flex-wrap gap-2">${alButtons}</div>
-                `;
-                container.appendChild(alSection);
-            }
-        }
-    }
-
-    // 5. SPELL-SPECIFIC FILTERS
-    if (contentState.filters.type['Spell']) {
-        // Prefer dynamic Tiers if available, otherwise slider?
-        // User said "display file should control which".
-        // Currently taxonomy defines 'tier'. If 'tier' is in taxonomy, dynamic loop handles it.
-        // If we want slider for tier, we should suppress dynamic loop for 'tier' OR
-        // make dynamic loop smart.
-        // For now, let's keep Tier as dynamic pills (as verified user liked it or asked for control).
-        // If taxonomy has 'tier', we SKIP the slider here to avoid double render.
-        if (!contentState.meta.taxonomy['tier']) {
-            renderDualSlider(container, 'Tier', 'tier', contentState.meta.ranges.tier);
-        }
-
-        // Class (Legacy/Hybrid)
-        if (!contentState.meta.taxonomy['class']) {
-            const clsSection = document.createElement('div');
-            clsSection.className = 'mt-4';
-            let clsButtons = '';
-            Array.from(contentState.meta.spellClasses).sort().forEach(cls => {
-                const selected = contentState.filters.spellClass[cls] ? 'selected' : '';
-                clsButtons += `<button onclick="toggleSpellClass('${cls}')" class="filter-btn ${selected}">${cls}</button>`;
-            });
-            if (clsButtons) {
-                clsSection.innerHTML = `
-                    <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Class</label>
-                    <div class="flex flex-wrap gap-2">${clsButtons}</div>
-                `;
-                container.appendChild(clsSection);
-            }
-        }
-    }
-
-    // 6. ITEM-SPECIFIC FILTERS
-    if (contentState.filters.type['Item']) {
-        // Category (Legacy/Hybrid)
-        // If 'category' is NOT in dynamic taxonomy, render standard
-        if (!contentState.meta.taxonomy['category']) {
-            const catSection = document.createElement('div');
-            catSection.className = 'mt-4';
-            let catButtons = '';
-            Array.from(contentState.meta.itemCategories).sort().forEach(cat => {
-                const selected = contentState.filters.itemCategory?.[cat] ? 'selected' : '';
-                catButtons += `<button onclick="toggleItemCategory('${cat}')" class="filter-btn ${selected}">${cat}</button>`;
-            });
-            if (catButtons) {
-                catSection.innerHTML = `
-                    <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Category</label>
-                    <div class="flex flex-wrap gap-2">${catButtons}</div>
-                `;
-                container.appendChild(catSection);
-            }
-        }
-    }
-
-    // 7. DYNAMIC TAXONOMY FILTERS
-    // Iterate over all active types, find their templates, and look for fields present in meta.taxonomy
+    // 4. TEMPLATE-DRIVEN FILTERS (Sliders and Pills)
+    // Get templates for active types and render filters based on filter_type
     const activeTypes = Object.keys(contentState.filters.type).filter(t => contentState.filters.type[t]);
+    const renderedSliders = new Set(); // Track rendered sliders to avoid duplicates
+    const renderedPills = new Set();   // Track rendered pill groups
 
-    // We already have gathered available values in contentState.meta.taxonomy
-    // We only render filters for fields that HAVE values in the current set
-    const taxonomyFields = Object.keys(contentState.meta.taxonomy);
-
-    // Get currently active types (or all if none selected? No, usually defaults to one or all)
-    // contentState.filters.type is object { Monster: true, Spell: false ... }
-    // If no type filter is active, we might show keys for ALL loaded content types?
-    // Let's rely on activeTypes calculated above.
-
-    taxonomyFields.forEach(field => {
-        // Skip legacy fields that we specifically want to Handle manually or override
-        // logic: alignment & class are handled by legacy blocks above if missing from taxonomy,
-        // BUT if present we want them here.
-        // HOWEVER, 'level', 'ac', 'hp' should ALWAYS be sliders for Monsters -> SKIP here.
-        // 'tier' is ambiguous. User liked 2 types.
-
-        if (activeTypes.includes('Monster') && (field === 'level' || field === 'ac' || field === 'hp')) return;
-        if (activeTypes.includes('Spell') && field === 'tier' && contentState.meta.ranges.tier.max > 0) {
-            // If tier is in taxonomy AND we have a range, we might want to render a slider instead of pills.
-            // For now, if taxonomy has 'tier', we let it render as pills here.
-            // If the user wants a slider for 'tier' when it's in taxonomy, we'd add a skip here.
-            // The current instruction implies if taxonomy has 'tier', it should be handled dynamically (pills).
+    activeTypes.forEach(type => {
+        // Find the template for this game:type or fallback to just type
+        let tmpl = null;
+        if (activeGame) {
+            const gameTypeKey = `${activeGame}:${type}`;
+            const gameTypeMatch = Object.keys(displayTemplates).find(k => k.toLowerCase() === gameTypeKey.toLowerCase());
+            if (gameTypeMatch) tmpl = displayTemplates[gameTypeMatch];
+        }
+        if (!tmpl) {
+            tmpl = displayTemplates[type];
         }
 
+        if (tmpl && tmpl.taxonomy) {
+            Object.keys(tmpl.taxonomy).forEach(field => {
+                const fieldConfig = tmpl.taxonomy[field];
+                const filterType = fieldConfig.filter_type || 'pills';
+                const label = fieldConfig.label || field;
 
-        // CHECK: Is this field relevant to any ACTIVE type?
-        let isRelevant = false;
-        let label = field;
-
-        for (const type of activeTypes) {
-            // Look for specific template first (e.g. ShadowDark:Monster)
-            // We need to know the active Game for this. Or just check both?
-            // Since we filter items based on ALL Active filters, we should check if the field is relevant to ANY active item's template.
-
-            // Simple approach: Check if ANY template for this type (across all loaded games) has the field.
-            // OR better: check namespaced keys in `displayTemplates` that match the type.
-
-            // Iterating all templates to find if they match "AnyGame:Type"
-            const keys = Object.keys(displayTemplates).filter(k => k === type || k.endsWith(':' + type));
-
-            for (const key of keys) {
-                const tmpl = displayTemplates[key];
-                if (tmpl && tmpl.taxonomy && tmpl.taxonomy[field]) {
-                    isRelevant = true;
-                    label = tmpl.taxonomy[field].label || field;
-                    break;
+                if (filterType === 'slider') {
+                    // Render as dual slider
+                    if (renderedSliders.has(field)) return; // Already rendered
+                    const range = contentState.meta.ranges[field];
+                    if (range && range.min <= range.max) {
+                        renderDualSlider(container, label, field, range);
+                        renderedSliders.add(field);
+                    }
+                } else {
+                    // Render as pills
+                    if (renderedPills.has(field)) return; // Already rendered
+                    const values = contentState.meta.taxonomy[field];
+                    if (values && values.size > 0) {
+                        const section = document.createElement('div');
+                        section.className = 'mt-4';
+                        let buttons = '';
+                        Array.from(values).sort().forEach(val => {
+                            const isSelected = contentState.filters.taxonomy[field] && contentState.filters.taxonomy[field][val];
+                            buttons += `<button onclick="toggleTaxonomyFilter('${field}', '${String(val).replace(/'/g, "\\'")}')" 
+                                class="filter-btn ${isSelected ? 'selected' : ''}">${val}</button>`;
+                        });
+                        section.innerHTML = `
+                            <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
+                            <div class="flex flex-wrap gap-2">${buttons}</div>
+                        `;
+                        container.appendChild(section);
+                        renderedPills.add(field);
+                    }
                 }
-            }
-            if (isRelevant) break;
+            });
         }
-
-        // If not relevant to any active type, skip rendering
-        if (!isRelevant) return;
-
-        const values = contentState.meta.taxonomy[field];
-        if (!values || values.size === 0) return; // Should not happen if populated from content
-
-        // Check "Smart Slider" condition:
-        // If values are numeric and count > 6, maybe we SHOULD use a slider?
-        // But for now user asked for "double-ball slider" for Monster Levels specifically.
-        // We already forced that by skipping 'level' above and using renderDualSlider.
-
-        const section = document.createElement('div');
-        section.className = 'mt-4';
-
-        let buttons = '';
-        const sortedValues = Array.from(values).sort();
-
-        sortedValues.forEach(val => {
-            const isSelected = contentState.filters.taxonomy[field] && contentState.filters.taxonomy[field][val];
-            buttons += `<button onclick="toggleTaxonomyFilter('${field}', '${String(val).replace(/'/g, "\\'")}')" 
-                class="filter-btn ${isSelected ? 'selected' : ''}">${val}</button>`;
-        });
-
-        section.innerHTML = `
-            <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">${label}</label>
-            <div class="flex flex-wrap gap-2">${buttons}</div>
-        `;
-        container.appendChild(section);
     });
+
+    // 5. LEGACY FILTERS (Alignment, Spell Class, Item Category - not yet in templates)
+    if (activeTypes.includes('Monster') && !renderedPills.has('alignment') && contentState.meta.alignments.size > 0) {
+        const alSection = document.createElement('div');
+        alSection.className = 'mt-4';
+        const alLabels = { 'L': 'Lawful', 'N': 'Neutral', 'C': 'Chaotic' };
+        let alButtons = '';
+        Array.from(contentState.meta.alignments).sort().forEach(al => {
+            const selected = contentState.filters.alignment[al] ? 'selected' : '';
+            alButtons += `<button onclick="toggleAlignment('${al}')" class="filter-btn ${selected}">${alLabels[al] || al}</button>`;
+        });
+        if (alButtons) {
+            alSection.innerHTML = `
+                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Alignment</label>
+                <div class="flex flex-wrap gap-2">${alButtons}</div>
+            `;
+            container.appendChild(alSection);
+        }
+    }
+
+    if (activeTypes.includes('Spell') && !renderedPills.has('class') && contentState.meta.spellClasses.size > 0) {
+        const clsSection = document.createElement('div');
+        clsSection.className = 'mt-4';
+        let clsButtons = '';
+        Array.from(contentState.meta.spellClasses).sort().forEach(cls => {
+            const selected = contentState.filters.spellClass[cls] ? 'selected' : '';
+            clsButtons += `<button onclick="toggleSpellClass('${cls}')" class="filter-btn ${selected}">${cls}</button>`;
+        });
+        if (clsButtons) {
+            clsSection.innerHTML = `
+                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Class</label>
+                <div class="flex flex-wrap gap-2">${clsButtons}</div>
+            `;
+            container.appendChild(clsSection);
+        }
+    }
+
+    if (activeTypes.includes('Item') && !renderedPills.has('category') && contentState.meta.itemCategories.size > 0) {
+        const catSection = document.createElement('div');
+        catSection.className = 'mt-4';
+        let catButtons = '';
+        Array.from(contentState.meta.itemCategories).sort().forEach(cat => {
+            const selected = contentState.filters.itemCategory?.[cat] ? 'selected' : '';
+            catButtons += `<button onclick="toggleItemCategory('${cat}')" class="filter-btn ${selected}">${cat}</button>`;
+        });
+        if (catButtons) {
+            catSection.innerHTML = `
+                <label class="text-xs font-bold text-text-muted-light dark:text-text-muted-dark uppercase tracking-wider block mb-2">Category</label>
+                <div class="flex flex-wrap gap-2">${catButtons}</div>
+            `;
+            container.appendChild(catSection);
+        }
+    }
 }
 
 function renderSourceDropdown(container) {
@@ -4017,6 +3949,58 @@ function getCardSummaryHtml(item) {
         tmpl = displayTemplates[item.type];
     }
 
+    if (tmpl && tmpl.summaryTemplate) {
+        // Enhanced template string support with {tag:...} and {stat:...} directives
+        const template = tmpl.summaryTemplate;
+        const getValue = (obj, path) => path.split('.').reduce((o, k) => (o || {})[k], obj);
+        const color = tmpl.colorAccent || 'primary';
+        const colorClass = color === 'cyan' ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-500/20'
+            : color === 'amber' ? 'text-amber-600 dark:text-amber-400 bg-amber-500/20'
+                : color === 'purple' ? 'text-purple-600 dark:text-purple-400 bg-purple-500/20'
+                    : 'text-primary bg-primary/20';
+
+        // Process {tag:key} or {tag:key:modifier} or {tag:key:modifier:color} or {tag:key::color} patterns
+        let result = template.replace(/\{tag:([\w\.]+)(?::([^:}]*))?(?::(\w+))?\}/g, (match, key, modifier, tagColor) => {
+            let val = getValue(p, key) || getValue(item, key);
+            if (!val) return '';
+
+            // Apply modifiers
+            if (modifier && tmpl.formatters && tmpl.formatters[modifier] && typeof val === 'string') {
+                try {
+                    const regex = new RegExp(tmpl.formatters[modifier]);
+                    const m = val.match(regex);
+                    if (m) {
+                        val = m[1] ? m[1].trim() : m[0].trim();
+                    }
+                } catch (e) {
+                    console.error(`Invalid formatter regex for '${modifier}':`, e);
+                }
+            }
+
+            // Determine tag color class
+            const tc = tagColor || color;
+            const tagColorClass = tc === 'cyan' ? 'text-cyan-600 dark:text-cyan-400 bg-cyan-500/20'
+                : tc === 'amber' ? 'text-amber-600 dark:text-amber-400 bg-amber-500/20'
+                    : tc === 'purple' ? 'text-purple-600 dark:text-purple-400 bg-purple-500/20'
+                        : tc === 'emerald' ? 'text-emerald-600 dark:text-emerald-400 bg-emerald-500/20'
+                            : tc === 'blue' ? 'text-blue-600 dark:text-blue-400 bg-blue-500/20'
+                                : tc === 'rose' ? 'text-rose-600 dark:text-rose-400 bg-rose-500/20'
+                                    : tc === 'orange' ? 'text-orange-600 dark:text-orange-400 bg-orange-500/20'
+                                        : colorClass;
+
+            return `<span class="text-xs ${tagColorClass} px-2 py-0.5 rounded font-semibold mr-1">${val}</span>`;
+        });
+
+        // Process {stat:key:label} patterns
+        result = result.replace(/\{stat:([\w\.]+):([\w]+)\}/g, (match, key, label) => {
+            let val = getValue(p, key) || getValue(item, key);
+            if (!val && val !== 0) return '';
+            return `<span class="text-xs text-text-muted-light dark:text-text-muted-dark ml-2"><strong class="${colorClass.split(' ')[0]}">${label}</strong> <span class="font-semibold text-text-main-light dark:text-text-main-dark">${val}</span></span>`;
+        });
+
+        return result;
+    }
+
     if (tmpl && tmpl.header) {
         return tmpl.header.map(field => {
             // Flexible property lookup
@@ -4120,20 +4104,21 @@ function renderContentList() {
         };
 
         if (item.type === 'Monster') {
-            const lvl = parseInt(findProperty(props, ['level', 'Level', 'LVL'])) || 0;
-            const ac = parseInt(findProperty(props, ['ac', 'AC', 'Armor Class'])) || 0;
-            const hp = parseInt(findProperty(props, ['hp', 'HP', 'Hit Points'])) || 0;
             const al = findProperty(props, ['alignment', 'Alignment']);
-
-            if (lvl < r.level.min || lvl > r.level.max) return false;
-            if (ac < r.ac.min || ac > r.ac.max) return false;
-            if (hp < r.hp.min || hp > r.hp.max) return false;
             if (al && contentState.filters.alignment && !contentState.filters.alignment[al]) return false;
+
+            // Dynamic slider range checks (from templates)
+            for (const field of Object.keys(r)) {
+                const range = r[field];
+                if (!range || range.min === undefined || range.max === undefined) continue;
+                const val = parseInt(findProperty(props, [field])) || 0;
+                if (val < range.min || val > range.max) return false;
+            }
         } else if (item.type === 'Spell') {
             const tier = parseInt(findProperty(props, ['tier', 'Tier', 'Level'])) || 0;
             const cls = findProperty(props, ['class', 'Class']);
 
-            if (tier < r.tier.min || tier > r.tier.max) return false;
+            if (r.tier && (tier < r.tier.min || tier > r.tier.max)) return false;
 
             // Check if any of the spell's classes are enabled
             if (cls) {
@@ -4282,49 +4267,128 @@ function renderConfigurableBody(item, container, tmpl, options) {
             : color === 'emerald' ? 'text-emerald-500 dark:text-emerald-400'
                 : 'text-primary';
 
+    // Helper for deep lookup
+    const getValue = (obj, path) => path.split('.').reduce((o, k) => (o || {})[k], obj);
+
     let contentHtml = '';
 
     if (tmpl.layout) {
         tmpl.layout.forEach(section => {
-            // NEW: abilities_list type - splits a text field by separator and lists vertically
-            if (section.type === 'abilities_list') {
-                const key = section.key || 'description';
-                const separator = section.separator || '.';
-                const cssClass = section.class || 'text-sm';
-                const text = p[key] || item[key] || '';
-
-                if (text) {
-                    // Split by separator, trim, filter empty
-                    const abilities = text.split(separator)
-                        .map(a => a.trim())
-                        .filter(a => a.length > 0);
-
-                    if (abilities.length > 0) {
-                        contentHtml += `
-                            <div class="mb-3">
-                                <ul class="space-y-1 ${cssClass}">
-                                    ${abilities.map(a => `<li class="flex items-start gap-2"><span class="${colorClass}">•</span><span>${a}</span></li>`).join('')}
-                                </ul>
-                            </div>`;
-                    }
-                }
+            // Generic if_has Check
+            if (section.if_has) {
+                const targetVal = getValue(p, section.if_has) || getValue(item, section.if_has);
+                if (!targetVal) return;
+                if (Array.isArray(targetVal) && targetVal.length === 0) return;
             }
-            else if (section.type === 'flavor' && p.flavor) {
-                contentHtml += `<div class="italic text-sm text-text-muted-light dark:text-text-muted-dark mb-3 border-l-2 border-${color}-500/40 pl-3">${p.flavor}</div>`;
+
+            const sectionColor = section.color || color;
+            const sColorClass = sectionColor === 'cyan' ? 'text-cyan-500 dark:text-cyan-400'
+                : sectionColor === 'amber' ? 'text-amber-500 dark:text-amber-400'
+                    : sectionColor === 'emerald' ? 'text-emerald-500 dark:text-emerald-400'
+                        : sectionColor === 'purple' ? 'text-purple-500 dark:text-purple-400'
+                            : sectionColor === 'red' ? 'text-red-500 dark:text-red-400'
+                                : colorClass;
+
+            if (section.type === 'flavor' && (p.flavor || item.flavor)) {
+                contentHtml += `<div class="italic text-sm text-text-muted-light dark:text-text-muted-dark mb-3 border-l-2 border-${sectionColor}-500/40 pl-3">${p.flavor || item.flavor}</div>`;
+            }
+            else if (section.type === 'description') {
+                const key = section.key || 'description';
+                const desc = p[key] || item[key];
+                if (desc) {
+                    const css = section.class || 'text-sm text-text-muted-light dark:text-text-muted-dark mb-3';
+                    contentHtml += `<div class="${css}">${desc}</div>`;
+                }
             }
             else if (section.type === 'properties') {
                 const keys = section.keys || [];
-                // Filter out keys that have no value to keep the display clean
-                const filteredKeys = keys.filter(k => p[k] && p[k] !== 'N/A');
+
+                // Filter out keys that have no value
+                const filteredKeys = keys.filter(k => {
+                    const val = getValue(p, k) || getValue(item, k);
+                    return val !== undefined && val !== 'N/A' && val !== '';
+                });
+
                 if (filteredKeys.length > 0) {
                     const fields = filteredKeys.map(k => {
-                        let val = p[k];
+                        const val = getValue(p, k) || getValue(item, k);
                         // Use custom label from template if available, otherwise uppercase key name
                         let label = (section.labels && section.labels[k]) ? section.labels[k] : k.toUpperCase();
 
-                        return `<div><strong class="${colorClass}">${label}</strong> ${val}</div>`;
+                        return `<div><strong class="${sColorClass}">${label}</strong> ${val}</div>`;
                     }).join('');
-                    contentHtml += `<div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mb-3">${fields}</div>`;
+                    contentHtml += `<div class="flex flex-wrap gap-x-4 gap-y-1 text-sm mb-3 ${section.class || ''}">${fields}</div>`;
+                }
+            }
+            else if (section.type === 'grid') {
+                const items = section.items || [];
+                const cols = section.columns || 2;
+                const gridItems = items.map(c => {
+                    // Deep lookup for keys like "bio.class"
+                    const val = c.key.split('.').reduce((obj, k) => obj && obj[k], item) ||
+                        c.key.split('.').reduce((obj, k) => obj && obj[k], p);
+
+                    if (!val) return null;
+                    return `<div><span class="font-bold text-text-muted-light dark:text-text-muted-dark opacity-100 mr-1">${c.label}:</span> <span class="text-text-main-light dark:text-text-main-dark">${val}</span></div>`;
+                }).filter(i => i !== null).join('');
+
+                if (gridItems) {
+                    contentHtml += `<div class="grid grid-cols-${cols} gap-2 text-xs mb-3 ${section.class || ''}">${gridItems}</div>`;
+                }
+            }
+            else if (section.type === 'abilities_grid') {
+                const key = section.key || 'attributes';
+                const attrs = p[key] || item[key];
+                if (attrs) {
+                    const stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+                    const grid = stats.map(s => {
+                        const data = attrs[s.toLowerCase()] || { score: 10, mod: '+0' };
+                        // Handle both simple score or complex object
+                        const score = typeof data === 'object' ? data.score : data;
+                        const mod = typeof data === 'object' ? data.mod : '';
+
+                        return `
+                        <div class="flex flex-col items-center p-1 rounded bg-surface-heavy-light dark:bg-black/20 border border-border-light dark:border-border-dark">
+                            <span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark">${s}</span>
+                            <span class="font-bold text-sm text-text-main-light dark:text-text-main-dark">${score} ${mod ? `(${mod})` : ''}</span>
+                        </div>`;
+                    }).join('');
+                    contentHtml += `<div class="grid grid-cols-6 gap-2 mb-3">${grid}</div>`;
+                }
+            }
+            else if (section.type === 'section_header') {
+                contentHtml += `<h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark border-b border-border-light dark:border-border-dark mb-2 mt-4 pb-1">${section.title}</h4>`;
+            }
+            else if (section.type === 'abilities_list') {
+                const key = section.key;
+                const abilities = p[key] || item[key];
+                if (Array.isArray(abilities) && abilities.length > 0) {
+                    const list = abilities.map(a => `
+                        <div class="text-sm mb-2">
+                            <strong class="${sColorClass}">${a.name}.</strong> ${a.desc}
+                        </div>
+                    `).join('');
+                    contentHtml += `<div class="mb-3">${list}</div>`;
+                }
+            }
+            else if (section.type === 'text_block') {
+                const val = p[section.key] || item[section.key];
+                if (val) {
+                    const title = section.title ? `<div class="font-bold text-xs uppercase mb-1 ${sColorClass}">${section.title}</div>` : '';
+                    contentHtml += `<div class="mb-3 ${section.class || ''}">${title}<div class="text-sm">${val}</div></div>`;
+                }
+            }
+            else if (section.type === 'list') {
+                const abilities = p[section.key] || item[section.key];
+                if (Array.isArray(abilities) && abilities.length > 0) {
+                    const tmpl_str = section.item_template || '${name}';
+                    const list = abilities.map(a => {
+                        let row = tmpl_str.replace(/\${(\w+)}/g, (m, k) => a[k] || '');
+                        // Simple markdown bold replacement
+                        row = row.replace(/\*\*(.*?)\*\*/g, '<strong class="text-text-main-light dark:text-text-main-dark">$1</strong>');
+                        return `<li>${row}</li>`;
+                    }).join('');
+                    contentHtml += `<div class="mb-3 ${section.class || ''}"><div class="font-bold text-xs mb-1 ${sColorClass} uppercase tracking-wide border-b border-gray-700/50 pb-1">${section.title}</div><ul class="list-none text-xs space-y-2 mt-2">${list}</ul></div>`;
                 }
             }
             else if (section.type === 'benefit' && p.benefit) {
@@ -4345,43 +4409,10 @@ function renderConfigurableBody(item, container, tmpl, options) {
                         <div class="text-sm text-red-400/80">${p.curse}</div>
                     </div>`;
             }
+            // Fallback for actions if not handled by abilities_list
             else if (section.type === 'actions' && item.actions && item.actions.length > 0) {
-                const title = section.title || 'Actions';
-                contentHtml += `
-                    <div class="mb-3">
-                        <h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark mb-1">${title}</h4>
-                        ${item.actions.map(a => `<div class="text-sm"><strong class="text-red-500 dark:text-red-400">${a.name || 'Action'}.</strong> ${formatAttacks(a.desc)}</div>`).join('')}
-                    </div>`;
-            }
-            else if (section.type === 'stats') {
-                // KNAVE-SPECIFIC: Skip stats grid entirely for Knave monsters (they don't use D&D stats)
-                if (item.game === 'Knave') return;
-
-                // For other games (like ShadowDark), show stats if they exist
-                if (!p.stats) return;
-
-                const stats = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
-                const grid = stats.map(s => {
-                    const val = (p.stats && p.stats[s.toLowerCase()]) ? p.stats[s.toLowerCase()] : '+0';
-                    return `
-                        <div class="flex flex-col items-center p-2 rounded bg-background-light dark:bg-background-dark">
-                            <span class="text-[10px] font-bold text-text-muted-light dark:text-text-muted-dark">${s}</span>
-                            <span class="font-mono font-bold text-text-main-light dark:text-text-main-dark">${val}</span>
-                        </div>
-                    `;
-                }).join('');
-
-                contentHtml += `<div class="grid grid-cols-6 gap-2 mb-3 p-1 rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">${grid}</div>`;
-            }
-            else if (section.type === 'abilities' && item.abilities && item.abilities.length > 0) {
-                contentHtml += `
-                <div class="space-y-1 mt-2">
-                    <h4 class="font-bold text-xs uppercase tracking-wide text-text-muted-light dark:text-text-muted-dark">Abilities</h4>
-                    ${item.abilities.map(a => `<div class="text-sm"><strong class="${colorClass}">${a.name || 'Ability'}.</strong> ${a.desc || ''}</div>`).join('')}
-                </div>`;
-            }
-            else if (section.type === 'description' && item.description) {
-                contentHtml += `<div class="text-sm text-text-muted-light dark:text-text-muted-dark mb-3">${item.description}</div>`;
+                // code overlap with abilities_list but kept for backward compat if needed
+                // ...
             }
         });
     }

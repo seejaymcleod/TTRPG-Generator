@@ -1,13 +1,13 @@
 # Project State (keep under 40 lines if possible)
 
 Project: Tabletop RPG table generator (File System as CMS)
-Version: 0.1.73
+Version: 0.1.74
 
 Current focus:
-- Forge workflow for PDF content extraction (multi-type import)
+- Refactoring to `_Forge` structure (Completed)
+- SolKesh Monster Extraction (In Progress - Docling Page-Based)
+- Website Functionality Verification
 - Content browser with source filtering and sorting
-- Card display templates for different content types
-- Item and Spell display in Content mode
 
 Core paths:
 - src/engine/ (Renderer, Loader, Expressions)

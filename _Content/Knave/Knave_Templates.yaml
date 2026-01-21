@@ -136,11 +136,11 @@ templates:
       level:
         label: "Level"
         source_property: "level"
-        options: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"]
+        filter_type: "slider"
       morale:
         label: "Morale"
         source_property: "morale"
-        options: ["2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+        filter_type: "slider"
 
     # Visual Display Template (Used by Frontend)
     colorAccent: "amber"
@@ -168,3 +168,114 @@ templates:
         key: "description"
         separator: "."
         class: "text-sm leading-relaxed"
+
+  # ==========================================================================
+  # SPELL TEMPLATE
+  # ==========================================================================
+  Spell:
+    description: |
+      A spell entry for Knave 2e.
+      In Knave, spells are level-less and class-less - they are tied to Spellbooks.
+      Any character can cast any spell if they possess its spellbook.
+      "INT" in spell descriptions refers to the caster's Intelligence bonus.
+    
+    id_format: "knave_spell_{snake_case_name}"
+    
+    required_fields:
+      id:
+        description: "Unique identifier"
+        example: "knave_spell_adhere"
+      name:
+        description: "Spell name"
+        example: "Adhere"
+      type:
+        description: "Always 'Spell'"
+        value: "Spell"
+      game:
+        description: "Always 'Knave'"
+        value: "Knave"
+      source:
+        description: "Source book"
+        value: "Core"
+    
+    properties:
+      description:
+        description: "Spell effect - 'INT' refers to caster's Intelligence bonus"
+    
+    # Visual Display Template
+    colorAccent: "purple"
+    header: []
+    layout:
+      - type: "description"
+        class: "text-base leading-relaxed"
+    
+    taxonomy: {}
+
+  # ==========================================================================
+  # ITEM TEMPLATE
+  # ==========================================================================
+  Item:
+    description: |
+      Equipment and Magic Items for Knave 2e.
+    
+    id_format: "knave_item_{snake_case_name}"
+    
+    required_fields:
+      id:
+        description: "Unique identifier"
+        example: "knave_item_rope"
+      name:
+        description: "Item name"
+        example: "Rope"
+      type:
+        description: "Always 'Item'"
+        value: "Item"
+      game:
+        description: "Always 'Knave'"
+        value: "Knave"
+      source:
+        description: "Source book"
+        value: "Knave 2e"
+    
+    properties:
+      category:
+        description: "Item category"
+        options: ["Weapon", "Armor", "Gear", "Magic Item"]
+      cost:
+        description: "Cost in coins"
+      slots:
+        description: "Inventory slots used"
+      quality:
+        description: "Item quality"
+      damage:
+        description: "Damage die (for weapons)"
+        example: "d8"
+      armor:
+        description: "Armor defense value (for armor)"
+        example: "12"
+    
+    # Visual Display Template
+    colorAccent: "emerald"
+    header:
+      - key: "category"
+        label: ""
+        badge: true
+    layout:
+      - type: "flavor"
+        italic: true
+      - type: "properties"
+        keys: ["category", "cost", "slots", "damage", "armor"]
+        labels:
+            category: "Category"
+            cost: "Cost"
+            slots: "Slots"
+            damage: "Damage"
+            armor: "Armor"
+        color: "emerald"
+      - type: "description"
+    
+    taxonomy:
+      category:
+         label: "Category"
+         source_property: "category"
+         options: ["Weapon", "Armor", "Gear", "Magic Item"]

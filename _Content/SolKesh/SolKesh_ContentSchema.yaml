@@ -1,0 +1,75 @@
+# SolKesh Content Schema
+# Canonical structure for SolKesh monster content validation.
+
+game: SolKesh
+version: "1.1"
+
+definitions:
+  # 1. Standard Monster
+  Monster:
+    type: object
+    description: "Standard creature stat block."
+    required: [id, name, type, game, source]
+    properties:
+      id: { type: string, pattern: "^sk_monster_[a-z0-9_]+$" }
+      name: { type: string }
+      type: { const: "Monster" }
+      game: { const: "SolKesh" }
+      source: { const: "SolKesh Bestiary" }
+      
+      properties:
+        type: object
+        properties:
+          stage: { type: string, enum: ["Standard", "Apex", "Young"] }
+          subtype: { type: string }
+          bio:
+            type: object
+            properties:
+              class: { type: string }
+              genus: { type: string }
+              niche: { type: string }
+              biome: { type: string }
+          ecology:
+            type: object
+            properties:
+              preys_on: { type: string }
+              preyed_upon_by: { type: string }
+          taming:
+            type: object
+            properties:
+              bond: { type: string }
+              maturity: { type: string }
+          ac: { type: string }
+          hp: { type: string }
+          speed: { type: string }
+          initiative: { type: string }
+          attributes: { type: object }
+          vulnerabilities: { type: string }
+          resistances: { type: string }
+          immunities: { type: string }
+          senses: { type: string }
+          skills: { type: string }
+          challenge:
+            type: object
+            properties:
+              rating: { type: string }
+              xp: { type: string }
+              pb: { type: string }
+  
+      traits: &traits_def
+        type: array
+        items: { type: object, properties: { name: { type: string }, desc: { type: string } } }
+      actions: &actions_def
+        type: array
+        items: { type: object, properties: { name: { type: string }, desc: { type: string }, type: { type: string } } }
+      bonus_actions: *traits_def
+      reactions: *traits_def
+      legendary_actions: *traits_def
+      lair_actions: *traits_def
+      regional_effects: *traits_def
+      defensive_instinct: { type: string }
+      encountering: { type: string }
+      crafting: 
+        type: array
+        items: { type: object, properties: { type: { type: string }, name: { type: string }, cost: { type: string }, check: { type: string } } }
+      description: { type: string }
