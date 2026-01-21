@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-const tablesDir = path.join(__dirname, '../Tables');
+const tablesDir = path.join(__dirname, '../_Tables');
 
 function getAllFiles(dir: string, fileList: string[] = []): string[] {
     const files = fs.readdirSync(dir);

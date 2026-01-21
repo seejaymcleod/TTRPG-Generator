@@ -5,7 +5,7 @@ import yaml from 'js-yaml';
 import { FileSchema, TableDefinition } from './schema';
 import { z } from 'zod';
 
-const TABLES_DIR = path.join(process.cwd(), 'Tables');
+const TABLES_DIR = path.join(process.cwd(), '_Tables');
 const DIST_DIR = path.join(process.cwd(), 'dist');
 const OUTPUT_FILE = path.join(DIST_DIR, 'tables.json');
 

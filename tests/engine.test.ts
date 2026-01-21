@@ -7,7 +7,7 @@ import { TableLoader } from '../src/engine/loader';
 import { Renderer } from '../src/engine/renderer';
 
 // Assumes we run from root
-const TABLES_DIR = path.join(__dirname, '../Tables');
+const TABLES_DIR = path.join(__dirname, '../_Tables');
 
 describe('TTRPG Engine V2', () => {
     let loader: TableLoader;

@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-const TABLES_DIR = path.join(process.cwd(), 'Tables');
+const TABLES_DIR = path.join(process.cwd(), '_Tables');
 
 // Helper to sanitize folder names
 function sanitize(name: string): string {
