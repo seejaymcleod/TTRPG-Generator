@@ -1,0 +1,54 @@
+# ShadowDark Input Schema
+# Instructions for parsing raw content into the Content Schema.
+
+game: ShadowDark
+version: "1.1"
+
+conventions:
+  stats:
+    S: "str"
+    D: "dex"
+    C: "con"
+    I: "int"
+    W: "wis"
+    Ch: "cha"
+  alignments:
+    L: "Lawful"
+    N: "Neutral"
+    C: "Chaotic"
+
+extraction_rules:
+  # Global formatting rules
+  id_format: "sd_{type_prefix}_{snake_case_name}"
+
+  # Content Types Detection & Schema
+  types:
+    Monster:
+      detection: "Header block followed by AC/HP/ATK stat line"
+      type_prefix: "monster"
+      instructions: "Parse standard ShadowDark stat block."
+      sections:
+        required: ["Header", "Stat Line", "Abilities", "Actions"]
+        optional: ["Flavor"]
+
+  # Section Mapping
+  sections:
+    header:
+      instructions: "Extract name from the banner header."
+    
+    stat_line:
+      pattern: "AC {ac}, HP {hp}, ATK {atk}, MV {mv}, S {str}, D {dex}, C {con}, I {int}, W {wis}, Ch {cha}, AL {align}, LV {level}"
+      fields:
+        ac: "AC value"
+        hp: "HP value"
+        mv: "Movement"
+        level: "Level"
+        alignment: "Alignment letter"
+        stats: "Ability modifiers"
+
+    abilities:
+      pattern: "**Trait Name.** Description."
+      instructions: "Extract bolded trait name and description."
+
+    actions:
+      instructions: "Parse attacks from 'ATK' line or separate action entries."

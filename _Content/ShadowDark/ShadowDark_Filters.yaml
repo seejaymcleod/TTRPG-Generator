@@ -1,0 +1,28 @@
+# ShadowDark Filters
+# Filter configurations for the library UI.
+
+game: ShadowDark
+version: "1.1"
+
+filters:
+  level:
+    label: "Level"
+    source_property: "properties.level"
+    filter_type: "slider"
+  ac:
+    label: "AC"
+    source_property: "properties.ac"
+    filter_type: "slider"
+  hp:
+    label: "HP"
+    source_property: "properties.hp"
+    filter_type: "slider"
+  alignment:
+    label: "Alignment"
+    source_property: "properties.alignment"
+    filter_type: "multiselect"
+    options: ["L", "N", "C"]
+  name:
+    label: "Search"
+    source_property: "name"
+    filter_type: "text_search"

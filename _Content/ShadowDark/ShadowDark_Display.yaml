@@ -1,0 +1,30 @@
+# ShadowDark Display Template
+# Visual layout configuration for ShadowDark content cards.
+
+game: ShadowDark
+version: "1.1"
+
+# 1. Standard Monster
+Monster:
+  colorAccent: "purple"
+  formatters:
+    extract_parentheses: '\(([^)]+)\)'
+  summaryTemplate: "LV {stat:level:LV} {stat:alignment::amber} {stat:ac:AC} {stat:hp:HP} {stat:mv:MV}"
+  header:
+    - { key: "level", label: "Level", badge: true }
+    - { key: "type", label: "Type", badge: false }
+    - { key: "alignment", label: "Align", badge: true }
+  layout:
+    - { type: "grid", columns: 2, class: "text-xs text-text-muted-light dark:text-text-muted-dark mb-3 border-b border-border-light dark:border-border-dark pb-2", items: [{label: "Movement", key: "properties.mv"}, {label: "Alignment", key: "properties.alignment"}] }
+    
+    - { type: "properties", keys: ["properties.ac", "properties.hp", "properties.level"], labels: {"properties.ac": "AC", "properties.hp": "HP", "properties.level": "LV"}, color: "purple" }
+    
+    - { type: "stats_grid", key: "properties.stats", fields: ["str", "dex", "con", "int", "wis", "cha"] }
+    
+    - { type: "section_header", title: "Traits & Abilities" }
+    - { type: "abilities_list", key: "abilities" }
+    
+    - { type: "section_header", title: "Actions" }
+    - { type: "abilities_list", key: "actions" }
+    
+    - { type: "flavor", key: "properties.flavor", italic: true }

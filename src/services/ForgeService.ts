@@ -3,6 +3,7 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
+import { JobManager, JobManifest } from './JobManager';
 const pdf = require('pdf-parse');
 
 interface DocumentSection {
@@ -18,9 +19,157 @@ export class ForgeService {
     private logger?: any;
     private activeTasks: Map<string, { controller: AbortController, pid?: number }> = new Map();
 
+    private queueInterval: NodeJS.Timeout | null = null;
+    private isProcessingQueue: boolean = false;
+    private jobManager: JobManager;
+
     constructor() {
         const ollamaHost = process.env.OLLAMA_HOST || 'http://localhost:11434';
         this.llm = new LLMClient(ollamaHost);
+        this.jobManager = new JobManager();
+
+        // Start queue worker
+        this.startQueueWorker();
+    }
+
+    private startQueueWorker() {
+        if (this.queueInterval) return;
+        this.log("Starting Forge Queue Worker...");
+        this.queueInterval = setInterval(() => this.processJobQueue(), 5000); // Check every 5s
+    }
+
+    private async processJobQueue() {
+        if (this.isProcessingQueue) return;
+        this.isProcessingQueue = true;
+
+        try {
+            const jobs = this.jobManager.listJobs();
+            // simple FIFO or priority? For now, just pick the first 'processing' or 'ready' job
+            const activeJob = jobs.find(j => j.status === 'processing' || j.status === 'ready');
+
+            if (activeJob) {
+                if (activeJob.status === 'ready') {
+                    this.jobManager.updateJob(activeJob.jobId, { status: 'processing' });
+                }
+
+                await this.processNextPage(activeJob.jobId);
+            }
+        } catch (e) {
+            this.error(`Queue Error: ${e}`);
+        } finally {
+            this.isProcessingQueue = false;
+        }
+    }
+
+    private async processNextPage(jobId: string) {
+        const job = this.jobManager.getJob(jobId);
+        if (!job) return;
+
+        // Find next unprocessed page
+        // We need to track which pages are done. 
+        // The manifest currently just lists pages. We need a way to track status per page.
+        // For now, let's assume we check if a result file exists.
+
+        // FUTURE: Add per-page status to manifest for O(1) lookup.
+        // Current: Filesystem check (robust but slower)
+
+        for (const pageFile of job.pages) {
+            const pageNum = pageFile.match(/page_(\d+)/)?.[1] || "0";
+            const resultFile = `result_${pageNum}.yaml`;
+            const resultPath = path.join(this.jobManager['stagingRoot'], jobId, 'results', resultFile);
+
+            // Check if result exists
+            // We need to expose stagingRoot or helper from JobManager. 
+            // Let's assume we implement a helper `hasPageResult(jobId, pageNum)` in JobManager later.
+            // For now, raw FS check:
+            const resultDir = path.join(process.cwd(), 'temp_staging', jobId, 'results');
+            if (!fs.existsSync(resultDir)) fs.mkdirSync(resultDir, { recursive: true });
+
+            if (fs.existsSync(path.join(resultDir, resultFile))) {
+                continue; // Already done
+            }
+
+            // FOUND PENDING PAGE
+            this.log(`[Queue] Processing Job ${jobId} - Page ${pageNum}...`);
+
+            try {
+                const pageContent = this.jobManager.getPageContent(jobId, pageFile);
+                if (!pageContent || !pageContent.text) {
+                    this.warn(`[Queue] Empty content for ${jobId}/${pageFile}, skipping.`);
+                    // Mark as failed or skipped? 
+                    // distinct failed status file?
+                    fs.writeFileSync(path.join(resultDir, resultFile), "# SKIPPED (Empty)");
+                    continue;
+                }
+
+                // PROCESS WITH LLM
+                // Determine model/provider from job settings (defaults for now)
+                const provider = job.provider || 'ollama';
+                const model = job.model || 'mistral-nemo';
+
+                // Construct Prompt based on typical usage
+                // We need to know WHAT we are extracting. 
+                // Currently ingestion is generic. 
+                // We probably need `job.type` (Monster, Spell) in the manifest.
+                // Assuming 'Universal' or we use a default explorer mode.
+
+                // For this refactor, let's assume we are doing the "Scribe" flow
+                // But Scribe is Python-based. 
+                // Do we call Python Scribe per page? OR do we use `this.llm` directly?
+                // The user asked for "Script (like GUI) allow us to use local resources".
+                // `extractWithPythonScribe` spawns python. 
+
+                // Decision: Call `extractWithPythonScribe` for this page.
+                // We need `contentType`. Let's assume it's stored in job or passed?
+                // If missing, we default to 'Raw'?
+
+                // TODO: Update Job Creation to accept `contentType`.
+                // For now, hardcode or guess.
+                const contentType = 'Monster'; // PLACEHOLDER until UI sends it
+
+                this.log(`[Queue] Sending page ${pageNum} to ${provider}:${model}`);
+
+                // Using the existing Scribe pipeline
+                // We pass the RAW TEXT of the page.
+                const results = await this.extractWithPythonScribe(
+                    pageContent.text,
+                    contentType,
+                    'ShadowDark', // Placeholder
+                    'Import',     // Placeholder
+                    undefined,    // taskId
+                    undefined,    // apiKey
+                    model
+                );
+
+                // Save Result
+                const yamlDump = yaml.dump(results);
+                fs.writeFileSync(path.join(resultDir, resultFile), yamlDump);
+
+                // Update Progress
+                const newProcessed = (job.progress.processed || 0) + 1;
+                this.jobManager.updateJob(jobId, {
+                    progress: { ...job.progress, processed: newProcessed }
+                });
+
+                // Check completion
+                if (newProcessed >= job.totalPages) {
+                    this.jobManager.updateJob(jobId, { status: 'completed' });
+                    this.log(`[Queue] Job ${jobId} FINISHED!`);
+                }
+
+                return; // Process one page per tick
+
+            } catch (err) {
+                this.error(`[Queue] Failed page ${pageNum}: ${err}`);
+                // Backoff?
+                // Mark failed
+                this.jobManager.updateJob(jobId, {
+                    progress: { ...job.progress, failed: (job.progress.failed || 0) + 1 }
+                });
+                // Create error file so we don't loop forever
+                fs.writeFileSync(path.join(resultDir, `error_${pageNum}.txt`), String(err));
+            }
+        }
     }
 
     setLogger(logger: any) {
@@ -71,6 +220,94 @@ export class ForgeService {
         if (this.logger?.error) this.logger.error(message);
     }
 
+    public getJob(jobId: string): JobManifest | null {
+        return this.jobManager.getJob(jobId);
+    }
+
+    async startIngestionJob(fileBuffer: Buffer, filename: string): Promise<{ jobId: string, manifestPath?: string }> {
+        const jobId = `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const stagingDir = path.resolve(process.cwd(), 'temp_staging', jobId);
+
+        // Ensure staging directory exists
+        if (!fs.existsSync(stagingDir)) {
+            fs.mkdirSync(stagingDir, { recursive: true });
+        }
+
+        const tempPdfPath = path.join(stagingDir, 'source.pdf');
+        fs.writeFileSync(tempPdfPath, fileBuffer);
+
+        return new Promise((resolve, reject) => {
+            const pythonScript = path.resolve(process.cwd(), '_Forge/PythonService/parser.py');
+            // Use global python - venv has known installation issues
+            const pythonCmd = 'python';
+
+            this.log(`[Ingestion] Starting job ${jobId} for ${filename}`);
+
+            // Execute parser with output directory argument
+            const pythonProcess = spawn(pythonCmd, [pythonScript, tempPdfPath, '--output-dir', stagingDir]);
+
+            // Track process
+            this.activeTasks.set(jobId, { controller: new AbortController(), pid: pythonProcess.pid });
+
+            // 30 minute timeout for large PDFs
+            const timeout = setTimeout(() => {
+                pythonProcess.kill();
+                reject(new Error("Ingestion process timed out after 30 minutes"));
+            }, 1800000);
+
+            let output = '';
+            let errorOutput = '';
+
+            pythonProcess.stdout.on('data', (data) => {
+                const msg = data.toString();
+                output += msg;
+                // Try to parse partial JSON from stdout if needed, mostly we wait for final hex
+            });
+
+            pythonProcess.stderr.on('data', (data) => {
+                const msg = data.toString();
+                errorOutput += msg;
+                if (this.logger?.log && (msg.includes('Page') || msg.includes('Processed'))) {
+                    this.log(`[Ingestion] ${msg.trim()}`);
+                }
+            });
+
+            pythonProcess.on('close', (code) => {
+                clearTimeout(timeout);
+                this.activeTasks.delete(jobId);
+
+                if (code !== 0) {
+                    reject(new Error(`Ingestion failed with code ${code}: ${errorOutput}`));
+                } else {
+                    try {
+                        // The script outputs the manifest status as the last line of stdout
+                        const lines = output.trim().split('\n');
+                        const lastLine = lines[lines.length - 1];
+                        const result = JSON.parse(lastLine);
+
+                        if (result.status === 'success') {
+                            this.log(`[Ingestion] Job ${jobId} completed successfully.`);
+                            resolve({ jobId, manifestPath: result.manifest });
+                        } else {
+                            reject(new Error(`Ingestion script reported failure: ${result.error || 'Unknown error'}`));
+                        }
+                    } catch (e) {
+                        // Fallback check if manifest exists
+                        const manifestPath = path.join(stagingDir, 'manifest.json');
+                        if (fs.existsSync(manifestPath)) {
+                            resolve({ jobId, manifestPath });
+                        } else {
+                            reject(new Error(`Failed to parse ingestion output: ${e}`));
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * Legacy method for direct extraction (kept for backward compatibility or simple text files)
+     */
     async extractText(fileBuffer: Buffer, filename?: string, taskId?: string): Promise<string> {
         // Handle non-PDF files directly
         if (filename) {
@@ -81,91 +318,45 @@ export class ForgeService {
             }
         }
 
-        // Try Python Docling first for PDFs
-        try {
-            return await this.extractWithDocling(fileBuffer, taskId);
-        } catch (error) {
-            this.warn(`Docling failed or not installed, falling back to pdf-parse: ${error}`);
-            try {
-                // Robust detection of pdf-parse function
-                let pdfParser: any = pdf;
-                if (typeof pdfParser !== 'function' && pdf && typeof pdf.default === 'function') {
-                    pdfParser = pdf.default;
-                }
+        // For PDFs, we now prefer the ingestion job flow, but if this method is called directly
+        // we can wrap the single-string return by running valid extraction and joining pages.
+        // Or we can keep the old logic if "Quick Extract" is needed.
+        // Current decision: Keep old logic for now as fallback.
 
-                if (typeof pdfParser !== 'function') {
-                    // One last attempt: Check if it's the mehmet-kozan version which is an object with PDFParse class
-                    // or other common patterns. For now, we prefer the function approach.
-                    throw new Error("pdf-parse library not loaded correctly. Expected a function.");
-                }
-                const data = await pdfParser(fileBuffer);
-                return data.text;
-            } catch (pdfError: any) {
-                this.error(`Critical: Both Docling and pdf-parse failed. ${pdfError}`);
-                throw new Error(`Failed to parse PDF: ${pdfError.message}`);
-            }
+        try {
+            return await this.extractWithDoclingLegacy(fileBuffer, taskId);
+        } catch (error) {
+            this.warn(`Docling legacy failed: ${error}`);
+            // Fallback to pdf-parse
+            const data = await pdf(fileBuffer);
+            return data.text;
         }
     }
 
-    private async extractWithDocling(fileBuffer: Buffer, taskId?: string): Promise<string> {
-        const tempPath = path.resolve(process.cwd(), `temp_${Date.now()}.pdf`);
-        fs.writeFileSync(tempPath, fileBuffer);
-
-        return new Promise((resolve, reject) => {
-            const pythonScript = path.resolve(process.cwd(), '_Forge/PythonService/parser.py');
-            const venvPython = path.resolve(process.cwd(), '.venv/bin/python');
-            const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
-
-            this.log(`Spawning Docling: ${pythonCmd} ${pythonScript}`);
-
-            const pythonProcess = spawn(pythonCmd, [pythonScript, tempPath]);
-
-            // Store PID for cancellation
-            if (taskId && this.activeTasks.has(taskId)) {
-                this.activeTasks.get(taskId)!.pid = pythonProcess.pid;
-            }
-
-            const timeout = setTimeout(() => {
-                pythonProcess.kill();
-                reject(new Error("Docling process timed out after 10 minutes"));
-            }, 600000);
-
-            let output = '';
-            let errorOutput = '';
-
-            pythonProcess.stdout.on('data', (data) => output += data.toString());
-            pythonProcess.stderr.on('data', (data) => {
-                const msg = data.toString();
-                errorOutput += msg;
-                // Forward reasonable-looking logs to the UI
-                if (this.logger?.log && (msg.includes('Docling') || msg.includes('INFO') || msg.length < 200)) {
-                    this.log(`[Docling] ${msg.trim()}`);
-                }
-            });
-
-            pythonProcess.on('close', (code) => {
-                clearTimeout(timeout);
-                if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
-
-                if (code !== 0 && code !== null) {
-                    reject(new Error(`Docling process exited with code ${code}: ${errorOutput}`));
-                } else if (code === null) {
-                    reject(new Error("Docling process was killed (timeout)"));
-                } else {
-                    if (!output || output.trim().length === 0) {
-                        reject(new Error("Docling process finished but returned empty output. Check server logs."));
-                    } else {
-                        resolve(output);
+    private async extractWithDoclingLegacy(fileBuffer: Buffer, taskId?: string): Promise<string> {
+        // ... (Old implementation of extractWithDocling goes here if we want to preserve it exact)
+        // For brevity in this refactor, I'm going to rely on the fact that we are moving to jobs.
+        // But to avoid breaking existing calls, I will leave a simplified version or reuse the job flow?
+        // Reusing job flow for extractText:
+        try {
+            const { jobId, manifestPath } = await this.startIngestionJob(fileBuffer, 'legacy_upload.pdf');
+            if (manifestPath && fs.existsSync(manifestPath)) {
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+                let fullText = "";
+                // Aggregate all pages
+                for (const pageFile of manifest.pages) {
+                    const pagePath = path.join(path.dirname(manifestPath), pageFile);
+                    if (fs.existsSync(pagePath)) {
+                        const pageData = JSON.parse(fs.readFileSync(pagePath, 'utf-8'));
+                        fullText += (pageData.text || "") + "\n\n";
                     }
                 }
-            });
-
-            pythonProcess.on('error', (err) => {
-                clearTimeout(timeout);
-                if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
-                reject(err);
-            });
-        });
+                return fullText;
+            }
+            throw new Error("Job completed but manifest missing");
+        } catch (e) {
+            throw e;
+        }
     }
 
     /**
@@ -208,8 +399,8 @@ export class ForgeService {
         fs.writeFileSync(tempTextPath, text);
         fs.writeFileSync(tempTemplatePath, JSON.stringify(template, null, 2));
 
-        const venvPython = path.resolve(process.cwd(), '.venv/bin/python');
-        const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
+        // Use global python - venv has known installation issues
+        const pythonCmd = 'python';
         const scribeScript = path.resolve(process.cwd(), '_Forge/PythonService/scribe.py');
 
         this.log(`[Scribe] Extracting ${contentType} using Python pipeline...`);

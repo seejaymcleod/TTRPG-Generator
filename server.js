@@ -234,46 +234,6 @@ const getForgeService = () => {
   return forgeService;
 };
 
-// POST /api/forge/upload
-app.post('/api/forge/upload', upload.single('file'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
-  const { taskId } = req.body;
-  const forge = getForgeService();
-  if (taskId) forge.startTask(taskId);
-
-  try {
-    const text = await forge.extractText(req.file.buffer, req.file.originalname, taskId);
-    res.json({ text });
-  } catch (e) {
-    console.error("Forge Upload Error:", e);
-    res.status(500).json({ error: e.message });
-  } finally {
-    if (taskId) forge.finishTask(taskId);
-  }
-});
-
-// --- Forge SSE Endpoint ---
-app.get('/api/forge/events', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-  res.flushHeaders();
-
-  const clientId = Date.now();
-  const newClient = { id: clientId, res };
-  forgeClients.push(newClient);
-
-  req.on('close', () => {
-    forgeClients = forgeClients.filter(c => c.id !== clientId);
-  });
-
-  // Initial connection event
-  res.write(`data: ${JSON.stringify({ type: 'connected', clientId })}\n\n`);
-  broadcastForgeEvent('log', { message: `New client connected (ID: ${clientId})`, level: 'info' });
-});
-
 // POST /api/forge/load-path - Load file from local filesystem path
 app.post('/api/forge/load-path', async (req, res) => {
   const { path: filePath } = req.body;
@@ -303,6 +263,19 @@ app.post('/api/forge/load-path', async (req, res) => {
 
     const buffer = fs.readFileSync(resolvedPath);
     const forge = getForgeService();
+
+    // Use new Job Flow for PDFs
+    if (ext === '.pdf') {
+      const filename = path.basename(resolvedPath);
+      try {
+        const manifest = await forge.startIngestionJob(buffer, filename);
+        return res.json({ jobId: manifest.jobId, manifest });
+      } catch (e) {
+        return res.status(500).json({ error: e.message });
+      }
+    }
+
+    // Legacy flow for other files
     const { taskId } = req.body;
     if (taskId) forge.startTask(taskId);
 
@@ -315,6 +288,67 @@ app.post('/api/forge/load-path', async (req, res) => {
     }
   } catch (e) {
     console.error("Forge Load Path Error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/forge/upload
+app.post('/api/forge/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+
+  const forge = getForgeService();
+  const ext = path.extname(req.file.originalname).toLowerCase();
+
+  // OPTION A: If it's a PDF, kick off an Ingestion Job
+  if (ext === '.pdf') {
+    try {
+      const manifest = await forge.startIngestionJob(req.file.buffer, req.file.originalname);
+      // Return Job ID immediately so frontend can poll
+      return res.json({ jobId: manifest.jobId, manifest });
+    } catch (e) {
+      console.error("Forge Ingestion Error:", e);
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // OPTION B: Simple text file (legacy flow)
+  const { taskId } = req.body;
+  if (taskId) forge.startTask(taskId);
+
+  try {
+    const text = await forge.extractText(req.file.buffer, req.file.originalname, taskId);
+    res.json({ text });
+  } catch (e) {
+    console.error("Forge Upload Error:", e);
+    res.status(500).json({ error: e.message });
+  } finally {
+    if (taskId) forge.finishTask(taskId);
+  }
+});
+
+// GET /api/forge/job/:jobId
+app.get('/api/forge/job/:jobId', (req, res) => {
+  const { jobId } = req.params;
+  try {
+    const forge = getForgeService();
+    // We need to access jobManager. Since it's private in ForgeService, 
+    // we should expose a method on ForgeService.
+    // But wait, ForgeService keeps JobManager private. 
+    // Let's add `getJobStatus(jobId)` to ForgeService or access it if public.
+    // Hack for now: access via private prop or we will add method in next step.
+    // Better: Add `getJob(jobId)` to ForgeService.
+
+    if (forge.getJob) {
+      const job = forge.getJob(jobId);
+      if (job) return res.json(job);
+      return res.status(404).json({ error: "Job not found" });
+    } else {
+      // Fallback if method not yet added (I will add it next)
+      return res.status(501).json({ error: "Job status not implemented yet" });
+    }
+  } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });

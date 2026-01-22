@@ -1,0 +1,103 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string",
+                "description": "Name of the monster"
+            },
+            "ac": {
+                "type": "string",
+                "description": "Armor Class value (e.g. '12', '14 (plate)')"
+            },
+            "hp": {
+                "type": "string",
+                "description": "Hit Points (e.g. '15')"
+            },
+            "mv": {
+                "type": "string",
+                "description": "Movement (e.g. 'NEAR', 'DOUBLE NEAR')"
+            },
+            "stats": {
+                "type": "object",
+                "properties": {
+                    "str": {
+                        "type": "string",
+                        "description": "Strength modifier (e.g. '+3')"
+                    },
+                    "dex": {
+                        "type": "string",
+                        "description": "Dexterity modifier"
+                    },
+                    "con": {
+                        "type": "string",
+                        "description": "Constitution modifier"
+                    },
+                    "int": {
+                        "type": "string",
+                        "description": "Intelligence modifier"
+                    },
+                    "wis": {
+                        "type": "string",
+                        "description": "Wisdom modifier"
+                    },
+                    "cha": {
+                        "type": "string",
+                        "description": "Charisma modifier"
+                    }
+                },
+                "required": [
+                    "str",
+                    "dex",
+                    "con",
+                    "int",
+                    "wis",
+                    "cha"
+                ]
+            },
+            "attack": {
+                "type": "string",
+                "description": "Attack description (e.g. '1x Dagger +1')"
+            },
+            "abilities": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "desc": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "desc"
+                    ]
+                }
+            },
+            "flavor": {
+                "type": "string",
+                "description": "Flavor text or description"
+            },
+            "alignment": {
+                "type": "string",
+                "description": "Alignment (C, N, L)"
+            },
+            "level": {
+                "type": "string",
+                "description": "Level or LV value"
+            }
+        },
+        "required": [
+            "name",
+            "ac",
+            "hp",
+            "mv",
+            "stats",
+            "attack"
+        ]
+    }
+}

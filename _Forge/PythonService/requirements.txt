@@ -1,5 +1,6 @@
-docling
+pymupdf
 pydantic
 google-generativeai
 python-dotenv
 pyyaml
+requests

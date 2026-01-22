@@ -1,0 +1,48 @@
+# ShadowDark Content Schema
+# Canonical structure for ShadowDark content validation.
+
+game: ShadowDark
+version: "1.1"
+
+definitions:
+  # 1. Standard Monster
+  Monster:
+    type: object
+    description: "Standard ShadowDark monster stat block."
+    required: [id, name, type, game, source]
+    properties:
+      id: { type: string, pattern: "^sd_monster_[a-z0-9_]+$" }
+      name: { type: string }
+      type: { const: "Monster" }
+      game: { const: "ShadowDark" }
+      source: { type: string }
+      
+      properties:
+        type: object
+        properties:
+          ac: { type: string }
+          hp: { type: string }
+          mv: { type: string }
+          level: { type: string }
+          alignment: { type: string, enum: ["L", "N", "C"] }
+          stats:
+            type: object
+            required: [str, dex, con, int, wis, cha]
+            properties:
+              str: { type: string }
+              dex: { type: string }
+              con: { type: string }
+              int: { type: string }
+              wis: { type: string }
+              cha: { type: string }
+          flavor: { type: string }
+      
+      abilities: 
+        type: array
+        items: { type: object, properties: { name: { type: string }, desc: { type: string } }, required: [name, desc] }
+      
+      actions:
+        type: array
+        items: { type: object, properties: { name: { type: string }, desc: { type: string } }, required: [name, desc] }
+      
+      description: { type: string }
