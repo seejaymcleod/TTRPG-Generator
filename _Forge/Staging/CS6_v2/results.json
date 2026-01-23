@@ -1,0 +1,112 @@
+{
+  "items": [
+    {
+      "id": "",
+      "name": "",
+      "type": "",
+      "game": "",
+      "source": "",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "",
+        "abilities": [
+          {
+            "name": "",
+            "desc": ""
+          }
+        ],
+        "actions": [
+          {
+            "name": "",
+            "desc": ""
+          }
+        ],
+        "description": ""
+      },
+      "_source_page": "page_999.json"
+    },
+    {
+      "id": "sd_monster_goblin",
+      "name": "Goblin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "12 (leather)",
+        "hp": "6",
+        "mv": "near",
+        "level": "1",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "Small, green, and annoying. They love to steal shiny things."
+      },
+      "abilities": [
+        {
+          "name": "Keen Senses",
+          "desc": "Goblins have advantage on Wisdom checks to detect creeping enemies."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Sneaky",
+          "desc": "Advantage on Dex checks to hide."
+        }
+      ],
+      "description": "Small, green, and annoying. They love to steal shiny things.",
+      "_source_page": "page_999.json"
+    },
+    {
+      "id": "sd_monster_goblin",
+      "name": "Goblin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "12 (leather)",
+        "hp": "6",
+        "mv": "near",
+        "level": "1-2",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "+3",
+          "con": "",
+          "int": "",
+          "wis": "+2",
+          "cha": ""
+        },
+        "abilities": [
+          {
+            "name": "Keen Senses",
+            "desc": "Advantage on Wisdom checks to detect creeping enemies."
+          },
+          {
+            "name": "Sneaky",
+            "desc": "Advantage on Dex checks to hide."
+          }
+        ]
+      },
+      "_source_page": "page_999.json",
+      "_extraction_method": "deep_docling"
+    }
+  ]
+}

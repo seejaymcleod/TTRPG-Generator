@@ -1,15 +1,15 @@
-# ShadowDark Content Schema
+# ShadowDark Content Schema v1.1
 # Canonical structure for ShadowDark content validation.
 
 game: ShadowDark
 version: "1.1"
 
 definitions:
-  # 1. Standard Monster
+  # 1. Monster
   Monster:
     type: object
-    description: "Standard ShadowDark monster stat block."
-    required: [id, name, type, game, source]
+    description: "Standard creature stat block."
+    required: [id, name, type, game, source, properties]
     properties:
       id: { type: string, pattern: "^sd_monster_[a-z0-9_]+$" }
       name: { type: string }
@@ -19,25 +19,26 @@ definitions:
       
       properties:
         type: object
+        required: [ac, hp, mv, level, alignment, stats]
         properties:
-          ac: { type: string }
-          hp: { type: string }
-          mv: { type: string }
-          level: { type: string }
+          ac: { type: string, description: "Armor Class" }
+          hp: { type: string, description: "Hit Points" }
+          mv: { type: string, description: "Movement" }
+          level: { type: string, description: "Level 1-20+" }
           alignment: { type: string, enum: ["L", "N", "C"] }
           stats:
-            type: object
-            required: [str, dex, con, int, wis, cha]
-            properties:
-              str: { type: string }
-              dex: { type: string }
-              con: { type: string }
-              int: { type: string }
-              wis: { type: string }
-              cha: { type: string }
+             type: object
+             required: [str, dex, con, int, wis, cha]
+             properties:
+               str: { type: string }
+               dex: { type: string }
+               con: { type: string }
+               int: { type: string }
+               wis: { type: string }
+               cha: { type: string }
           flavor: { type: string }
-      
-      abilities: 
+
+      abilities:
         type: array
         items: { type: object, properties: { name: { type: string }, desc: { type: string } }, required: [name, desc] }
       
@@ -45,4 +46,55 @@ definitions:
         type: array
         items: { type: object, properties: { name: { type: string }, desc: { type: string } }, required: [name, desc] }
       
+      description: { type: string }
+
+  # 2. Spell
+  Spell:
+    type: object
+    description: "Spell entry."
+    required: [id, name, type, game, source, properties, description]
+    properties:
+      id: { type: string, pattern: "^sd_spell_[a-z0-9_]+$" }
+      name: { type: string }
+      type: { const: "Spell" }
+      game: { const: "ShadowDark" }
+      source: { type: string }
+      
+      properties:
+        type: object
+        required: [tier, class, duration, range]
+        properties:
+          tier: { type: string }
+          class: { type: string }
+          duration: { type: string }
+          range: { type: string }
+      
+      description: { type: string }
+
+  # 3. Item
+  Item:
+    type: object
+    description: "Item or Magic Item."
+    required: [id, name, type, game, source, properties, description]
+    properties:
+      id: { type: string, pattern: "^sd_item_[a-z0-9_]+$" }
+      name: { type: string }
+      type: { const: "Item" }
+      game: { const: "ShadowDark" }
+      source: { type: string }
+      
+      properties:
+        type: object
+        required: [category]
+        properties:
+          category: { type: string, enum: ["Magic Item", "Potion", "Weapon", "Armor", "Gear", "Treasure"] }
+          flavor: { type: string }
+          benefit: { type: string }
+          bonus: { type: string }
+          curse: { type: string }
+          personality: { type: string }
+          level_effects:
+             type: array
+             items: { type: object, properties: { level: { type: string }, effect: { type: string } } }
+
       description: { type: string }

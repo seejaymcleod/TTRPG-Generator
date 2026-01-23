@@ -1,0 +1,97 @@
+{
+  "job_id": "CS6_v3",
+  "pipeline_status": {
+    "chunking": "complete"
+  },
+  "pages": {
+    "page_001.json": {
+      "status": "ignored",
+      "last_updated": 1769107546.0477898
+    },
+    "page_002.json": {
+      "status": "ignored",
+      "last_updated": 1769107546.0487907
+    },
+    "page_003.json": {
+      "status": "ignored",
+      "last_updated": 1769107546.0497913
+    },
+    "page_004.json": {
+      "status": "verified",
+      "last_updated": 1769110785.3501265,
+      "last_method": "deep_docling"
+    },
+    "page_005.json": {
+      "status": "verified",
+      "last_updated": 1769107578.0306442
+    },
+    "page_006.json": {
+      "status": "ignored",
+      "last_updated": 1769107578.0325868
+    },
+    "page_007.json": {
+      "status": "verified",
+      "last_updated": 1769107583.9623394
+    },
+    "page_008.json": {
+      "status": "verified",
+      "last_updated": 1769107595.5643904
+    },
+    "page_009.json": {
+      "status": "verified",
+      "last_updated": 1769107601.3477058
+    },
+    "page_010.json": {
+      "status": "ignored",
+      "last_updated": 1769107601.3492115
+    },
+    "page_011.json": {
+      "status": "ignored",
+      "last_updated": 1769107601.3502133
+    },
+    "page_012.json": {
+      "status": "verified",
+      "last_updated": 1769107615.5254955
+    },
+    "page_013.json": {
+      "status": "ignored",
+      "last_updated": 1769107615.5264971
+    },
+    "page_014.json": {
+      "status": "ignored",
+      "last_updated": 1769107615.5274975
+    },
+    "page_015.json": {
+      "status": "verified",
+      "last_updated": 1769110632.4179065
+    },
+    "page_016.json": {
+      "status": "verified",
+      "last_updated": 1769110794.8216982
+    },
+    "page_017.json": {
+      "status": "verified",
+      "last_updated": 1769110801.7254722
+    },
+    "page_018.json": {
+      "status": "verified",
+      "last_updated": 1769110807.6315944
+    },
+    "page_019.json": {
+      "status": "verified",
+      "last_updated": 1769110813.155961
+    },
+    "page_020.json": {
+      "status": "verified",
+      "last_updated": 1769110833.9413786
+    },
+    "page_021.json": {
+      "status": "verified",
+      "last_updated": 1769110852.8796015
+    },
+    "page_022.json": {
+      "status": "verified",
+      "last_updated": 1769110859.6234226
+    }
+  }
+}

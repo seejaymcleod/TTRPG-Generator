@@ -1,0 +1,1138 @@
+{
+  "items": [
+    {
+      "id": "sd_monster_BARKSKIN",
+      "name": "Barkskin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Tier 2, wizard (N)",
+      "properties": {
+        "ac": {
+          "description": "Armor Class"
+        },
+        "hp": {
+          "description": "Hit Points"
+        },
+        "mv": {
+          "description": "Movement"
+        },
+        "level": {
+          "description": "Level 1-20+"
+        },
+        "alignment": {
+          "enum": [
+            "L",
+            "N",
+            "C"
+          ]
+        },
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        },
+        "flavor": null
+      },
+      "abilities": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "actions": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "description": null
+    },
+    {
+      "id": "sd_monster_Treeshape",
+      "name": "TREESHAPE",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Shadowdark RPG pg. 57-58",
+      "properties": {
+        "ac": "14",
+        "hp": "38",
+        "mv": "",
+        "level": "8",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "*",
+          "wis": "*",
+          "cha": "*"
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_Salamander",
+      "name": "Salamander",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "N/A",
+        "hp": "10",
+        "mv": "20 ft.",
+        "level": "1/2",
+        "alignment": "Neutral",
+        "stats": {
+          "str": "10",
+          "dex": "16",
+          "con": "14",
+          "int": "6",
+          "wis": "12",
+          "cha": "8"
+        },
+        "flavor": "A salamander is a large lizard-like humanoid."
+      },
+      "abilities": [
+        {
+          "name": "Amphibious",
+          "desc": "Salamanders can breathe air or water."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Bite",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Guard",
+      "name": "Guard",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "10",
+        "hp": "5",
+        "mv": "15 ft.",
+        "level": "1/2",
+        "alignment": "Lawful Evil",
+        "stats": {
+          "str": "14",
+          "dex": "12",
+          "con": "16",
+          "int": "6",
+          "wis": "10",
+          "cha": "8"
+        },
+        "flavor": "A guard is a humanoid with a lawfully evil alignment."
+      },
+      "abilities": [
+        {
+          "name": "Intimidate",
+          "desc": "Intimidate a creature to gain advantage on Intimidation checks."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Elder",
+      "name": "Elder",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "16",
+        "hp": "42",
+        "mv": "15 ft.",
+        "level": "9/20",
+        "alignment": "Chaotic Good",
+        "stats": {
+          "str": "18",
+          "dex": "14",
+          "con": "14",
+          "int": "10",
+          "wis": "16",
+          "cha": "18"
+        },
+        "flavor": "An elder is a wise and powerful salamander."
+      },
+      "abilities": [
+        {
+          "name": "Rage",
+          "desc": "Gain advantage on Intimidation checks for 1 day."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Saladin",
+      "name": "Saladin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "18",
+        "hp": "25",
+        "mv": "20 ft.",
+        "level": "10/20",
+        "alignment": "Neutral Good",
+        "stats": {
+          "str": "16",
+          "dex": "14",
+          "con": "14",
+          "int": "12",
+          "wis": "18",
+          "cha": "14"
+        },
+        "flavor": "A saladin is a human knight with a noble alignment."
+      },
+      "abilities": [
+        {
+          "name": "Shield Wall",
+          "desc": "Gain advantage on Intimidation checks for 1 day."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Rothak",
+      "name": "Rothak",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "14",
+        "hp": "20",
+        "mv": "15 ft.",
+        "level": "5/10",
+        "alignment": "Chaotic Evil",
+        "stats": {
+          "str": "12",
+          "dex": "16",
+          "con": "12",
+          "int": "8",
+          "wis": "14",
+          "cha": "18"
+        },
+        "flavor": "A rothak is a human rogue with an evil alignment."
+      },
+      "abilities": [
+        {
+          "name": "Stealth",
+          "desc": "Move up to 30 feet without being detected."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Halmoneus",
+      "name": "Halmoneus",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "12",
+        "hp": "15",
+        "mv": "10 ft.",
+        "level": "1/5",
+        "alignment": "Lawful Good",
+        "stats": {
+          "str": "8",
+          "dex": "14",
+          "con": "16",
+          "int": "10",
+          "wis": "12",
+          "cha": "16"
+        },
+        "flavor": "A halmoneus is a human merchant with a lawful alignment."
+      },
+      "abilities": [
+        {
+          "name": "Negotiate",
+          "desc": "Gain advantage on Intimidation checks for 1 day."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Vilago",
+      "name": "Vilago",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "12",
+        "hp": "15",
+        "mv": "10 ft.",
+        "level": "1/5",
+        "alignment": "Chaotic Neutral",
+        "stats": {
+          "str": "8",
+          "dex": "16",
+          "con": "14",
+          "int": "12",
+          "wis": "18",
+          "cha": "20"
+        },
+        "flavor": "A vilago is a human pirate with an chaotic alignment."
+      },
+      "abilities": [
+        {
+          "name": "Intimidate",
+          "desc": "Intimidate a creature to gain advantage on Intimidation checks."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Titus",
+      "name": "Titus",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "10",
+        "hp": "15",
+        "mv": "10 ft.",
+        "level": "1/5",
+        "alignment": "Chaotic Good",
+        "stats": {
+          "str": "8",
+          "dex": "14",
+          "con": "16",
+          "int": "10",
+          "wis": "12",
+          "cha": "18"
+        },
+        "flavor": "A titus is a human aristocrat with a chaotic alignment."
+      },
+      "abilities": [
+        {
+          "name": "Intimidate",
+          "desc": "Intimidate a creature to gain advantage on Intimidation checks."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Mestis",
+      "name": "Mestis",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "12",
+        "hp": "15",
+        "mv": "10 ft.",
+        "level": "1/5",
+        "alignment": "Chaotic Neutral",
+        "stats": {
+          "str": "8",
+          "dex": "16",
+          "con": "14",
+          "int": "12",
+          "wis": "18",
+          "cha": "20"
+        },
+        "flavor": "A mestis is a human warrior with an chaotic alignment."
+      },
+      "abilities": [
+        {
+          "name": "Intimidate",
+          "desc": "Intimidate a creature to gain advantage on Intimidation checks."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Peasant",
+      "name": "Peasant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "10",
+        "hp": "15",
+        "mv": "10 ft.",
+        "level": "1/5",
+        "alignment": "Lawful Good",
+        "stats": {
+          "str": "8",
+          "dex": "14",
+          "con": "16",
+          "int": "10",
+          "wis": "12",
+          "cha": "16"
+        },
+        "flavor": "A peasant is a human merchant with a lawful alignment."
+      },
+      "abilities": [
+        {
+          "name": "Negotiate",
+          "desc": "Gain advantage on Intimidation checks for 1 day."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Ramlaat",
+      "name": "Ramlaat",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Core Rulebook",
+      "properties": {
+        "ac": "18",
+        "hp": "25",
+        "mv": "20 ft.",
+        "level": "10/20",
+        "alignment": "Neutral Good",
+        "stats": {
+          "str": "16",
+          "dex": "14",
+          "con": "14",
+          "int": "12",
+          "wis": "18",
+          "cha": "14"
+        },
+        "flavor": "A ramlaat is a human knight with a noble alignment."
+      },
+      "abilities": [
+        {
+          "name": "Shield Wall",
+          "desc": "Gain advantage on Intimidation checks for 1 day."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Attack",
+          "desc": "Make an attack against a creature."
+        }
+      ]
+    },
+    {
+      "id": "sd_monster_Anaconda",
+      "name": "Anaconda, Giant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "12",
+        "hp": "33",
+        "mv": "near (climb, swim)",
+        "level": "7",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "20-foot long, amphibious snake with red stripes and piercing, yellow eyes."
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": "A 20-foot long, amphibious snake with red stripes and piercing, yellow eyes. AC 12, HP 33, ATK 2 bite +6 (1d10 + swallow), MV near (climb, swim), S +4, D +2, C +2, I -2, W +1, Ch -2, AL N, LV 7 Swallow. DC 12 STR or target is swallowed. Total darkness inside and 1d8 damage per round. Anaconda regurgitates all swallowed if dealt at least 15 damage in one round to the inside of its gullet."
+    },
+    {
+      "id": "sd_monster_ant",
+      "name": "Ant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "ANT, GIANT",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "near (climb)",
+        "level": "1-20+",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_stonewarrior",
+      "name": "STONE WARRIOR",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "",
+        "level": "1",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "Lithe, basilisk-worshipping warriors covered in dried mud dotted with stones and pebbles."
+      },
+      "abilities": [
+        {
+          "name": "spear-thrower (far) +2 (1d8)",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "near, S +2, D +1, C +1, I +0, W +1",
+          "desc": ""
+        },
+        {
+          "name": "Ch -1, AL C, LV 1",
+          "desc": ""
+        }
+      ],
+      "description": "Camouflage. ADV on checks to sneak and hide in a natural environment."
+    },
+    {
+      "id": "sd_monster_stone_shaman",
+      "name": "Stone Shaman",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "11",
+        "hp": "19",
+        "mv": "near",
+        "level": "4",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "WIS Spell",
+          "cha": ""
+        },
+        "flavor": "Stooped elders who lead stone warriors in the rituals and traditions of the basilisk cult."
+      },
+      "abilities": [
+        {
+          "name": "Daze",
+          "desc": "DC 12. Focus. One target in near is helplessly stunned for spell's duration."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Death Touch",
+          "desc": "DC 13. Close. One target 2d8 damage."
+        }
+      ],
+      "description": "STONE SHAMAN\nStooped elders who lead stone warriors in the rituals and traditions of the basilisk cult.\nAC 11, HP 19, ATK 1 obsidian dagger (near) +2 (1d6) and 1 spell +4,\nMV near, S +2, D +1, C +1, I +0,\nW +3, Ch +1, AL C, LV 4"
+    },
+    {
+      "id": "sd_monster_blue_dart_frog",
+      "name": "BLUE DART FROG",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "1",
+        "mv": "near (climb)",
+        "level": "",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "Elusive, neon-blue treefrogs that carry a potent toxin."
+    },
+    {
+      "id": "sd_monster_toxin",
+      "name": "Toxin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "DC 15 CON or go to 0",
+        "hp": "HP with a death timer of 1.",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": "LV 0"
+    },
+    {
+      "id": "sd_monster_basilisk_hatchling",
+      "name": "Basilisk Hatchling",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "13",
+        "hp": "6",
+        "mv": "near",
+        "level": "1",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_catfish",
+      "name": "Catfish, Giant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "13",
+        "hp": "56",
+        "mv": "double near (swim)",
+        "level": "12",
+        "alignment": "N",
+        "stats": {
+          "str": "ATK 2 bite +9 (2d10 + swallow)",
+          "dex": "S +4",
+          "con": "C +2",
+          "int": "I -3",
+          "wis": "W +1",
+          "cha": "Ch -3"
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Swallow",
+          "desc": "On a natural attack roll of 18-20, target is swallowed into giant catfish's stomach."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Swallow",
+          "desc": "Total darkness inside stomach and 2d8 damage per round."
+        }
+      ],
+      "description": "A whiskered, gaping catfish as big as a whale. Streaks of minerals collect in its skin, giving it tiger stripes that flash silver and copper in the sun."
+    },
+    {
+      "id": "sd_monster_cobra_statue",
+      "name": "Cobra Statue",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "COBRA STATUE",
+      "properties": {
+        "ac": "14",
+        "hp": "27",
+        "mv": "near",
+        "level": "6",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "S +4",
+          "con": "D +1",
+          "int": "",
+          "wis": "W +0",
+          "cha": "Ch -3"
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Hypnotize",
+          "desc": "One creature in near who can see cobra statue, DC 12 CHA or become helplessly stupefied for 1 round."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Poison",
+          "desc": "DC 18 CON or go to 0 HP with a death timer of 1."
+        }
+      ],
+      "description": "A rearing statue of a hooded cobra that looms 20 feet high. Its ruby eyes are pointed down, watching what passes below."
+    },
+    {
+      "id": "sd_monster_jaguarking",
+      "name": "Jaguar King",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "16 (shield)",
+        "hp": "56",
+        "mv": "near (climb), S +3, D +4, C +2, I +0, W +3",
+        "level": "12",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        }
+      },
+      "abilities": [
+        {
+          "name": "pounce",
+          "desc": "Jump up to a near distance. If landing within close range of an enemy, make one melee attack with ADV."
+        },
+        {
+          "name": "obsidian spear (close/near) +7",
+          "desc": "(1d8)"
+        }
+      ],
+      "actions": [
+        {
+          "name": "pounce",
+          "desc": "Jump up to a near distance. If landing within close range of an enemy, make one melee attack with ADV."
+        },
+        {
+          "name": "obsidian spear (close/near) +7",
+          "desc": "(1d8)"
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_death_slug",
+      "name": "Death Slug",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "DEATH SLUG",
+      "properties": {
+        "ac": "12",
+        "hp": "1",
+        "mv": "close (climb)",
+        "level": "0",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Burrow",
+          "desc": "Death slug plunges under target's skin. Its AC becomes 18 and it begins tunneling toward target's heart."
+        }
+      ],
+      "actions": [
+        {
+          "name": "bite +0 (1 burrow)",
+          "desc": "1 bite +0 (1 burrow)"
+        },
+        {
+          "name": "close (climb)",
+          "desc": "MV close (climb)"
+        }
+      ],
+      "description": "A palm-sized, pale slug with a spinning mouth lined in hundreds of needle-like teeth."
+    },
+    {
+      "id": "sd_monster_condor",
+      "name": "Condor",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "11",
+        "hp": "16",
+        "mv": "double near (fly)",
+        "level": "",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "Wagon-sized, bald-faced vultures with barbed hooks of bone growing from their flesh."
+    },
+    {
+      "id": "sd_monster_sharpjavelina",
+      "name": "Javelina",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "JAVELINA",
+      "properties": {
+        "ac": "10",
+        "hp": "5",
+        "mv": "near",
+        "level": "1",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "A sharp-hooved pig with russet fur dusted in white spots."
+      },
+      "abilities": [
+        {
+          "name": "Rage",
+          "desc": "If injured, tusk attacks deal d8 damage instead of d6."
+        }
+      ],
+      "actions": [
+        {
+          "name": "tusk +1 (1d6)",
+          "desc": ""
+        },
+        {
+          "name": "ATK 1 tusk",
+          "desc": ""
+        }
+      ],
+      "description": "A sharp-hooved pig with russet fur dusted in white spots. AC 10, HP 5, ATK 1 tusk +1 (1d6), MV near, S +0, D +0, C +1, I -3, W +0, Ch -2, AL C, LV 1"
+    },
+    {
+      "id": "sd_monster_javelina",
+      "name": "Javelina",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Diseased",
+      "properties": {
+        "ac": "10",
+        "hp": "10",
+        "mv": "near",
+        "level": "2",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": "A sharp-hooved pig with russet fur dusted in white spots. Crusted lines of black ichor runs from its eyes and mouth."
+    },
+    {
+      "id": "sd_monster_kawitze_k",
+      "name": "KAWITZEK",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "13",
+        "hp": "44",
+        "mv": "double near",
+        "level": "9",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "A horned snapping turtle as large as an elephant covered in muck, vines, and debris."
+      },
+      "abilities": [
+        {
+          "name": "Whirlpool",
+          "desc": "WIS spell. DC 12."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Focus",
+          "desc": "Cause a near-sized cube of water within a near distance to change shape, defy gravity, or flow in a different direction."
+        }
+      ],
+      "description": "A horned snapping turtle as large as an elephant covered in muck, vines, and debris."
+    },
+    {
+      "id": "sd_monster_skandrill",
+      "name": "Skandrill",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Unknown",
+      "properties": {
+        "ac": "13",
+        "hp": "14",
+        "mv": "double near",
+        "level": "3",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "Crocodile-lizards as tall as humans and covered in bright orange feathers."
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "Crocodile-lizards as tall as humans and covered in bright orange feathers. They run on two powerful legs, greedily chasing down shining objects."
+    },
+    {
+      "id": "sd_monster_skandrill_Rex",
+      "name": "Skandrill, Rex",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "SKANDRILL, REX",
+      "properties": {
+        "ac": "13",
+        "hp": "19",
+        "mv": "double near",
+        "level": "4",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_voidbat",
+      "name": "Void Bat",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "VOID BAT",
+      "properties": {
+        "ac": "13",
+        "hp": "19",
+        "mv": "double near (fly)",
+        "level": "",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "Dog-sized, eyeless bats with glossy black wings and rows of earholes. They travel through space while absorbing faint light for nourishment, though too much of it burns them."
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "VOID BAT"
+    },
+    {
+      "id": "sd_monster_void_being",
+      "name": "Void Being",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "void creatures",
+      "properties": {
+        "ac": 11,
+        "hp": 41,
+        "mv": "near (climb)",
+        "level": 9,
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "Biologically undead and hold a deep hatred for the living."
+      },
+      "abilities": [
+        {
+          "name": "Brain Meld",
+          "desc": "One undead creature within near DC 15 CHA or fall under the control of the void being for 1d4 days."
+        }
+      ],
+      "actions": [
+        {
+          "name": "brain meld",
+          "desc": "One undead creature within near DC 15 CHA or fall under the control of the void being for 1d4 days."
+        }
+      ],
+      "description": "Vaguely humanoid, 10-foot tall horrors made of purple-black oil slick. Their bodies can protrude writhing arms, and they share a cold and calculating hive mind where their actions and decisions are unified."
+    }
+  ]
+}

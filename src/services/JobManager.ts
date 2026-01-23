@@ -92,7 +92,14 @@ export class JobManager {
 
     getPageContent(jobId: string, pageFile: string): any | null {
         try {
-            const pagePath = path.join(this.stagingRoot, jobId, pageFile);
+            // New structure: Pages are in "Pages" subdirectory
+            let pagePath = path.join(this.stagingRoot, jobId, 'Pages', pageFile);
+
+            // Backward compatibility: Check root if not in Pages
+            if (!fs.existsSync(pagePath)) {
+                pagePath = path.join(this.stagingRoot, jobId, pageFile);
+            }
+
             if (fs.existsSync(pagePath)) {
                 return JSON.parse(fs.readFileSync(pagePath, 'utf-8'));
             }

@@ -1,0 +1,451 @@
+- id: sd_monster_Anacoda
+  name: Anacoda, Giant
+  type: Monster
+  game: ShadowDark
+  source: ''
+  properties:
+    ac: '12'
+    hp: '33'
+    mv: near (climb, swim)
+    level: '7'
+    alignment: N
+    stats:
+      str: '+4'
+      dex: '+2'
+      con: '+2'
+      int: '-2'
+      wis: '+1'
+      cha: '-2'
+    flavor: ''
+  abilities: []
+  actions: []
+  description: A 20-foot long, amphibious snake with red stripes and piercing, yellow
+    eyes. AC 12, HP 33, ATK 2 bite +6 (1d10 + swallow), MV near (climb, swim), S +4,
+    D +2, C +2, I -2, W +1, Ch -2, AL N, LV 7 Swallow. DC 12 STR or target is swallowed.
+    Total darkness inside and 1d8 damage per round. Anaconda regurgitates all swallowed
+    if dealt at least 15 damage in one round to the inside of its gullet.
+- id: sd_monster_ant
+  name: ANT
+  type: Monster
+  game: ShadowDark
+  source: None
+  properties:
+    ac: '12'
+    hp: '5'
+    mv: near (climb)
+    level: 1-20+
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: None
+  abilities: []
+  actions: []
+  description: Red, ox-sized ants with hooked mandibles. They attack in swarms and
+    carry live prey off to their colonies to be devoured.
+- id: sd_monster_stone_warrior
+  name: Stone Warrior
+  type: Monster
+  game: ShadowDark
+  source: Unknown
+  properties:
+    ac: '12'
+    hp: '5'
+    mv: ''
+    level: 1-20+
+    alignment: C
+    stats:
+      str: '+2'
+      dex: '+1'
+      con: '+1'
+      int: '+0'
+      wis: '+1'
+      cha: '-1'
+    flavor: ''
+  abilities:
+  - name: Camouflage
+    desc: ADV on checks to sneak and hide in a natural environment.
+  actions: []
+  description: Lithe, basilisk-worshipping warriors covered in dried mud dotted with
+    stones and pebbles. AC 12, HP 5, ATK 1 obsidian spear-thrower (far) +2 (1d8),
+    MV near, S +2, D +1, C +1, I +0, W +1, Ch -1, AL C, LV 1
+- id: sd_monster_stone_shaman
+  name: Stone Shaman
+  type: Monster
+  game: ShadowDark
+  source: Unknown
+  properties:
+    ac: '11'
+    hp: '19'
+    mv: near
+    level: '4'
+    alignment: C
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: WIS Spell
+      cha: ''
+    flavor: Stooped elders who lead stone warriors in the rituals and traditions of
+      the basilisk cult.
+  abilities:
+  - name: Daze
+    desc: DC 12. Focus. One target in near is helplessly stunned for spell's duration.
+  - name: Death Touch
+    desc: DC 13. Close. One target 2d8 damage.
+  actions:
+  - name: Daze
+    desc: DC 12. Focus. One target in near is helplessly stunned for spell's duration.
+  - name: Death Touch
+    desc: DC 13. Close. One target 2d8 damage.
+  description: Stooped elders who lead stone warriors in the rituals and traditions
+    of the basilisk cult.
+- id: sd_monster_blue_dart_frog
+  name: Blue Dart Frog
+  type: Monster
+  game: ShadowDark
+  source: unknown
+  properties:
+    ac: '12'
+    hp: '1'
+    mv: near (climb)
+    level: ''
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: unknown
+  abilities:
+  - name: toxin
+    desc: touch +2 (potent toxin)
+  actions:
+  - name: attack
+    desc: touch +2 (toxin)
+  description: Elusive, neon-blue treefrogs that carry a potent toxin.
+- id: sd_monster_catfish_giant
+  name: Giant Catfish
+  type: Monster
+  game: ShadowDark
+  source: ''
+  properties:
+    ac: '13'
+    hp: '56'
+    mv: double near (swim)
+    level: 12+
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: ''
+  abilities:
+  - name: Swallow
+    desc: On a natural attack roll of 18-20, target is swallowed into giant catfish's
+      stomach.
+  actions:
+  - name: Regurgitate
+    desc: Giant catfish regurgitates all swallowed creatures if dealt at least 15
+      damage in one round to the inside of its gullet.
+  description: ''
+- id: sd_monster_cobra_statue
+  name: Cobra Statue
+  type: Monster
+  game: ShadowDark
+  source: Unknown
+  properties:
+    ac: '14'
+    hp: '27'
+    mv: near
+    level: '6'
+    alignment: C
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: A rearing statue of a hooded cobra that looms 20 feet high. Its ruby eyes
+      are pointed down, watching what passes below.
+  abilities:
+  - name: Hypnotize
+    desc: One creature in near who can see cobra statue, DC 12 CHA or become helplessly
+      stupefied for 1 round.
+  actions:
+  - name: Poison
+    desc: DC 18 CON or go to 0 HP with a death timer of 1.
+  description: A rearing statue of a hooded cobra that looms 20 feet high. Its ruby
+    eyes are pointed down, watching what passes below.
+- id: sd_monster_jaguarking
+  name: JAGUAR KING
+  type: Monster
+  game: ShadowDark
+  source: null
+  properties:
+    ac: 16 (shield)
+    hp: '56'
+    mv: near (climb)
+    level: '12'
+    alignment: N
+    stats:
+      str: null
+      dex: null
+      con: null
+      int: null
+      wis: null
+      cha: null
+    flavor: null
+  abilities:
+  - name: null
+    desc: null
+  actions:
+  - name: null
+    desc: null
+  description: null
+- id: sd_monster_death_slug
+  name: Death Slug
+  type: Monster
+  game: ShadowDark
+  source: DEATH SLUG
+  properties:
+    ac: '12'
+    hp: '1'
+    mv: close (climb)
+    level: '0'
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: A living humanoid creature dies of this in 1d4 rounds unless the death
+      slug is killed first.
+  abilities:
+  - name: ''
+    desc: Burrow. Death slug plunges under target's skin. Its AC becomes 18 and it
+      begins tunneling toward target's heart.
+  actions:
+  - name: ''
+    desc: (1 + burrow), MV close (climb), S -3, D +2, C +0, I -3, W -2, Ch -3
+  description: A palm-sized, pale slug with a spinning mouth lined in hundreds of
+    needle-like teeth.
+- id: sd_monster Condor
+  name: Condor
+  type: Monster
+  game: ShadowDark
+  source: ''
+  properties:
+    ac: '11'
+    hp: '16'
+    mv: double near (fly)
+    level: ''
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: ''
+  abilities:
+  - name: ''
+    desc: ''
+  actions:
+  - name: ''
+    desc: ''
+  description: Wagon-sized, bald-faced vultures with barbed hooks of bone growing
+    from their flesh.
+- id: sd_monster_javelina
+  name: Javelina
+  type: Monster
+  game: ShadowDark
+  source: ''
+  properties:
+    ac: '10'
+    hp: '5'
+    mv: near
+    level: '1'
+    alignment: C
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: ''
+  abilities: []
+  actions: []
+  description: A sharp-hooved pig with russet fur dusted in white spots.
+- id: sd_monster_javelina_diseased
+  name: Javelina, Diseased
+  type: Monster
+  game: ShadowDark
+  source: Unknown
+  properties:
+    ac: '10'
+    hp: '10'
+    mv: near
+    level: '2'
+    alignment: C
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: A sharp-hooved pig with russet fur dusted in white spots. Crusted lines
+      of black ichor runs from its eyes and mouth.
+  abilities:
+  - name: ''
+    desc: ''
+  actions:
+  - name: ''
+    desc: ''
+  description: Undead. Immune to morale checks. Rage. If injured, tusk attacks deal
+    d8 damage instead of d6.
+- id: sd_monster_kawitzek
+  name: KAWITZEK
+  type: Monster
+  game: ShadowDark
+  source: Standard creature stat block.
+  properties:
+    ac: '13'
+    hp: '44'
+    mv: double near
+    level: '9'
+    alignment: N
+  abilities:
+  - name: ''
+    desc: ''
+  actions:
+  - name: ''
+    desc: ''
+  description: A horned snapping turtle as large as an elephant covered in muck, vines,
+    and debris.
+- id: sd_monster_skandrill
+  name: Skandrill
+  type: Monster
+  game: ShadowDark
+  source: ''
+  properties:
+    ac: '13'
+    hp: '14'
+    mv: double near
+    level: '3'
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+  abilities:
+  - name: ''
+    desc: ''
+  actions:
+  - name: ''
+    desc: ''
+  description: ''
+- id: sd_monster_skandrill_Rex
+  name: Skandrill, Rex
+  type: Monster
+  game: ShadowDark
+  source: Unknown
+  properties:
+    ac: '13'
+    hp: '19'
+    mv: double near
+    level: '4'
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: Unknown
+  abilities:
+  - name: Fireblood. Fire immune.
+    desc: Fireimmune.
+  actions:
+  - name: Greedy. In place of dealing damage, steal one metallic object target carries.
+    desc: In place of dealing damage, steal one metallic object target carries.
+  - name: Scream. 1/day, hideous caw-scream summons 1d4 loyal skandrill. They arrive
+      in 2 rounds.
+    desc: 1/day, hideous caw-scream summons 1d4 loyal skandrill. They arrive in 2
+      rounds.
+  description: This massive skandrill has an extra long wattle and a row of blue feathers
+    down its spine.
+- id: sd_monster_voidbat
+  name: Void Bat
+  type: Monster
+  game: ShadowDark
+  source: Unknown
+  properties:
+    ac: '13'
+    hp: '19'
+    mv: double near (fly)
+    level: ''
+    alignment: N
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: ''
+      cha: ''
+    flavor: Dog-sized, eyeless bats with glossy black wings and rows of earholes.
+      They travel through space while absorbing faint light for nourishment, though
+      too much of it burns them.
+  abilities: []
+  actions: []
+  description: VOID BAT
+- id: sd_monster_impervious
+  name: Impervious Void Bat
+  type: Monster
+  game: ShadowDark
+  source: LV 4
+  properties:
+    ac: '11'
+    hp: '41'
+    mv: near (climb)
+    level: '9'
+    alignment: C
+    stats:
+      str: ''
+      dex: ''
+      con: ''
+      int: ''
+      wis: I +4, W +2
+      cha: Ch +4
+    flavor: ''
+  abilities:
+  - name: Brain Meld
+    desc: One undead creature within near DC 15 CHA or fall under the control of the
+      void being for 1d4 days.
+  actions:
+  - name: Attack
+    desc: (2d8) or 1 brain meld
+  - name: Special Ability
+    desc: Absorb Ambient Light. Faint light (such as from torches) within double near
+      of the void bat dims to a faint ember, only providing light within close.
+  description: ''

@@ -1,0 +1,174 @@
+{
+  "items": [
+    {
+      "id": "sd_monster_Anacoda",
+      "name": "Anaconda, Giant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "33",
+        "mv": "near (climb, swim)",
+        "level": "7",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Swallow",
+          "desc": "DC 12 STR or target is swallowed."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Swallow",
+          "desc": "Total darkness inside and 1d8 damage per round. Anaconda regurgitates all swallowed if dealt at least 15 damage in one round to the inside of its gullet."
+        }
+      ],
+      "description": "",
+      "_source_page": "page_060.json"
+    },
+    {
+      "id": "sd_monster_Ant",
+      "name": "ANT, Giant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "near (climb)",
+        "level": "1",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Grab",
+          "desc": "DC 12 STR or pinned in ant's mandibles."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Grab",
+          "desc": "The ant can carry grabbed targets when it moves."
+        }
+      ],
+      "description": "",
+      "_source_page": "page_060.json"
+    },
+    {
+      "id": "sd_monster_BasiliskCultist",
+      "name": "BASILISK CULTISTS",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "near",
+        "level": "1",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Camouflage",
+          "desc": "ADV on checks to sneak and hide in a natural environment."
+        }
+      ],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_060.json"
+    },
+    {
+      "id": "sd_monster_StoneWarrior",
+      "name": "STONE WARRIOR",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "near",
+        "level": "1",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Focus",
+          "desc": "One target in near is helplessly stunned for spell's duration."
+        }
+      ],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_060.json"
+    },
+    {
+      "id": "sd_monster_StoneShaman",
+      "name": "STONE SHAMAN",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "11",
+        "hp": "19",
+        "mv": "near",
+        "level": "4",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Death Touch",
+          "desc": "Close. One target 2d8 damage."
+        }
+      ],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_060.json"
+    }
+  ]
+}

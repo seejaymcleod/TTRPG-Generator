@@ -1,30 +1,64 @@
-# ShadowDark Display Template
+# ShadowDark Display Template v1.1
 # Visual layout configuration for ShadowDark content cards.
 
 game: ShadowDark
 version: "1.1"
 
-# 1. Standard Monster
+# 1. Monster
 Monster:
-  colorAccent: "purple"
-  formatters:
-    extract_parentheses: '\(([^)]+)\)'
-  summaryTemplate: "LV {stat:level:LV} {stat:alignment::amber} {stat:ac:AC} {stat:hp:HP} {stat:mv:MV}"
+  colorAccent: "zinc" # ShadowDark is grim/dark
+  summaryTemplate: "LV {stat:level:Level} {tag:alignment::zinc} {stat:ac:AC} {stat:hp:HP}"
   header:
-    - { key: "level", label: "Level", badge: true }
-    - { key: "type", label: "Type", badge: false }
-    - { key: "alignment", label: "Align", badge: true }
+    - { key: "level", label: "LV", badge: true }
+    - { key: "alignment", label: "AL", badge: false }
+  
   layout:
-    - { type: "grid", columns: 2, class: "text-xs text-text-muted-light dark:text-text-muted-dark mb-3 border-b border-border-light dark:border-border-dark pb-2", items: [{label: "Movement", key: "properties.mv"}, {label: "Alignment", key: "properties.alignment"}] }
+    - { type: "flavor", key: "properties.flavor", italic: true, class: "mb-3 text-sm text-gray-400" }
     
-    - { type: "properties", keys: ["properties.ac", "properties.hp", "properties.level"], labels: {"properties.ac": "AC", "properties.hp": "HP", "properties.level": "LV"}, color: "purple" }
+    # Stat Grid
+    - { type: "properties", keys: ["properties.ac", "properties.hp", "properties.mv", "level", "alignment"], labels: {"properties.ac": "AC", "properties.hp": "HP", "properties.mv": "MV", "level": "Level", "alignment": "Align"}, color: "zinc" }
     
-    - { type: "stats_grid", key: "properties.stats", fields: ["str", "dex", "con", "int", "wis", "cha"] }
+    # Ability Scores
+    - { type: "grid", columns: 6, class: "text-xs text-center font-mono my-2 border-y border-gray-700 py-1", items: [
+        {label: "S", key: "properties.stats.str"}, 
+        {label: "D", key: "properties.stats.dex"}, 
+        {label: "C", key: "properties.stats.con"}, 
+        {label: "I", key: "properties.stats.int"}, 
+        {label: "W", key: "properties.stats.wis"}, 
+        {label: "Ch", key: "properties.stats.cha"}
+      ] 
+    }
     
-    - { type: "section_header", title: "Traits & Abilities" }
+    # Abilities
     - { type: "abilities_list", key: "abilities" }
     
-    - { type: "section_header", title: "Actions" }
+    # Actions
+    - { type: "section_header", title: "Actions", class: "mt-2" }
     - { type: "abilities_list", key: "actions" }
-    
+
+# 2. Spell
+Spell:
+  colorAccent: "purple"
+  summaryTemplate: "Tier {stat:properties.tier:T} {tag:properties.class::purple} {stat:properties.duration:dur}"
+  header:
+    - { key: "properties.tier", label: "Tier", badge: true }
+    - { key: "properties.class", label: "Class", badge: true }
+  
+  layout:
+    - { type: "grid", columns: 2, class: "text-sm mb-2", items: [{label: "Duration", key: "properties.duration"}, {label: "Range", key: "properties.range"}] }
+    - { type: "text_block", key: "description" }
+
+# 3. Item
+Item:
+  colorAccent: "amber"
+  summaryTemplate: "{tag:properties.category::amber} {tag:properties.bonus::zinc}"
+  header:
+    - { key: "properties.category", label: "Type", badge: true }
+  
+  layout:
     - { type: "flavor", key: "properties.flavor", italic: true }
+    - { type: "text_block", title: "Benefit", key: "properties.benefit", if_has: "properties.benefit" }
+    - { type: "text_block", title: "Curse", key: "properties.curse", if_has: "properties.curse", class: "text-red-400" }
+    - { type: "text_block", title: "Personality", key: "properties.personality", if_has: "properties.personality" }
+    - { type: "list", title: "Level Effects", key: "properties.level_effects", if_has: "properties.level_effects", item_template: "**LV ${level}:** ${effect}" }
+    - { type: "text_block", key: "description" }

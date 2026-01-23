@@ -1,0 +1,31 @@
+# Smart Scout Configuration
+# Define keywords for each content type to filter relevant pages.
+# Matches are case-insensitive.
+
+Monster:
+  - "AC"
+  - "HP"
+  - "ATK"
+  - "MV"
+  - "LV"
+  - "Alignment"
+  - "d20"
+  - "Stats"
+
+Spell:
+  - "Tier"
+  - "Duration"
+  - "Range"
+  - "Sorcerer"
+  - "Wizard"
+  - "Priest"
+  - "Spell"
+
+Item:
+  - "Cost"
+  - "Gear"
+  - "Slots"
+  - "Properties"
+  - "Armor"
+  - "Weapon"
+  - "Gold"

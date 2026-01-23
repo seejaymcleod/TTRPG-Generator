@@ -1,4 +1,4 @@
-# ShadowDark Input Schema
+# ShadowDark Input Schema v1.1
 # Instructions for parsing raw content into the Content Schema.
 
 game: ShadowDark
@@ -12,6 +12,7 @@ conventions:
     I: "int"
     W: "wis"
     Ch: "cha"
+  
   alignments:
     L: "Lawful"
     N: "Neutral"
@@ -19,36 +20,45 @@ conventions:
 
 extraction_rules:
   # Global formatting rules
-  id_format: "sd_{type_prefix}_{snake_case_name}"
+  id_format: "sd_{type}_{snake_case_name}"
 
   # Content Types Detection & Schema
   types:
     Monster:
-      detection: "Header block followed by AC/HP/ATK stat line"
+      detection: "Contains 'AC', 'HP', 'ATK' headers in a block"
       type_prefix: "monster"
-      instructions: "Parse standard ShadowDark stat block."
+      instructions: "Extract standard monster stat block. IGNORE independent bold headers that lack stats (e.g. Group Headers like 'BASILISK CULTISTS'). A Monster MUST have AC and HP lines immediately following the name or flavor text."
       sections:
-        required: ["Header", "Stat Line", "Abilities", "Actions"]
-        optional: ["Flavor"]
+        required: ["Header", "Stats", "Actions"]
+        optional: ["Flavor", "Abilities"]
 
   # Section Mapping
   sections:
     header:
-      instructions: "Extract name from the banner header."
-    
-    stat_line:
-      pattern: "AC {ac}, HP {hp}, ATK {atk}, MV {mv}, S {str}, D {dex}, C {con}, I {int}, W {wis}, Ch {cha}, AL {align}, LV {level}"
+      instructions: "Extract Name and Flavor text. WARN: If multiple names appear, ensure each is a distinct stat block. Do not merge siblings."
       fields:
-        ac: "AC value"
-        hp: "HP value"
-        mv: "Movement"
-        level: "Level"
-        alignment: "Alignment letter"
-        stats: "Ability modifiers"
+        name: "ALL CAPS name line (Must be followed by Flavor or AC/HP)"
+        flavor: "Italicized text immediately following name"
 
-    abilities:
-      pattern: "**Trait Name.** Description."
-      instructions: "Extract bolded trait name and description."
+    stats_block:
+      instructions: "Extract core stats. AC and HP are mandatory."
+      fields:
+        ac: "AC {value}"
+        hp: "HP {value}"
+        mv: "MV {value}"
+        atk: "ATK {value}"
+        level: "LV {value}"
+        alignment: "AL {value}"
+    
+    attributes:
+      instructions: "Extract the single line containing all ability modifiers."
+      fields:
+        stats_line: "The full stats string (e.g. 'S +3, D +1, C +1, I -3, W +0, Ch -3')"
 
-    actions:
-      instructions: "Parse attacks from 'ATK' line or separate action entries."
+    properties:
+      instructions: "Extract Spell/Item properties."
+      fields:
+        tier: "Tier {value}"
+        class: "class {value}"
+        duration: "Duration: {value}"
+        range: "Range: {value}"

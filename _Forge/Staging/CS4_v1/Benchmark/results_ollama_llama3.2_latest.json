@@ -1,0 +1,154 @@
+{
+  "model": "llama3.2:latest",
+  "duration": 25.746199369430542,
+  "items": [
+    {
+      "id": "sd_monster_Anacoda",
+      "name": "Anaconda, Giant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "33",
+        "mv": "near (climb, swim)",
+        "level": "7",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Swallow",
+          "desc": "DC 12 STR or target is swallowed."
+        }
+      ],
+      "actions": [
+        {
+          "name": "bite +6 (1d10 + swallow)",
+          "desc": "Total darkness inside and 1d8 damage per round."
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_Ant",
+      "name": "Ant, Giant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "near (climb)",
+        "level": "1",
+        "alignment": "N",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Grab",
+          "desc": "DC 12 STR or pinned in ant's mandibles."
+        }
+      ],
+      "actions": [
+        {
+          "name": "bite +3 (1d6 + grab)",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_BasiliskCultist",
+      "name": "",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "12",
+        "hp": "5",
+        "mv": "near",
+        "level": "1",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Camouflage",
+          "desc": "ADV on checks to sneak and hide in a natural environment."
+        }
+      ],
+      "actions": [
+        {
+          "name": "obsidian spear-thrower (far) +2 (1d8)",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    },
+    {
+      "id": "sd_monster_StoneShaman",
+      "name": "",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "11",
+        "hp": "19",
+        "mv": "near",
+        "level": "4",
+        "alignment": "C",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Daze (WIS Spell)",
+          "desc": "DC 12. Focus. One target in near is helplessly stunned for spell's duration."
+        }
+      ],
+      "actions": [
+        {
+          "name": "obsidian dagger (near) +2 (1d6)",
+          "desc": ""
+        },
+        {
+          "name": "spell +4",
+          "desc": ""
+        }
+      ],
+      "description": ""
+    }
+  ]
+}

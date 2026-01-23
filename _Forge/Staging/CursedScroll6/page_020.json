@@ -1,5 +1,0 @@
-{
-  "page": 20,
-  "text": "20\nABJURE\nTier 5, wizard (L)\nDuration: Instant\nRange: Close\nYou and one creature you touch \nboth die.\nABSORB\nTier 2, wizard (L)\nDuration: 5 rounds\nRange: Self\nYou create an absorptive barrier \nof force around you.\nHalve all damage you take for \nthe spell's duration (round \ndown).\nBANISH\nTier 3, wizard (L)\nDuration: Instant\nRange: Near\nWith a word of power, you send \none extraplanar creature of LV 6 \nor less who hears you back to its \ndimension of origin.\nCLEANSE\nTier 1, wizard (L)\nDuration: Instant\nRange: Close\nYou expunge natural toxins from \none creature you touch. \nEnd the effects of one poison \ncurrently affecting the target.\nFLARE\nTier 1, wizard (L)\nDuration: 1 round\nRange: Near\nA flash of blinding, white light \nbursts from you. All enemies in \nrange who see it are blinded for \nthe spell's duration.",
-  "block_count": 29
-}

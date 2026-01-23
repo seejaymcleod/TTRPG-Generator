@@ -1,0 +1,997 @@
+{
+  "items": [
+    {
+      "id": "sd_monster_Gedgarrin",
+      "name": "Gedgarrin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 50",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json"
+    },
+    {
+      "id": "sd_monster_ThePaleToad",
+      "name": "The Pale Toad",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 2",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json"
+    },
+    {
+      "id": "sd_monster_ShroudCultist",
+      "name": "Shroud Cultist",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "The City of Masks",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": "N",
+        "alignment": "N",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        },
+        "flavor": null
+      },
+      "abilities": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "actions": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "description": null,
+      "_source_page": "page_005.json"
+    },
+    {
+      "id": "sd_monster_ThievesGuildThug",
+      "name": "Thieves' Guild Thug",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "The City of Masks",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": "L",
+        "alignment": "C",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        },
+        "flavor": null
+      },
+      "abilities": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "actions": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "description": null,
+      "_source_page": "page_005.json"
+    },
+    {
+      "id": "sd_monster_Peasant",
+      "name": "Peasant",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "The City of Masks",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": "L",
+        "alignment": "N",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        },
+        "flavor": null
+      },
+      "abilities": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "actions": [
+        {
+          "name": null,
+          "desc": null
+        }
+      ],
+      "description": null,
+      "_source_page": "page_005.json"
+    },
+    {
+      "id": "sd_monster_shadowsnake",
+      "name": "Cursed Scroll",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Cursed Scroll",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_007.json"
+    },
+    {
+      "id": "sd_monster_8",
+      "name": "Characters",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "None",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": null,
+        "stats": {},
+        "flavor": null
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "None",
+      "_source_page": "page_008.json"
+    },
+    {
+      "id": "sd_monster_11",
+      "name": "Bard Class",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "None",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": null,
+        "stats": {},
+        "flavor": null
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "None",
+      "_source_page": "page_008.json"
+    },
+    {
+      "id": "sd_monster_12",
+      "name": "Duelist Class",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "None",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": null,
+        "stats": {},
+        "flavor": null
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "None",
+      "_source_page": "page_008.json"
+    },
+    {
+      "id": "sd_monster_the_duke",
+      "name": "The Duke",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Kelsey Dionne, Oct. 2025",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_009.json"
+    },
+    {
+      "id": "sd_monster_2",
+      "name": "Bards",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "1d6 per level",
+        "hp": "Hit Points: 1d6 per level",
+        "mv": "Movement",
+        "level": "Level 1-20+",
+        "alignment": "L",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Bardic Arts",
+          "desc": "You're trained in oration, performing arts, lore, and diplomacy. You have advantage on related checks."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Fascinate (Focus)",
+          "desc": "Make a DC 12 CHA check. On a success, you transfix all targets in near whose LV is equal to or less than 1 + half your level (round down). If you fail, excluding focus, you can't use this again until you rest."
+        },
+        {
+          "name": "Inspire",
+          "desc": "Each day, you can grant a number of luck tokens equal to your Charisma modifier (min. 1)"
+        },
+        {
+          "name": "Magical Dabbler",
+          "desc": "You can activate spell scrolls and wands using your Charisma modifier. If you critically fail, roll a wizard mishap."
+        }
+      ],
+      "description": "",
+      "_source_page": "page_012.json"
+    },
+    {
+      "id": "sd_monster_3",
+      "name": "",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_012.json"
+    },
+    {
+      "id": "sd_monster_Gedgarrin",
+      "name": "Gedgarrin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 50",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_ThePaleToad",
+      "name": "The Pale Toad",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 2",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_MonveauTheater",
+      "name": "Monveau Theater",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 3",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_Gedgarrin",
+      "name": "Gedgarrin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 4",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_TheRound",
+      "name": "The Round",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 5",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_BardicCollege",
+      "name": "Bardic College",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 6",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_Gutterwash",
+      "name": "Gutterwash",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 52\u2021",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json",
+      "_extraction_method": "deep_docling"
+    },
+    {
+      "id": "sd_monster_DuelistClass",
+      "name": "Duelist Class",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "",
+        "hp": "1d8 per level",
+        "mv": "",
+        "level": "Level 1-20+",
+        "alignment": "LNC",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": "Spinning swordsmen and fast-\ntalking fame mongers. Duelists \ndeliver insults and injuries alike \nto defeat their foes in style."
+      },
+      "abilities": [
+        {
+          "name": "Tale Spinner",
+          "desc": "You may make a DC 15 CHA check. If you pass, strangers around you believe you are famous and important for the remainder of your interaction with them."
+        },
+        {
+          "name": "Taunt",
+          "desc": "When an enemy misses you with an attack, you have advantage on attacks against that enemy next round."
+        }
+      ],
+      "actions": [
+        {
+          "name": "Parry",
+          "desc": "Once per day, an attack of your choice that would hit you misses instead."
+        }
+      ],
+      "description": "",
+      "_source_page": "page_015.json"
+    },
+    {
+      "id": "",
+      "name": "",
+      "type": "",
+      "game": "",
+      "source": "",
+      "properties": {},
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_015.json"
+    },
+    {
+      "id": "sd_monster_Gedgarrin",
+      "name": "Gedgarrin",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 50",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json"
+    },
+    {
+      "id": "sd_monster_ThePaleToad",
+      "name": "The Pale Toad",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "pg. 2",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_004.json"
+    },
+    {
+      "id": "sd_monster_seeker",
+      "name": "Seeker",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "3-4",
+        "alignment": "Neutral",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_016.json"
+    },
+    {
+      "id": "sd_monster_truthbearer",
+      "name": "Truthbearer",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "9-10",
+        "alignment": "Neutral",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_016.json"
+    },
+    {
+      "id": "sd_monster_17",
+      "name": "Adept",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "IDENTIFIERS",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": "",
+      "_source_page": "page_017.json"
+    },
+    {
+      "id": "sd_monster_3",
+      "name": "Renown",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "18",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "3 or Less",
+        "alignment": "L",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "A character's renown can grow over time and increase their fame (or infamy). Having a high renown confers benefits.",
+      "_source_page": "page_018.json"
+    },
+    {
+      "id": "sd_monster_mage",
+      "name": "Mage",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Source not specified",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {},
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "Lawful wizards can choose from the below spells in addition to standard wizard spells.",
+      "_source_page": "page_019.json"
+    },
+    {
+      "id": "sd_monster_ABJURE",
+      "name": "ABJURE",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": "L",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        }
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_020.json"
+    },
+    {
+      "id": "sd_monster_ABSORB",
+      "name": "ABSORB",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": "L",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        },
+        "flavor": ""
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_020.json"
+    },
+    {
+      "id": "sd_monster_BANISH",
+      "name": "BANISH",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": "L",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        }
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_020.json"
+    },
+    {
+      "id": "sd_monster_CLEANSE",
+      "name": "CLEANSE",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": "L",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        }
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_020.json"
+    },
+    {
+      "id": "sd_monster_FLARE",
+      "name": "FLARE",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": null,
+        "hp": null,
+        "mv": null,
+        "level": null,
+        "alignment": "L",
+        "stats": {
+          "str": null,
+          "dex": null,
+          "con": null,
+          "int": null,
+          "wis": null,
+          "cha": null
+        }
+      },
+      "abilities": [],
+      "actions": [],
+      "description": "",
+      "_source_page": "page_020.json"
+    },
+    {
+      "id": "sd_monster_Glyph",
+      "name": "Glyph",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "FORBID",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "Tier 4, wizard (L)",
+        "alignment": "L",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Bind",
+          "desc": "A reader of LV 6 or less is paralyzed for 1 hour."
+        },
+        {
+          "name": "Harm",
+          "desc": "The reader takes 3d6 damage."
+        },
+        {
+          "name": "Message",
+          "desc": "The reader hears a brief mental message."
+        },
+        {
+          "name": "Teleportation Sigil",
+          "desc": "Treat the object as a teleportation sigil per the teleport spell."
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        },
+        {
+          "name": "",
+          "desc": ""
+        },
+        {
+          "name": "",
+          "desc": ""
+        },
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": "You draw an arcane symbol on an object that imparts one of the following magical effects:",
+      "_source_page": "page_021.json"
+    },
+    {
+      "id": "sd_monster_FORBID",
+      "name": "FORBID",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "Tier 3, wizard (L)",
+        "alignment": "L",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "Bind",
+          "desc": "A reader of LV 6 or less is paralyzed for 1 hour."
+        },
+        {
+          "name": "Harm",
+          "desc": "The reader takes 3d6 damage."
+        },
+        {
+          "name": "Message",
+          "desc": "The reader hears a brief mental message."
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        },
+        {
+          "name": "",
+          "desc": "Creatures cannot teleport into, out of, or within an area of effect extending out to double near from you. This area of effect moves with you."
+        }
+      ],
+      "description": "FORBID",
+      "_source_page": "page_021.json"
+    },
+    {
+      "id": "sd_monster_shadowdemon",
+      "name": "",
+      "type": "Monster",
+      "game": "ShadowDark",
+      "source": "Input Text",
+      "properties": {
+        "ac": "",
+        "hp": "",
+        "mv": "",
+        "level": "",
+        "alignment": "",
+        "stats": {
+          "str": "",
+          "dex": "",
+          "con": "",
+          "int": "",
+          "wis": "",
+          "cha": ""
+        },
+        "flavor": ""
+      },
+      "abilities": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "actions": [
+        {
+          "name": "",
+          "desc": ""
+        }
+      ],
+      "description": "",
+      "_source_page": "page_022.json"
+    }
+  ]
+}

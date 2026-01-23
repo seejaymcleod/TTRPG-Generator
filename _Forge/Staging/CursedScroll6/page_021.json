@@ -1,5 +1,0 @@
-{
-  "page": 21,
-  "text": "21\nGLYPH\nTier 4, wizard (L)\nDuration: 1 week\nRange: Close\nYou draw an arcane symbol on \nan object that imparts one of the \nfollowing magical effects:\n•\t Bind. A reader of LV 6 or less \nis paralyzed for 1 hour.\n•\t Harm. The reader takes 3d6 \ndamage.\n•\t Message. The reader hears a \nbrief mental message.\n•\t Teleportation Sigil. Treat the \nobject as a teleportation sigil \nper the teleport spell.\nThe glyph disappears once \nactivated.\nFORBID\nTier 3, wizard (L)\nDuration: 10 rounds\nRange: Self\nCreatures cannot teleport into, \nout of, or within an area of effect \nextending out to double near \nfrom you. This area of effect \nmoves with you.",
-  "block_count": 20
-}
