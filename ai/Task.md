@@ -1,4 +1,6 @@
-TASK above:
+TASK:
+Find the code for the 2-ball slider filters (all of it) and make an md file so i can export it to a different website project.
+
 
 SOURCES:
 ai/00_SYSTEM_CONTRACT.md
@@ -8,10 +10,6 @@ ai/STATE.md
 GEMINI API KEY:
 If lost for some reason, it's in the user file:
 /Users/seejaymac/Documents/GitHub/TTRPG-Generator/data/users/SeeJayMac.json
-
-
-DISCUSSION MODE ONLY. DO NOT WRITE CODE
-1) Let's work on the backend for ForgeMode. I want to develop a workflow where the docling parses the PDF and chunks it into page that it saves into a temp folder in case it hit a rate limit or something. Is that the best strategy?
 
 CONTEXT:
 <only the relevant code snippets or diff>
