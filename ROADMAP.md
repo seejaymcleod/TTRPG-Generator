@@ -80,7 +80,7 @@ flowchart TD
     }
     ```
 - [x] **2.2 AST Tokenizer for Expressions**
-  - Parse strings containing `{1d6}`, `{{1d6} * 10}`, or `{Variable}` into token lists rather than flattening them to strings immediately.
+  - Parse strings containing `{1d6}`, `{\{1d6\} * 10}`, or `{Variable}` into token lists rather than flattening them to strings immediately.
   - Preserve the raw formula alongside the rolled value.
 - [x] **2.3 Serialization & Hydration**
   - Ensure any card can be serialized to JSON, stored in LocalStorage/IndexedDB or downloaded, and rehydrated with complete re-roll capability intact.
