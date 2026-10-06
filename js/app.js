@@ -5196,11 +5196,16 @@ async function handleGitHubSync() {
             const filename = blob.path.split('/').pop();
             if (statusDiv) statusDiv.textContent = `Syncing (${syncedCount + 1}/${yamlBlobs.length}): ${filename}`;
 
-            const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${blob.path}`;
-            const fileRes = await fetch(rawUrl, { headers });
+            // Fetch via GitHub API blob raw endpoint (works for private repositories)
+            const blobUrl = blob.url || `https://api.github.com/repos/${owner}/${repo}/git/blobs/${blob.sha}`;
+            const fileHeaders = {
+                'Accept': 'application/vnd.github.v3.raw',
+                ...(tokenVal ? { 'Authorization': `token ${tokenVal}` } : {})
+            };
+            const fileRes = await fetch(blobUrl, { headers: fileHeaders });
             if (fileRes.ok) {
                 const text = await fileRes.text();
-                // Store in browser localStorage/IndexedDB
+                // Store in browser localStorage
                 try {
                     localStorage.setItem(`ttrpg_table_${filename}`, text);
                     syncedCount++;

@@ -102,3 +102,13 @@ export function compileSources(sources: SourceFile[], options: CompileOptions = 
 export function compileDirectory(dir: string, options?: CompileOptions): CompileResult {
     return compileSources(readTableSources(dir), options);
 }
+
+export function compileDirectories(dirs: string[], options?: CompileOptions): CompileResult {
+    const sources: SourceFile[] = [];
+    for (const dir of dirs) {
+        if (fs.existsSync(dir)) {
+            sources.push(...readTableSources(dir));
+        }
+    }
+    return compileSources(sources, options);
+}

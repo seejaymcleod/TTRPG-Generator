@@ -8,17 +8,27 @@
 //   npm run lint:tables -- --code=unresolved-reference
 //   npm run lint:tables -- Shadowdark         # only files whose path contains "Shadowdark"
 
+import fs from 'fs';
 import path from 'path';
 import { Diagnostic, formatDiagnostic, summarize } from './diagnostics';
-import { compileDirectory } from './pipeline';
+import { compileDirectories } from './pipeline';
 
 const args = process.argv.slice(2);
 const flag = (name: string) => args.includes(`--${name}`);
 const option = (name: string) => args.find(a => a.startsWith(`--${name}=`))?.split('=')[1];
 const filters = args.filter(a => !a.startsWith('--'));
 
-const tablesDir = option('dir') ? path.resolve(option('dir')!) : path.join(process.cwd(), '_Tables');
-const result = compileDirectory(tablesDir);
+const targetDirs: string[] = [];
+if (option('dir')) {
+    targetDirs.push(path.resolve(option('dir')!));
+} else {
+    targetDirs.push(path.join(process.cwd(), '_Tables'));
+    const privateDir = path.join(process.cwd(), '_Tables_Private');
+    if (fs.existsSync(privateDir)) {
+        targetDirs.push(privateDir);
+    }
+}
+const result = compileDirectories(targetDirs);
 
 let diagnostics: Diagnostic[] = result.diagnostics;
 if (!flag('verbose')) diagnostics = diagnostics.filter(d => d.severity !== 'info');
