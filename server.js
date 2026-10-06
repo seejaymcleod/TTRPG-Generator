@@ -4,7 +4,7 @@ const fs = require('fs');
 
 // Import the compiled engine
 // Note: Running from root, so dist is at ./dist
-const { TableLoader, Renderer } = require('./dist/src/engine');
+const { TableLoader, Renderer, createCardFromResult, ExecutionEngine } = require('./dist/src/engine');
 
 const app = express();
 const PORT = process.env.PORT || 1337;
@@ -155,6 +155,14 @@ app.post('/api/generate', (req, res) => {
       const identifier = targetTable.filename || targetTable.tablename;
       const result = renderer.generate(identifier, context);
 
+      // Create typed Card model alongside GeneratedResult for Phase 2 persistence
+      const card = createCardFromResult(
+        result,
+        { file: targetTable.filename || `${identifier}.yaml`, tableName: targetTable.tablename || identifier },
+        result.context || context
+      );
+      result.card = card;
+
       if (result._isSeparateRows) {
         results.push(result);
       } else if (Array.isArray(result.result) && !result._isCareer && !result._isMultiElementArray) {
@@ -175,8 +183,28 @@ app.post('/api/generate', (req, res) => {
 
 // POST /api/reroll
 app.post('/api/reroll', (req, res) => {
-  const { table, header, context, inputValues } = req.body;
+  const { table, header, context, inputValues, card, nodeId, microToken, tokenIndex } = req.body;
 
+  // New Phase 3: Card-based execution (Micro-reroll or Node-reroll)
+  if (card && nodeId) {
+    try {
+      const executionEngine = new ExecutionEngine(loader);
+      if (microToken) {
+        // Micro-reroll of embedded dice/math expression
+        const microResult = executionEngine.rerollMicroToken(card, nodeId, microToken, tokenIndex || 0);
+        return res.json(microResult);
+      } else {
+        // Row-level reroll with generator provenance
+        const rowResult = executionEngine.rerollNode(card, nodeId);
+        return res.json(rowResult);
+      }
+    } catch (e) {
+      console.error("Card reroll error:", e);
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // Legacy header-based reroll fallback
   if (!table || !header) {
     return res.status(400).json({ error: 'Missing table or header' });
   }
@@ -199,14 +227,58 @@ app.post('/api/reroll', (req, res) => {
     // Return { result: { ... }, context: ... }
     res.json({
       result: result,
-      context: mergedContext // Context might have been updated by mutations (though new engine tries to be immutable, assignments happen)
-      // Actually, new engine context entries are assigned to `context` object passed in.
+      context: mergedContext
     });
   } catch (e) {
     console.error("Reroll error:", e);
     res.status(500).json({ error: e.message });
   }
 });
+
+// POST /api/cards/export/markdown
+
+app.post('/api/cards/export/markdown', (req, res) => {
+  try {
+    const { card } = req.body;
+    if (!card) return res.status(400).json({ error: 'Missing card' });
+    const { exportCardToMarkdown } = require('./dist/src/engine');
+    const markdown = exportCardToMarkdown(card);
+    res.json({ markdown });
+  } catch (e) {
+    console.error("Markdown export error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/cards/export/json
+app.post('/api/cards/export/json', (req, res) => {
+  try {
+    const { card } = req.body;
+    if (!card) return res.status(400).json({ error: 'Missing card' });
+    const { serializeCard } = require('./dist/src/engine');
+    const jsonStr = serializeCard(card);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(jsonStr);
+  } catch (e) {
+    console.error("JSON export error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// POST /api/cards/import
+app.post('/api/cards/import', (req, res) => {
+  try {
+    const { data } = req.body;
+    if (!data) return res.status(400).json({ error: 'Missing card data' });
+    const { hydrateCard } = require('./dist/src/engine');
+    const card = hydrateCard(data);
+    res.json({ card });
+  } catch (e) {
+    console.error("Card import error:", e);
+    res.status(400).json({ error: e.message });
+  }
+});
+
 
 // --- Forge Mode Endpoints ---
 const multer = require('multer');

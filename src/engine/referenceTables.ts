@@ -36,6 +36,9 @@ export class ReferenceTableHandler {
                     if (!isNaN(val) && numKey >= val) return entry.value;
                 }
                 // Handle ">=" standard notation as well if needed, but spec says "13<="
+                // "13+" means 13 or more
+                const plus = entry.key.match(/^\s*(-?\d+(?:\.\d+)?)\s*\+\s*$/);
+                if (plus && numKey >= parseFloat(plus[1])) return entry.value;
             }
         }
 

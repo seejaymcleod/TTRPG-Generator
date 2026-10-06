@@ -7,6 +7,7 @@
     "start": "npx tsc && npm run build:tables && node server.js",
     "build": "npx tsc && npm run build:tables",
     "build:tables": "npx ts-node src/compiler/build.ts",
+    "lint:tables": "npx ts-node src/compiler/lint.ts",
     "cli": "npx ts-node scripts/cli.ts",
     "test": "vitest",
     "dev": "npm run build && nodemon server.js"

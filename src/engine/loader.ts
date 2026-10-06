@@ -31,6 +31,13 @@ export class TableLoader {
     }
 
     /**
+     * Indexes already-parsed tables (e.g. from the compiler, tests, or browser storage).
+     */
+    loadTables(tables: Table[]): void {
+        tables.forEach(t => this.processTable(t));
+    }
+
+    /**
      * Helper to process valid table objects into the index.
      */
     private processTable(t: Table) {

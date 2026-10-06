@@ -712,15 +712,37 @@ document.addEventListener('DOMContentLoaded', async function () {
                 toggleCardCollapse(e.currentTarget);
             });
 
+            cardClone.querySelector('.export-json-btn')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                exportCardJson(cardClone);
+            });
+
             attachEditableListeners(cardClone);
 
             // Add the card to the saved area
             this.appendChild(cardClone);
+            persistSavedCards();
 
             // Show confirmation
             showToast('Card saved!');
         });
     }
+
+    // Set up export & import for saved cards board
+    document.getElementById('exportSavedCardsBtn')?.addEventListener('click', () => {
+        exportAllSavedCardsJson();
+    });
+
+    const importInput = document.getElementById('importSavedCardsFileInput');
+    document.getElementById('importSavedCardsBtn')?.addEventListener('click', () => {
+        importInput?.click();
+    });
+    importInput?.addEventListener('change', (e) => {
+        handleSavedCardsImport(e);
+    });
+
+    // Load persisted cards from localStorage
+    loadPersistedSavedCards();
 
     // Check filter overflow on window resize
     window.addEventListener('resize', debounce(() => {
@@ -730,6 +752,232 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Initialize resizer
     setupSidebarResizer();
 });
+
+// --- Phase 5: Saved Cards Persistence & Export/Import ---
+const SAVED_CARDS_STORAGE_KEY = 'ttrpg_saved_cards';
+
+function persistSavedCards() {
+    const savedArea = document.getElementById('savedGenerations');
+    if (!savedArea) return;
+    const cards = [];
+    savedArea.querySelectorAll('.generation-container').forEach(c => {
+        if (c._cardModel) {
+            cards.push(c._cardModel);
+        } else {
+            // Build model from DOM
+            const title = c.querySelector('.card-title-text')?.textContent || 'Card';
+            const nodes = [];
+            c.querySelectorAll('.result-row').forEach(row => {
+                const label = row.querySelector('.result-header')?.textContent || '';
+                const val = Array.from(row.querySelectorAll('.result-content')).map(x => x.textContent.trim()).join(', ');
+                nodes.push({
+                    id: `node_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+                    label: label,
+                    displayValue: val,
+                    generator: { tableName: label },
+                    history: [{ rolledAt: Date.now(), value: val }],
+                    locked: row.classList.contains('locked')
+                });
+            });
+            cards.push({
+                id: c.dataset.index || `card_${Date.now()}`,
+                title: title,
+                source: { file: c.dataset.tableFilename || '', tableName: title },
+                context: {},
+                nodes: nodes,
+                createdAt: Date.now()
+            });
+        }
+    });
+
+    try {
+        localStorage.setItem(SAVED_CARDS_STORAGE_KEY, JSON.stringify(cards));
+    } catch (e) {
+        console.error('Failed to save cards to localStorage:', e);
+    }
+}
+
+function loadPersistedSavedCards() {
+    const savedArea = document.getElementById('savedGenerations');
+    if (!savedArea) return;
+    try {
+        const raw = localStorage.getItem(SAVED_CARDS_STORAGE_KEY);
+        if (!raw) return;
+        const cards = JSON.parse(raw);
+        if (Array.isArray(cards)) {
+            for (const card of cards) {
+                renderSavedCardFromModel(card, savedArea);
+            }
+        }
+    } catch (e) {
+        console.error('Failed to load saved cards:', e);
+    }
+}
+
+function renderSavedCardFromModel(card, targetArea) {
+    if (!targetArea) targetArea = document.getElementById('savedGenerations');
+    if (!targetArea || !card) return;
+
+    const cardContainer = document.createElement('div');
+    cardContainer.className = 'generation-container';
+    cardContainer.dataset.index = card.id || `saved-${Date.now()}`;
+    cardContainer.dataset.tableFilename = card.source?.file || '';
+    cardContainer._cardModel = card;
+    cardContainer.draggable = true;
+    cardContainer.addEventListener('dragstart', handleCardDragStart);
+    cardContainer.addEventListener('dragend', handleCardDragEnd);
+
+    // Title Bar
+    const cardTitle = document.createElement('div');
+    cardTitle.className = 'card-title';
+
+    const collapseBtn = document.createElement('button');
+    collapseBtn.className = 'collapse-btn';
+    collapseBtn.onclick = (e) => { e.stopPropagation(); toggleCardCollapse(collapseBtn); };
+    collapseBtn.innerHTML = '<span class="down-arrow">▼</span><span class="up-arrow">▲</span>';
+    cardTitle.appendChild(collapseBtn);
+
+    const titleText = document.createElement('span');
+    titleText.className = 'card-title-text';
+    titleText.textContent = card.title || 'Saved Card';
+    titleText.contentEditable = true;
+    titleText.spellcheck = false;
+    cardTitle.appendChild(titleText);
+
+    // Actions
+    const cardActions = document.createElement('div');
+    cardActions.className = 'card-actions';
+
+    const undoBtn = document.createElement('button');
+    undoBtn.className = 'undo-btn';
+    undoBtn.title = "Undo";
+    undoBtn.onclick = (e) => { e.stopPropagation(); undoCardChange(cardContainer); };
+    undoBtn.innerHTML = '<span class="material-symbols-outlined">undo</span>';
+    undoBtn.disabled = true;
+    undoBtn.style.opacity = '0.3';
+    cardActions.appendChild(undoBtn);
+
+    const jsonBtn = document.createElement('button');
+    jsonBtn.className = 'export-json-btn';
+    jsonBtn.title = "Export Card JSON";
+    jsonBtn.onclick = (e) => { e.stopPropagation(); exportCardJson(cardContainer); };
+    jsonBtn.innerHTML = '<span class="material-symbols-outlined">data_object</span>';
+    cardActions.appendChild(jsonBtn);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'copy-btn';
+    copyBtn.title = "Copy to Markdown";
+    copyBtn.onclick = (e) => { e.stopPropagation(); copyToMarkdown(cardContainer); };
+    copyBtn.innerHTML = '<span class="material-symbols-outlined">content_copy</span>';
+    cardActions.appendChild(copyBtn);
+
+    const rerollAllBtn = document.createElement('button');
+    rerollAllBtn.className = 'reroll-all-btn';
+    rerollAllBtn.title = "Reroll All";
+    rerollAllBtn.onclick = (e) => { e.stopPropagation(); rerollAllContent(cardContainer); };
+    rerollAllBtn.innerHTML = '<span class="material-symbols-outlined">casino</span>';
+    cardActions.appendChild(rerollAllBtn);
+
+    const resetAllBtn = document.createElement('button');
+    resetAllBtn.className = 'reset-all-btn';
+    resetAllBtn.title = "Reset All";
+    resetAllBtn.onclick = (e) => { e.stopPropagation(); resetAllContent(cardContainer); };
+    resetAllBtn.innerHTML = '<span class="material-symbols-outlined">restart_alt</span>';
+    cardActions.appendChild(resetAllBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-card-btn';
+    deleteBtn.title = "Delete Card";
+    deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        deleteCard(cardContainer);
+        persistSavedCards();
+    };
+    deleteBtn.innerHTML = '<span class="material-symbols-outlined">delete_forever</span>';
+    cardActions.appendChild(deleteBtn);
+
+    cardTitle.appendChild(cardActions);
+    cardContainer.appendChild(cardTitle);
+
+    // Content
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'card-content';
+
+    if (Array.isArray(card.nodes)) {
+        for (const node of card.nodes) {
+            const row = document.createElement('div');
+            row.className = 'result-row';
+            row.dataset.format = 'simple';
+            if (node.locked) row.classList.add('locked');
+
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'result-header';
+            headerDiv.textContent = node.label;
+            row.appendChild(headerDiv);
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'result-content';
+            contentDiv.contentEditable = true;
+            contentDiv.dataset.header = node.label;
+            contentDiv.innerHTML = renderResultContentWithChips(node.displayValue, node.label);
+            row.appendChild(contentDiv);
+
+            const btnGroup = document.createElement('div');
+            btnGroup.innerHTML = getButtonGroup();
+            row.appendChild(btnGroup.firstElementChild);
+
+            contentWrapper.appendChild(row);
+        }
+    }
+
+    cardContainer.appendChild(contentWrapper);
+    targetArea.appendChild(cardContainer);
+    attachEditableListeners(cardContainer);
+}
+
+function exportAllSavedCardsJson() {
+    const raw = localStorage.getItem(SAVED_CARDS_STORAGE_KEY) || '[]';
+    const blob = new Blob([raw], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ttrpg_saved_cards_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast('Exported all saved cards!');
+}
+
+async function handleSavedCardsImport(event) {
+    const file = event.target?.files?.[0];
+    if (!file) return;
+
+    try {
+        const text = await file.text();
+        const imported = JSON.parse(text);
+        const cardArray = Array.isArray(imported) ? imported : [imported];
+        const savedArea = document.getElementById('savedGenerations');
+
+        let count = 0;
+        for (const card of cardArray) {
+            if (card && typeof card === 'object' && (card.nodes || card.title)) {
+                renderSavedCardFromModel(card, savedArea);
+                count++;
+            }
+        }
+        persistSavedCards();
+        showToast(`Imported ${count} card(s)!`);
+    } catch (err) {
+        console.error('Import error:', err);
+        showToast('Error parsing card JSON file');
+    } finally {
+        event.target.value = '';
+    }
+}
+window.exportAllSavedCardsJson = exportAllSavedCardsJson;
+window.handleSavedCardsImport = handleSavedCardsImport;
+
 
 // New function to populate filter buttons
 function populateFilterButtons(tables) {
@@ -1743,6 +1991,10 @@ function generateContent() {
                 generationContainer.addEventListener('dragstart', handleCardDragStart);
                 generationContainer.addEventListener('dragend', handleCardDragEnd);
 
+                if (result.card) {
+                    generationContainer._cardModel = result.card;
+                }
+
                 // Title Bar
                 const cardTitle = document.createElement('div');
                 cardTitle.className = 'card-title';
@@ -1787,6 +2039,13 @@ function generateContent() {
                 undoBtn.disabled = true;
                 undoBtn.style.opacity = '0.3';
                 cardActions.appendChild(undoBtn);
+
+                const jsonBtn = document.createElement('button');
+                jsonBtn.className = 'export-json-btn';
+                jsonBtn.title = "Export Card JSON";
+                jsonBtn.onclick = (e) => { e.stopPropagation(); exportCardJson(generationContainer); };
+                jsonBtn.innerHTML = '<span class="material-symbols-outlined">data_object</span>';
+                cardActions.appendChild(jsonBtn);
 
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
@@ -2096,9 +2355,19 @@ function attachEditableListeners(container) {
     // Also re-attach title listeners if needed (already handled in generateContent)
 }
 
+function renderResultContentWithChips(text, header) {
+    if (typeof text !== 'string') text = String(text ?? '');
+    // Escape HTML first
+    let escaped = escapeHtml(text);
+    // Replace dice patterns like [🎲 4] or dice formula tokens like {1d6}, {2d4+1} with interactive chips
+    escaped = escaped.replace(/\{(\d*d\d+(?:[+-]\d+)?)\}/g, (match, diceExpr) => {
+        return `<span class="micro-roll-chip inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 cursor-pointer border border-primary/30 transition-colors" data-micro-token="${match}" onclick="handleMicroRollClick(this, event)" title="Re-roll only this die expression (${match})">🎲 ${diceExpr}</span>`;
+    });
+    return escaped;
+}
+
 function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNestedContent = false) {
     // Generate the HTML for a row
-    // Simplified version of legacy logic
     if (!item) return '';
 
     let desc = '';
@@ -2111,11 +2380,13 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
     // Check types
     if (item._isCareer && Array.isArray(item.result)) {
         const btnGroup = !isNestedContent ? getButtonGroup() : '';
+        const cVal = renderResultContentWithChips(item.result[0], item.header);
+        const iVal = renderResultContentWithChips(item.result[1], item.header);
         return `${titleDesc}${desc}
         <div class="result-row" data-format="career">
             <div class="result-header">${item.header}</div>
-            <div class="result-content career-value" contenteditable="true" data-header="${item.header}" data-col-index="0" spellcheck="false">${escapeHtml(String(item.result[0]))}</div>
-            <div class="result-content career-description" contenteditable="true" data-header="${item.header}" data-col-index="1" spellcheck="false">${escapeHtml(String(item.result[1]))}</div>
+            <div class="result-content career-value" contenteditable="true" data-header="${item.header}" data-col-index="0" spellcheck="false">${cVal}</div>
+            <div class="result-content career-description" contenteditable="true" data-header="${item.header}" data-col-index="1" spellcheck="false">${iVal}</div>
             ${btnGroup}
         </div>`;
     }
@@ -2131,10 +2402,11 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
 
         // Simple
         const btnGroup = !isNestedContent ? getButtonGroup() : '';
+        const displayHtml = renderResultContentWithChips(item.result, item.header);
         return `${titleDesc}${desc}
         <div class="result-row" data-format="simple">
             <div class="result-header">${item.header}</div>
-            <div class="result-content" contenteditable="true" data-header="${item.header}" data-col-index="0" spellcheck="false">${escapeHtml(String(item.result))}</div>
+            <div class="result-content" contenteditable="true" data-header="${item.header}" data-col-index="0" spellcheck="false">${displayHtml}</div>
             ${btnGroup}
         </div>`;
     }
@@ -2145,6 +2417,9 @@ function renderResultItem(item, isTopLevel = true, generationIndex = 0, isNested
 function getButtonGroup() {
     return `
     <div class="button-group">
+        <button class="row-undo-btn" onclick="undoRowChange(this)" title="Undo Field Change" style="display:none; opacity:0.8;">
+             <span class="material-symbols-outlined text-xs">undo</span>
+        </button>
         <button class="lock-btn" onclick="toggleRowLock(this)" title="Lock/Unlock">
              <span class="material-symbols-outlined">lock_open</span>
         </button>
@@ -2218,14 +2493,173 @@ function extractDisplayValueForTitle(res) {
 }
 
 function copyToMarkdown(container) {
+    if (container._cardModel) {
+        fetch('/api/cards/export/markdown', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ card: container._cardModel })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.markdown) {
+                navigator.clipboard.writeText(data.markdown).then(() => showToast('Copied card markdown to clipboard!'));
+                return;
+            }
+            fallbackCopyMarkdown(container);
+        })
+        .catch(() => fallbackCopyMarkdown(container));
+    } else {
+        fallbackCopyMarkdown(container);
+    }
+}
+
+function fallbackCopyMarkdown(container) {
     let md = '';
+    const titleEl = container.querySelector('.card-title-text');
+    if (titleEl) md += `## ${titleEl.textContent}\n\n`;
     container.querySelectorAll('.result-row').forEach(row => {
-        const h = row.querySelector('.result-header').textContent;
-        const c = Array.from(row.querySelectorAll('.result-content')).map(x => x.textContent).join(', ');
+        const h = row.querySelector('.result-header')?.textContent || '';
+        const c = Array.from(row.querySelectorAll('.result-content')).map(x => x.textContent.trim()).join(', ');
         md += `*${h}*: ${c}\n`;
     });
     navigator.clipboard.writeText(md).then(() => showToast('Copied to markdown'));
 }
+
+function exportCardJson(container) {
+    let card = container._cardModel;
+    if (!card) {
+        // Build card structure from DOM
+        const title = container.querySelector('.card-title-text')?.textContent || 'Card';
+        const nodes = [];
+        container.querySelectorAll('.result-row').forEach(row => {
+            const label = row.querySelector('.result-header')?.textContent || '';
+            const val = Array.from(row.querySelectorAll('.result-content')).map(x => x.textContent.trim()).join(', ');
+            nodes.push({
+                id: `node_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+                label: label,
+                displayValue: val,
+                generator: { tableName: label },
+                history: [{ rolledAt: Date.now(), value: val }],
+                locked: row.classList.contains('locked')
+            });
+        });
+        card = {
+            id: `card_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+            title: title,
+            source: { file: container.dataset.tableFilename || '', tableName: title },
+            context: {},
+            nodes: nodes,
+            createdAt: Date.now()
+        };
+    }
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(card, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `${(card.title || 'card').replace(/[^a-zA-Z0-9_-]/g, '_')}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    showToast('Card JSON exported!');
+}
+
+async function handleMicroRollClick(chipEl, event) {
+    if (event) event.stopPropagation();
+    const row = chipEl.closest('.result-row');
+    const container = chipEl.closest('.generation-container');
+    if (!row || !container) return;
+
+    if (row.classList.contains('locked')) {
+        showToast('Row is locked');
+        return;
+    }
+
+    const microToken = chipEl.dataset.microToken;
+    if (!microToken) return;
+
+    pushUndoState(container);
+    chipEl.classList.add('animate-pulse');
+
+    // If card model is available, use /api/reroll microToken
+    if (container._cardModel) {
+        const header = row.querySelector('.result-header')?.textContent?.trim();
+        const targetNode = container._cardModel.nodes.find(n => n.label === header) || container._cardModel.nodes[0];
+        if (targetNode) {
+            try {
+                const res = await fetch('/api/reroll', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        card: container._cardModel,
+                        nodeId: targetNode.id,
+                        microToken: microToken
+                    })
+                });
+                const data = await res.json();
+                if (data.card) {
+                    container._cardModel = data.card;
+                    const updatedNode = data.node;
+                    const contentEl = row.querySelector('.result-content');
+                    if (contentEl && updatedNode) {
+                        contentEl.innerHTML = renderResultContentWithChips(updatedNode.displayValue, header);
+                    }
+                    showToast(`Rolled ${microToken} -> ${data.newValue}`);
+                    chipEl.classList.remove('animate-pulse');
+                    return;
+                }
+            } catch (err) {
+                console.warn('Backend micro-reroll failed, falling back:', err);
+            }
+        }
+    }
+
+    // Client-side dice evaluation fallback
+    try {
+        const match = microToken.match(/\{(\d*)d(\d+)((?:[+-]\d+)?)\}/);
+        if (match) {
+            const count = parseInt(match[1]) || 1;
+            const sides = parseInt(match[2]);
+            const mod = parseInt(match[3]) || 0;
+            let sum = 0;
+            for (let i = 0; i < count; i++) {
+                sum += Math.floor(Math.random() * sides) + 1;
+            }
+            sum += mod;
+            const contentEl = row.querySelector('.result-content');
+            if (contentEl) {
+                const oldText = contentEl.textContent;
+                // Replace this occurrence of the evaluated number or die pattern
+                chipEl.textContent = `🎲 ${sum}`;
+                chipEl.title = `Rolled ${sum} from ${microToken}`;
+            }
+            showToast(`Rolled ${microToken} = ${sum}`);
+        }
+    } finally {
+        chipEl.classList.remove('animate-pulse');
+    }
+}
+
+function undoRowChange(btn) {
+    const row = btn.closest('.result-row');
+    const container = btn.closest('.generation-container');
+    if (!container || !row) return;
+
+    if (row._history && row._history.length > 1) {
+        row._history.pop(); // Pop current
+        const prev = row._history[row._history.length - 1];
+        const contentEl = row.querySelector('.result-content');
+        if (contentEl && prev) {
+            contentEl.innerHTML = renderResultContentWithChips(prev, row.querySelector('.result-header')?.textContent);
+            showToast('Reverted field value');
+            if (row._history.length <= 1) {
+                btn.style.display = 'none';
+            }
+        }
+    } else {
+        undoCardChange(container);
+    }
+}
+
 
 function showToast(msg) {
     const t = document.createElement('div');
@@ -4688,4 +5122,128 @@ initContentBrowser();
 
 window.renderContentCard = renderContentCard;
 window.loadDisplayTemplates = loadDisplayTemplates;
+
+// ============================================================================
+// Phase 4: Client-Side Table Sync & Import Handlers
+// ============================================================================
+
+function openSyncModal() {
+    const modal = document.getElementById('syncModal');
+    if (!modal) return;
+    modal.style.display = 'block';
+
+    // Load saved settings from localStorage
+    const savedRepo = localStorage.getItem('ttrpg_sync_repo') || '';
+    const savedPath = localStorage.getItem('ttrpg_sync_path') || '_Tables';
+    const repoInput = document.getElementById('syncRepoInput');
+    const pathInput = document.getElementById('syncPathInput');
+    if (repoInput && savedRepo) repoInput.value = savedRepo;
+    if (pathInput && savedPath) pathInput.value = savedPath;
+}
+window.openSyncModal = openSyncModal;
+
+async function handleGitHubSync() {
+    const repoInput = document.getElementById('syncRepoInput');
+    const tokenInput = document.getElementById('syncTokenInput');
+    const pathInput = document.getElementById('syncPathInput');
+    const statusDiv = document.getElementById('syncStatus');
+    const syncBtn = document.getElementById('startSyncBtn');
+
+    const repoVal = repoInput ? repoInput.value.trim() : '';
+    const tokenVal = tokenInput ? tokenInput.value.trim() : '';
+    const pathVal = pathInput ? pathInput.value.trim() : '';
+
+    if (!repoVal || !repoVal.includes('/')) {
+        alert('Please specify the repository in owner/repo format (e.g. user/ttrpg-tables).');
+        return;
+    }
+
+    const [owner, repo] = repoVal.split('/');
+    localStorage.setItem('ttrpg_sync_repo', repoVal);
+    localStorage.setItem('ttrpg_sync_path', pathVal);
+
+    if (statusDiv) {
+        statusDiv.classList.remove('hidden');
+        statusDiv.textContent = 'Connecting to GitHub...';
+    }
+    if (syncBtn) syncBtn.disabled = true;
+
+    try {
+        const headers = { 'Accept': 'application/vnd.github.v3+json' };
+        if (tokenVal) headers['Authorization'] = `token ${tokenVal}`;
+
+        // Fetch tree recursively
+        const treeUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/main?recursive=1`;
+        const treeRes = await fetch(treeUrl, { headers });
+        if (!treeRes.ok) throw new Error(`GitHub error: ${treeRes.status} ${treeRes.statusText}`);
+
+        const treeData = await treeRes.json();
+        const prefix = pathVal ? pathVal.replace(/^\/+|\/+$/g, '') + '/' : '';
+        const yamlBlobs = (treeData.tree || []).filter(item => {
+            if (item.type !== 'blob') return false;
+            const isYaml = item.path.endsWith('.yaml') || item.path.endsWith('.yml');
+            if (!isYaml) return false;
+            return prefix ? item.path.startsWith(prefix) : true;
+        });
+
+        if (yamlBlobs.length === 0) {
+            if (statusDiv) statusDiv.textContent = 'No YAML table files found in the specified path.';
+            return;
+        }
+
+        let syncedCount = 0;
+        for (const blob of yamlBlobs) {
+            const filename = blob.path.split('/').pop();
+            if (statusDiv) statusDiv.textContent = `Syncing (${syncedCount + 1}/${yamlBlobs.length}): ${filename}`;
+
+            const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${blob.path}`;
+            const fileRes = await fetch(rawUrl, { headers });
+            if (fileRes.ok) {
+                const text = await fileRes.text();
+                // Store in browser localStorage/IndexedDB
+                try {
+                    localStorage.setItem(`ttrpg_table_${filename}`, text);
+                    syncedCount++;
+                } catch (e) {
+                    console.warn(`Storage quota warning on ${filename}`);
+                }
+            }
+        }
+
+        if (statusDiv) {
+            statusDiv.textContent = `✓ Successfully synced ${syncedCount} tables from ${owner}/${repo}!`;
+        }
+        setTimeout(() => closeModal('syncModal'), 2500);
+    } catch (e) {
+        console.error('Sync failed:', e);
+        if (statusDiv) statusDiv.textContent = `❌ Sync failed: ${e.message}`;
+    } finally {
+        if (syncBtn) syncBtn.disabled = false;
+    }
+}
+window.handleGitHubSync = handleGitHubSync;
+
+async function handleLocalFilesImport(event) {
+    const files = event.target?.files;
+    if (!files || files.length === 0) return;
+
+    const statusDiv = document.getElementById('syncStatus');
+    if (statusDiv) {
+        statusDiv.classList.remove('hidden');
+        statusDiv.textContent = `Importing ${files.length} local table(s)...`;
+    }
+
+    let loaded = 0;
+    for (const file of files) {
+        const text = await file.text();
+        localStorage.setItem(`ttrpg_table_${file.name}`, text);
+        loaded++;
+    }
+
+    if (statusDiv) {
+        statusDiv.textContent = `✓ Imported ${loaded} local YAML table(s) into browser storage.`;
+    }
+}
+window.handleLocalFilesImport = handleLocalFilesImport;
+
 

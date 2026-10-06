@@ -1200,6 +1200,57 @@
       </form>
     </div>
   </div>
+
+  <!-- Table Sync Modal (Phase 4 Dual-Repo / Sync) -->
+  <div id="syncModal" class="modal" style="display:none;">
+    <div class="modal-content max-w-lg bg-surface-light dark:bg-surface-dark p-6 rounded-2xl border border-border-light dark:border-border-dark shadow-2xl relative">
+      <span class="close cursor-pointer absolute top-4 right-4 text-2xl text-text-muted-light dark:text-text-muted-dark hover:text-primary" onclick="closeModal('syncModal')">&times;</span>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="material-symbols-outlined text-primary text-2xl">sync</span>
+        <h2 class="text-xl font-bold">Sync Custom & Private Tables</h2>
+      </div>
+      <p class="text-xs text-text-muted-light dark:text-text-muted-dark mb-4">
+        Sync tables across devices from a private GitHub repository or import local YAML table packs.
+      </p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-text-muted-light dark:text-text-muted-dark mb-1">GitHub Repository (owner/repo)</label>
+          <input type="text" id="syncRepoInput" placeholder="e.g. yourname/ttrpg-private-tables"
+            class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-text-muted-light dark:text-text-muted-dark mb-1">Personal Access Token (fine-grained, read-only)</label>
+          <input type="password" id="syncTokenInput" placeholder="ghp_... (stored only in local browser)"
+            class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase text-text-muted-light dark:text-text-muted-dark mb-1">Tables Folder Path</label>
+          <input type="text" id="syncPathInput" placeholder="_Tables (leave blank for repository root)"
+            class="w-full bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none">
+        </div>
+
+        <div id="syncStatus" class="text-xs py-2 px-3 rounded-lg bg-primary/10 text-primary hidden"></div>
+
+        <div class="flex gap-2 pt-2">
+          <button id="startSyncBtn" onclick="handleGitHubSync()"
+            class="flex-1 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors text-sm flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">cloud_download</span>
+            Sync from GitHub
+          </button>
+        </div>
+
+        <div class="border-t border-border-light dark:border-border-dark pt-3">
+          <label class="block text-xs font-bold uppercase text-text-muted-light dark:text-text-muted-dark mb-2">Or Import Local YAML Files</label>
+          <input type="file" id="localYamlFilesInput" multiple accept=".yaml,.yml" onchange="handleLocalFilesImport(event)"
+            class="block w-full text-xs text-text-muted-light dark:text-text-muted-dark file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+        </div>
+      </div>
+    </div>
+  </div>
+
   <header
     class="bg-surface-light dark:bg-surface-dark border-b border-border-light dark:border-border-dark h-16 flex items-center justify-between px-6 shrink-0 z-20 shadow-sm relative">
     <div class="flex items-center gap-6 w-1/3">
@@ -1224,6 +1275,11 @@
         class="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-background-light dark:hover:bg-surface-highlight-dark transition-colors text-sm font-medium border border-transparent">
         <span class="material-symbols-outlined text-lg">star</span>
         <span>Favorites Only</span>
+      </button>
+      <button id="syncModalBtn" onclick="openSyncModal()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-background-light dark:hover:bg-surface-highlight-dark transition-colors text-sm font-medium border border-border-light dark:border-border-dark text-text-muted-light dark:text-text-muted-dark hover:text-primary">
+        <span class="material-symbols-outlined text-lg">sync</span>
+        <span>Sync Tables</span>
       </button>
     </div>
 
@@ -1383,10 +1439,11 @@
               <h2 class="font-semibold text-sm text-text-muted-light dark:text-text-muted-dark uppercase tracking-wide">
                 Saved Cards</h2>
               <div class="flex gap-1">
-                <button class="p-1 hover:text-primary text-text-muted-light dark:text-text-muted-dark"><span
+                <button id="exportSavedCardsBtn" class="p-1 hover:text-primary text-text-muted-light dark:text-text-muted-dark" title="Export Saved Cards (JSON)"><span
                     class="material-symbols-outlined text-sm">download</span></button>
-                <button class="p-1 hover:text-primary text-text-muted-light dark:text-text-muted-dark"><span
+                <button id="importSavedCardsBtn" class="p-1 hover:text-primary text-text-muted-light dark:text-text-muted-dark" title="Import Saved Cards (JSON)"><span
                     class="material-symbols-outlined text-sm">upload</span></button>
+                <input type="file" id="importSavedCardsFileInput" accept=".json" style="display:none;" />
               </div>
             </div>
             <div class="flex-1 overflow-y-auto p-4 space-y-4" id="savedGenerations">

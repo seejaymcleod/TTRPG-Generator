@@ -12,6 +12,7 @@ import {
     Table,
     ResultEntry
 } from './types';
+import { Card, createCardFromResult } from './card';
 
 export class Renderer {
     private rng: RNG;
@@ -58,6 +59,23 @@ export class Renderer {
         this.startTime = Date.now();
         const res = this.processTable(rootTable, context, tracker);
         return { ...res, context };
+    }
+
+    /**
+     * Generates a persistent, typed Card data model.
+     */
+    public generateCard(identifier: string, context: Context = {}, title?: string): Card {
+        const rootTable = this.loader.findTable(identifier);
+        const genResult = this.generate(identifier, context);
+        const sourceFile = rootTable?.filename || `${identifier}.yaml`;
+        const sourceTable = rootTable?.tablename || identifier;
+
+        return createCardFromResult(
+            genResult,
+            { file: sourceFile, tableName: sourceTable },
+            genResult.context || context,
+            title
+        );
     }
 
     private processTable(

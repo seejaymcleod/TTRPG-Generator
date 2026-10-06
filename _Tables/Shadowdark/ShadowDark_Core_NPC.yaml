@@ -174,7 +174,7 @@ tables:
           - ven
           - sen
           - win
-          - true
+          - "true"
           - en
           - lin
           - sor
