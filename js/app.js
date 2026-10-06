@@ -606,17 +606,165 @@ async function deleteUser(username, btnElement) {
 // Explicitly attach to window
 window.deleteUser = deleteUser;
 
+/* ==========================================================================
+   CLIENT-SIDE ENGINE INITIALIZATION & FALLBACK
+   Enables 100% serverless operation on GitHub Pages (like StaticDice).
+   ========================================================================== */
+window.isClientMode = false;
+window.clientTableLoader = null;
+window.clientRenderer = null;
+window.clientExecutionEngine = null;
+
+function loadStoredPrivateTablesIntoClientLoader(loader) {
+    if (!window.TTRPG || !window.TTRPG.yaml || !loader) return 0;
+    let count = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('ttrpg_table_')) {
+            const rawYaml = localStorage.getItem(key);
+            const filename = key.replace('ttrpg_table_', '');
+            try {
+                const parsed = window.TTRPG.yaml.load(rawYaml);
+                if (parsed && typeof parsed === 'object') {
+                    if (Array.isArray(parsed)) {
+                        parsed.forEach(t => {
+                            window.TTRPG.normalizeTable(t, filename);
+                            loader.loadTables([t]);
+                            count++;
+                        });
+                    } else {
+                        window.TTRPG.normalizeTable(parsed, filename);
+                        loader.loadTables([parsed]);
+                        count++;
+                    }
+                }
+            } catch (err) {
+                console.warn(`Failed to parse stored table ${filename}:`, err);
+            }
+        }
+    }
+    return count;
+}
+
+async function initClientEngineAndTables() {
+    window.isClientMode = true;
+    if (!window.TTRPG) {
+        console.error("TTRPG engine bundle not found on window!");
+        return;
+    }
+
+    const loader = new window.TTRPG.TableLoader();
+    window.clientTableLoader = loader;
+    window.clientRenderer = new window.TTRPG.Renderer(loader);
+    window.clientExecutionEngine = new window.TTRPG.ExecutionEngine(loader);
+
+    // 1. Fetch public open tables (data/tables.json)
+    try {
+        const publicRes = await fetch('data/tables.json');
+        if (publicRes.ok) {
+            const publicTables = await publicRes.json();
+            if (Array.isArray(publicTables)) {
+                loader.loadTables(publicTables);
+                console.log(`Loaded ${publicTables.length} public open tables into client engine.`);
+            }
+        }
+    } catch (e) {
+        console.warn("Could not load data/tables.json:", e);
+    }
+
+    // 2. Load private tables from browser storage (localStorage)
+    const storedCount = loadStoredPrivateTablesIntoClientLoader(loader);
+    if (storedCount > 0) {
+        console.log(`Loaded ${storedCount} private tables from browser storage.`);
+    }
+
+    // 3. Map to tablesData format
+    tablesData = loader.getAllTables().map(t => ({
+        filename: t.filename,
+        tablename: t.tablename || 'Unknown',
+        game: t.game || 'Unknown',
+        type: t.type || 'Unknown',
+        setting: t.setting || 'Unknown',
+        source: t.source || null,
+        inputField: t.inputField || null
+    }));
+
+    console.log(`Client engine running: ${tablesData.length} total tables available.`);
+    populateFilterButtons(tablesData);
+    applyFilters();
+}
+
+function generateClientSide(tableSpec, count, inputValues) {
+    if (!window.clientRenderer || !window.clientTableLoader) {
+        throw new Error('Client engine is not initialized');
+    }
+    const targetTable = window.clientTableLoader.getTableByFilename(tableSpec.filename)
+        || window.clientTableLoader.getTableByName(tableSpec.tablename)
+        || window.clientTableLoader.findTable(tableSpec.filename || tableSpec.tablename);
+    if (!targetTable) {
+        throw new Error(`Table not found: ${tableSpec.filename || tableSpec.tablename}`);
+    }
+
+    const results = [];
+    const num = parseInt(count) || 1;
+    for (let i = 0; i < num; i++) {
+        const context = { ...(inputValues || {}) };
+        context.thisResult = null;
+        const identifier = targetTable.filename || targetTable.tablename;
+        const result = window.clientRenderer.generate(identifier, context);
+        const card = window.TTRPG.createCardFromResult(
+            result,
+            { file: targetTable.filename || `${identifier}.yaml`, tableName: targetTable.tablename || identifier },
+            result.context || context
+        );
+        result.card = card;
+        results.push(result);
+    }
+    return { results };
+}
+
+function rerollClientSide(payload) {
+    const { table, header, context, inputValues, card, nodeId, microToken, tokenIndex } = payload;
+    if (card && nodeId && window.clientExecutionEngine) {
+        if (microToken) {
+            return window.clientExecutionEngine.rerollMicroToken(card, nodeId, microToken, tokenIndex || 0);
+        } else {
+            return window.clientExecutionEngine.rerollNode(card, nodeId);
+        }
+    }
+    if (window.clientRenderer && window.clientTableLoader) {
+        let rootTable;
+        if (table?.filename) rootTable = window.clientTableLoader.getTableByFilename(table.filename);
+        if (!rootTable && table?.tablename) rootTable = window.clientTableLoader.getTableByName(table.tablename);
+        if (!rootTable && table) rootTable = window.clientTableLoader.findTable(table.filename || table.tablename);
+        if (!rootTable) throw new Error("Table not found for reroll");
+        const mergedContext = { ...(context || {}), ...(inputValues || {}) };
+        const result = window.clientRenderer.reroll(rootTable, header, mergedContext);
+        return { result, context: mergedContext };
+    }
+    throw new Error('Client engine cannot perform reroll');
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
     createAutocompleteContainer();
     checkSession(); // Check for logged in user
-    try {
-        const response = await fetch('/api/tables');
-        tablesData = await response.json();
-        console.log('Tables Data:', tablesData);
-        populateFilterButtons(tablesData);
-        applyFilters();
-    } catch (error) {
-        console.error('Error fetching tables:', error);
+
+    const isStaticHost = window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:';
+    if (isStaticHost) {
+        console.log('Detected static hosting environment (GitHub Pages). Initializing client-side engine.');
+        await initClientEngineAndTables();
+    } else {
+        try {
+            const response = await fetch('/api/tables');
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            tablesData = await response.json();
+            console.log('Tables Data loaded from server:', tablesData.length);
+            populateFilterButtons(tablesData);
+            applyFilters();
+        } catch (error) {
+            console.warn('Backend /api/tables unavailable. Falling back to client-side engine:', error);
+            await initClientEngineAndTables();
+        }
     }
 
     // Set up drag and drop for saved cards
@@ -1962,21 +2110,31 @@ function generateContent() {
         }
     }
 
-    fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            table: selectedTable,
-            number: parseInt(numberOfGenerations),
-            inputValues: inputValues
-        })
-    })
-        .then(response => {
-            document.getElementById('loading-indicator')?.remove();
-            if (!response.ok) throw new Error('Generation failed');
-            return response.json();
-        })
+    const runGeneration = async () => {
+        if (window.isClientMode) {
+            return generateClientSide(selectedTable, parseInt(numberOfGenerations), inputValues);
+        }
+        try {
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    table: selectedTable,
+                    number: parseInt(numberOfGenerations),
+                    inputValues: inputValues
+                })
+            });
+            if (!response.ok) throw new Error('Server returned ' + response.status);
+            return await response.json();
+        } catch (e) {
+            console.warn('Backend generation failed, using client engine:', e);
+            return generateClientSide(selectedTable, parseInt(numberOfGenerations), inputValues);
+        }
+    };
+
+    runGeneration()
         .then(data => {
+            document.getElementById('loading-indicator')?.remove();
             if (!data.results || data.results.length === 0) throw new Error('Empty results');
 
             const resultsContainer = document.getElementById('results');
@@ -2126,14 +2284,28 @@ function rerollContent(button) {
 
     resultRow.style.opacity = '0.5';
 
-    return fetch('/api/reroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            table: currentSelectedTable, header: header, context: context, inputValues: inputValues
-        })
-    })
-        .then(r => r.json())
+    const rerollPayload = {
+        table: currentSelectedTable, header: header, context: context, inputValues: inputValues
+    };
+    const doReroll = async () => {
+        if (window.isClientMode) {
+            return rerollClientSide(rerollPayload);
+        }
+        try {
+            const res = await fetch('/api/reroll', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(rerollPayload)
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            return await res.json();
+        } catch (e) {
+            console.warn('Backend reroll failed, using client engine:', e);
+            return rerollClientSide(rerollPayload);
+        }
+    };
+
+    return doReroll()
         .then(data => {
             if (data.context) Object.assign(context, data.context);
 
@@ -2586,17 +2758,23 @@ async function handleMicroRollClick(chipEl, event) {
         const targetNode = container._cardModel.nodes.find(n => n.label === header) || container._cardModel.nodes[0];
         if (targetNode) {
             try {
-                const res = await fetch('/api/reroll', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        card: container._cardModel,
-                        nodeId: targetNode.id,
-                        microToken: microToken
-                    })
-                });
-                const data = await res.json();
-                if (data.card) {
+                let data;
+                if (window.isClientMode) {
+                    data = rerollClientSide({ card: container._cardModel, nodeId: targetNode.id, microToken: microToken });
+                } else {
+                    const res = await fetch('/api/reroll', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            card: container._cardModel,
+                            nodeId: targetNode.id,
+                            microToken: microToken
+                        })
+                    });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    data = await res.json();
+                }
+                if (data && data.card) {
                     container._cardModel = data.card;
                     const updatedNode = data.node;
                     const contentEl = row.querySelector('.result-content');
@@ -2608,7 +2786,23 @@ async function handleMicroRollClick(chipEl, event) {
                     return;
                 }
             } catch (err) {
-                console.warn('Backend micro-reroll failed, falling back:', err);
+                console.warn('Backend micro-reroll failed, falling back to client engine:', err);
+                if (window.clientExecutionEngine) {
+                    try {
+                        const data = rerollClientSide({ card: container._cardModel, nodeId: targetNode.id, microToken: microToken });
+                        if (data && data.card) {
+                            container._cardModel = data.card;
+                            const updatedNode = data.node;
+                            const contentEl = row.querySelector('.result-content');
+                            if (contentEl && updatedNode) {
+                                contentEl.innerHTML = renderResultContentWithChips(updatedNode.displayValue, header);
+                            }
+                            showToast(`Rolled ${microToken} -> ${data.newValue}`);
+                            chipEl.classList.remove('animate-pulse');
+                            return;
+                        }
+                    } catch (e2) {}
+                }
             }
         }
     }
@@ -3279,28 +3473,36 @@ function toggleSavedCard(headerEl) {
 // Shared function to load display templates (used by Content browser and Forge)
 async function loadDisplayTemplates() {
     if (Object.keys(displayTemplates).length > 0) {
-        // Already loaded
+        return displayTemplates;
+    }
+    if (window.isClientMode || window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:') {
         return displayTemplates;
     }
     try {
         const tmplRes = await fetch('/api/templates');
-        const tmplData = await tmplRes.json();
-        if (tmplData && tmplData.types) {
-            displayTemplates = tmplData.types;
-            console.log("Loaded display templates for:", Object.keys(displayTemplates));
+        if (tmplRes.ok) {
+            const tmplData = await tmplRes.json();
+            if (tmplData && tmplData.types) {
+                displayTemplates = tmplData.types;
+                console.log("Loaded display templates for:", Object.keys(displayTemplates));
+            }
         }
     } catch (e) {
-        console.warn("Failed to load templates, using defaults", e);
+        // Quiet fallback to defaults
     }
     return displayTemplates;
 }
 
 async function loadContent() {
+    if (window.isClientMode || window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:') {
+        return;
+    }
     try {
         // Load Templates
         await loadDisplayTemplates();
 
         const response = await fetch('/api/content');
+        if (!response.ok) return;
         const data = await response.json();
         if (data.content) {
             contentData = data.content;
@@ -3309,8 +3511,7 @@ async function loadContent() {
             renderContentUi();
         }
     } catch (e) {
-        console.error("Failed to load content:", e);
-        showToast("Error loading content");
+        // Content browser only available with backend
     }
 }
 
@@ -5218,6 +5419,23 @@ async function handleGitHubSync() {
         if (statusDiv) {
             statusDiv.textContent = `✓ Successfully synced ${syncedCount} tables from ${owner}/${repo}!`;
         }
+
+        if (syncedCount > 0 && window.clientTableLoader) {
+            loadStoredPrivateTablesIntoClientLoader(window.clientTableLoader);
+            tablesData = window.clientTableLoader.getAllTables().map(t => ({
+                filename: t.filename,
+                tablename: t.tablename || 'Unknown',
+                game: t.game || 'Unknown',
+                type: t.type || 'Unknown',
+                setting: t.setting || 'Unknown',
+                source: t.source || null,
+                inputField: t.inputField || null
+            }));
+            populateFilterButtons(tablesData);
+            applyFilters();
+            console.log(`UI refreshed with ${tablesData.length} total tables after sync.`);
+        }
+
         setTimeout(() => closeModal('syncModal'), 2500);
     } catch (e) {
         console.error('Sync failed:', e);
@@ -5245,6 +5463,21 @@ async function handleLocalFilesImport(event) {
         loaded++;
     }
 
+    if (loaded > 0 && window.clientTableLoader) {
+        loadStoredPrivateTablesIntoClientLoader(window.clientTableLoader);
+        tablesData = window.clientTableLoader.getAllTables().map(t => ({
+            filename: t.filename,
+            tablename: t.tablename || 'Unknown',
+            game: t.game || 'Unknown',
+            type: t.type || 'Unknown',
+            setting: t.setting || 'Unknown',
+            source: t.source || null,
+            inputField: t.inputField || null
+        }));
+        populateFilterButtons(tablesData);
+        applyFilters();
+    }
+
     if (statusDiv) {
         statusDiv.textContent = `✓ Imported ${loaded} local YAML table(s) into browser storage.`;
     }
@@ -5264,14 +5497,62 @@ async function generatePresetCard(templateId) {
 
     showToast('Generating template card...');
 
+    function generatePresetClient(id) {
+        if (!window.clientExecutionEngine) return null;
+        let template;
+        if (id === 'monster_shadowdark') {
+            template = {
+                id: 'monster_shadowdark',
+                title: 'Monster Statblock',
+                game: 'Shadowdark',
+                fields: [
+                    { key: 'Name', label: 'Name', type: 'rollable', tableName: 'ShadowDark_Core_Monsters.yaml', defaultValue: 'Dungeon Beast' },
+                    { key: 'Level', label: 'Level', type: 'static', defaultValue: '3' },
+                    { key: 'ArmorClass', label: 'AC', type: 'static', defaultValue: '13' },
+                    { key: 'HP', label: 'HP', type: 'static', defaultValue: '14' },
+                    { key: 'Attacks', label: 'Attacks', type: 'static', defaultValue: '1 claw +3 (1d6) or 1 bite +3 (1d8)' },
+                    { key: 'Movement', label: 'Movement', type: 'static', defaultValue: 'Near' },
+                    { key: 'Alignment', label: 'Alignment', type: 'rollable', tableName: 'ShadowDark_Core_Alignments.yaml', defaultValue: 'Chaotic' }
+                ]
+            };
+        } else {
+            template = {
+                id: 'npc_knave',
+                title: 'Knave NPC',
+                game: 'Knave',
+                fields: [
+                    { key: 'Physique', label: 'Physique', type: 'rollable', tableName: 'Knave_Physique.yaml', defaultValue: 'Athletic' },
+                    { key: 'Face', label: 'Face', type: 'rollable', tableName: 'Knave_Face.yaml', defaultValue: 'Chiseled' },
+                    { key: 'Skin', label: 'Skin', type: 'rollable', tableName: 'Knave_Skin.yaml', defaultValue: 'Weathered' },
+                    { key: 'Hair', label: 'Hair', type: 'rollable', tableName: 'Knave_Hair.yaml', defaultValue: 'Braided' },
+                    { key: 'Clothing', label: 'Clothing', type: 'rollable', tableName: 'Knave_Clothing.yaml', defaultValue: 'Traveler garments' },
+                    { key: 'Virtue', label: 'Virtue', type: 'rollable', tableName: 'Knave_Virtues.yaml', defaultValue: 'Courageous' },
+                    { key: 'Vice', label: 'Vice', type: 'rollable', tableName: 'Knave_Vices.yaml', defaultValue: 'Greedy' }
+                ]
+            };
+        }
+        return { card: window.clientExecutionEngine.renderTemplateCard(template, {}) };
+    }
+
     try {
-        const res = await fetch('/api/cards/template', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ templateId })
-        });
-        const data = await res.json();
-        if (data.card) {
+        let data;
+        if (window.isClientMode) {
+            data = generatePresetClient(templateId);
+        } else {
+            const res = await fetch('/api/cards/template', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ templateId })
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            data = await res.json();
+        }
+
+        if (!data || !data.card) {
+            data = generatePresetClient(templateId);
+        }
+
+        if (data && data.card) {
             const resultsContainer = document.getElementById('results');
             if (resultsContainer) {
                 renderSavedCardFromModel(data.card, resultsContainer);
@@ -5281,11 +5562,21 @@ async function generatePresetCard(templateId) {
             showToast('Error generating template card');
         }
     } catch (e) {
-        console.error('Template card generation error:', e);
-        showToast('Failed to generate template card');
+        console.warn('Backend template card generation failed, trying client:', e);
+        const fallback = generatePresetClient(templateId);
+        if (fallback && fallback.card) {
+            const resultsContainer = document.getElementById('results');
+            if (resultsContainer) {
+                renderSavedCardFromModel(fallback.card, resultsContainer);
+                showToast(`Generated ${fallback.card.title}!`);
+            }
+        } else {
+            showToast('Failed to generate template card');
+        }
     }
 }
 window.generatePresetCard = generatePresetCard;
+
 
 
 

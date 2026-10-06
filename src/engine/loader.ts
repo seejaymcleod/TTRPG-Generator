@@ -1,8 +1,10 @@
 // src/engine/loader.ts
-import fs from 'fs';
-import path from 'path';
 import yaml from 'js-yaml';
 import { Table, SubTable } from './types';
+
+function extractBaseName(filename: string): string {
+    return filename.replace(/^.*[\\\/]/, '').replace(/\.(yaml|yml)$/, '');
+}
 
 export class TableLoader {
     // Index by filename (basename key) and tablename
@@ -11,22 +13,37 @@ export class TableLoader {
     private allTables: Table[] = [];
 
     /**
-     * Loads tables from a pre-compiled JSON file.
-     * @param jsonPath Absolute path to the tables.json file.
+     * Loads tables from a pre-compiled JSON file path, JSON string, or parsed table array.
      */
-    loadFromJSON(jsonPath: string): void {
-        console.log(`Loading tables from JSON: ${jsonPath}`);
+    loadFromJSON(source: string | Table[]): void {
         try {
-            const content = fs.readFileSync(jsonPath, 'utf8');
-            const tables = JSON.parse(content) as Table[];
+            let tables: Table[];
+            if (Array.isArray(source)) {
+                tables = source;
+            } else if (typeof source === 'string' && source.trim().startsWith('[')) {
+                tables = JSON.parse(source);
+            } else if (typeof source === 'string') {
+                // In Node environment, read from disk
+                const fs = typeof require !== 'undefined' ? require('fs') : null;
+                if (!fs) {
+                    console.error("File system access not available in browser. Pass parsed array or JSON string.");
+                    return;
+                }
+                const content = fs.readFileSync(source, 'utf8');
+                tables = JSON.parse(content) as Table[];
+            } else {
+                console.error("Invalid tables data format.");
+                return;
+            }
+
             if (Array.isArray(tables)) {
                 tables.forEach(t => this.processTable(t));
-                console.log(`Loaded ${tables.length} tables from JSON.`);
+                console.log(`Loaded ${tables.length} tables into index.`);
             } else {
                 console.error("Invalid tables.json format: expected array.");
             }
         } catch (e: any) {
-            console.error(`Failed to load tables from JSON: ${e.message}`);
+            console.error(`Failed to load tables: ${e.message}`);
         }
     }
 
@@ -49,7 +66,7 @@ export class TableLoader {
             if (!this.tablesByFilename.has(t.filename)) {
                 this.tablesByFilename.set(t.filename, t);
                 // Also index without extension
-                const baseName = path.basename(t.filename, path.extname(t.filename));
+                const baseName = extractBaseName(t.filename);
                 this.tablesByFilename.set(baseName, t);
             }
         }
@@ -91,25 +108,6 @@ export class TableLoader {
      */
     loadFromDirectory(dir: string): void {
         console.warn("loadFromDirectory is DEPRECATED. Please use loadFromJSON.");
-        // ... helper to forward to old logic or just fail?
-        // For now, let's leave it empty or implemented just in case.
-        // Actually, let's keep the files scanning for dev fallback if JSON missing?
-        // No, we want strict pipeline.
-    }
-
-    private getFilesRecursively(dir: string): string[] {
-        let results: string[] = [];
-        const list = fs.readdirSync(dir);
-        list.forEach(file => {
-            const filePath = path.join(dir, file);
-            const stat = fs.statSync(filePath);
-            if (stat && stat.isDirectory()) {
-                results = results.concat(this.getFilesRecursively(filePath));
-            } else {
-                results.push(filePath);
-            }
-        });
-        return results;
     }
 
     getTableByFilename(filename: string): Table | undefined {

@@ -175,6 +175,9 @@ const ForgeAPI = {
     },
 
     async getMetadata() {
+        if (window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:') {
+            return { games: [], sources: [] };
+        }
         return this._safeFetch('/api/forge/metadata');
     },
 
@@ -300,6 +303,9 @@ class ForgeController {
     }
 
     _initEventSource() {
+        if (window.location.hostname.endsWith('github.io') || window.location.protocol === 'file:') {
+            return; // No SSE backend on static hosts
+        }
         if (this.eventSource) this.eventSource.close();
 
         this.eventSource = new EventSource('/api/forge/events');

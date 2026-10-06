@@ -12,7 +12,7 @@
 
 import yaml from 'js-yaml';
 import { Table } from './types';
-import { normalizeTable } from '../compiler/pipeline';
+import { normalizeTable } from './normalize';
 
 export interface GitHubSyncConfig {
     repoOwner: string;

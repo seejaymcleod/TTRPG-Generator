@@ -7,3 +7,4 @@ export * from './template';
 export * from './card';
 export * from './execution';
 export * from './sync';
+export * from './normalize';

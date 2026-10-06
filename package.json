@@ -4,9 +4,10 @@
   "description": "A TTRPG table generator engine with recursion support",
   "main": "server.js",
   "scripts": {
-    "start": "npx tsc && npm run build:tables && node server.js",
-    "build": "npx tsc && npm run build:tables",
+    "start": "npx tsc && npm run build:tables && npm run build:browser && node server.js",
+    "build": "npx tsc && npm run build:tables && npm run build:browser",
     "build:tables": "npx ts-node src/compiler/build.ts",
+    "build:browser": "npx esbuild src/engine/browser.ts --bundle --outfile=js/engine.bundle.js --format=iife --global-name=TTRPGBundle",
     "lint:tables": "npx ts-node src/compiler/lint.ts",
     "cli": "npx ts-node scripts/cli.ts",
     "test": "vitest",
