@@ -36,7 +36,12 @@ tables:
       - "{Knave_Relationships}"
   - tablename: Secret
     results: 
-      - "{ShadowDark_Core_NPC|Secret}"
+      - "Hidden debt to {Knave_Factions}"
+      - "Fugitive from a {Knave_CityEvents}"
+      - "Afflicted with {Knave_Mutations}"
+      - "Possesses forbidden {Knave_Spells}"
+      - "Secret allegiance to {Knave_Factions}"
+      - "Hiding stolen {Knave_Treasures}"
   - tablename: Summary
     results:
       - "{N} is a {A}."

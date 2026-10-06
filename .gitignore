@@ -8,3 +8,5 @@ coverage
 *.log
 .DS_Store
 _Forge/Import/SolKesh_Bestiary.pdf
+_Tables_Private/
+

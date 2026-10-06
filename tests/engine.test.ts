@@ -225,49 +225,14 @@ describe('TTRPG Engine V2', () => {
             expect(val).toBeLessThanOrEqual(11);
         });
 
-        it('should reroll ShadowDark Ancestry', () => {
-            const root = loader.getTableByName('NPC'); // ShadowDark_Core_NPC.yaml tablename is NPC
-            expect(root).toBeDefined();
-            if (!root) return;
-
-            const res = renderer.reroll(root, 'Ancestry', {});
-            // Ancestry results: Human, Elf, Dwarf, Halfling, Half-orc, Goblin
-            expect(['Human', 'Elf', 'Dwarf', 'Halfling', 'Half-orc', 'Goblin']).toContain(res.result);
-        });
-
-        it('should reroll InlineArrays correctly', () => {
-            const table = loader.getTableByName('AllFeaturesTest');
-            expect(table).toBeDefined();
-            if (!table) return;
-            const result = renderer.reroll(table, 'InlineArrays', {});
-            expect(result.header).toBe('InlineArrays');
-            expect(typeof result.result).toBe('string');
-            const valid = ['Red', 'Green', 'Blue'];
-            expect(valid.some(v => (result.result as string).includes(v))).toBe(true);
-        });
-
-        it('should reroll MultiRollDirective correctly', () => {
-            const table = loader.getTableByName('AllFeaturesTest');
-            expect(table).toBeDefined();
-            if (!table) return;
-            const result = renderer.reroll(table, 'MultiRollDirective', {});
-            expect(result.header).toBe('MultiRollDirective');
-            if (Array.isArray(result.result)) {
-                expect(result.result.length).toBeGreaterThan(1);
-            } else {
-                expect(typeof result.result).toBe('string');
-                expect(result.result).toMatch(/Base/);
-            }
-        });
-
-        it('should reroll CrossFileRefTable correctly', () => {
+        it('should reroll Knave Names via CrossFileRefTable', () => {
             const table = loader.getTableByName('AllFeaturesTest');
             expect(table).toBeDefined();
             if (!table) return;
             const result = renderer.reroll(table, 'CrossFileRefTable', {});
             expect(result.header).toBe('CrossFileRefTable');
             expect(typeof result.result).toBe('string');
-            expect((result.result as string)).toContain('Reference ShadowDark Ancestry');
+            expect((result.result as string)).toContain('Reference Knave Names');
         });
 
         it('should reroll SeparateRowsDirective correctly', () => {

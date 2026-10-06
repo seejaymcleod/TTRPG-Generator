@@ -279,6 +279,56 @@ app.post('/api/cards/import', (req, res) => {
   }
 });
 
+// POST /api/cards/template
+app.post('/api/cards/template', (req, res) => {
+  try {
+    const { templateId, context } = req.body;
+    const executionEngine = new ExecutionEngine(loader);
+
+    let template;
+    if (templateId === 'monster_shadowdark') {
+      template = {
+        id: 'monster_shadowdark',
+        title: 'Monster Statblock',
+        game: 'Shadowdark',
+        fields: [
+          { key: 'Name', label: 'Name', type: 'rollable', tableName: 'ShadowDark_Core_Monsters.yaml', defaultValue: 'Dungeon Beast' },
+          { key: 'Level', label: 'Level', type: 'static', defaultValue: '3' },
+          { key: 'ArmorClass', label: 'AC', type: 'static', defaultValue: '13' },
+          { key: 'HP', label: 'HP', type: 'static', defaultValue: '14' },
+          { key: 'Attacks', label: 'Attacks', type: 'static', defaultValue: '1 claw +3 (1d6) or 1 bite +3 (1d8)' },
+          { key: 'Movement', label: 'Movement', type: 'static', defaultValue: 'Near' },
+          { key: 'Alignment', label: 'Alignment', type: 'static', defaultValue: 'Chaotic' }
+        ]
+      };
+    } else if (templateId === 'npc_knave') {
+      template = {
+        id: 'npc_knave',
+        title: 'NPC Crawler',
+        game: 'Knave',
+        fields: [
+          { key: 'Physique', label: 'Physique', type: 'rollable', tableName: 'Knave_Physique.yaml', defaultValue: 'Athletic' },
+          { key: 'Face', label: 'Face', type: 'rollable', tableName: 'Knave_Face.yaml', defaultValue: 'Chiseled' },
+          { key: 'Skin', label: 'Skin', type: 'rollable', tableName: 'Knave_Skin.yaml', defaultValue: 'Weathered' },
+          { key: 'Clothing', label: 'Clothing', type: 'rollable', tableName: 'Knave_Clothing.yaml', defaultValue: 'Tattered rags' },
+          { key: 'Virtue', label: 'Virtue', type: 'rollable', tableName: 'Knave_Virtues.yaml', defaultValue: 'Honest' },
+          { key: 'Vice', label: 'Vice', type: 'rollable', tableName: 'Knave_Vices.yaml', defaultValue: 'Greedy' },
+          { key: 'Misfortune', label: 'Misfortune', type: 'rollable', tableName: 'Knave_Misfortunes.yaml', defaultValue: 'Exiled' }
+        ]
+      };
+    } else {
+      return res.status(400).json({ error: `Unknown template: ${templateId}` });
+    }
+
+    const card = executionEngine.generateTemplateCard(template, context || {});
+    res.json({ card });
+  } catch (e) {
+    console.error("Template generation error:", e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
 
 // --- Forge Mode Endpoints ---
 const multer = require('multer');

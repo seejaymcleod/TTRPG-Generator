@@ -5246,4 +5246,41 @@ async function handleLocalFilesImport(event) {
 }
 window.handleLocalFilesImport = handleLocalFilesImport;
 
+// --- Phase 3.4 / 5: Template Cards Modal Logic ---
+function openTemplatesModal() {
+    const modal = document.getElementById('templatesModal');
+    if (modal) modal.style.display = 'block';
+}
+window.openTemplatesModal = openTemplatesModal;
+
+async function generatePresetCard(templateId) {
+    const modal = document.getElementById('templatesModal');
+    if (modal) modal.style.display = 'none';
+
+    showToast('Generating template card...');
+
+    try {
+        const res = await fetch('/api/cards/template', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ templateId })
+        });
+        const data = await res.json();
+        if (data.card) {
+            const resultsContainer = document.getElementById('results');
+            if (resultsContainer) {
+                renderSavedCardFromModel(data.card, resultsContainer);
+                showToast(`Generated ${data.card.title}!`);
+            }
+        } else {
+            showToast('Error generating template card');
+        }
+    } catch (e) {
+        console.error('Template card generation error:', e);
+        showToast('Failed to generate template card');
+    }
+}
+window.generatePresetCard = generatePresetCard;
+
+
 

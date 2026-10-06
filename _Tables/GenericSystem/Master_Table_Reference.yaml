@@ -56,7 +56,7 @@ tables:
     results:
       - "Double Level: {HeroLevel * 2}"
       - "Half Gold: {{1d100} / 2}" # Nested braces for dice result usage
-      - "Stat Check: {3d6 + HeroLevel}"
+      - "Stat Check: {{3d6} + HeroLevel}"
 
   # --- 6. Logic and Variables ---
   - tablename: ConditionalLogic

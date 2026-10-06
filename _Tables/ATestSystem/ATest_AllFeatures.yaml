@@ -110,7 +110,7 @@ tables:
   - tablename: CrossFileRefTable
     description: Tests referencing a table in another file.
     results:
-      - "Reference ShadowDark Ancestry: {Ancestry}"
+      - "Reference Knave Names: {Knave_Names}"
 
   - tablename: ArrayIndexRef
     description: Tests accessing an element from an array result via reference.
